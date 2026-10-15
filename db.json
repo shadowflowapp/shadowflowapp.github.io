@@ -1,83 +1,27 @@
 [
-  { 
-    "id": 1, 
-    "th": "ฉันกำลังทำงานอยู่ตอนนี้", 
-    "en": "I ____ at the moment.", 
-    "answer": "am working", 
-    "options": ["am working", "work", "worked", "working"],
-    "level": "Elementary (A1-A2)", "color": "#ef4444",
-    "explanation": "ใช้ Present Continuous (is/am/are + v.ing) สำหรับสิ่งที่กำลังเกิดขึ้น 'ตอนนี้' (at the moment)"
-  },
-  { 
-    "id": 2, 
-    "th": "ฉันเกิดในเดือนสิงหาคม", 
-    "en": "I was born ____ August.", 
-    "answer": "in", 
-    "options": ["in", "on", "at", "from"],
-    "level": "Elementary (A1-A2)", "color": "#ef4444",
-    "explanation": "ใช้ 'in' กับเดือน ปี และฤดูกาล (in August, in 1990) ส่วน 'on' ใช้กับวัน (on Monday)"
-  },
-  { 
-    "id": 3, 
-    "th": "เธอไม่ได้ชอบแอปเปิ้ล", 
-    "en": "She ____ like apples.", 
-    "answer": "doesn't", 
-    "options": ["doesn't", "don't", "isn't", "aren't"],
-    "level": "Elementary (A1-A2)", "color": "#ef4444",
-    "explanation": "ประธานเอกพจน์ (He, She, It) ใน Present Simple รูปปฏิเสธต้องใช้ doesn't + กริยาช่อง 1"
-  },
-  { 
-    "id": 4, 
-    "th": "ฉันอาศัยอยู่ที่นี่มาตั้งแต่ปี 2010", 
-    "en": "I have lived here ____ 2010.", 
-    "answer": "since", 
-    "options": ["since", "for", "in", "from"],
-    "level": "Intermediate (B1-B2)", "color": "#3b82f6",
-    "explanation": "'since' แปลว่าตั้งแต่ ใช้กับ 'จุดเริ่มต้นของเวลา' (since 2010) ส่วน 'for' ใช้กับระยะเวลา (for 10 years)"
-  },
-  { 
-    "id": 5, 
-    "th": "ห้องนี้ถูกทำความสะอาดทุกวัน", 
-    "en": "This room ____ every day.", 
-    "answer": "is cleaned", 
-    "options": ["is cleaned", "cleans", "cleaned", "is cleaning"],
-    "level": "Intermediate (B1-B2)", "color": "#3b82f6",
-    "explanation": "นี่คือ Passive Voice (ประธานถูกกระทำ) โครงสร้างคือ Verb to be + กริยาช่อง 3"
-  },
-  { 
-    "id": 6, 
-    "th": "ถ้าฉันถูกลอตเตอรี่ ฉันจะซื้อบ้าน", 
-    "en": "If I won the lottery, I ____ a house.", 
-    "answer": "would buy", 
-    "options": ["would buy", "will buy", "bought", "buy"],
-    "level": "Intermediate (B1-B2)", "color": "#3b82f6",
-    "explanation": "Second Conditional (สมมติเรื่องที่ไม่จริงในปัจจุบัน) โครงสร้าง: If + Past Simple, S + would + V.infinitive"
-  },
-  { 
-    "id": 7, 
-    "th": "ถ้าตอนนั้นฉันรู้ ฉันคงทำตัวต่างออกไป", 
-    "en": "Had I known, I ____ differently.", 
-    "answer": "would have acted", 
-    "options": ["would have acted", "would act", "will act", "acted"],
-    "level": "Advanced (C1-C2)", "color": "#10b981",
-    "explanation": "Third Conditional แบบละ If (Inversion) สมมติแก้ไขอดีต โครงสร้างหลักคือ would have + V.3"
-  },
-  { 
-    "id": 8, 
-    "th": "พอฉันมาถึงปุ๊บ โทรศัพท์ก็ดังปั๊บ", 
-    "en": "Hardly ____ when the phone rang.", 
-    "answer": "had I arrived", 
-    "options": ["had I arrived", "I had arrived", "did I arrive", "I arrived"],
-    "level": "Advanced (C1-C2)", "color": "#10b981",
-    "explanation": "เมื่อขึ้นต้นด้วยคำปฏิเสธ (Hardly, Scarcely) ต้องเกิด Inversion คือสลับกริยาช่วยมาหน้าประธานเหมือนประโยคคำถาม"
-  },
-  { 
-    "id": 9, 
-    "th": "กระเป๋าของฉันต้องถูกขโมยไปแน่ๆ", 
-    "en": "My bag ____ stolen.", 
-    "answer": "must have been", 
-    "options": ["must have been", "must be", "should have been", "had to be"],
-    "level": "Advanced (C1-C2)", "color": "#10b981",
-    "explanation": "must have + V.3 ใช้คาดเดาสิ่งที่มั่นใจมากๆ ว่าเกิดขึ้นใน 'อดีต' (ถูกขโมย = must have been + V.3)"
-  }
+  { "id": 1, "level": "Grade K", "color": "#3b82f6", "q": "1 + 1 = ?", "answer": "2", "options": ["1", "2", "3", "4"], "explanation": "If you have 1 apple and get 1 more, you have 2." },
+  { "id": 2, "level": "Grade K", "color": "#3b82f6", "q": "5 - 2 = ?", "answer": "3", "options": ["2", "3", "4", "5"], "explanation": "Start with 5, take away 2, you are left with 3." },
+  { "id": 3, "level": "Grade 1", "color": "#3b82f6", "q": "10 + 7 = ?", "answer": "17", "options": ["15", "16", "17", "18"], "explanation": "10 plus 7 is 17." },
+  { "id": 4, "level": "Grade 2", "color": "#3b82f6", "q": "What is 3 x 4?", "answer": "12", "options": ["7", "10", "12", "14"], "explanation": "3 groups of 4 equals 12." },
+  { "id": 5, "level": "Grade 3", "color": "#10b981", "q": "24 ÷ 6 = ?", "answer": "4", "options": ["3", "4", "5", "6"], "explanation": "24 divided into 6 equal parts is 4." },
+  { "id": 6, "level": "Grade 3", "color": "#10b981", "q": "What is the perimeter of a square with side length 5?", "answer": "20", "options": ["15", "20", "25", "10"], "explanation": "A square has 4 equal sides. 5 + 5 + 5 + 5 = 20." },
+  { "id": 7, "level": "Grade 4", "color": "#10b981", "q": "Simplify the fraction: 4/8", "answer": "1/2", "options": ["1/4", "1/3", "1/2", "3/4"], "explanation": "Divide top and bottom by 4 to get 1/2." },
+  { "id": 8, "level": "Grade 5", "color": "#10b981", "q": "What is 15% of 100?", "answer": "15", "options": ["1.5", "15", "150", "10"], "explanation": "Percent means 'per 100'. So 15% of 100 is 15." },
+  { "id": 9, "level": "Grade 6", "color": "#f59e0b", "q": "Solve for x: x + 5 = 12", "answer": "7", "options": ["5", "6", "7", "8"], "explanation": "Subtract 5 from both sides: x = 12 - 5 = 7." },
+  { "id": 10, "level": "Grade 6", "color": "#f59e0b", "q": "Evaluate: 3³ (3 to the power of 3)", "answer": "27", "options": ["9", "18", "27", "81"], "explanation": "3 × 3 × 3 = 27." },
+  { "id": 11, "level": "Grade 7", "color": "#f59e0b", "q": "What is the area of a circle with radius 3? (Use π)", "answer": "9π", "options": ["3π", "6π", "9π", "12π"], "explanation": "Area = πr². r = 3, so r² = 9. Area = 9π." },
+  { "id": 12, "level": "Grade 7", "color": "#f59e0b", "q": "Solve: -8 + (-4) = ?", "answer": "-12", "options": ["-4", "4", "-12", "12"], "explanation": "Adding two negative numbers makes a larger negative number." },
+  { "id": 13, "level": "Grade 8", "color": "#f59e0b", "q": "Find the hypotenuse of a right triangle with legs 3 and 4.", "answer": "5", "options": ["5", "6", "7", "8"], "explanation": "Pythagorean theorem: a² + b² = c². 9 + 16 = 25. √25 = 5." },
+  { "id": 14, "level": "Algebra I", "color": "#ef4444", "q": "Solve for x: 2x - 4 = 10", "answer": "7", "options": ["3", "5", "7", "9"], "explanation": "Add 4 to both sides (2x = 14), then divide by 2 (x = 7)." },
+  { "id": 15, "level": "Algebra I", "color": "#ef4444", "q": "What is the slope of the line: y = -3x + 2?", "answer": "-3", "options": ["-3", "2", "3", "-2"], "explanation": "In y = mx + b, 'm' is the slope. Here, m = -3." },
+  { "id": 16, "level": "Geometry", "color": "#ef4444", "q": "Sum of the interior angles of a triangle?", "answer": "180°", "options": ["90°", "180°", "360°", "720°"], "explanation": "The angles of any triangle always add up to 180 degrees." },
+  { "id": 17, "level": "Algebra II", "color": "#ef4444", "q": "Factor: x² - 9", "answer": "(x-3)(x+3)", "options": ["(x-9)(x+1)", "(x-3)(x-3)", "(x-3)(x+3)", "(x+9)(x-1)"], "explanation": "This is a difference of squares: a² - b² = (a-b)(a+b)." },
+  { "id": 18, "level": "Algebra II", "color": "#ef4444", "q": "Solve: log₂(8) = ?", "answer": "3", "options": ["2", "3", "4", "8"], "explanation": "Log base 2 of 8 asks: 2 to what power equals 8? 2³ = 8." },
+  { "id": 19, "level": "Pre-Calculus", "color": "#8b5cf6", "q": "What is sin(30°) ?", "answer": "1/2", "options": ["0", "1/2", "√2/2", "√3/2"], "explanation": "In a 30-60-90 triangle, the sine of 30 degrees is 1/2." },
+  { "id": 20, "level": "Pre-Calculus", "color": "#8b5cf6", "q": "Convert π/2 radians to degrees.", "answer": "90°", "options": ["45°", "90°", "180°", "360°"], "explanation": "π radians = 180°. So π/2 = 180 / 2 = 90°." },
+  { "id": 21, "level": "Calculus", "color": "#8b5cf6", "q": "What is the derivative of x² ?", "answer": "2x", "options": ["x", "2x", "x²/2", "2"], "explanation": "Power rule: bring down the exponent and subtract 1 from it." },
+  { "id": 22, "level": "Calculus", "color": "#8b5cf6", "q": "Evaluate the limit as x approaches 0 for sin(x)/x", "answer": "1", "options": ["0", "1", "Infinity", "Undefined"], "explanation": "This is a fundamental calculus limit that equals 1." },
+  { "id": 23, "level": "Calculus", "color": "#8b5cf6", "q": "Find the integral of 2x dx", "answer": "x² + C", "options": ["x² + C", "2x² + C", "x + C", "2 + C"], "explanation": "Reverse power rule: increase exponent by 1 and divide by it." },
+  { "id": 24, "level": "Calculus II", "color": "#ec4899", "q": "What is the derivative of e^x ?", "answer": "e^x", "options": ["e^x", "xe^(x-1)", "1/x", "ln(x)"], "explanation": "The exponential function e^x is its own derivative." },
+  { "id": 25, "level": "Calculus II", "color": "#ec4899", "q": "Solve the integral of 1/x dx", "answer": "ln|x| + C", "options": ["-1/x² + C", "x + C", "ln|x| + C", "e^x + C"], "explanation": "The integral of 1/x is the natural logarithm of the absolute value of x." }
 ]
