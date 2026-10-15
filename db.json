@@ -1,22 +1,83 @@
 [
-  { "id": 1, "th": "ฉันต้องมีสมาธิ", "en": "I need to focus.", "answer": "focus", "options": ["focus", "focuses", "focused", "focusing"] },
-  { "id": 2, "th": "มันขึ้นอยู่กับคุณ", "en": "It depends on you.", "answer": "depends", "options": ["depends", "depend", "depending", "depended"] },
-  { "id": 3, "th": "การทำงานหนักมักจะให้ผลตอบแทนเสมอ", "en": "Hard work always pays off.", "answer": "pays", "options": ["pays", "pay", "paying", "paid"] },
-  { "id": 4, "th": "ฉันเห็นด้วยกับคุณ", "en": "I agree with you.", "answer": "agree", "options": ["agree", "agrees", "agreed", "agreeing"] },
-  { "id": 5, "th": "ฉันไม่คิดอย่างนั้น", "en": "I don't think so.", "answer": "think", "options": ["think", "thinks", "thought", "thinking"] },
-  { "id": 6, "th": "คุณช่วยพูดอีกครั้งได้ไหม?", "en": "Could you repeat that?", "answer": "repeat", "options": ["repeat", "repeats", "repeated", "repeating"] },
-  { "id": 7, "th": "บทนี้เน้นไปที่ประวัติศาสตร์", "en": "This chapter focuses on history.", "answer": "focuses", "options": ["focuses", "focus", "focused", "focusing"] },
-  { "id": 8, "th": "ฉันกำลังรอเพื่อนอยู่", "en": "I am waiting for a friend.", "answer": "waiting", "options": ["waiting", "wait", "waits", "waited"] },
-  { "id": 9, "th": "ฉันเคยไปที่นั่นมาแล้ว", "en": "I have been there before.", "answer": "been", "options": ["been", "be", "being", "was"] },
-  { "id": 10, "th": "เราต้องหาทางออกโดยเร็ว", "en": "We must find a solution fast.", "answer": "solution", "options": ["solution", "solve", "solving", "solved"] },
-  { "id": 11, "th": "ฉันไม่มีเวลามากนัก", "en": "I do not have much time.", "answer": "much", "options": ["much", "many", "more", "most"] },
-  { "id": 12, "th": "คุณกำลังทำอะไรอยู่?", "en": "What are you doing?", "answer": "doing", "options": ["doing", "do", "does", "done"] },
-  { "id": 13, "th": "ฉันอยากเป็นอิสระ", "en": "I want to be free.", "answer": "want", "options": ["want", "wants", "wanted", "wanting"] },
-  { "id": 14, "th": "เพื่อนแท้อยู่ด้วยกันตลอดไป", "en": "True friends stay forever.", "answer": "stay", "options": ["stay", "stays", "stayed", "staying"] },
-  { "id": 15, "th": "เกิดอะไรขึ้น?", "en": "What is wrong?", "answer": "wrong", "options": ["wrong", "false", "bad", "mistake"] },
-  { "id": 16, "th": "เขาเริ่มที่จะเข้าใจแล้ว", "en": "He is beginning to understand.", "answer": "understand", "options": ["understand", "understands", "understood", "understanding"] },
-  { "id": 17, "th": "น้ำเป็นสิ่งจำเป็นสำหรับชีวิต", "en": "Water is essential for life.", "answer": "essential", "options": ["essential", "need", "want", "useful"] },
-  { "id": 18, "th": "เดินทางปลอดภัยนะ", "en": "Have a safe trip.", "answer": "safe", "options": ["safe", "save", "safety", "safely"] },
-  { "id": 19, "th": "ตัวเลขไม่เคยโกหก", "en": "Numbers do not lie.", "answer": "lie", "options": ["lie", "lies", "lied", "lying"] },
-  { "id": 20, "th": "อย่าหยุดพยายาม", "en": "Never stop trying.", "answer": "trying", "options": ["trying", "try", "tries", "tried"] }
+  { 
+    "id": 1, 
+    "th": "ฉันกำลังทำงานอยู่ตอนนี้", 
+    "en": "I ____ at the moment.", 
+    "answer": "am working", 
+    "options": ["am working", "work", "worked", "working"],
+    "level": "Elementary (A1-A2)", "color": "#ef4444",
+    "explanation": "ใช้ Present Continuous (is/am/are + v.ing) สำหรับสิ่งที่กำลังเกิดขึ้น 'ตอนนี้' (at the moment)"
+  },
+  { 
+    "id": 2, 
+    "th": "ฉันเกิดในเดือนสิงหาคม", 
+    "en": "I was born ____ August.", 
+    "answer": "in", 
+    "options": ["in", "on", "at", "from"],
+    "level": "Elementary (A1-A2)", "color": "#ef4444",
+    "explanation": "ใช้ 'in' กับเดือน ปี และฤดูกาล (in August, in 1990) ส่วน 'on' ใช้กับวัน (on Monday)"
+  },
+  { 
+    "id": 3, 
+    "th": "เธอไม่ได้ชอบแอปเปิ้ล", 
+    "en": "She ____ like apples.", 
+    "answer": "doesn't", 
+    "options": ["doesn't", "don't", "isn't", "aren't"],
+    "level": "Elementary (A1-A2)", "color": "#ef4444",
+    "explanation": "ประธานเอกพจน์ (He, She, It) ใน Present Simple รูปปฏิเสธต้องใช้ doesn't + กริยาช่อง 1"
+  },
+  { 
+    "id": 4, 
+    "th": "ฉันอาศัยอยู่ที่นี่มาตั้งแต่ปี 2010", 
+    "en": "I have lived here ____ 2010.", 
+    "answer": "since", 
+    "options": ["since", "for", "in", "from"],
+    "level": "Intermediate (B1-B2)", "color": "#3b82f6",
+    "explanation": "'since' แปลว่าตั้งแต่ ใช้กับ 'จุดเริ่มต้นของเวลา' (since 2010) ส่วน 'for' ใช้กับระยะเวลา (for 10 years)"
+  },
+  { 
+    "id": 5, 
+    "th": "ห้องนี้ถูกทำความสะอาดทุกวัน", 
+    "en": "This room ____ every day.", 
+    "answer": "is cleaned", 
+    "options": ["is cleaned", "cleans", "cleaned", "is cleaning"],
+    "level": "Intermediate (B1-B2)", "color": "#3b82f6",
+    "explanation": "นี่คือ Passive Voice (ประธานถูกกระทำ) โครงสร้างคือ Verb to be + กริยาช่อง 3"
+  },
+  { 
+    "id": 6, 
+    "th": "ถ้าฉันถูกลอตเตอรี่ ฉันจะซื้อบ้าน", 
+    "en": "If I won the lottery, I ____ a house.", 
+    "answer": "would buy", 
+    "options": ["would buy", "will buy", "bought", "buy"],
+    "level": "Intermediate (B1-B2)", "color": "#3b82f6",
+    "explanation": "Second Conditional (สมมติเรื่องที่ไม่จริงในปัจจุบัน) โครงสร้าง: If + Past Simple, S + would + V.infinitive"
+  },
+  { 
+    "id": 7, 
+    "th": "ถ้าตอนนั้นฉันรู้ ฉันคงทำตัวต่างออกไป", 
+    "en": "Had I known, I ____ differently.", 
+    "answer": "would have acted", 
+    "options": ["would have acted", "would act", "will act", "acted"],
+    "level": "Advanced (C1-C2)", "color": "#10b981",
+    "explanation": "Third Conditional แบบละ If (Inversion) สมมติแก้ไขอดีต โครงสร้างหลักคือ would have + V.3"
+  },
+  { 
+    "id": 8, 
+    "th": "พอฉันมาถึงปุ๊บ โทรศัพท์ก็ดังปั๊บ", 
+    "en": "Hardly ____ when the phone rang.", 
+    "answer": "had I arrived", 
+    "options": ["had I arrived", "I had arrived", "did I arrive", "I arrived"],
+    "level": "Advanced (C1-C2)", "color": "#10b981",
+    "explanation": "เมื่อขึ้นต้นด้วยคำปฏิเสธ (Hardly, Scarcely) ต้องเกิด Inversion คือสลับกริยาช่วยมาหน้าประธานเหมือนประโยคคำถาม"
+  },
+  { 
+    "id": 9, 
+    "th": "กระเป๋าของฉันต้องถูกขโมยไปแน่ๆ", 
+    "en": "My bag ____ stolen.", 
+    "answer": "must have been", 
+    "options": ["must have been", "must be", "should have been", "had to be"],
+    "level": "Advanced (C1-C2)", "color": "#10b981",
+    "explanation": "must have + V.3 ใช้คาดเดาสิ่งที่มั่นใจมากๆ ว่าเกิดขึ้นใน 'อดีต' (ถูกขโมย = must have been + V.3)"
+  }
 ]
