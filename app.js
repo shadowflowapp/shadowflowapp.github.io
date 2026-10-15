@@ -13,7 +13,6 @@ fetch('db.json')
     })
     .catch(err => console.error("Error loading DB", err));
 
-// Utility: Shuffle array elements
 function shuffle(array) {
     let currentIndex = array.length, randomIndex;
     while (currentIndex != 0) {
@@ -24,7 +23,7 @@ function shuffle(array) {
     return array;
 }
 
-// 2. Start / Reset Game
+// 2. Game Loop State
 function startGame() {
     score = 0;
     lives = 3;
@@ -34,18 +33,27 @@ function startGame() {
     loadNextQuestion();
 }
 
-// 3. Load Question
 function loadNextQuestion() {
     isAnimating = false;
+    
+    // Reset UI state
+    document.getElementById('options-grid').style.display = 'grid';
+    document.getElementById('feedback-area').style.display = 'none';
+
+    // Pick random grammar question
     const randomIndex = Math.floor(Math.random() * database.length);
     currentQuestion = database[randomIndex];
 
-    // Render text
+    // Set Level Badge
+    const levelTag = document.getElementById('level-tag');
+    levelTag.innerText = currentQuestion.level;
+    levelTag.style.backgroundColor = currentQuestion.color;
+
+    // Render Text
     document.getElementById('thai-translation').innerText = currentQuestion.th;
     
-    // Replace the answer word with a blank span (case insensitive replace)
-    const regex = new RegExp(`\\b${currentQuestion.answer}\\b`, "i");
-    const blankedSentence = currentQuestion.en.replace(regex, `<span class="blank" id="blank-space">____</span>`);
+    // Convert ____ into a styled HTML span
+    const blankedSentence = currentQuestion.en.replace('____', `<span class="blank" id="blank-space">____</span>`);
     document.getElementById('english-sentence').innerHTML = blankedSentence;
 
     // Render options
@@ -63,56 +71,62 @@ function loadNextQuestion() {
     });
 }
 
-// 4. Validate Answer
+// 3. Validation & Feedback
 function checkAnswer(btn, selectedOption) {
-    if (isAnimating) return; // Prevent clicking multiple times
+    if (isAnimating) return;
     isAnimating = true;
 
     const isCorrect = (selectedOption === currentQuestion.answer);
     const blankSpace = document.getElementById('blank-space');
+    
+    // Always reveal the answer in the sentence
+    blankSpace.innerText = currentQuestion.answer;
+    blankSpace.style.borderBottomColor = 'transparent';
 
     if (isCorrect) {
         btn.classList.add('correct');
         score++;
         document.getElementById('score').innerText = score;
-        
-        // Fill in the blank with a smooth color transition
-        blankSpace.innerText = currentQuestion.answer;
         blankSpace.style.color = 'var(--correct-color)';
-        blankSpace.style.borderBottomColor = 'transparent';
-
-        // Move to next question quickly
+        
+        // Fast-paced auto-advance if correct
         setTimeout(loadNextQuestion, 800);
     } else {
+        // Penalty
         btn.classList.add('wrong');
         lives--;
         updateHearts();
-
-        // Show the correct answer in the blank space in white, to teach them
-        blankSpace.innerText = currentQuestion.answer;
         blankSpace.style.color = 'var(--text-main)';
-        blankSpace.style.borderBottomColor = 'transparent';
 
-        // Find and highlight the correct button
+        // Show the user the correct button
         const allBtns = document.querySelectorAll('.option-btn');
         allBtns.forEach(b => {
             if(b.innerText === currentQuestion.answer) b.classList.add('correct');
         });
 
-        if (lives <= 0) {
-            setTimeout(showGameOver, 1000);
-        } else {
-            // Give them a bit more time to read the correct answer if they got it wrong
-            setTimeout(loadNextQuestion, 1500);
-        }
+        // Pause the game, hide options, show grammar rule
+        setTimeout(() => {
+            document.getElementById('options-grid').style.display = 'none';
+            document.getElementById('explanation-text').innerText = currentQuestion.explanation;
+            document.getElementById('feedback-area').style.display = 'flex';
+        }, 600);
     }
 }
 
-// 5. Update UI
+// 4. Continue Button (Post-Feedback)
+function handleContinue() {
+    if (lives <= 0) {
+        showGameOver();
+    } else {
+        loadNextQuestion();
+    }
+}
+
+// 5. UI Helpers
 function updateHearts() {
     let heartsString = "";
     for(let i=0; i<lives; i++) heartsString += "❤️";
-    for(let i=lives; i<3; i++) heartsString += "🖤"; // Empty heart for lost life
+    for(let i=lives; i<3; i++) heartsString += "🖤"; 
     document.getElementById('hearts').innerText = heartsString;
 }
 
