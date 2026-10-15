@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Grammar Flow</title>
+    <title>Math Ascension</title>
     <style>
         :root {
             --bg-color: #0d0f12;
@@ -37,62 +37,39 @@
             display: flex; justify-content: space-between; align-items: center;
             margin-bottom: 20px;
         }
-        .score-badge { font-size: 18px; font-weight: 700; background: var(--surface-color); padding: 8px 16px; border-radius: 20px; }
+        .progress-badge { font-size: 16px; font-weight: 700; background: var(--surface-color); padding: 8px 16px; border-radius: 20px; }
         .hearts { font-size: 20px; letter-spacing: 2px; color: #ff4757; }
 
-        /* Grammar Level Tag */
-        .level-tag-container {
-            margin-bottom: 20px;
-        }
+        /* Level Tag */
+        .level-tag-container { margin-bottom: 20px; }
         #level-tag {
-            display: inline-block;
-            padding: 4px 10px;
-            border-radius: 6px;
-            font-size: 12px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            color: #fff;
+            display: inline-block; padding: 4px 10px; border-radius: 6px;
+            font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: #fff;
         }
 
         /* Question Area */
-        .question-area { flex-grow: 1; display: flex; flex-direction: column; justify-content: center; }
-        #thai-translation { font-size: 18px; color: var(--text-sub); margin-bottom: 12px; font-weight: 500; }
-        #english-sentence { font-size: 28px; font-weight: 700; line-height: 1.4; margin-bottom: 40px; }
-        .blank { display: inline-block; min-width: 60px; border-bottom: 2px solid var(--text-sub); color: transparent; transition: color 0.3s ease; }
+        .question-area { flex-grow: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; }
+        #math-problem { font-size: 38px; font-weight: 700; line-height: 1.4; margin-bottom: 40px; }
 
         /* Options Grid */
         .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding-bottom: 20px; }
-        .option-btn { background-color: var(--surface-color); color: var(--text-main); border: 2px solid transparent; padding: 20px 10px; border-radius: 16px; font-size: 18px; font-weight: 600; cursor: pointer; transition: all 0.1s ease; }
+        .option-btn { background-color: var(--surface-color); color: var(--text-main); border: 2px solid transparent; padding: 20px 10px; border-radius: 16px; font-size: 22px; font-weight: 600; cursor: pointer; transition: all 0.1s ease; }
         .option-btn:active { transform: scale(0.95); background-color: var(--surface-hover); }
         .option-btn.correct { background-color: var(--correct-color); border-color: var(--correct-color); }
         .option-btn.wrong { background-color: var(--wrong-color); border-color: var(--wrong-color); }
 
-        /* Grammar Explanation Box (Hidden by default) */
-        .feedback-area {
-            display: none;
-            flex-direction: column;
-            padding-bottom: 20px;
-        }
-        .explanation-box {
-            background-color: rgba(229, 62, 62, 0.1);
-            border-left: 4px solid var(--wrong-color);
-            padding: 16px;
-            border-radius: 0 8px 8px 0;
-            margin-bottom: 16px;
-        }
+        /* Explanation Box */
+        .feedback-area { display: none; flex-direction: column; padding-bottom: 20px; }
+        .explanation-box { background-color: rgba(229, 62, 62, 0.1); border-left: 4px solid var(--wrong-color); padding: 16px; border-radius: 0 8px 8px 0; margin-bottom: 16px; }
         .explanation-title { font-size: 14px; font-weight: 700; color: var(--wrong-color); margin-bottom: 6px; text-transform: uppercase; }
         .explanation-text { font-size: 15px; color: var(--text-main); line-height: 1.5; }
-        
-        .continue-btn {
-            background-color: var(--text-main); color: var(--bg-color); border: none; padding: 18px; border-radius: 16px; font-size: 17px; font-weight: 700; cursor: pointer; width: 100%;
-        }
+        .continue-btn { background-color: var(--text-main); color: var(--bg-color); border: none; padding: 18px; border-radius: 16px; font-size: 17px; font-weight: 700; cursor: pointer; width: 100%; }
 
-        /* Game Over Overlay */
+        /* Game Over / Victory Overlay */
         #game-over {
             position: absolute; top: 0; left: 0; right: 0; bottom: 0;
             background-color: rgba(13, 15, 18, 0.95);
-            display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 10;
+            display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 10; text-align: center;
         }
         #game-over h1 { font-size: 36px; margin-bottom: 10px; }
         #game-over p { font-size: 20px; color: var(--text-sub); margin-bottom: 30px; }
@@ -103,7 +80,7 @@
     <div class="app-container">
         
         <div class="hud">
-            <div class="score-badge">🏆 <span id="score">0</span></div>
+            <div class="progress-badge">Q: <span id="q-counter">1</span> / <span id="q-total">100</span></div>
             <div class="hearts" id="hearts">❤️❤️❤️</div>
         </div>
 
@@ -112,27 +89,24 @@
         </div>
         
         <div class="question-area">
-            <div id="thai-translation">Loading...</div>
-            <div id="english-sentence"></div>
+            <div id="math-problem"></div>
         </div>
 
-        <!-- Gameplay Options -->
         <div class="options-grid" id="options-grid"></div>
 
-        <!-- Post-Mistake Grammar Feedback -->
         <div class="feedback-area" id="feedback-area">
             <div class="explanation-box">
-                <div class="explanation-title">Grammar Rule</div>
+                <div class="explanation-title">Explanation</div>
                 <div class="explanation-text" id="explanation-text"></div>
             </div>
-            <button class="continue-btn" onclick="handleContinue()">Got it, Next</button>
+            <button class="continue-btn" onclick="handleContinue()">Next Question</button>
         </div>
 
-        <!-- Game Over Modal -->
+        <!-- End Screen -->
         <div id="game-over">
-            <h1>Game Over</h1>
-            <p>Final Score: <span id="final-score">0</span></p>
-            <button class="continue-btn" style="width: auto; padding: 16px 32px;" onclick="startGame()">Play Again</button>
+            <h1 id="end-title">Game Over</h1>
+            <p>You reached Level: <span id="final-score">1</span></p>
+            <button class="continue-btn" style="width: auto; padding: 16px 32px;" onclick="startGame()">Try Again</button>
         </div>
 
     </div>
