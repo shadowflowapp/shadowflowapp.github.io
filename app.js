@@ -1,7 +1,6 @@
 let database = [];
-let currentQuestionIndex = 0;
 let currentQuestion = null;
-let lives = 3;
+let hintUsed = false;
 let isAnimating = false;
 
 // 1. Initialize
@@ -9,8 +8,8 @@ fetch('db.json')
     .then(response => response.json())
     .then(data => {
         database = data;
-        document.getElementById('q-total').innerText = database.length;
-        startGame();
+        updateMasteryUI();
+        loadNextWord();
     })
     .catch(err => console.error("Error loading DB", err));
 
@@ -24,45 +23,37 @@ function shuffle(array) {
     return array;
 }
 
-// 2. Start Game
-function startGame() {
-    currentQuestionIndex = 0;
-    lives = 3;
-    updateHearts();
-    document.getElementById('game-over').style.display = 'none';
-    loadQuestion();
-}
-
-// 3. Load Current Question (Sequential Progression)
-function loadQuestion() {
+// 2. Load the Next Word
+function loadNextWord() {
     isAnimating = false;
+    hintUsed = false;
     
-    // Check if player won
-    if (currentQuestionIndex >= database.length) {
-        showGameOver(true);
+    // Reset UI
+    document.getElementById('hint-btn').style.display = 'block';
+    document.getElementById('thai-hint').style.display = 'none';
+
+    // Find words that are NOT yet mastered (mastery < 1)
+    const unmasteredWords = database.filter(w => (w.mastery || 0) < 1);
+    
+    if (unmasteredWords.length === 0) {
+        alert("Incredible! You have mastered the entire A batch!");
         return;
     }
 
-    document.getElementById('options-grid').style.display = 'grid';
-    document.getElementById('feedback-area').style.display = 'none';
+    // Pick a random unmastered word
+    const randomIndex = Math.floor(Math.random() * unmasteredWords.length);
+    currentQuestion = unmasteredWords[randomIndex];
 
-    currentQuestion = database[currentQuestionIndex];
-    document.getElementById('q-counter').innerText = currentQuestionIndex + 1;
-
-    // Set Level Badge
-    const levelTag = document.getElementById('level-tag');
-    levelTag.innerText = currentQuestion.level;
-    levelTag.style.backgroundColor = currentQuestion.color;
-
-    // Render Math Problem
-    document.getElementById('math-problem').innerText = currentQuestion.q;
+    // Render the COBUILD Sentence
+    const blankedSentence = currentQuestion.definition.replace('____', `<span class="blank" id="blank-space">____</span>`);
+    document.getElementById('english-sentence').innerHTML = blankedSentence;
+    document.getElementById('thai-hint').innerText = currentQuestion.thai_hint;
 
     // Render Options
     const optionsGrid = document.getElementById('options-grid');
     optionsGrid.innerHTML = '';
     
     let shuffledOptions = shuffle([...currentQuestion.options]);
-    
     shuffledOptions.forEach(opt => {
         const btn = document.createElement('button');
         btn.className = 'option-btn';
@@ -72,61 +63,62 @@ function loadQuestion() {
     });
 }
 
-// 4. Validation & Feedback
+// 3. Fading Thai Mechanic (Hint System)
+function revealHint() {
+    hintUsed = true; // Penalize mastery gain for this turn
+    document.getElementById('hint-btn').style.display = 'none';
+    document.getElementById('thai-hint').style.display = 'block';
+}
+
+// 4. Validate Answer
 function checkAnswer(btn, selectedOption) {
     if (isAnimating) return;
     isAnimating = true;
 
-    const isCorrect = (selectedOption === currentQuestion.answer);
+    const isCorrect = (selectedOption === currentQuestion.word);
+    const blankSpace = document.getElementById('blank-space');
+    
+    blankSpace.innerText = currentQuestion.word;
+    blankSpace.style.borderBottomColor = 'transparent';
 
     if (isCorrect) {
         btn.classList.add('correct');
+        blankSpace.style.color = 'var(--correct-color)';
         
-        // Fast-paced auto-advance to next harder level
-        setTimeout(() => {
-            currentQuestionIndex++;
-            loadQuestion();
-        }, 800);
+        // Mastery Logic: Only grant mastery if they didn't use the Thai hint
+        if (!hintUsed) {
+            currentQuestion.mastery = 1;
+            updateMasteryUI();
+        }
+
+        setTimeout(loadNextWord, 1000);
     } else {
+        // Wrong Answer
         btn.classList.add('wrong');
-        lives--;
-        updateHearts();
+        blankSpace.style.color = 'var(--text-main)';
 
         // Highlight correct answer
         const allBtns = document.querySelectorAll('.option-btn');
         allBtns.forEach(b => {
-            if(b.innerText === currentQuestion.answer) b.classList.add('correct');
+            if(b.innerText === currentQuestion.word) b.classList.add('correct');
         });
 
-        // Pause the game, show math explanation
-        setTimeout(() => {
-            document.getElementById('options-grid').style.display = 'none';
-            document.getElementById('explanation-text').innerText = currentQuestion.explanation;
-            document.getElementById('feedback-area').style.display = 'flex';
-        }, 600);
+        // Automatically reveal the Thai hint so they understand why they were wrong
+        document.getElementById('hint-btn').style.display = 'none';
+        document.getElementById('thai-hint').style.display = 'block';
+
+        setTimeout(loadNextWord, 2500);
     }
 }
 
-// 5. Post-Explanation Continue
-function handleContinue() {
-    if (lives <= 0) {
-        showGameOver(false);
-    } else {
-        currentQuestionIndex++;
-        loadQuestion();
-    }
-}
-
-// 6. UI Helpers
-function updateHearts() {
-    let heartsString = "";
-    for(let i=0; i<lives; i++) heartsString += "❤️";
-    for(let i=lives; i<3; i++) heartsString += "🖤"; 
-    document.getElementById('hearts').innerText = heartsString;
-}
-
-function showGameOver(isVictory) {
-    document.getElementById('end-title').innerText = isVictory ? "You Won!" : "Game Over";
-    document.getElementById('final-score').innerText = currentQuestionIndex;
-    document.getElementById('game-over').style.display = 'flex';
+// 5. Update Pokedex Progress Bar
+function updateMasteryUI() {
+    const totalWords = database.length;
+    const masteredWords = database.filter(w => (w.mastery || 0) >= 1).length;
+    
+    document.getElementById('total-count').innerText = totalWords;
+    document.getElementById('mastered-count').innerText = masteredWords;
+    
+    const percentage = (masteredWords / totalWords) * 100;
+    document.getElementById('progress-fill').style.width = percentage + '%';
 }
