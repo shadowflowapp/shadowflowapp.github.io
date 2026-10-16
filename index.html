@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Math Ascension</title>
+    <title>Vocab Pokedex</title>
     <style>
         :root {
             --bg-color: #0d0f12;
@@ -11,12 +11,13 @@
             --surface-hover: #2a2d35;
             --text-main: #ffffff;
             --text-sub: #8a919f;
+            --accent-gold: #f59e0b;
             --correct-color: #2eab5b;
             --wrong-color: #e53e3e;
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, Helvetica, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", sans-serif;
             background-color: var(--bg-color);
             color: var(--text-main);
             margin: 0; padding: 0;
@@ -28,86 +29,91 @@
         .app-container {
             width: 100%; max-width: 430px; height: 100%;
             display: flex; flex-direction: column;
-            padding: 40px 24px; box-sizing: border-box;
-            position: relative;
+            padding: 30px 24px; box-sizing: border-box;
         }
 
-        /* Top HUD */
-        .hud {
-            display: flex; justify-content: space-between; align-items: center;
-            margin-bottom: 20px;
+        /* Mastery Pokedex Bar */
+        .mastery-header {
+            text-align: center;
+            margin-bottom: 30px;
         }
-        .progress-badge { font-size: 16px; font-weight: 700; background: var(--surface-color); padding: 8px 16px; border-radius: 20px; }
-        .hearts { font-size: 20px; letter-spacing: 2px; color: #ff4757; }
-
-        /* Level Tag */
-        .level-tag-container { margin-bottom: 20px; }
-        #level-tag {
-            display: inline-block; padding: 4px 10px; border-radius: 6px;
-            font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: #fff;
+        .mastery-title {
+            font-size: 12px; font-weight: 700; color: var(--text-sub);
+            letter-spacing: 1px; text-transform: uppercase; margin-bottom: 8px;
+        }
+        .progress-bar-bg {
+            background-color: var(--surface-color);
+            height: 8px; border-radius: 4px; overflow: hidden; margin-bottom: 8px;
+        }
+        .progress-bar-fill {
+            background-color: var(--accent-gold);
+            height: 100%; width: 0%; transition: width 0.5s ease;
+        }
+        .mastery-stats {
+            font-size: 14px; font-weight: 600; color: var(--accent-gold);
         }
 
         /* Question Area */
-        .question-area { flex-grow: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; }
-        #math-problem { font-size: 38px; font-weight: 700; line-height: 1.4; margin-bottom: 40px; }
+        .question-area { flex-grow: 1; display: flex; flex-direction: column; justify-content: center; }
+        
+        .batch-tag {
+            font-size: 13px; font-weight: 700; color: var(--text-sub);
+            margin-bottom: 16px; border: 1px solid #333; display: inline-block;
+            padding: 4px 10px; border-radius: 6px; align-self: flex-start;
+        }
+
+        .cobuild-sentence {
+            font-size: 24px; font-weight: 600; line-height: 1.5; margin-bottom: 24px;
+        }
+        .blank {
+            display: inline-block; min-width: 80px; border-bottom: 2px solid var(--text-sub);
+            color: transparent; transition: color 0.3s ease; text-align: center;
+        }
+
+        /* Hint System */
+        .hint-btn {
+            background: none; border: 1px dashed #444; color: var(--text-sub);
+            padding: 12px; border-radius: 8px; font-size: 14px; cursor: pointer;
+            width: 100%; margin-bottom: 30px; transition: background 0.2s;
+        }
+        .hint-btn:active { background: #222; }
+        
+        .thai-hint {
+            display: none; font-size: 16px; color: var(--accent-gold);
+            background: rgba(245, 158, 11, 0.1); padding: 16px; border-radius: 8px;
+            margin-bottom: 30px; line-height: 1.4; border-left: 3px solid var(--accent-gold);
+        }
 
         /* Options Grid */
         .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding-bottom: 20px; }
-        .option-btn { background-color: var(--surface-color); color: var(--text-main); border: 2px solid transparent; padding: 20px 10px; border-radius: 16px; font-size: 22px; font-weight: 600; cursor: pointer; transition: all 0.1s ease; }
-        .option-btn:active { transform: scale(0.95); background-color: var(--surface-hover); }
+        .option-btn { background-color: var(--surface-color); color: var(--text-main); border: 2px solid transparent; padding: 18px 10px; border-radius: 12px; font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.1s ease; }
+        .option-btn:active { transform: scale(0.96); background-color: var(--surface-hover); }
         .option-btn.correct { background-color: var(--correct-color); border-color: var(--correct-color); }
         .option-btn.wrong { background-color: var(--wrong-color); border-color: var(--wrong-color); }
-
-        /* Explanation Box */
-        .feedback-area { display: none; flex-direction: column; padding-bottom: 20px; }
-        .explanation-box { background-color: rgba(229, 62, 62, 0.1); border-left: 4px solid var(--wrong-color); padding: 16px; border-radius: 0 8px 8px 0; margin-bottom: 16px; }
-        .explanation-title { font-size: 14px; font-weight: 700; color: var(--wrong-color); margin-bottom: 6px; text-transform: uppercase; }
-        .explanation-text { font-size: 15px; color: var(--text-main); line-height: 1.5; }
-        .continue-btn { background-color: var(--text-main); color: var(--bg-color); border: none; padding: 18px; border-radius: 16px; font-size: 17px; font-weight: 700; cursor: pointer; width: 100%; }
-
-        /* Game Over / Victory Overlay */
-        #game-over {
-            position: absolute; top: 0; left: 0; right: 0; bottom: 0;
-            background-color: rgba(13, 15, 18, 0.95);
-            display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 10; text-align: center;
-        }
-        #game-over h1 { font-size: 36px; margin-bottom: 10px; }
-        #game-over p { font-size: 20px; color: var(--text-sub); margin-bottom: 30px; }
     </style>
 </head>
 <body>
 
     <div class="app-container">
         
-        <div class="hud">
-            <div class="progress-badge">Q: <span id="q-counter">1</span> / <span id="q-total">100</span></div>
-            <div class="hearts" id="hearts">❤️❤️❤️</div>
-        </div>
-
-        <div class="level-tag-container">
-            <span id="level-tag">Loading...</span>
+        <!-- Lexicon Mastery Progress -->
+        <div class="mastery-header">
+            <div class="mastery-title">Dictionary Mastery</div>
+            <div class="progress-bar-bg">
+                <div class="progress-bar-fill" id="progress-fill"></div>
+            </div>
+            <div class="mastery-stats"><span id="mastered-count">0</span> / <span id="total-count">0</span> Words Captured</div>
         </div>
         
         <div class="question-area">
-            <div id="math-problem"></div>
+            <div class="batch-tag">CURRENT BATCH: A</div>
+            <div class="cobuild-sentence" id="english-sentence">Loading...</div>
+            
+            <button class="hint-btn" id="hint-btn" onclick="revealHint()">👁️ Tap to reveal Thai hint (Disables Mastery gain)</button>
+            <div class="thai-hint" id="thai-hint"></div>
         </div>
 
         <div class="options-grid" id="options-grid"></div>
-
-        <div class="feedback-area" id="feedback-area">
-            <div class="explanation-box">
-                <div class="explanation-title">Explanation</div>
-                <div class="explanation-text" id="explanation-text"></div>
-            </div>
-            <button class="continue-btn" onclick="handleContinue()">Next Question</button>
-        </div>
-
-        <!-- End Screen -->
-        <div id="game-over">
-            <h1 id="end-title">Game Over</h1>
-            <p>You reached Level: <span id="final-score">1</span></p>
-            <button class="continue-btn" style="width: auto; padding: 16px 32px;" onclick="startGame()">Try Again</button>
-        </div>
 
     </div>
 
