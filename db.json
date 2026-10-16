@@ -1,65 +1,272 @@
 [
   {
-    "id": 1,
+    "id": "A1",
+    "batch": "A",
     "word": "abandon",
     "definition": "If you ____ a place, thing, or person, you leave them permanently.",
     "thai_hint": "ถ้าคุณ (ละทิ้ง) สถานที่ สิ่งของ หรือบุคคล คุณจะทิ้งพวกเขาไปอย่างถาวร",
-    "options": ["abandon", "acquire", "abolish", "absolve"],
+    "options": ["abandon", "absorb", "abolish", "absolve"],
     "mastery": 0
   },
   {
-    "id": 2,
-    "word": "abolish",
-    "definition": "If someone in authority ____ a law or practice, they formally put an end to it.",
-    "thai_hint": "หากผู้มีอำนาจ (ยกเลิก) กฎหมายหรือข้อปฏิบัติ พวกเขาได้ยุติสิ่งนั้นอย่างเป็นทางการ",
-    "options": ["abolish", "absorb", "accelerate", "abandon"]
+    "id": "A2",
+    "batch": "A",
+    "word": "ability",
+    "definition": "Your ____ to do something is the fact that you can do it.",
+    "thai_hint": "(ความสามารถ) ในการทำบางสิ่งของคุณ คือความจริงที่ว่าคุณสามารถทำสิ่งนั้นได้",
+    "options": ["ability", "agility", "anxiety", "authority"],
+    "mastery": 0
   },
   {
-    "id": 3,
+    "id": "A3",
+    "batch": "A",
+    "word": "abrupt",
+    "definition": "An ____ change or action is very sudden, often in an unpleasant way.",
+    "thai_hint": "การเปลี่ยนแปลงหรือการกระทำที่ (กะทันหัน) คือสิ่งที่เกิดขึ้นอย่างฉับพลัน มักไปในทางที่ไม่ดี",
+    "options": ["abrupt", "absurd", "abundant", "absolute"],
+    "mastery": 0
+  },
+  {
+    "id": "A4",
+    "batch": "A",
     "word": "absorb",
-    "definition": "If something ____ a liquid, gas, or other substance, it soaks it up or takes it in.",
-    "thai_hint": "หากบางสิ่ง (ดูดซับ) ของเหลว ก๊าซ หรือสารอื่นๆ มันจะซึมซับหรือรับสิ่งนั้นเข้าไป",
-    "options": ["absorb", "abound", "absolve", "abstain"],
+    "definition": "If something ____ a liquid, gas, or other substance, it soaks it up.",
+    "thai_hint": "หากบางสิ่ง (ดูดซับ) ของเหลว หรือก๊าซ มันจะซึมซับสิ่งนั้นเข้าไป",
+    "options": ["absorb", "absolve", "abstain", "abound"],
     "mastery": 0
   },
   {
-    "id": 4,
+    "id": "A5",
+    "batch": "A",
     "word": "abundant",
     "definition": "Something that is ____ is present in large quantities.",
     "thai_hint": "สิ่งที่มี (มากมาย/อุดมสมบูรณ์) คือสิ่งที่มีอยู่ในปริมาณมาก",
-    "options": ["abundant", "absent", "abrupt", "absolute"],
+    "options": ["abundant", "absent", "arrogant", "adequate"],
     "mastery": 0
   },
   {
-    "id": 5,
+    "id": "A6",
+    "batch": "A",
     "word": "accelerate",
-    "definition": "If the process or rate of something ____, it gets faster and faster.",
-    "thai_hint": "หากกระบวนการหรืออัตราของบางสิ่ง (เร่งความเร็ว) มันจะเร็วขึ้นเรื่อยๆ",
-    "options": ["accelerate", "accumulate", "accommodate", "accompany"],
+    "definition": "If a process ____, it gets faster and faster.",
+    "thai_hint": "หากกระบวนการบางอย่าง (เร่งความเร็ว) มันจะเร็วขึ้นเรื่อยๆ",
+    "options": ["accelerate", "accumulate", "accommodate", "anticipate"],
     "mastery": 0
   },
   {
-    "id": 6,
-    "word": "accumulate",
-    "definition": "If you ____ things, you collect them or gather them together over time.",
-    "thai_hint": "หากคุณ (สะสม) สิ่งของ คุณรวบรวมพวกมันเข้าด้วยกันเมื่อเวลาผ่านไป",
-    "options": ["accumulate", "accelerate", "acquit", "achieve"],
+    "id": "A7",
+    "batch": "A",
+    "word": "accessible",
+    "definition": "If a place or building is ____ to people, it is easy for them to reach or enter.",
+    "thai_hint": "หากสถานที่นั้น (เข้าถึงได้) สำหรับผู้คน หมายความว่าพวกเขาเข้าไปได้ง่าย",
+    "options": ["accessible", "acceptable", "accountable", "applicable"],
     "mastery": 0
   },
   {
-    "id": 7,
-    "word": "adequate",
-    "definition": "If something is ____, there is enough of it or it is good enough to be used or accepted.",
-    "thai_hint": "หากบางสิ่ง (เพียงพอ) แสดงว่ามีสิ่งนั้นมากพอ หรือดีพอที่จะถูกนำไปใช้หรือยอมรับได้",
-    "options": ["adequate", "adjacent", "addicted", "adverse"],
+    "id": "A8",
+    "batch": "A",
+    "word": "accomplish",
+    "definition": "If you ____ something, you succeed in doing it.",
+    "thai_hint": "หากคุณ (ทำสำเร็จ) ในบางสิ่ง หมายความว่าคุณทำมันได้ตามเป้าหมาย",
+    "options": ["accomplish", "accumulate", "acknowledge", "abolish"],
     "mastery": 0
   },
   {
-    "id": 8,
-    "word": "adjacent",
-    "definition": "If one room, building, or area is ____ to another, it is next to it.",
-    "thai_hint": "หากห้อง อาคาร หรือพื้นที่หนึ่งอยู่ (ติดกัน/ประชิด) กับอีกแห่งหนึ่ง หมายความว่ามันอยู่ถัดไป",
-    "options": ["adjacent", "adequate", "adherent", "adaptable"],
+    "id": "A9",
+    "batch": "A",
+    "word": "accurate",
+    "definition": "Information that is ____ is correct in all details.",
+    "thai_hint": "ข้อมูลที่ (แม่นยำ/ถูกต้อง) คือข้อมูลที่ถูกต้องในทุกรายละเอียด",
+    "options": ["accurate", "adequate", "absolute", "acute"],
+    "mastery": 0
+  },
+  {
+    "id": "A10",
+    "batch": "A",
+    "word": "acquire",
+    "definition": "If you ____ something, you buy or obtain it for yourself.",
+    "thai_hint": "หากคุณ (ได้รับ/ได้มา) บางสิ่ง หมายความว่าคุณซื้อหรือหามันมาเป็นของตัวเอง",
+    "options": ["acquire", "require", "inquire", "admire"],
+    "mastery": 0
+  },
+  {
+    "id": "B1",
+    "batch": "B",
+    "word": "background",
+    "definition": "Your ____ is the kind of family you come from and the education you had.",
+    "thai_hint": "(ภูมิหลัง) ของคุณคือครอบครัวที่คุณเติบโตมาและการศึกษาที่คุณได้รับ",
+    "options": ["background", "backbone", "backlash", "backward"],
+    "mastery": 0
+  },
+  {
+    "id": "B2",
+    "batch": "B",
+    "word": "balance",
+    "definition": "If you ____ something, you keep it steady so it does not fall.",
+    "thai_hint": "หากคุณ (ทรงตัว/สร้างสมดุล) ให้บางสิ่ง คุณทำให้มันมั่นคงเพื่อไม่ให้ตกลงมา",
+    "options": ["balance", "bounce", "baffle", "bargain"],
+    "mastery": 0
+  },
+  {
+    "id": "B3",
+    "batch": "B",
+    "word": "barrier",
+    "definition": "A ____ is an object or rule that prevents people from moving forward.",
+    "thai_hint": "(อุปสรรค/สิ่งกีดขวาง) คือสิ่งของหรือกฎที่ขัดขวางไม่ให้ผู้คนก้าวไปข้างหน้า",
+    "options": ["barrier", "banner", "barrel", "border"],
+    "mastery": 0
+  },
+  {
+    "id": "B4",
+    "batch": "B",
+    "word": "beneficial",
+    "definition": "Something that is ____ has a good effect or helps you in some way.",
+    "thai_hint": "สิ่งที่เป็น (ประโยชน์) คือสิ่งที่มีผลดีหรือช่วยคุณได้ในทางใดทางหนึ่ง",
+    "options": ["beneficial", "beautiful", "brilliant", "bizarre"],
+    "mastery": 0
+  },
+  {
+    "id": "B5",
+    "batch": "B",
+    "word": "betray",
+    "definition": "If you ____ someone who trusts you, you do something that hurts them.",
+    "thai_hint": "หากคุณ (ทรยศ) คนที่เชื่อใจคุณ คุณทำสิ่งที่ทำให้พวกเขาเจ็บปวด",
+    "options": ["betray", "bother", "believe", "borrow"],
+    "mastery": 0
+  },
+  {
+    "id": "B6",
+    "batch": "B",
+    "word": "bias",
+    "definition": "____ is a tendency to prefer one person or thing to another in an unfair way.",
+    "thai_hint": "(อคติ) คือแนวโน้มที่จะเข้าข้างคนใดคนหนึ่งอย่างไม่ยุติธรรม",
+    "options": ["bias", "basis", "blame", "boost"],
+    "mastery": 0
+  },
+  {
+    "id": "B7",
+    "batch": "B",
+    "word": "bizarre",
+    "definition": "Something that is ____ is very odd or strange.",
+    "thai_hint": "สิ่งประหลาดหรือ (แปลกประหลาดมาก) คือสิ่งที่ผิดปกติหรือแปลกไปจากเดิม",
+    "options": ["bizarre", "bitter", "blunt", "brief"],
+    "mastery": 0
+  },
+  {
+    "id": "B8",
+    "batch": "B",
+    "word": "blame",
+    "definition": "If you ____ someone, you say that they are responsible for something bad.",
+    "thai_hint": "หากคุณ (กล่าวโทษ) ใครสักคน คุณบอกว่าพวกเขาเป็นต้นเหตุของเรื่องแย่ๆ",
+    "options": ["blame", "bleed", "blend", "block"],
+    "mastery": 0
+  },
+  {
+    "id": "B9",
+    "batch": "B",
+    "word": "boost",
+    "definition": "If something ____ your confidence, it improves it or makes it higher.",
+    "thai_hint": "หากบางสิ่ง (ส่งเสริม/กระตุ้น) ความมั่นใจของคุณ มันจะทำให้ดีขึ้นหรือสูงขึ้น",
+    "options": ["boost", "boast", "boom", "boot"],
+    "mastery": 0
+  },
+  {
+    "id": "B10",
+    "batch": "B",
+    "word": "boundary",
+    "definition": "The ____ of an area of land is an imaginary line that separates it from other areas.",
+    "thai_hint": "(ขอบเขต/พรมแดน) ของพื้นที่คือเส้นสมมติที่แยกมันออกจากพื้นที่อื่นๆ",
+    "options": ["boundary", "bounty", "boulder", "burden"],
+    "mastery": 0
+  },
+  {
+    "id": "C1",
+    "batch": "C",
+    "word": "calculate",
+    "definition": "If you ____ a number or amount, you discover it using mathematics.",
+    "thai_hint": "หากคุณ (คำนวณ) ตัวเลข คุณค้นหาผลลัพธ์โดยใช้คณิตศาสตร์",
+    "options": ["calculate", "calibrate", "circulate", "cultivate"],
+    "mastery": 0
+  },
+  {
+    "id": "C2",
+    "batch": "C",
+    "word": "campaign",
+    "definition": "A ____ is a planned set of activities to achieve a social or political goal.",
+    "thai_hint": "(การรณรงค์/แคมเปญ) คือชุดกิจกรรมที่วางแผนไว้เพื่อบรรลุเป้าหมายทางสังคมหรือการเมือง",
+    "options": ["campaign", "champion", "complaint", "concept"],
+    "mastery": 0
+  },
+  {
+    "id": "C3",
+    "batch": "C",
+    "word": "capacity",
+    "definition": "The ____ of a container is the maximum amount it can hold.",
+    "thai_hint": "(ความจุ) ของภาชนะคือปริมาณสูงสุดที่มันสามารถบรรจุได้",
+    "options": ["capacity", "clarity", "casualty", "charity"],
+    "mastery": 0
+  },
+  {
+    "id": "C4",
+    "batch": "C",
+    "word": "category",
+    "definition": "A ____ is a group of things or people with similar qualities.",
+    "thai_hint": "(หมวดหมู่) คือกลุ่มของสิ่งของหรือผู้คนที่มีลักษณะคล้ายคลึงกัน",
+    "options": ["category", "catastrophe", "catalog", "canopy"],
+    "mastery": 0
+  },
+  {
+    "id": "C5",
+    "batch": "C",
+    "word": "cease",
+    "definition": "If something ____ to happen, it stops happening.",
+    "thai_hint": "หากบางสิ่ง (หยุด/ยุติ) เกิดขึ้น หมายความว่ามันไม่เกิดขึ้นอีกต่อไป",
+    "options": ["cease", "cause", "chase", "choose"],
+    "mastery": 0
+  },
+  {
+    "id": "C6",
+    "batch": "C",
+    "word": "challenge",
+    "definition": "A ____ is a new and difficult task that tests your ability.",
+    "thai_hint": "(ความท้าทาย) คือภารกิจใหม่และยากที่ทดสอบความสามารถของคุณ",
+    "options": ["challenge", "channel", "change", "character"],
+    "mastery": 0
+  },
+  {
+    "id": "C7",
+    "batch": "C",
+    "word": "clarify",
+    "definition": "If you ____ something, you make it easier to understand by explaining it in more detail.",
+    "thai_hint": "หากคุณ (ทำให้ชัดเจน) บางสิ่ง คุณทำให้มันเข้าใจง่ายขึ้นโดยอธิบายให้ละเอียด",
+    "options": ["clarify", "classify", "certify", "crucify"],
+    "mastery": 0
+  },
+  {
+    "id": "C8",
+    "batch": "C",
+    "word": "coincidence",
+    "definition": "A ____ happens when two things occur at the same time by chance.",
+    "thai_hint": "(ความบังเอิญ) เกิดขึ้นเมื่อสองสิ่งเกิดขึ้นพร้อมกันโดยไม่ได้ตั้งใจ",
+    "options": ["coincidence", "consequence", "confidence", "convenience"],
+    "mastery": 0
+  },
+  {
+    "id": "C9",
+    "batch": "C",
+    "word": "collapse",
+    "definition": "If a building or system ____, it falls down or fails suddenly.",
+    "thai_hint": "หากอาคารหรือระบบ (พังทลาย) มันจะถล่มหรือล้มเหลวอย่างกะทันหัน",
+    "options": ["collapse", "collide", "collect", "corrupt"],
+    "mastery": 0
+  },
+  {
+    "id": "C10",
+    "batch": "C",
+    "word": "commit",
+    "definition": "If you ____ a crime or a mistake, you do something wrong or illegal.",
+    "thai_hint": "หากคุณ (ก่ออาชญากรรม/กระทำ) ความผิด คุณทำสิ่งที่ไม่ดีหรือผิดกฎหมาย",
+    "options": ["commit", "command", "comment", "compete"],
     "mastery": 0
   }
 ]
