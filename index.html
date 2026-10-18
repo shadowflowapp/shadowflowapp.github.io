@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Vocab Pokedex</title>
+    <title>Spoken American English</title>
     <style>
         :root {
             --bg-color: #0d0f12;
@@ -11,7 +11,8 @@
             --surface-hover: #2a2d35;
             --text-main: #ffffff;
             --text-sub: #8a919f;
-            --accent-gold: #f59e0b;
+            --accent-gold: #f59e0b; /* Mastered color */
+            --accent-blue: #3b82f6; /* Category tag color */
             --correct-color: #2eab5b;
             --wrong-color: #e53e3e;
         }
@@ -32,42 +33,28 @@
             padding: 30px 24px; box-sizing: border-box;
         }
 
-        /* Mastery Pokedex Bar */
-        .mastery-header {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-        .mastery-title {
-            font-size: 12px; font-weight: 700; color: var(--text-sub);
-            letter-spacing: 1px; text-transform: uppercase; margin-bottom: 8px;
-        }
-        .progress-bar-bg {
-            background-color: var(--surface-color);
-            height: 8px; border-radius: 4px; overflow: hidden; margin-bottom: 8px;
-        }
-        .progress-bar-fill {
-            background-color: var(--accent-gold);
-            height: 100%; width: 0%; transition: width 0.5s ease;
-        }
-        .mastery-stats {
-            font-size: 14px; font-weight: 600; color: var(--accent-gold);
-        }
+        /* Mastery Progress */
+        .mastery-header { text-align: center; margin-bottom: 30px; }
+        .mastery-title { font-size: 12px; font-weight: 700; color: var(--text-sub); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 8px; }
+        .progress-bar-bg { background-color: var(--surface-color); height: 8px; border-radius: 4px; overflow: hidden; margin-bottom: 8px; }
+        .progress-bar-fill { background-color: var(--accent-gold); height: 100%; width: 0%; transition: width 0.5s ease; }
+        .mastery-stats { font-size: 14px; font-weight: 600; color: var(--accent-gold); }
 
-        /* Question Area */
-        .question-area { flex-grow: 1; display: flex; flex-direction: column; justify-content: center; }
+        /* Dialogue Area */
+        .question-area { flex-grow: 1; display: flex; flex-direction: column; justify-content: center; position: relative; }
         
-        .batch-tag {
-            font-size: 13px; font-weight: 700; color: var(--text-sub);
-            margin-bottom: 16px; border: 1px solid #333; display: inline-block;
-            padding: 4px 10px; border-radius: 6px; align-self: flex-start;
+        .category-tag {
+            font-size: 12px; font-weight: 700; color: var(--accent-blue);
+            margin-bottom: 16px; border: 1px solid rgba(59, 130, 246, 0.3); background-color: rgba(59, 130, 246, 0.1); display: inline-block;
+            padding: 6px 12px; border-radius: 20px; align-self: flex-start; text-transform: uppercase;
         }
 
-        .cobuild-sentence {
-            font-size: 24px; font-weight: 600; line-height: 1.5; margin-bottom: 24px;
+        .dialogue-sentence {
+            font-size: 26px; font-weight: 500; line-height: 1.4; margin-bottom: 24px; font-style: italic; color: #e2e8f0;
         }
         .blank {
             display: inline-block; min-width: 80px; border-bottom: 2px solid var(--text-sub);
-            color: transparent; transition: color 0.3s ease; text-align: center;
+            color: transparent; transition: color 0.3s ease; text-align: center; font-style: normal; font-weight: 700;
         }
 
         /* Hint System */
@@ -96,20 +83,20 @@
 
     <div class="app-container">
         
-        <!-- Lexicon Mastery Progress -->
+        <!-- Mastery Progress -->
         <div class="mastery-header">
-            <div class="mastery-title">Dictionary Mastery</div>
+            <div class="mastery-title">Native Phrases Mastered</div>
             <div class="progress-bar-bg">
                 <div class="progress-bar-fill" id="progress-fill"></div>
             </div>
-            <div class="mastery-stats"><span id="mastered-count">0</span> / <span id="total-count">0</span> Words Captured</div>
+            <div class="mastery-stats"><span id="mastered-count">0</span> / <span id="total-count">0</span></div>
         </div>
         
         <div class="question-area">
-            <div class="batch-tag">CURRENT BATCH: A</div>
-            <div class="cobuild-sentence" id="english-sentence">Loading...</div>
+            <div class="category-tag" id="category-tag">Loading...</div>
+            <div class="dialogue-sentence" id="english-sentence">Loading...</div>
             
-            <button class="hint-btn" id="hint-btn" onclick="revealHint()">👁️ Tap to reveal Thai hint (Disables Mastery gain)</button>
+            <button class="hint-btn" id="hint-btn" onclick="revealHint()">👁️ Tap to reveal Thai meaning</button>
             <div class="thai-hint" id="thai-hint"></div>
         </div>
 
