@@ -1,9 +1,11 @@
 let database = [];
-let currentWordIndex = 0;
-let currentSentenceIndex = 0;
-let masteredCount = 0;
-let quizActive = false;
-let currentQuizCorrectAnswer = "";
+let masteredWords = 0;
+
+// Batch config
+const BATCH_SIZE = 5;
+let currentBatch = [];
+let studyIndex = 0;
+let quizIndex = 0;
 
 const synth = window.speechSynthesis;
 
@@ -14,12 +16,12 @@ fetch('db.jsonl')
         const lines = text.split('\n').filter(line => line.trim() !== '');
         database = lines.map(line => JSON.parse(line));
         
-        document.getElementById('total-words').innerText = database.length;
-        loadWordHub(currentWordIndex);
+        document.getElementById('total-count').innerText = database.length;
+        loadNextBatch();
     })
-    .catch(err => console.error("Error loading JSONL DB", err));
+    .catch(err => console.error("Error loading DB", err));
 
-// Utility: Shuffle Array
+// Utility: Shuffle
 function shuffle(array) {
     let curId = array.length;
     while (0 !== curId) {
@@ -32,39 +34,42 @@ function shuffle(array) {
     return array;
 }
 
-// 2. Load Word Hub (Study Mode)
-function loadWordHub(wordIdx) {
-    quizActive = false;
-    document.getElementById('study-container').style.display = 'flex';
-    document.getElementById('quiz-container').style.display = 'none';
-
-    const wordData = database[wordIdx];
-    document.getElementById('word-index').innerText = wordIdx + 1;
-    document.getElementById('target-word').innerText = wordData.target_word;
+// 2. Load a Batch of 5 Words
+function loadNextBatch() {
+    // Get next unmastered words up to BATCH_SIZE
+    currentBatch = database.slice(masteredWords, masteredWords + BATCH_SIZE);
     
-    currentSentenceIndex = 0;
-    renderSentence(currentSentenceIndex);
+    if (currentBatch.length === 0) {
+        alert("Incredible! You are a walking COBUILD dictionary!");
+        return;
+    }
+
+    studyIndex = 0;
+    document.getElementById('study-mode').style.display = 'flex';
+    document.getElementById('quiz-mode').style.display = 'none';
+    renderStudyCard();
 }
 
 // 3. Render Study Card
-function renderSentence(sentenceIdx) {
-    const wordData = database[currentWordIndex];
-    const data = wordData.sentences[sentenceIdx];
-    
-    document.getElementById('situation-tag').innerText = data.situation;
-    document.getElementById('pos-tag').innerText = `${sentenceIdx + 1} / ${wordData.sentences.length}`;
-    
-    // Highlight Target Word
-    const regex = new RegExp(`(${wordData.target_word}[a-z]*)`, 'gi');
-    document.getElementById('english-sentence').innerHTML = data.en.replace(regex, `<span class="target-highlight">$1</span>`);
-    
-    // Reset Thai UI
+function renderStudyCard() {
+    const wordObj = currentBatch[studyIndex];
+
+    document.getElementById('target-word').innerText = wordObj.word;
+    document.getElementById('phonetic').innerText = wordObj.phonetic;
+    document.getElementById('pos').innerText = wordObj.pos;
+
+    // Highlight target word in COBUILD definition
+    const regex = new RegExp(`\\b(${wordObj.word}[a-z]*)\\b`, 'gi');
+    document.getElementById('cobuild-def').innerHTML = wordObj.cobuild.replace(regex, `<span class="target-highlight">$1</span>`);
+    document.getElementById('example-sentence').innerText = `"${wordObj.example}"`;
+
+    // Thai Toggle
     document.getElementById('reveal-btn').style.display = 'inline-block';
     document.getElementById('thai-text').style.display = 'none';
-    document.getElementById('thai-text').innerText = data.th;
+    document.getElementById('thai-text').innerText = wordObj.thai;
 
-    // Toggle Next vs Quiz button
-    if (sentenceIdx === wordData.sentences.length - 1) {
+    // Button Toggle (Next vs Quiz)
+    if (studyIndex === currentBatch.length - 1) {
         document.getElementById('btn-next').style.display = 'none';
         document.getElementById('btn-quiz').style.display = 'block';
     } else {
@@ -78,93 +83,100 @@ function revealThai() {
     document.getElementById('thai-text').style.display = 'block';
 }
 
-function nextSentence() {
-    if (currentSentenceIndex < database[currentWordIndex].sentences.length - 1) {
-        currentSentenceIndex++;
-        renderSentence(currentSentenceIndex);
+function nextStudyWord() {
+    if (studyIndex < currentBatch.length - 1) {
+        studyIndex++;
+        renderStudyCard();
     }
 }
 
-// 4. Start Mastery Quiz (Active Gamification)
-function startQuiz() {
-    quizActive = true;
-    document.getElementById('study-container').style.display = 'none';
-    document.getElementById('quiz-container').style.display = 'flex';
+// 4. Enter Quiz Phase (Test the whole batch)
+function startQuizPhase() {
+    quizIndex = 0;
+    document.getElementById('study-mode').style.display = 'none';
+    document.getElementById('quiz-mode').style.display = 'flex';
+    renderQuizCard();
+}
 
-    const wordData = database[currentWordIndex];
-    currentQuizCorrectAnswer = wordData.target_word;
-
-    // Pick a random sentence from the hub they just studied
-    const randomSentenceData = wordData.sentences[Math.floor(Math.random() * wordData.sentences.length)];
+function renderQuizCard() {
+    const wordObj = currentBatch[quizIndex];
     
-    document.getElementById('quiz-situation').innerText = randomSentenceData.situation;
+    // Blank out the target word in the definition
+    const regex = new RegExp(`\\b${wordObj.word}[a-z]*\\b`, 'gi');
+    document.getElementById('quiz-sentence').innerHTML = wordObj.cobuild.replace(regex, `<span class="blank" id="quiz-blank">____</span>`);
 
-    // Blank out the target word
-    const regex = new RegExp(`\\b${wordData.target_word}[a-z]*\\b`, 'gi');
-    document.getElementById('quiz-sentence').innerHTML = randomSentenceData.en.replace(regex, `<span class="blank" id="quiz-blank">____</span>`);
-
-    // Dynamically generate 3 wrong answers from OTHER words in the database
-    let otherWords = database.filter(w => w.target_word !== currentQuizCorrectAnswer).map(w => w.target_word);
+    // Distractors: Pull 3 random words from the ENTIRE database
+    let otherWords = database.filter(w => w.word !== wordObj.word).map(w => w.word);
     otherWords = shuffle(otherWords);
-    let distractors = otherWords.slice(0, 3);
-    
-    let options = shuffle([currentQuizCorrectAnswer, ...distractors]);
+    let options = shuffle([wordObj.word, ...otherWords.slice(0, 3)]);
 
-    // Render Options
     const grid = document.getElementById('options-grid');
     grid.innerHTML = '';
     options.forEach(opt => {
         const btn = document.createElement('button');
         btn.className = 'option-btn';
         btn.innerText = opt;
-        btn.onclick = () => checkQuizAnswer(btn, opt);
+        btn.onclick = () => checkQuizAnswer(btn, opt, wordObj.word);
         grid.appendChild(btn);
     });
 }
 
 // 5. Grade Quiz
-function checkQuizAnswer(btn, selectedOption) {
+function checkQuizAnswer(btn, selectedOption, correctAnswer) {
     const blank = document.getElementById('quiz-blank');
-    blank.innerText = currentQuizCorrectAnswer;
+    blank.innerText = correctAnswer;
     blank.style.borderBottomColor = 'transparent';
 
-    if (selectedOption === currentQuizCorrectAnswer) {
+    if (selectedOption === correctAnswer) {
         btn.classList.add('correct');
         blank.style.color = 'var(--correct-color)';
         
-        masteredCount++;
-        document.getElementById('mastered-count').innerText = masteredCount;
-
         setTimeout(() => {
-            // Move to next word hub
-            if (currentWordIndex < database.length - 1) {
-                currentWordIndex++;
-                loadWordHub(currentWordIndex);
+            quizIndex++;
+            if (quizIndex < currentBatch.length) {
+                renderQuizCard();
             } else {
-                alert("You've mastered the entire database!");
+                // Batch Complete! Increase mastery and load next batch.
+                masteredWords += currentBatch.length;
+                updateProgressUI();
+                loadNextBatch();
             }
-        }, 1000);
+        }, 800);
     } else {
         btn.classList.add('wrong');
         blank.style.color = 'var(--text-main)';
 
-        // Highlight correct option
+        // Highlight correct answer
         const allBtns = document.querySelectorAll('.option-btn');
         allBtns.forEach(b => {
-            if(b.innerText === currentQuizCorrectAnswer) b.classList.add('correct');
+            if(b.innerText === correctAnswer) b.classList.add('correct');
         });
 
+        // Fail condition: If they miss one, they fail the checkpoint and must restudy the batch
         setTimeout(() => {
-            // Force them to re-study the word if they fail
-            loadWordHub(currentWordIndex);
+            alert(`Oops! You missed "${correctAnswer}". Let's review this batch again.`);
+            studyIndex = 0;
+            document.getElementById('study-mode').style.display = 'flex';
+            document.getElementById('quiz-mode').style.display = 'none';
+            renderStudyCard();
         }, 2000);
     }
 }
 
-// Text-to-Speech
+// 6. Global Progress
+function updateProgressUI() {
+    const total = database.length;
+    document.getElementById('mastered-count').innerText = masteredWords;
+    document.getElementById('progress-fill').style.width = (masteredWords / total * 100) + '%';
+}
+
+// Text-to-Speech (American Male priority)
 function playAudio() {
     if (synth.speaking) synth.cancel(); 
-    const textToSpeak = database[currentWordIndex].sentences[currentSentenceIndex].en;
+    
+    // Read the Target Word, pause, then the Definition
+    const wordObj = currentBatch[studyIndex];
+    const textToSpeak = `${wordObj.word}. ${wordObj.cobuild}`;
     const utterThis = new SpeechSynthesisUtterance(textToSpeak);
     
     const voices = synth.getVoices();
@@ -173,7 +185,7 @@ function playAudio() {
     if (!selectedVoice) selectedVoice = voices.find(v => v.lang.includes('en-US'));
 
     if (selectedVoice) utterThis.voice = selectedVoice;
-    utterThis.rate = 0.95; 
+    utterThis.rate = 0.9; 
     synth.speak(utterThis);
 }
 
