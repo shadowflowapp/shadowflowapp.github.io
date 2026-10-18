@@ -23,7 +23,7 @@ function shuffle(array) {
     return array;
 }
 
-// 2. Load the Next Word
+// 2. Load the Next Phrase
 function loadNextWord() {
     isAnimating = false;
     hintUsed = false;
@@ -32,20 +32,23 @@ function loadNextWord() {
     document.getElementById('hint-btn').style.display = 'block';
     document.getElementById('thai-hint').style.display = 'none';
 
-    // Find words that are NOT yet mastered (mastery < 1)
+    // Find phrases that are NOT yet mastered
     const unmasteredWords = database.filter(w => (w.mastery || 0) < 1);
     
     if (unmasteredWords.length === 0) {
-        alert("Incredible! You have mastered the entire A batch!");
+        alert("Awesome! You have mastered all conversational phrases in this batch!");
         return;
     }
 
-    // Pick a random unmastered word
+    // Pick a random unmastered phrase
     const randomIndex = Math.floor(Math.random() * unmasteredWords.length);
     currentQuestion = unmasteredWords[randomIndex];
 
-    // Render the COBUILD Sentence
-    const blankedSentence = currentQuestion.definition.replace('____', `<span class="blank" id="blank-space">____</span>`);
+    // Render Data
+    document.getElementById('category-tag').innerText = currentQuestion.category;
+    
+    // Insert the blank into the dialogue
+    const blankedSentence = currentQuestion.dialogue.replace('____', `<span class="blank" id="blank-space">____</span>`);
     document.getElementById('english-sentence').innerHTML = blankedSentence;
     document.getElementById('thai-hint').innerText = currentQuestion.thai_hint;
 
@@ -63,9 +66,9 @@ function loadNextWord() {
     });
 }
 
-// 3. Fading Thai Mechanic (Hint System)
+// 3. Hint System (Fading Thai)
 function revealHint() {
-    hintUsed = true; // Penalize mastery gain for this turn
+    hintUsed = true; // Penalize mastery gain if they needed the Thai translation
     document.getElementById('hint-btn').style.display = 'none';
     document.getElementById('thai-hint').style.display = 'block';
 }
@@ -75,17 +78,17 @@ function checkAnswer(btn, selectedOption) {
     if (isAnimating) return;
     isAnimating = true;
 
-    const isCorrect = (selectedOption === currentQuestion.word);
+    const isCorrect = (selectedOption === currentQuestion.phrase);
     const blankSpace = document.getElementById('blank-space');
     
-    blankSpace.innerText = currentQuestion.word;
+    blankSpace.innerText = currentQuestion.phrase;
     blankSpace.style.borderBottomColor = 'transparent';
 
     if (isCorrect) {
         btn.classList.add('correct');
         blankSpace.style.color = 'var(--correct-color)';
         
-        // Mastery Logic: Only grant mastery if they didn't use the Thai hint
+        // Only grant mastery if they didn't use the Thai hint
         if (!hintUsed) {
             currentQuestion.mastery = 1;
             updateMasteryUI();
@@ -93,17 +96,16 @@ function checkAnswer(btn, selectedOption) {
 
         setTimeout(loadNextWord, 1000);
     } else {
-        // Wrong Answer
         btn.classList.add('wrong');
         blankSpace.style.color = 'var(--text-main)';
 
-        // Highlight correct answer
+        // Show correct answer
         const allBtns = document.querySelectorAll('.option-btn');
         allBtns.forEach(b => {
-            if(b.innerText === currentQuestion.word) b.classList.add('correct');
+            if(b.innerText === currentQuestion.phrase) b.classList.add('correct');
         });
 
-        // Automatically reveal the Thai hint so they understand why they were wrong
+        // Automatically reveal the Thai hint so they learn the phrase
         document.getElementById('hint-btn').style.display = 'none';
         document.getElementById('thai-hint').style.display = 'block';
 
@@ -111,7 +113,7 @@ function checkAnswer(btn, selectedOption) {
     }
 }
 
-// 5. Update Pokedex Progress Bar
+// 5. Update Mastery Tracker
 function updateMasteryUI() {
     const totalWords = database.length;
     const masteredWords = database.filter(w => (w.mastery || 0) >= 1).length;
