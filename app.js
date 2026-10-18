@@ -23,20 +23,20 @@ function shuffle(array) {
     return array;
 }
 
-// 2. Load the Next Phrase
+// 2. Load the Next Native Transcript
 function loadNextWord() {
     isAnimating = false;
     hintUsed = false;
     
     // Reset UI
     document.getElementById('hint-btn').style.display = 'block';
-    document.getElementById('thai-hint').style.display = 'none';
+    document.getElementById('en-hint').style.display = 'none';
 
     // Find phrases that are NOT yet mastered
     const unmasteredWords = database.filter(w => (w.mastery || 0) < 1);
     
     if (unmasteredWords.length === 0) {
-        alert("Awesome! You have mastered all conversational phrases in this batch!");
+        alert("Awesome! You have mastered all phrases in this interview transcript!");
         return;
     }
 
@@ -45,12 +45,12 @@ function loadNextWord() {
     currentQuestion = unmasteredWords[randomIndex];
 
     // Render Data
-    document.getElementById('category-tag').innerText = currentQuestion.category;
+    document.getElementById('source-tag').innerText = `SOURCE: ${currentQuestion.source}`;
     
-    // Insert the blank into the dialogue
+    // Insert the blank into the transcript dialogue
     const blankedSentence = currentQuestion.dialogue.replace('____', `<span class="blank" id="blank-space">____</span>`);
     document.getElementById('english-sentence').innerHTML = blankedSentence;
-    document.getElementById('thai-hint').innerText = currentQuestion.thai_hint;
+    document.getElementById('hint-text').innerText = currentQuestion.english_hint;
 
     // Render Options
     const optionsGrid = document.getElementById('options-grid');
@@ -66,11 +66,11 @@ function loadNextWord() {
     });
 }
 
-// 3. Hint System (Fading Thai)
+// 3. Hint System (First Principles English)
 function revealHint() {
-    hintUsed = true; // Penalize mastery gain if they needed the Thai translation
+    hintUsed = true; // Penalize mastery gain if they needed the definition
     document.getElementById('hint-btn').style.display = 'none';
-    document.getElementById('thai-hint').style.display = 'block';
+    document.getElementById('en-hint').style.display = 'block';
 }
 
 // 4. Validate Answer
@@ -88,7 +88,7 @@ function checkAnswer(btn, selectedOption) {
         btn.classList.add('correct');
         blankSpace.style.color = 'var(--correct-color)';
         
-        // Only grant mastery if they didn't use the Thai hint
+        // Grant mastery only if they didn't use the English hint
         if (!hintUsed) {
             currentQuestion.mastery = 1;
             updateMasteryUI();
@@ -99,17 +99,17 @@ function checkAnswer(btn, selectedOption) {
         btn.classList.add('wrong');
         blankSpace.style.color = 'var(--text-main)';
 
-        // Show correct answer
+        // Highlight correct answer
         const allBtns = document.querySelectorAll('.option-btn');
         allBtns.forEach(b => {
             if(b.innerText === currentQuestion.phrase) b.classList.add('correct');
         });
 
-        // Automatically reveal the Thai hint so they learn the phrase
+        // Auto-reveal the English definition so they learn the phrase context
         document.getElementById('hint-btn').style.display = 'none';
-        document.getElementById('thai-hint').style.display = 'block';
+        document.getElementById('en-hint').style.display = 'block';
 
-        setTimeout(loadNextWord, 2500);
+        setTimeout(loadNextWord, 3000);
     }
 }
 
