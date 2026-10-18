@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Spoken American English</title>
+    <title>Native Flow</title>
     <style>
         :root {
             --bg-color: #0d0f12;
@@ -11,8 +11,8 @@
             --surface-hover: #2a2d35;
             --text-main: #ffffff;
             --text-sub: #8a919f;
-            --accent-gold: #f59e0b; /* Mastered color */
-            --accent-blue: #3b82f6; /* Category tag color */
+            --accent-gold: #f59e0b; 
+            --accent-blue: #3b82f6; 
             --correct-color: #2eab5b;
             --wrong-color: #e53e3e;
         }
@@ -43,21 +43,22 @@
         /* Dialogue Area */
         .question-area { flex-grow: 1; display: flex; flex-direction: column; justify-content: center; position: relative; }
         
-        .category-tag {
-            font-size: 12px; font-weight: 700; color: var(--accent-blue);
-            margin-bottom: 16px; border: 1px solid rgba(59, 130, 246, 0.3); background-color: rgba(59, 130, 246, 0.1); display: inline-block;
-            padding: 6px 12px; border-radius: 20px; align-self: flex-start; text-transform: uppercase;
+        .source-tag {
+            font-size: 11px; font-weight: 800; color: var(--text-main);
+            margin-bottom: 16px; background-color: #ef4444; display: inline-block;
+            padding: 6px 10px; border-radius: 4px; align-self: flex-start; text-transform: uppercase; letter-spacing: 1px;
         }
 
         .dialogue-sentence {
             font-size: 26px; font-weight: 500; line-height: 1.4; margin-bottom: 24px; font-style: italic; color: #e2e8f0;
         }
+        
         .blank {
             display: inline-block; min-width: 80px; border-bottom: 2px solid var(--text-sub);
             color: transparent; transition: color 0.3s ease; text-align: center; font-style: normal; font-weight: 700;
         }
 
-        /* Hint System */
+        /* Hint System (English Only) */
         .hint-btn {
             background: none; border: 1px dashed #444; color: var(--text-sub);
             padding: 12px; border-radius: 8px; font-size: 14px; cursor: pointer;
@@ -65,10 +66,13 @@
         }
         .hint-btn:active { background: #222; }
         
-        .thai-hint {
-            display: none; font-size: 16px; color: var(--accent-gold);
-            background: rgba(245, 158, 11, 0.1); padding: 16px; border-radius: 8px;
-            margin-bottom: 30px; line-height: 1.4; border-left: 3px solid var(--accent-gold);
+        .en-hint {
+            display: none; font-size: 15px; color: var(--text-main);
+            background: rgba(59, 130, 246, 0.1); padding: 16px; border-radius: 8px;
+            margin-bottom: 30px; line-height: 1.5; border-left: 3px solid var(--accent-blue);
+        }
+        .en-hint-label {
+            font-size: 12px; font-weight: 700; color: var(--accent-blue); text-transform: uppercase; margin-bottom: 6px; display: block;
         }
 
         /* Options Grid */
@@ -83,7 +87,6 @@
 
     <div class="app-container">
         
-        <!-- Mastery Progress -->
         <div class="mastery-header">
             <div class="mastery-title">Native Phrases Mastered</div>
             <div class="progress-bar-bg">
@@ -93,11 +96,14 @@
         </div>
         
         <div class="question-area">
-            <div class="category-tag" id="category-tag">Loading...</div>
+            <div class="source-tag" id="source-tag">Loading...</div>
             <div class="dialogue-sentence" id="english-sentence">Loading...</div>
             
-            <button class="hint-btn" id="hint-btn" onclick="revealHint()">👁️ Tap to reveal Thai meaning</button>
-            <div class="thai-hint" id="thai-hint"></div>
+            <button class="hint-btn" id="hint-btn" onclick="revealHint()">👁️ Tap to reveal simple English meaning</button>
+            <div class="en-hint" id="en-hint">
+                <span class="en-hint-label">Meaning</span>
+                <span id="hint-text"></span>
+            </div>
         </div>
 
         <div class="options-grid" id="options-grid"></div>
