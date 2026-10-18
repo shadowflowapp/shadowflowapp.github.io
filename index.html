@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Situational Fluency</title>
+    <title>Situational Fluency Engine</title>
     <style>
         :root {
             --bg-color: #0d0f12;
@@ -32,76 +32,42 @@
         }
 
         /* Top Bar: Word Hub */
-        .word-header {
-            text-align: center; margin-bottom: 20px;
-        }
+        .word-header { text-align: center; margin-bottom: 20px; }
         .target-word { font-size: 36px; font-weight: 800; text-transform: lowercase; margin-bottom: 4px; letter-spacing: -1px; }
-        .phonetic { font-size: 16px; color: var(--text-sub); font-family: monospace; }
+        .phonetic { font-size: 16px; color: var(--text-sub); font-family: monospace; margin-bottom: 10px; }
         
-        .progress-tracker { font-size: 14px; color: var(--accent-blue); font-weight: 700; margin-top: 10px; }
+        .progress-badges { display: flex; justify-content: center; gap: 12px; }
+        .progress-tracker { font-size: 13px; color: var(--text-sub); font-weight: 700; background: var(--surface-color); padding: 4px 10px; border-radius: 12px; }
 
         /* The Sentence Card */
         .card {
-            background-color: var(--surface-color);
-            border-radius: 24px;
-            padding: 30px 24px;
-            flex-grow: 1;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            position: relative;
+            background-color: var(--surface-color); border-radius: 24px; padding: 30px 24px;
+            flex-grow: 1; display: flex; flex-direction: column; justify-content: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5); position: relative;
         }
 
         .tags-container {
             display: flex; justify-content: space-between; align-items: center;
-            margin-bottom: 30px; width: 100%;
-            position: absolute; top: 30px; left: 0; padding: 0 24px; box-sizing: border-box;
+            margin-bottom: 30px; width: 100%; position: absolute; top: 30px; left: 0; padding: 0 24px; box-sizing: border-box;
         }
+        .situation-tag { background-color: rgba(245, 158, 11, 0.15); color: var(--accent-gold); padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+        .pos-tag { font-size: 12px; font-weight: 600; color: var(--text-sub); }
 
-        .situation-tag {
-            background-color: rgba(245, 158, 11, 0.15); color: var(--accent-gold);
-            padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;
-        }
-
-        .pos-tag {
-            font-size: 12px; font-weight: 600; color: var(--text-sub);
-        }
-
-        .english-sentence {
-            font-size: 28px; font-weight: 600; line-height: 1.4; margin-bottom: 30px; text-align: center;
-        }
-
-        .target-highlight {
-            color: var(--accent-blue);
-        }
+        .english-sentence { font-size: 28px; font-weight: 600; line-height: 1.4; margin-bottom: 30px; text-align: center; }
+        .target-highlight { color: var(--accent-blue); }
 
         /* Thai Reveal Bridge */
-        .thai-bridge {
-            text-align: center; margin-bottom: 20px;
-        }
-        .reveal-btn {
-            background: none; border: 1px dashed #444; color: var(--text-sub);
-            padding: 10px 20px; border-radius: 20px; font-size: 14px; cursor: pointer; transition: background 0.2s;
-        }
+        .thai-bridge { text-align: center; margin-bottom: 20px; }
+        .reveal-btn { background: none; border: 1px dashed #444; color: var(--text-sub); padding: 10px 20px; border-radius: 20px; font-size: 14px; cursor: pointer; transition: background 0.2s; }
         .reveal-btn:active { background: #222; }
-        .thai-text {
-            display: none; font-size: 18px; color: var(--accent-gold); line-height: 1.5; font-weight: 500;
-        }
+        .thai-text { display: none; font-size: 18px; color: var(--accent-gold); line-height: 1.5; font-weight: 500; }
 
         /* Controls */
-        .controls {
-            display: flex; gap: 12px; margin-top: 20px;
-        }
-
-        .btn {
-            border: none; border-radius: 16px; font-size: 18px; font-weight: 700; cursor: pointer; padding: 20px; flex: 1; transition: transform 0.1s;
-        }
+        .controls { display: flex; gap: 12px; margin-top: 20px; }
+        .btn { border: none; border-radius: 16px; font-size: 18px; font-weight: 700; cursor: pointer; padding: 20px; flex: 1; transition: transform 0.1s; }
         .btn:active { transform: scale(0.95); }
-        
         .btn-audio { background-color: var(--surface-color); color: var(--text-main); border: 1px solid #333; flex: 0.5; }
         .btn-next { background-color: var(--accent-blue); color: #fff; }
-
     </style>
 </head>
 <body>
@@ -111,7 +77,10 @@
         <div class="word-header">
             <div class="target-word" id="target-word">loading</div>
             <div class="phonetic" id="phonetic"></div>
-            <div class="progress-tracker">Card <span id="current-index">0</span> / <span id="total-index">0</span></div>
+            <div class="progress-badges">
+                <div class="progress-tracker">Word <span id="word-index">0</span> / <span id="total-words">0</span></div>
+                <div class="progress-tracker">Card <span id="current-index">0</span> / <span id="total-index">0</span></div>
+            </div>
         </div>
 
         <div class="card" id="card">
@@ -130,7 +99,7 @@
 
         <div class="controls">
             <button class="btn btn-audio" onclick="playAudio()">🔊 Listen</button>
-            <button class="btn btn-next" onclick="nextSentence()">Next Scenario ➡️</button>
+            <button class="btn btn-next" onclick="nextSentence()">Next ➡️</button>
         </div>
 
     </div>
