@@ -1,92 +1,63 @@
-[
-  {
-    "id": "T1",
-    "source": "Pain & Gain Interview",
-    "phrase": "revolves around",
-    "dialogue": "\"This was a hell of a prep for a movie like this where it ____ the world of bodybuilding.\"",
-    "english_hint": "Focuses on or is centered on a specific topic.",
-    "options": ["revolves around", "circles about", "spins over", "turns into"],
-    "mastery": 0
-  },
-  {
-    "id": "T2",
-    "source": "Pain & Gain Interview",
-    "phrase": "showed up",
-    "dialogue": "\"I invited Dwayne to do some jazzercising with me on Tuesdays, but he never ____.\"",
-    "english_hint": "Arrived or appeared at a place where you were expected to be.",
-    "options": ["showed up", "came up", "brought up", "made up"],
-    "mastery": 0
-  },
-  {
-    "id": "T3",
-    "source": "Pain & Gain Interview",
-    "phrase": "passed up",
-    "dialogue": "\"I ____ for the Wednesday jazzercise. So I'd bring the class outside of his trailer...\"",
-    "english_hint": "Declined an opportunity or decided not to participate.",
-    "options": ["passed up", "gave up", "let down", "turned out"],
-    "mastery": 0
-  },
-  {
-    "id": "T4",
-    "source": "Pain & Gain Interview",
-    "phrase": "wind up",
-    "dialogue": "\"You throw on way too much weight and you use poor form and you ____ getting hurt.\"",
-    "english_hint": "To finally be in a particular situation or state, especially a bad one (similar to 'end up').",
-    "options": ["wind up", "finish up", "close down", "break down"],
-    "mastery": 0
-  },
-  {
-    "id": "T5",
-    "source": "Pain & Gain Movie",
-    "phrase": "kept down",
-    "dialogue": "\"We're being ____ by people who cheated to get where they are.\"",
-    "english_hint": "Prevented from moving forward, succeeding, or gaining power by someone else.",
-    "options": ["kept down", "stayed down", "taken down", "put down"],
-    "mastery": 0
-  },
-  {
-    "id": "T6",
-    "source": "Pain & Gain Interview",
-    "phrase": "ego train",
-    "dialogue": "\"Younger Mark will tell you it's what you do. You ____. You throw on way too much weight...\"",
-    "english_hint": "Lifting weights just to show off your pride or feel strong, rather than using safe form.",
-    "options": ["ego train", "pride lift", "show out", "power flex"],
-    "mastery": 0
-  },
-  {
-    "id": "T7",
-    "source": "Pain & Gain Movie",
-    "phrase": "knock you out",
-    "dialogue": "\"All right, little fella. I'm going to headbutt you and ____.\"",
-    "english_hint": "Hit someone so hard that they lose consciousness (go to sleep).",
-    "options": ["knock you out", "take you out", "put you down", "beat you up"],
-    "mastery": 0
-  },
-  {
-    "id": "T8",
-    "source": "Pain & Gain Interview",
-    "phrase": "fine-tunes",
-    "dialogue": "\"That was the smartest thing because it really ____ your details and you just have a greater appreciation.\"",
-    "english_hint": "Makes very small adjustments to something so that it works perfectly.",
-    "options": ["fine-tunes", "sharp-fixes", "perfect-makes", "well-sets"],
-    "mastery": 0
-  },
-  {
-    "id": "T9",
-    "source": "Pain & Gain Interview",
-    "phrase": "starts out",
-    "dialogue": "\"So it ____, you know, I'm up at 4:30 in the morning. I'm in the kitchen having breakfast.\"",
-    "english_hint": "Begins in a certain way.",
-    "options": ["starts out", "wakes up", "opens up", "sets off"],
-    "mastery": 0
-  },
-  {
-    "id": "T10",
-    "source": "Pain & Gain Interview",
-    "phrase": "got things done",
-    "dialogue": "\"So these men were like big men who always trained and ____ with their hands.\"",
-    "english_hint": "Completed tasks or achieved goals successfully.",
-    "options": ["got things done", "made things work", "did things right", "put things out"],
-    "mastery": 0
-  }
-]
+{
+  "target_word": "focus",
+  "phonetic": "/ˈfoʊ.kəs/",
+  "total_sentences": 8,
+  "sentences": [
+    {
+      "id": 1,
+      "situation": "💼 Office / Work",
+      "pos": "Verb (Phrasal)",
+      "en": "Let's focus on the main issue for this quarter.",
+      "th": "มามุ่งเน้นไปที่ปัญหาหลักของไตรมาสนี้กันเถอะ (เน้นเรื่องงาน)"
+    },
+    {
+      "id": 2,
+      "situation": "🧠 Mental State",
+      "pos": "Verb",
+      "en": "I can't focus with all this construction noise outside.",
+      "th": "ฉันไม่มีสมาธิเลยเพราะเสียงก่อสร้างข้างนอกนั่น (เน้นเรื่องสมาธิ)"
+    },
+    {
+      "id": 3,
+      "situation": "📸 Photography / Tech",
+      "pos": "Verb",
+      "en": "Make sure the camera is focused before you take the shot.",
+      "th": "เช็คให้แน่ใจว่ากล้องโฟกัสชัดแล้วก่อนกดถ่าย (เน้นเรื่องความคมชัด)"
+    },
+    {
+      "id": 4,
+      "situation": "⭐ Center of Attention",
+      "pos": "Noun",
+      "en": "She always wants to be the focus of the party.",
+      "th": "เธออยากเป็นจุดสนใจของงานปาร์ตี้เสมอ (เน้นการเป็นเป้าสายตา)"
+    },
+    {
+      "id": 5,
+      "situation": "💔 Dating / Arguments",
+      "pos": "Verb (Phrasal)",
+      "en": "Right now, I just need to focus on myself.",
+      "th": "ตอนนี้ฉันแค่อยากโฟกัสที่ตัวเอง (ใช้เวลาเลิกคุยหรือต้องการอยู่คนเดียว)"
+    },
+    {
+      "id": 6,
+      "situation": "🏥 Health / Vision",
+      "pos": "Verb",
+      "en": "My eyes are taking a moment to focus; everything is blurry.",
+      "th": "สายตาฉันกำลังปรับโฟกัสอยู่ ตอนนี้ทุกอย่างดูเบลอไปหมด (เน้นเรื่องสายตา)"
+    },
+    {
+      "id": 7,
+      "situation": "🏫 Academic / Study",
+      "pos": "Noun",
+      "en": "The main focus of this research is human psychology.",
+      "th": "จุดเน้นหลักของงานวิจัยชิ้นนี้คือจิตวิทยาของมนุษย์ (เน้นประเด็นสำคัญ)"
+    },
+    {
+      "id": 8,
+      "situation": "🏋️ Gym / Motivation",
+      "pos": "Adjective",
+      "en": "You have to stay focused if you want to see results.",
+      "th": "คุณต้องแน่วแน่และมีสมาธิถ้าอยากเห็นผลลัพธ์ (เน้นความมุ่งมั่น)"
+    }
+  ]
+}
