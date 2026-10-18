@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Native Flow</title>
+    <title>Situational Fluency</title>
     <style>
         :root {
             --bg-color: #0d0f12;
@@ -11,10 +11,8 @@
             --surface-hover: #2a2d35;
             --text-main: #ffffff;
             --text-sub: #8a919f;
-            --accent-gold: #f59e0b; 
-            --accent-blue: #3b82f6; 
-            --correct-color: #2eab5b;
-            --wrong-color: #e53e3e;
+            --accent-blue: #3b82f6;
+            --accent-gold: #f59e0b;
         }
 
         body {
@@ -30,83 +28,110 @@
         .app-container {
             width: 100%; max-width: 430px; height: 100%;
             display: flex; flex-direction: column;
-            padding: 30px 24px; box-sizing: border-box;
+            padding: 20px 20px 40px 20px; box-sizing: border-box;
         }
 
-        /* Mastery Progress */
-        .mastery-header { text-align: center; margin-bottom: 30px; }
-        .mastery-title { font-size: 12px; font-weight: 700; color: var(--text-sub); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 8px; }
-        .progress-bar-bg { background-color: var(--surface-color); height: 8px; border-radius: 4px; overflow: hidden; margin-bottom: 8px; }
-        .progress-bar-fill { background-color: var(--accent-gold); height: 100%; width: 0%; transition: width 0.5s ease; }
-        .mastery-stats { font-size: 14px; font-weight: 600; color: var(--accent-gold); }
-
-        /* Dialogue Area */
-        .question-area { flex-grow: 1; display: flex; flex-direction: column; justify-content: center; position: relative; }
+        /* Top Bar: Word Hub */
+        .word-header {
+            text-align: center; margin-bottom: 20px;
+        }
+        .target-word { font-size: 36px; font-weight: 800; text-transform: lowercase; margin-bottom: 4px; letter-spacing: -1px; }
+        .phonetic { font-size: 16px; color: var(--text-sub); font-family: monospace; }
         
-        .source-tag {
-            font-size: 11px; font-weight: 800; color: var(--text-main);
-            margin-bottom: 16px; background-color: #ef4444; display: inline-block;
-            padding: 6px 10px; border-radius: 4px; align-self: flex-start; text-transform: uppercase; letter-spacing: 1px;
+        .progress-tracker { font-size: 14px; color: var(--accent-blue); font-weight: 700; margin-top: 10px; }
+
+        /* The Sentence Card */
+        .card {
+            background-color: var(--surface-color);
+            border-radius: 24px;
+            padding: 30px 24px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            position: relative;
         }
 
-        .dialogue-sentence {
-            font-size: 26px; font-weight: 500; line-height: 1.4; margin-bottom: 24px; font-style: italic; color: #e2e8f0;
-        }
-        
-        .blank {
-            display: inline-block; min-width: 80px; border-bottom: 2px solid var(--text-sub);
-            color: transparent; transition: color 0.3s ease; text-align: center; font-style: normal; font-weight: 700;
+        .tags-container {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 30px; width: 100%;
+            position: absolute; top: 30px; left: 0; padding: 0 24px; box-sizing: border-box;
         }
 
-        /* Hint System (English Only) */
-        .hint-btn {
+        .situation-tag {
+            background-color: rgba(245, 158, 11, 0.15); color: var(--accent-gold);
+            padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;
+        }
+
+        .pos-tag {
+            font-size: 12px; font-weight: 600; color: var(--text-sub);
+        }
+
+        .english-sentence {
+            font-size: 28px; font-weight: 600; line-height: 1.4; margin-bottom: 30px; text-align: center;
+        }
+
+        .target-highlight {
+            color: var(--accent-blue);
+        }
+
+        /* Thai Reveal Bridge */
+        .thai-bridge {
+            text-align: center; margin-bottom: 20px;
+        }
+        .reveal-btn {
             background: none; border: 1px dashed #444; color: var(--text-sub);
-            padding: 12px; border-radius: 8px; font-size: 14px; cursor: pointer;
-            width: 100%; margin-bottom: 30px; transition: background 0.2s;
+            padding: 10px 20px; border-radius: 20px; font-size: 14px; cursor: pointer; transition: background 0.2s;
         }
-        .hint-btn:active { background: #222; }
-        
-        .en-hint {
-            display: none; font-size: 15px; color: var(--text-main);
-            background: rgba(59, 130, 246, 0.1); padding: 16px; border-radius: 8px;
-            margin-bottom: 30px; line-height: 1.5; border-left: 3px solid var(--accent-blue);
-        }
-        .en-hint-label {
-            font-size: 12px; font-weight: 700; color: var(--accent-blue); text-transform: uppercase; margin-bottom: 6px; display: block;
+        .reveal-btn:active { background: #222; }
+        .thai-text {
+            display: none; font-size: 18px; color: var(--accent-gold); line-height: 1.5; font-weight: 500;
         }
 
-        /* Options Grid */
-        .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding-bottom: 20px; }
-        .option-btn { background-color: var(--surface-color); color: var(--text-main); border: 2px solid transparent; padding: 18px 10px; border-radius: 12px; font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.1s ease; }
-        .option-btn:active { transform: scale(0.96); background-color: var(--surface-hover); }
-        .option-btn.correct { background-color: var(--correct-color); border-color: var(--correct-color); }
-        .option-btn.wrong { background-color: var(--wrong-color); border-color: var(--wrong-color); }
+        /* Controls */
+        .controls {
+            display: flex; gap: 12px; margin-top: 20px;
+        }
+
+        .btn {
+            border: none; border-radius: 16px; font-size: 18px; font-weight: 700; cursor: pointer; padding: 20px; flex: 1; transition: transform 0.1s;
+        }
+        .btn:active { transform: scale(0.95); }
+        
+        .btn-audio { background-color: var(--surface-color); color: var(--text-main); border: 1px solid #333; flex: 0.5; }
+        .btn-next { background-color: var(--accent-blue); color: #fff; }
+
     </style>
 </head>
 <body>
 
     <div class="app-container">
         
-        <div class="mastery-header">
-            <div class="mastery-title">Native Phrases Mastered</div>
-            <div class="progress-bar-bg">
-                <div class="progress-bar-fill" id="progress-fill"></div>
-            </div>
-            <div class="mastery-stats"><span id="mastered-count">0</span> / <span id="total-count">0</span></div>
+        <div class="word-header">
+            <div class="target-word" id="target-word">loading</div>
+            <div class="phonetic" id="phonetic"></div>
+            <div class="progress-tracker">Card <span id="current-index">0</span> / <span id="total-index">0</span></div>
         </div>
-        
-        <div class="question-area">
-            <div class="source-tag" id="source-tag">Loading...</div>
-            <div class="dialogue-sentence" id="english-sentence">Loading...</div>
-            
-            <button class="hint-btn" id="hint-btn" onclick="revealHint()">👁️ Tap to reveal simple English meaning</button>
-            <div class="en-hint" id="en-hint">
-                <span class="en-hint-label">Meaning</span>
-                <span id="hint-text"></span>
+
+        <div class="card" id="card">
+            <div class="tags-container">
+                <div class="situation-tag" id="situation-tag">Loading...</div>
+                <div class="pos-tag" id="pos-tag">Loading...</div>
+            </div>
+
+            <div class="english-sentence" id="english-sentence">Loading...</div>
+
+            <div class="thai-bridge">
+                <button class="reveal-btn" id="reveal-btn" onclick="revealThai()">Tap for Thai Context</button>
+                <div class="thai-text" id="thai-text"></div>
             </div>
         </div>
 
-        <div class="options-grid" id="options-grid"></div>
+        <div class="controls">
+            <button class="btn btn-audio" onclick="playAudio()">🔊 Listen</button>
+            <button class="btn btn-next" onclick="nextSentence()">Next Scenario ➡️</button>
+        </div>
 
     </div>
 
