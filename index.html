@@ -2,162 +2,180 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <!-- NATIVE APP VIEWPORT -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Word Family Matrix</title>
+    <title>Los Santos Lingo</title>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@500;700&family=Roboto:wght@400;700;900&display=swap');
+
         :root {
-            --bg-color: #0d0f12;
-            --surface-color: #1a1d24;
-            --surface-hover: #2a2d35;
-            --text-main: #ffffff;
-            --text-sub: #8a919f;
-            --accent-blue: #3b82f6;
-            --accent-gold: #f59e0b;
-            --correct-color: #2eab5b;
-            --wrong-color: #e53e3e;
+            --gta-black: #0a0a0a;
+            --gta-dark: #1c1c1e;
+            --gta-green: #41d95d;
+            --gta-red: #d94141;
+            --gta-yellow: #f2c80f;
+            --gta-cyan: #0fdbf2;
+            --gta-pink: #f20f8c;
+            --text-light: #f5f5f5;
+            --text-dim: #888888;
         }
 
-        /* 100dvh prevents Safari/Chrome bottom bar jumping */
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", sans-serif;
-            background-color: var(--bg-color); color: var(--text-main);
-            margin: 0; padding: 0; display: flex; justify-content: center;
-            height: 100dvh; overflow: hidden; -webkit-tap-highlight-color: transparent;
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--gta-black);
+            color: var(--text-light);
+            margin: 0; padding: 0;
+            display: flex; justify-content: center;
+            height: 100dvh; overflow: hidden;
+            -webkit-tap-highlight-color: transparent;
+            background-image: radial-gradient(circle at center, #1a1a1a 0%, #000000 100%);
         }
 
         .app-container {
             width: 100%; max-width: 430px; height: 100%;
             display: flex; flex-direction: column;
-            padding: 20px 20px 30px 20px; box-sizing: border-box;
+            padding: 20px 15px; box-sizing: border-box;
+            position: relative;
         }
 
-        /* Top Header: Scrollable Root Words */
-        .header { text-align: center; margin-bottom: 20px; border-bottom: 1px solid #333; padding-bottom: 15px; }
-        .root-label { font-size: 12px; font-weight: 800; color: var(--text-sub); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 10px; }
+        /* HUD Header */
+        .hud-header {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 20px; padding-bottom: 10px; border-bottom: 2px solid #333;
+        }
+        .mission-title {
+            font-family: 'Oswald', sans-serif; font-size: 20px; font-weight: 700;
+            color: var(--gta-yellow); text-transform: uppercase; letter-spacing: 1px;
+            text-shadow: 1px 1px 0px #000;
+        }
+        .wanted-stars { color: var(--text-dim); font-size: 22px; letter-spacing: 2px; }
+        .wanted-stars .active { color: var(--text-light); text-shadow: 0 0 5px #fff; }
+
+        /* Audio Briefing Button */
+        .audio-briefing {
+            background: linear-gradient(135deg, var(--gta-pink), #a60a5e);
+            border: 2px solid #fff; border-radius: 12px;
+            padding: 20px; display: flex; align-items: center; justify-content: center;
+            gap: 15px; cursor: pointer; transition: transform 0.1s;
+            box-shadow: 0 4px 15px rgba(242, 15, 140, 0.4);
+            margin-bottom: 30px;
+        }
+        .audio-briefing:active { transform: scale(0.96); }
+        .audio-icon { font-size: 32px; }
+        .audio-text { font-family: 'Oswald', sans-serif; font-size: 24px; font-weight: 700; letter-spacing: 1px; }
+
+        /* The Drop Zone (Answer Box) */
+        .drop-zone {
+            min-height: 120px; background: rgba(255,255,255,0.05);
+            border: 2px dashed #444; border-radius: 12px;
+            padding: 15px; display: flex; flex-wrap: wrap; gap: 8px;
+            align-content: flex-start; margin-bottom: 25px;
+        }
         
-        .root-selector {
-            display: flex; gap: 20px; overflow-x: auto; scroll-behavior: smooth;
-            padding: 10px 0; align-items: baseline; justify-content: flex-start;
-            scrollbar-width: none; /* Firefox */
-            touch-action: pan-x; /* Optimizes mobile swiping */
-            cursor: grab;
-        }
-        .root-selector::-webkit-scrollbar { display: none; /* Chrome */ }
-        .root-selector:active { cursor: grabbing; }
-
-        .root-pill {
-            font-size: 26px; font-weight: 800; color: var(--text-sub);
-            text-transform: uppercase; transition: all 0.2s ease;
-            white-space: nowrap; opacity: 0.5; pointer-events: none; /* Let the parent handle drag */
-        }
-        .root-pill.active {
-            color: var(--accent-gold); font-size: 38px; opacity: 1; letter-spacing: -1px;
-        }
-
-        /* Form Selector (Horizontal Scroll Pills) */
-        .form-selector {
-            display: flex; gap: 10px; overflow-x: auto; padding-bottom: 15px; margin-bottom: 5px;
-            scrollbar-width: none; touch-action: pan-x; cursor: grab;
-        }
-        .form-selector::-webkit-scrollbar { display: none; }
-        .form-selector:active { cursor: grabbing; }
+        /* The Chunks */
+        .chunks-bank { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
         
-        .form-pill {
-            background: var(--surface-color); color: var(--text-main); border: 2px solid transparent;
-            padding: 10px 20px; border-radius: 20px; font-size: 16px; font-weight: 600; 
-            white-space: nowrap; transition: all 0.2s; pointer-events: none;
+        .chunk-btn {
+            background-color: var(--gta-dark); color: #fff;
+            border: 2px solid #444; border-radius: 8px;
+            padding: 12px 16px; font-size: 18px; font-weight: 700;
+            cursor: pointer; transition: all 0.1s;
+            box-shadow: 0 4px 0 #111; user-select: none;
         }
-        .form-pill.active { background: rgba(59, 130, 246, 0.2); border-color: var(--accent-blue); color: var(--accent-blue); }
+        .chunk-btn:active { transform: translateY(4px); box-shadow: 0 0 0 #111; }
+        .chunk-btn.in-zone { background-color: var(--gta-cyan); color: #000; border-color: #fff; box-shadow: 0 4px 0 #008f9e; }
+        .chunk-btn.hidden { visibility: hidden; pointer-events: none; }
 
-        /* Study Area */
-        .card {
-            background-color: var(--surface-color); border-radius: 24px; padding: 24px;
-            flex-grow: 1; display: flex; flex-direction: column; overflow-y: auto; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            scrollbar-width: none;
+        /* Subtitles (Thai Hint) */
+        .subtitles-container {
+            margin-top: auto; text-align: center;
+            background: rgba(0, 0, 0, 0.8); border-radius: 8px;
+            padding: 15px; border-left: 4px solid var(--gta-yellow);
         }
-        .card::-webkit-scrollbar { display: none; }
-        
-        .form-title-container { display: flex; align-items: center; margin-bottom: 5px; gap: 10px; }
-        .form-title { font-size: 28px; font-weight: 800; color: var(--accent-blue); }
-        .form-pos { font-size: 14px; font-weight: 700; color: var(--text-sub); text-transform: uppercase; margin-bottom: 15px; border-bottom: 1px solid #333; padding-bottom: 15px; }
-        
-        .def-container { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; margin-bottom: 25px; }
-        .form-def { font-size: 18px; line-height: 1.5; color: var(--text-main); }
-
-        .sentence-block { margin-bottom: 25px; }
-        .sentence-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; margin-bottom: 8px;}
-        .english-sentence { font-size: 20px; font-weight: 500; line-height: 1.4; }
-        .thai-bridge { font-size: 15px; color: var(--accent-gold); font-weight: 500; }
-        .target-highlight { color: var(--accent-blue); font-weight: 700; text-decoration: underline; }
-
-        /* Audio Buttons */
-        .icon-btn {
-            background: rgba(255, 255, 255, 0.1); border: none; font-size: 18px; cursor: pointer;
-            color: var(--text-main); border-radius: 50%; width: 36px; height: 36px;
-            display: flex; align-items: center; justify-content: center; flex-shrink: 0;
-            transition: transform 0.1s, background 0.2s;
+        .thai-text { display: none; font-size: 16px; color: var(--gta-yellow); font-weight: 500; }
+        .reveal-btn {
+            background: none; border: none; color: var(--text-dim);
+            font-family: 'Oswald', sans-serif; font-size: 16px; letter-spacing: 1px;
+            cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%;
         }
-        .icon-btn:active { transform: scale(0.9); background: rgba(255, 255, 255, 0.3); }
 
-        /* Quiz Area */
-        #quiz-container { display: none; flex-direction: column; flex-grow: 1; }
-        .quiz-title { font-size: 16px; color: var(--accent-gold); font-weight: 800; text-transform: uppercase; text-align: center; margin-bottom: 30px; letter-spacing: 2px; }
-        .quiz-sentence { font-size: 24px; font-weight: 500; line-height: 1.5; text-align: center; margin-bottom: 40px; }
-        .blank { display: inline-block; min-width: 100px; border-bottom: 3px solid var(--text-sub); color: transparent; text-align: center; font-weight: 800; }
+        /* Overlay Screens */
+        .overlay {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            z-index: 100; opacity: 0; pointer-events: none; transition: opacity 0.3s;
+            backdrop-filter: blur(5px);
+        }
+        .overlay.active { opacity: 1; pointer-events: auto; }
+
+        .passed-bg { background: rgba(0, 0, 0, 0.85); }
+        .passed-text {
+            font-family: 'Impact', 'Oswald', sans-serif; font-size: 48px; color: var(--gta-yellow);
+            text-transform: uppercase; letter-spacing: 2px; text-align: center;
+            text-shadow: 3px 3px 0px #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+            transform: scale(1.5); transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .overlay.active .passed-text { transform: scale(1); }
         
-        .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-        .option-btn { background-color: var(--surface-color); color: var(--text-main); border: 2px solid transparent; padding: 18px 10px; border-radius: 16px; font-size: 18px; font-weight: 600; cursor: pointer; transition: all 0.1s ease; }
-        .option-btn.correct { background-color: var(--correct-color); border-color: var(--correct-color); }
-        .option-btn.wrong { background-color: var(--wrong-color); border-color: var(--wrong-color); }
+        .wasted-bg { background: rgba(217, 65, 65, 0.3); } /* Red tint */
+        .wasted-text {
+            font-family: 'Impact', 'Oswald', sans-serif; font-size: 54px; color: var(--gta-red);
+            text-transform: uppercase; letter-spacing: 4px;
+            text-shadow: 2px 2px 0px #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+        }
 
-        /* Controls */
-        .controls { display: flex; gap: 12px; margin-top: 20px; }
-        .btn { border: none; border-radius: 16px; font-size: 18px; font-weight: 700; cursor: pointer; padding: 20px; flex: 1; transition: transform 0.1s; }
-        .btn:active { transform: scale(0.95); }
-        .btn-quiz { background-color: var(--accent-gold); color: #000; }
+        .next-btn {
+            margin-top: 40px; background: #fff; color: #000; font-family: 'Oswald', sans-serif;
+            font-size: 24px; font-weight: 700; padding: 15px 40px; border: none; border-radius: 8px;
+            cursor: pointer; text-transform: uppercase;
+        }
+        .next-btn:active { transform: scale(0.95); }
+
     </style>
 </head>
 <body>
 
     <div class="app-container">
         
-        <div class="header">
-            <div class="root-label">Word Families</div>
-            <div class="root-selector" id="root-selector">
-                <!-- Root pills injected here -->
+        <!-- HUD -->
+        <div class="hud-header">
+            <div class="mission-title">Mission: <span id="mission-word">SPEED</span></div>
+            <div class="wanted-stars" id="wanted-stars">
+                ★★★★★
             </div>
         </div>
 
-        <div id="study-container" style="display: flex; flex-direction: column; flex-grow: 1; overflow: hidden;">
-            <div class="form-selector" id="form-selector">
-                <!-- Word Form Pills generated by JS -->
-            </div>
-
-            <div class="card" id="study-card">
-                <div class="form-title-container" id="form-title-container"></div>
-                <div class="form-pos" id="form-pos"></div>
-                
-                <!-- Definition Section with Audio -->
-                <div class="def-container" id="def-container">
-                    <div class="form-def" id="form-def"></div>
-                    <button class="icon-btn" id="def-audio-btn">🔊</button>
-                </div>
-
-                <div id="sentences-container"></div>
-            </div>
-
-            <div class="controls">
-                <button class="btn btn-quiz" onclick="startSyntaxQuiz()">Take Syntax Quiz ⚔️</button>
-            </div>
+        <!-- Play Audio Briefing -->
+        <div class="audio-briefing" onclick="playAudio()">
+            <span class="audio-icon">📻</span>
+            <span class="audio-text">PLAY BRIEFING</span>
         </div>
 
-        <div id="quiz-container">
-            <div class="card" style="justify-content: flex-start; padding-top: 40px;">
-                <div class="quiz-title">Grammar Boss Fight</div>
-                <div class="quiz-sentence" id="quiz-sentence">Loading...</div>
-                <div class="options-grid" id="options-grid"></div>
-            </div>
+        <!-- Drop Zone -->
+        <div class="drop-zone" id="drop-zone">
+            <!-- Selected chunks go here -->
+        </div>
+
+        <!-- Scrambled Bank -->
+        <div class="chunks-bank" id="chunks-bank">
+            <!-- Scrambled chunks go here -->
+        </div>
+
+        <!-- GTA Subtitles (Thai Hint) -->
+        <div class="subtitles-container">
+            <button class="reveal-btn" id="reveal-btn" onclick="revealThai()">
+                <span>👁️</span> REVEAL INTEL
+            </button>
+            <div class="thai-text" id="thai-text">Loading...</div>
+        </div>
+
+        <!-- OVERLAYS -->
+        <div class="overlay passed-bg" id="overlay-passed">
+            <div class="passed-text">MISSION PASSED<br><span style="font-size: 24px; color: #fff;">RESPECT +</span></div>
+            <button class="next-btn" onclick="nextMission()">CONTINUE</button>
+        </div>
+
+        <div class="overlay wasted-bg" id="overlay-wasted">
+            <div class="wasted-text">WASTED</div>
         </div>
 
     </div>
