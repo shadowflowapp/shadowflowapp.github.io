@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <!-- NATIVE APP VIEWPORT -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Word Family Matrix</title>
     <style>
@@ -17,11 +18,12 @@
             --wrong-color: #e53e3e;
         }
 
+        /* 100dvh prevents Safari/Chrome bottom bar jumping */
         body {
             font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", sans-serif;
             background-color: var(--bg-color); color: var(--text-main);
             margin: 0; padding: 0; display: flex; justify-content: center;
-            height: 100vh; overflow: hidden; -webkit-tap-highlight-color: transparent;
+            height: 100dvh; overflow: hidden; -webkit-tap-highlight-color: transparent;
         }
 
         .app-container {
@@ -38,13 +40,16 @@
             display: flex; gap: 20px; overflow-x: auto; scroll-behavior: smooth;
             padding: 10px 0; align-items: baseline; justify-content: flex-start;
             scrollbar-width: none; /* Firefox */
+            touch-action: pan-x; /* Optimizes mobile swiping */
+            cursor: grab;
         }
         .root-selector::-webkit-scrollbar { display: none; /* Chrome */ }
+        .root-selector:active { cursor: grabbing; }
 
         .root-pill {
             font-size: 26px; font-weight: 800; color: var(--text-sub);
-            text-transform: uppercase; cursor: pointer; transition: all 0.2s ease;
-            white-space: nowrap; opacity: 0.5;
+            text-transform: uppercase; transition: all 0.2s ease;
+            white-space: nowrap; opacity: 0.5; pointer-events: none; /* Let the parent handle drag */
         }
         .root-pill.active {
             color: var(--accent-gold); font-size: 38px; opacity: 1; letter-spacing: -1px;
@@ -53,14 +58,15 @@
         /* Form Selector (Horizontal Scroll Pills) */
         .form-selector {
             display: flex; gap: 10px; overflow-x: auto; padding-bottom: 15px; margin-bottom: 5px;
-            scrollbar-width: none;
+            scrollbar-width: none; touch-action: pan-x; cursor: grab;
         }
         .form-selector::-webkit-scrollbar { display: none; }
+        .form-selector:active { cursor: grabbing; }
         
         .form-pill {
             background: var(--surface-color); color: var(--text-main); border: 2px solid transparent;
-            padding: 10px 20px; border-radius: 20px; font-size: 16px; font-weight: 600; cursor: pointer;
-            white-space: nowrap; transition: all 0.2s;
+            padding: 10px 20px; border-radius: 20px; font-size: 16px; font-weight: 600; 
+            white-space: nowrap; transition: all 0.2s; pointer-events: none;
         }
         .form-pill.active { background: rgba(59, 130, 246, 0.2); border-color: var(--accent-blue); color: var(--accent-blue); }
 
@@ -75,7 +81,9 @@
         .form-title-container { display: flex; align-items: center; margin-bottom: 5px; gap: 10px; }
         .form-title { font-size: 28px; font-weight: 800; color: var(--accent-blue); }
         .form-pos { font-size: 14px; font-weight: 700; color: var(--text-sub); text-transform: uppercase; margin-bottom: 15px; border-bottom: 1px solid #333; padding-bottom: 15px; }
-        .form-def { font-size: 18px; line-height: 1.5; margin-bottom: 25px; }
+        
+        .def-container { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; margin-bottom: 25px; }
+        .form-def { font-size: 18px; line-height: 1.5; color: var(--text-main); }
 
         .sentence-block { margin-bottom: 25px; }
         .sentence-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; margin-bottom: 8px;}
@@ -92,7 +100,7 @@
         }
         .icon-btn:active { transform: scale(0.9); background: rgba(255, 255, 255, 0.3); }
 
-        /* Quiz Area (Hidden initially) */
+        /* Quiz Area */
         #quiz-container { display: none; flex-direction: column; flex-grow: 1; }
         .quiz-title { font-size: 16px; color: var(--accent-gold); font-weight: 800; text-transform: uppercase; text-align: center; margin-bottom: 30px; letter-spacing: 2px; }
         .quiz-sentence { font-size: 24px; font-weight: 500; line-height: 1.5; text-align: center; margin-bottom: 40px; }
@@ -108,14 +116,12 @@
         .btn { border: none; border-radius: 16px; font-size: 18px; font-weight: 700; cursor: pointer; padding: 20px; flex: 1; transition: transform 0.1s; }
         .btn:active { transform: scale(0.95); }
         .btn-quiz { background-color: var(--accent-gold); color: #000; }
-
     </style>
 </head>
 <body>
 
     <div class="app-container">
         
-        <!-- Top Scrollable Panel for Root Words -->
         <div class="header">
             <div class="root-label">Word Families</div>
             <div class="root-selector" id="root-selector">
@@ -123,21 +129,22 @@
             </div>
         </div>
 
-        <!-- STUDY MODE -->
         <div id="study-container" style="display: flex; flex-direction: column; flex-grow: 1; overflow: hidden;">
             <div class="form-selector" id="form-selector">
                 <!-- Word Form Pills generated by JS -->
             </div>
 
             <div class="card" id="study-card">
-                <div class="form-title-container" id="form-title-container">
-                    <!-- Title and Audio button injected here -->
+                <div class="form-title-container" id="form-title-container"></div>
+                <div class="form-pos" id="form-pos"></div>
+                
+                <!-- Definition Section with Audio -->
+                <div class="def-container" id="def-container">
+                    <div class="form-def" id="form-def"></div>
+                    <button class="icon-btn" id="def-audio-btn">🔊</button>
                 </div>
-                <div class="form-pos" id="form-pos">Noun</div>
-                <div class="form-def" id="form-def">Definition</div>
-                <div id="sentences-container">
-                    <!-- Sentences and Audio buttons injected here -->
-                </div>
+
+                <div id="sentences-container"></div>
             </div>
 
             <div class="controls">
@@ -145,7 +152,6 @@
             </div>
         </div>
 
-        <!-- QUIZ MODE -->
         <div id="quiz-container">
             <div class="card" style="justify-content: flex-start; padding-top: 40px;">
                 <div class="quiz-title">Grammar Boss Fight</div>
