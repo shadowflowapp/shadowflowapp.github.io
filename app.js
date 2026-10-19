@@ -1,29 +1,22 @@
 let database = [];
-let masteredWords = 0;
+let currentRootIndex = 0;
+let currentFormIndex = 0;
 
-// Batch config
-const BATCH_SIZE = 5;
-let currentBatch = [];
-let studyIndex = 0;
-let quizIndex = 0;
-
-// Initialize Web Speech API
-const synth = window.speechSynthesis;
+let quizSentences = [];
+let currentQuizIndex = 0;
 
 // 1. Fetch JSONL Database
 fetch('db.jsonl')
     .then(response => response.text())
     .then(text => {
-        // Parse the JSONL file line by line
         const lines = text.split('\n').filter(line => line.trim() !== '');
         database = lines.map(line => JSON.parse(line));
         
-        document.getElementById('total-count').innerText = database.length;
-        loadNextBatch();
+        loadRootWord(currentRootIndex);
     })
     .catch(err => console.error("Error loading DB", err));
 
-// Utility: Shuffle Array
+// Utility: Shuffle
 function shuffle(array) {
     let curId = array.length;
     while (0 !== curId) {
@@ -36,182 +29,147 @@ function shuffle(array) {
     return array;
 }
 
-// 2. Load a Batch of 5 Words
-function loadNextBatch() {
-    // Get next unmastered words up to BATCH_SIZE
-    currentBatch = database.slice(masteredWords, masteredWords + BATCH_SIZE);
+// 2. Load Root Word Family
+function loadRootWord(index) {
+    const rootData = database[index];
+    document.getElementById('root-word').innerText = rootData.root;
     
-    if (currentBatch.length === 0) {
-        alert("Incredible! You are a walking COBUILD dictionary!");
-        return;
-    }
+    // Generate Form Selector Pills
+    const selector = document.getElementById('form-selector');
+    selector.innerHTML = '';
+    
+    rootData.forms.forEach((formObj, idx) => {
+        const pill = document.createElement('div');
+        pill.className = `form-pill ${idx === 0 ? 'active' : ''}`;
+        pill.innerText = formObj.word;
+        pill.onclick = () => selectForm(idx);
+        selector.appendChild(pill);
+    });
 
-    studyIndex = 0;
-    document.getElementById('study-mode').style.display = 'flex';
-    document.getElementById('quiz-mode').style.display = 'none';
-    renderStudyCard();
+    selectForm(0);
 }
 
-// 3. Render Study Card
-function renderStudyCard() {
-    const wordObj = currentBatch[studyIndex];
+// 3. Render Study Content for Selected Form
+function selectForm(formIdx) {
+    currentFormIndex = formIdx;
+    const rootData = database[currentRootIndex];
+    const formObj = rootData.forms[formIdx];
 
-    document.getElementById('target-word').innerText = wordObj.word;
-    document.getElementById('phonetic').innerText = wordObj.phonetic;
-    document.getElementById('pos').innerText = wordObj.pos;
+    // Update Pill styling
+    document.querySelectorAll('.form-pill').forEach((pill, idx) => {
+        pill.classList.toggle('active', idx === formIdx);
+    });
 
-    // Highlight the target word (and any suffixes like 's' or 'ed') in the definition
-    const regex = new RegExp(`\\b(${wordObj.word}[a-z]*)\\b`, 'gi');
-    document.getElementById('cobuild-def').innerHTML = wordObj.cobuild.replace(regex, `<span class="target-highlight">$1</span>`);
-    
-    document.getElementById('example-sentence').innerText = `"${wordObj.example}"`;
+    // Populate Card
+    document.getElementById('form-title').innerText = formObj.word;
+    document.getElementById('form-pos').innerText = formObj.pos;
+    document.getElementById('form-def').innerText = formObj.definition;
 
-    // Reset Thai Toggle UI
-    document.getElementById('reveal-btn').style.display = 'inline-block';
-    document.getElementById('thai-text').style.display = 'none';
-    document.getElementById('thai-text').innerText = wordObj.thai;
+    const sentencesContainer = document.getElementById('sentences-container');
+    sentencesContainer.innerHTML = '';
 
-    // Button Toggle (Next Word vs Checkpoint Quiz)
-    if (studyIndex === currentBatch.length - 1) {
-        document.getElementById('btn-next').style.display = 'none';
-        document.getElementById('btn-quiz').style.display = 'block';
-    } else {
-        document.getElementById('btn-next').style.display = 'block';
-        document.getElementById('btn-quiz').style.display = 'none';
-    }
+    formObj.sentences.forEach(sentence => {
+        const block = document.createElement('div');
+        block.className = 'sentence-block';
+        
+        // Highlight the specific form word in the English sentence
+        const regex = new RegExp(`\\b(${formObj.word}[a-z]*)\\b`, 'gi');
+        const highlightedEn = sentence.en.replace(regex, `<span class="target-highlight">$1</span>`);
+
+        block.innerHTML = `
+            <div class="english-sentence">${highlightedEn}</div>
+            <div class="thai-bridge">${sentence.th}</div>
+        `;
+        sentencesContainer.appendChild(block);
+    });
 }
 
-function revealThai() {
-    document.getElementById('reveal-btn').style.display = 'none';
-    document.getElementById('thai-text').style.display = 'block';
+// 4. Grammar / Syntax Boss Fight (The Quiz)
+function startSyntaxQuiz() {
+    document.getElementById('study-container').style.display = 'none';
+    document.getElementById('quiz-container').style.display = 'flex';
+
+    const rootData = database[currentRootIndex];
+    
+    // Gather all sentences from all forms to create a quiz pool
+    quizSentences = [];
+    rootData.forms.forEach(formObj => {
+        formObj.sentences.forEach(sentence => {
+            quizSentences.push({
+                sentence: sentence.en,
+                answer: formObj.word
+            });
+        });
+    });
+
+    quizSentences = shuffle(quizSentences).slice(0, 5); // Take 5 random sentences
+    currentQuizIndex = 0;
+    
+    renderQuizQuestion();
 }
 
-function nextStudyWord() {
-    if (studyIndex < currentBatch.length - 1) {
-        studyIndex++;
-        renderStudyCard();
-    }
-}
+function renderQuizQuestion() {
+    const quizData = quizSentences[currentQuizIndex];
+    const rootData = database[currentRootIndex];
 
-// 4. Enter Quiz Phase (Test the whole batch)
-function startQuizPhase() {
-    quizIndex = 0;
-    document.getElementById('study-mode').style.display = 'none';
-    document.getElementById('quiz-mode').style.display = 'flex';
-    renderQuizCard();
-}
+    // Blank out the specific word form
+    const regex = new RegExp(`\\b${quizData.answer}\\b`, 'gi');
+    document.getElementById('quiz-sentence').innerHTML = quizData.sentence.replace(regex, `<span class="blank" id="quiz-blank">____</span>`);
 
-function renderQuizCard() {
-    const wordObj = currentBatch[quizIndex];
-    
-    // FALLBACK FIX: If "answer" is missing in JSON, fall back to "word"
-    const exactAnswer = wordObj.answer || wordObj.word;
-    
-    // Blank out the EXACT grammatical answer in the definition
-    const regex = new RegExp(`\\b${exactAnswer}\\b`, 'gi');
-    document.getElementById('quiz-sentence').innerHTML = wordObj.cobuild.replace(regex, `<span class="blank" id="quiz-blank">____</span>`);
-
-    // Distractors: Pull 3 random answers from the ENTIRE database
-    // FALLBACK FIX applied to distractors as well
-    let otherWords = database.filter(w => w.word !== wordObj.word).map(w => w.answer || w.word);
-    otherWords = shuffle(otherWords);
-    
-    // Combine the correct answer with 3 distractors and shuffle them
-    let options = shuffle([exactAnswer, ...otherWords.slice(0, 3)]);
+    // The Options are ALL the different forms of the root word!
+    let allForms = rootData.forms.map(f => f.word);
+    allForms = shuffle(allForms);
 
     const grid = document.getElementById('options-grid');
     grid.innerHTML = '';
-    options.forEach(opt => {
+    
+    // Display up to 6 forms as options
+    allForms.slice(0, 6).forEach(opt => {
         const btn = document.createElement('button');
         btn.className = 'option-btn';
         btn.innerText = opt;
-        // Pass the exact grammatical answer to the validation function
-        btn.onclick = () => checkQuizAnswer(btn, opt, exactAnswer);
+        btn.onclick = () => checkSyntaxAnswer(btn, opt, quizData.answer);
         grid.appendChild(btn);
     });
 }
 
-// 5. Grade Quiz Answer
-function checkQuizAnswer(btn, selectedOption, correctAnswer) {
+function checkSyntaxAnswer(btn, selectedOption, correctAnswer) {
     const blank = document.getElementById('quiz-blank');
-    blank.innerText = correctAnswer; // Fills the blank with perfect grammar
+    blank.innerText = correctAnswer;
     blank.style.borderBottomColor = 'transparent';
 
     if (selectedOption === correctAnswer) {
         btn.classList.add('correct');
         blank.style.color = 'var(--correct-color)';
         
-        // Progress to next quiz question automatically
         setTimeout(() => {
-            quizIndex++;
-            if (quizIndex < currentBatch.length) {
-                renderQuizCard();
+            currentQuizIndex++;
+            if (currentQuizIndex < quizSentences.length) {
+                renderQuizQuestion();
             } else {
-                // Batch Complete! Increase mastery and load next batch.
-                masteredWords += currentBatch.length;
-                updateProgressUI();
-                loadNextBatch();
+                alert(`Perfect! You've mastered the "${database[currentRootIndex].root}" family.`);
+                document.getElementById('study-container').style.display = 'flex';
+                document.getElementById('quiz-container').style.display = 'none';
+                
+                // Move to next root word
+                currentRootIndex = (currentRootIndex + 1) % database.length;
+                loadRootWord(currentRootIndex);
             }
-        }, 800);
+        }, 1000);
     } else {
         btn.classList.add('wrong');
         blank.style.color = 'var(--text-main)';
 
-        // Highlight the button that was actually correct
-        const allBtns = document.querySelectorAll('.option-btn');
-        allBtns.forEach(b => {
+        // Highlight correct
+        document.querySelectorAll('.option-btn').forEach(b => {
             if(b.innerText === correctAnswer) b.classList.add('correct');
         });
 
-        // Fail condition: If they miss one, they fail the checkpoint and must restudy the batch
         setTimeout(() => {
-            alert(`Oops! You missed "${correctAnswer}". Let's review this batch again.`);
-            studyIndex = 0;
-            document.getElementById('study-mode').style.display = 'flex';
-            document.getElementById('quiz-mode').style.display = 'none';
-            renderStudyCard();
-        }, 2000);
+            alert(`Grammar check! The correct form was "${correctAnswer}". Let's review this word family.`);
+            document.getElementById('study-container').style.display = 'flex';
+            document.getElementById('quiz-container').style.display = 'none';
+            selectForm(0);
+        }, 2500);
     }
 }
-
-// 6. Global Progress UI Update
-function updateProgressUI() {
-    const total = database.length;
-    document.getElementById('mastered-count').innerText = masteredWords;
-    document.getElementById('progress-fill').style.width = (masteredWords / total * 100) + '%';
-}
-
-// 7. Text-to-Speech (American Male Priority)
-function playAudio() {
-    if (synth.speaking) synth.cancel(); 
-    
-    const wordObj = currentBatch[studyIndex];
-    // Read the Target Word, pause slightly, then read the Definition
-    const textToSpeak = `${wordObj.word}. ${wordObj.cobuild}`;
-    const utterThis = new SpeechSynthesisUtterance(textToSpeak);
-    
-    const voices = synth.getVoices();
-    
-    // Identifiers for common Native American Male voices across operating systems
-    const maleUSIdentifiers = ['David', 'Alex', 'Aaron', 'Google US English'];
-    
-    let selectedVoice = voices.find(v => 
-        v.lang.includes('en-US') && 
-        maleUSIdentifiers.some(id => v.name.includes(id))
-    );
-    
-    // Fallback if no specific male name is found
-    if (!selectedVoice) {
-        selectedVoice = voices.find(v => v.lang.includes('en-US'));
-    }
-
-    if (selectedVoice) {
-        utterThis.voice = selectedVoice;
-    }
-    
-    utterThis.rate = 0.9; // Slightly slower for better learner comprehension
-    synth.speak(utterThis);
-}
-
-// Browser quirk: ensure voices load fully before first play
-speechSynthesis.onvoiceschanged = () => { synth.getVoices(); };
