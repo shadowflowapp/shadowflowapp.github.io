@@ -3,107 +3,106 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Los Santos Lingo</title>
+    <title>Los Santos Lingo: Infinite</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@500;700&family=Roboto:wght@400;700;900&display=swap');
 
         :root {
-            --gta-black: #0a0a0a;
-            --gta-dark: #1c1c1e;
-            --gta-green: #41d95d;
-            --gta-red: #d94141;
-            --gta-yellow: #f2c80f;
-            --gta-cyan: #0fdbf2;
-            --gta-pink: #f20f8c;
-            --text-light: #f5f5f5;
-            --text-dim: #888888;
+            --gta-black: #0a0a0a; --gta-dark: #1c1c1e;
+            --gta-green: #41d95d; --gta-red: #d94141;
+            --gta-yellow: #f2c80f; --gta-cyan: #0fdbf2; --gta-pink: #f20f8c;
+            --text-light: #f5f5f5; --text-dim: #888888;
         }
 
         body {
-            font-family: 'Roboto', sans-serif;
-            background-color: var(--gta-black);
-            color: var(--text-light);
-            margin: 0; padding: 0;
-            display: flex; justify-content: center;
-            height: 100dvh; overflow: hidden;
-            -webkit-tap-highlight-color: transparent;
+            font-family: 'Roboto', sans-serif; background-color: var(--gta-black);
+            color: var(--text-light); margin: 0; padding: 0;
+            display: flex; justify-content: center; height: 100dvh; overflow: hidden;
+            -webkit-tap-highlight-color: transparent; user-select: none;
             background-image: radial-gradient(circle at center, #1a1a1a 0%, #000000 100%);
         }
 
         .app-container {
             width: 100%; max-width: 430px; height: 100%;
-            display: flex; flex-direction: column;
-            padding: 20px 15px; box-sizing: border-box;
-            position: relative;
+            display: flex; flex-direction: column; padding: 20px 15px; box-sizing: border-box; position: relative;
         }
 
         /* HUD Header */
-        .hud-header {
-            display: flex; justify-content: space-between; align-items: center;
-            margin-bottom: 20px; padding-bottom: 10px; border-bottom: 2px solid #333;
-        }
-        .mission-title {
-            font-family: 'Oswald', sans-serif; font-size: 20px; font-weight: 700;
-            color: var(--gta-yellow); text-transform: uppercase; letter-spacing: 1px;
-            text-shadow: 1px 1px 0px #000;
-        }
-        .wanted-stars { color: var(--text-dim); font-size: 22px; letter-spacing: 2px; }
-        .wanted-stars .active { color: var(--text-light); text-shadow: 0 0 5px #fff; }
+        .hud { margin-bottom: 20px; border-bottom: 2px solid #333; padding-bottom: 15px; }
+        .hud-top { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 10px; }
+        
+        .rank-title { font-family: 'Oswald', sans-serif; font-size: 24px; font-weight: 700; color: var(--gta-yellow); text-transform: uppercase; text-shadow: 1px 1px 0px #000; }
+        .elo-score { font-size: 14px; color: var(--gta-cyan); font-weight: 900; letter-spacing: 1px; }
+        
+        .wanted-stars { color: var(--text-dim); font-size: 20px; letter-spacing: 2px; }
+        .wanted-stars .active { color: #fff; text-shadow: 0 0 8px #fff; }
 
-        /* Audio Briefing Button */
-        .audio-briefing {
-            background: linear-gradient(135deg, var(--gta-pink), #a60a5e);
-            border: 2px solid #fff; border-radius: 12px;
-            padding: 20px; display: flex; align-items: center; justify-content: center;
-            gap: 15px; cursor: pointer; transition: transform 0.1s;
-            box-shadow: 0 4px 15px rgba(242, 15, 140, 0.4);
-            margin-bottom: 30px;
-        }
-        .audio-briefing:active { transform: scale(0.96); }
-        .audio-icon { font-size: 32px; }
-        .audio-text { font-family: 'Oswald', sans-serif; font-size: 24px; font-weight: 700; letter-spacing: 1px; }
+        .xp-bar-bg { width: 100%; height: 6px; background: #222; border-radius: 3px; overflow: hidden; }
+        .xp-bar-fill { height: 100%; background: var(--gta-pink); width: 0%; transition: width 0.3s ease; }
+        .xp-text { font-size: 12px; color: var(--text-dim); text-align: right; margin-top: 4px; font-weight: 700; }
 
-        /* The Drop Zone (Answer Box) */
-        .drop-zone {
-            min-height: 120px; background: rgba(255,255,255,0.05);
-            border: 2px dashed #444; border-radius: 12px;
-            padding: 15px; display: flex; flex-wrap: wrap; gap: 8px;
-            align-content: flex-start; margin-bottom: 25px;
+        /* The Sentence Stage */
+        .stage {
+            flex-grow: 1; display: flex; flex-direction: column; justify-content: center; position: relative;
         }
         
-        /* The Chunks */
-        .chunks-bank { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
+        /* Interactive Sentence */
+        .sentence-container {
+            font-size: 28px; font-weight: 700; line-height: 1.6; text-align: center;
+            display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-bottom: 40px;
+        }
         
-        .chunk-btn {
-            background-color: var(--gta-dark); color: #fff;
-            border: 2px solid #444; border-radius: 8px;
-            padding: 12px 16px; font-size: 18px; font-weight: 700;
-            cursor: pointer; transition: all 0.1s;
-            box-shadow: 0 4px 0 #111; user-select: none;
+        .tap-word {
+            position: relative; cursor: pointer; border-bottom: 2px dotted #444; padding-bottom: 2px; transition: color 0.1s;
         }
-        .chunk-btn:active { transform: translateY(4px); box-shadow: 0 0 0 #111; }
-        .chunk-btn.in-zone { background-color: var(--gta-cyan); color: #000; border-color: #fff; box-shadow: 0 4px 0 #008f9e; }
-        .chunk-btn.hidden { visibility: hidden; pointer-events: none; }
+        .tap-word:active { color: var(--gta-yellow); }
+        
+        /* Neon Tooltip for Translation */
+        .tooltip {
+            position: absolute; bottom: 110%; left: 50%; transform: translateX(-50%);
+            background: rgba(0,0,0,0.9); border: 1px solid var(--gta-cyan);
+            color: var(--gta-cyan); padding: 6px 12px; border-radius: 6px;
+            font-size: 16px; font-weight: 900; white-space: nowrap;
+            opacity: 0; pointer-events: none; transition: opacity 0.2s;
+            box-shadow: 0 0 10px rgba(15, 219, 242, 0.4); z-index: 10;
+        }
+        .tap-word.show-tooltip .tooltip { opacity: 1; }
 
-        /* Subtitles (Thai Hint) */
-        .subtitles-container {
-            margin-top: auto; text-align: center;
-            background: rgba(0, 0, 0, 0.8); border-radius: 8px;
-            padding: 15px; border-left: 4px solid var(--gta-yellow);
-        }
-        .thai-text { display: none; font-size: 16px; color: var(--gta-yellow); font-weight: 500; }
-        .reveal-btn {
-            background: none; border: none; color: var(--text-dim);
-            font-family: 'Oswald', sans-serif; font-size: 16px; letter-spacing: 1px;
-            cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%;
+        .blank {
+            display: inline-block; min-width: 100px; border-bottom: 4px solid var(--text-light);
+            color: var(--gta-yellow); text-align: center; padding: 0 10px;
         }
 
-        /* Overlay Screens */
+        /* Full Thai Fracture (Long Press) */
+        .full-thai-overlay {
+            display: none; background: rgba(242, 200, 15, 0.1); border-left: 4px solid var(--gta-yellow);
+            padding: 15px; border-radius: 8px; margin-bottom: 30px;
+            font-size: 18px; color: var(--gta-yellow); text-align: center; font-weight: 500;
+            animation: fadeIn 0.2s;
+        }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Options Grid */
+        .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
+        .option-btn {
+            background-color: var(--gta-dark); color: #fff; border: 2px solid #333;
+            padding: 20px 10px; border-radius: 12px; font-size: 18px; font-weight: 700;
+            cursor: pointer; transition: all 0.1s; box-shadow: 0 4px 0 #111;
+        }
+        .option-btn:active { transform: translateY(4px); box-shadow: 0 0 0 #111; }
+        .option-btn.correct { background-color: var(--gta-green); border-color: #fff; color: #000; box-shadow: 0 4px 0 #1b8a30; }
+        .option-btn.wrong { background-color: var(--gta-red); border-color: #fff; box-shadow: 0 4px 0 #8a1b1b; }
+
+        /* Audio Helper */
+        .audio-btn { background: none; border: 2px solid #555; color: #fff; border-radius: 50%; width: 50px; height: 50px; font-size: 24px; margin: 0 auto 20px auto; display: block; }
+        
+        .hint-instruction { text-align: center; color: var(--text-dim); font-size: 12px; text-transform: uppercase; letter-spacing: 1px; }
+
+        /* Overlays */
         .overlay {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
-            z-index: 100; opacity: 0; pointer-events: none; transition: opacity 0.3s;
-            backdrop-filter: blur(5px);
+            z-index: 100; opacity: 0; pointer-events: none; transition: opacity 0.3s; backdrop-filter: blur(5px);
         }
         .overlay.active { opacity: 1; pointer-events: auto; }
 
@@ -115,67 +114,62 @@
             transform: scale(1.5); transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
         .overlay.active .passed-text { transform: scale(1); }
+        .xp-gain { font-family: 'Oswald', sans-serif; font-size: 24px; color: var(--gta-green); margin-top: 10px; }
         
-        .wasted-bg { background: rgba(217, 65, 65, 0.3); } /* Red tint */
+        .wasted-bg { background: rgba(217, 65, 65, 0.4); }
         .wasted-text {
-            font-family: 'Impact', 'Oswald', sans-serif; font-size: 54px; color: var(--gta-red);
+            font-family: 'Impact', 'Oswald', sans-serif; font-size: 64px; color: var(--gta-red);
             text-transform: uppercase; letter-spacing: 4px;
             text-shadow: 2px 2px 0px #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
         }
-
-        .next-btn {
-            margin-top: 40px; background: #fff; color: #000; font-family: 'Oswald', sans-serif;
-            font-size: 24px; font-weight: 700; padding: 15px 40px; border: none; border-radius: 8px;
-            cursor: pointer; text-transform: uppercase;
-        }
-        .next-btn:active { transform: scale(0.95); }
 
     </style>
 </head>
 <body>
 
-    <div class="app-container">
+    <div class="app-container" id="main-container">
         
         <!-- HUD -->
-        <div class="hud-header">
-            <div class="mission-title">Mission: <span id="mission-word">SPEED</span></div>
-            <div class="wanted-stars" id="wanted-stars">
-                ★★★★★
+        <div class="hud">
+            <div class="hud-top">
+                <div>
+                    <div class="rank-title" id="rank-title">STREET THUG</div>
+                    <div class="elo-score">ELO: <span id="elo-display">800</span></div>
+                </div>
+                <div class="wanted-stars" id="wanted-stars">☆☆☆☆☆</div>
             </div>
+            <div class="xp-bar-bg"><div class="xp-bar-fill" id="xp-fill"></div></div>
+            <div class="xp-text">LVL <span id="lvl-display">1</span> XP: <span id="xp-display">0</span> / 1000</div>
         </div>
 
-        <!-- Play Audio Briefing -->
-        <div class="audio-briefing" onclick="playAudio()">
-            <span class="audio-icon">📻</span>
-            <span class="audio-text">PLAY BRIEFING</span>
+        <!-- Gameplay Stage -->
+        <div class="stage">
+            <button class="audio-btn" onclick="playAudio()">🔊</button>
+            
+            <div class="sentence-container" id="sentence-container">
+                <!-- Words injected here -->
+            </div>
+
+            <div class="full-thai-overlay" id="full-thai-overlay">
+                <!-- Full Thai sentence injected here -->
+            </div>
+
+            <div class="options-grid" id="options-grid">
+                <!-- Distractors injected here -->
+            </div>
+
+            <div class="hint-instruction">Tap word for hint • Hold screen for full Thai</div>
         </div>
 
-        <!-- Drop Zone -->
-        <div class="drop-zone" id="drop-zone">
-            <!-- Selected chunks go here -->
-        </div>
-
-        <!-- Scrambled Bank -->
-        <div class="chunks-bank" id="chunks-bank">
-            <!-- Scrambled chunks go here -->
-        </div>
-
-        <!-- GTA Subtitles (Thai Hint) -->
-        <div class="subtitles-container">
-            <button class="reveal-btn" id="reveal-btn" onclick="revealThai()">
-                <span>👁️</span> REVEAL INTEL
-            </button>
-            <div class="thai-text" id="thai-text">Loading...</div>
-        </div>
-
-        <!-- OVERLAYS -->
+        <!-- Overlays -->
         <div class="overlay passed-bg" id="overlay-passed">
-            <div class="passed-text">MISSION PASSED<br><span style="font-size: 24px; color: #fff;">RESPECT +</span></div>
-            <button class="next-btn" onclick="nextMission()">CONTINUE</button>
+            <div class="passed-text">MISSION PASSED</div>
+            <div class="xp-gain" id="xp-gain-text">+50 RESPECT</div>
         </div>
 
         <div class="overlay wasted-bg" id="overlay-wasted">
             <div class="wasted-text">WASTED</div>
+            <div class="xp-gain" style="color: #fff;">ELO DROPPED</div>
         </div>
 
     </div>
