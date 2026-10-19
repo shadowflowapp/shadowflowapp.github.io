@@ -5,6 +5,9 @@ let currentFormIndex = 0;
 let quizSentences = [];
 let currentQuizIndex = 0;
 
+// Initialize Web Speech API
+const synth = window.speechSynthesis;
+
 // 1. Fetch JSONL Database
 fetch('db.jsonl')
     .then(response => response.text())
@@ -12,6 +15,7 @@ fetch('db.jsonl')
         const lines = text.split('\n').filter(line => line.trim() !== '');
         database = lines.map(line => JSON.parse(line));
         
+        buildRootSelector();
         loadRootWord(currentRootIndex);
     })
     .catch(err => console.error("Error loading DB", err));
@@ -29,62 +33,155 @@ function shuffle(array) {
     return array;
 }
 
-// 2. Load Root Word Family
+// 2. Build the Top Scrollable Root Selector
+function buildRootSelector() {
+    const selector = document.getElementById('root-selector');
+    selector.innerHTML = '';
+
+    database.forEach((rootData, idx) => {
+        const pill = document.createElement('div');
+        pill.className = `root-pill`;
+        pill.id = `root-pill-${idx}`;
+        pill.innerText = rootData.root;
+        pill.onclick = () => loadRootWord(idx);
+        selector.appendChild(pill);
+    });
+}
+
+// 3. Load Root Word Family
 function loadRootWord(index) {
+    currentRootIndex = index;
     const rootData = database[index];
-    document.getElementById('root-word').innerText = rootData.root;
     
-    // Generate Form Selector Pills
+    // Update Top Panel UI and scroll into view
+    document.querySelectorAll('.root-pill').forEach((pill, idx) => {
+        if (idx === index) {
+            pill.classList.add('active');
+            pill.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+        } else {
+            pill.classList.remove('active');
+        }
+    });
+    
+    // Generate Form Selector Sub-Pills
     const selector = document.getElementById('form-selector');
     selector.innerHTML = '';
     
     rootData.forms.forEach((formObj, idx) => {
         const pill = document.createElement('div');
-        pill.className = `form-pill ${idx === 0 ? 'active' : ''}`;
+        pill.className = `form-pill`;
         pill.innerText = formObj.word;
         pill.onclick = () => selectForm(idx);
         selector.appendChild(pill);
     });
 
+    // Make sure we switch back to study mode if we clicked this from a quiz
+    document.getElementById('study-container').style.display = 'flex';
+    document.getElementById('quiz-container').style.display = 'none';
+
     selectForm(0);
 }
 
-// 3. Render Study Content for Selected Form
+// 4. Render Study Content with Audio Buttons
 function selectForm(formIdx) {
     currentFormIndex = formIdx;
     const rootData = database[currentRootIndex];
     const formObj = rootData.forms[formIdx];
 
-    // Update Pill styling
+    // Update Sub-Pill styling
     document.querySelectorAll('.form-pill').forEach((pill, idx) => {
         pill.classList.toggle('active', idx === formIdx);
+        if (idx === formIdx) {
+            pill.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+        }
     });
 
-    // Populate Card
-    document.getElementById('form-title').innerText = formObj.word;
+    // Populate Title with Audio Button
+    const titleContainer = document.getElementById('form-title-container');
+    titleContainer.innerHTML = ''; // Clear existing
+    
+    const titleText = document.createElement('span');
+    titleText.className = 'form-title';
+    titleText.innerText = formObj.word;
+    
+    const titleAudio = document.createElement('button');
+    titleAudio.className = 'icon-btn';
+    titleAudio.innerText = '🔊';
+    titleAudio.onclick = () => speakText(formObj.word);
+
+    titleContainer.appendChild(titleText);
+    titleContainer.appendChild(titleAudio);
+
+    // Populate Meta Info
     document.getElementById('form-pos').innerText = formObj.pos;
     document.getElementById('form-def').innerText = formObj.definition;
 
+    // Populate Sentences
     const sentencesContainer = document.getElementById('sentences-container');
     sentencesContainer.innerHTML = '';
 
     formObj.sentences.forEach(sentence => {
+        // Create elements securely to avoid quote-escaping bugs in audio strings
         const block = document.createElement('div');
         block.className = 'sentence-block';
         
-        // Highlight the specific form word in the English sentence
-        const regex = new RegExp(`\\b(${formObj.word}[a-z]*)\\b`, 'gi');
-        const highlightedEn = sentence.en.replace(regex, `<span class="target-highlight">$1</span>`);
+        const header = document.createElement('div');
+        header.className = 'sentence-header';
 
-        block.innerHTML = `
-            <div class="english-sentence">${highlightedEn}</div>
-            <div class="thai-bridge">${sentence.th}</div>
-        `;
+        const enDiv = document.createElement('div');
+        enDiv.className = 'english-sentence';
+        // Highlight the target word dynamically
+        const regex = new RegExp(`\\b(${formObj.word}[a-z]*)\\b`, 'gi');
+        enDiv.innerHTML = sentence.en.replace(regex, `<span class="target-highlight">$1</span>`);
+
+        const audioBtn = document.createElement('button');
+        audioBtn.className = 'icon-btn';
+        audioBtn.innerText = '🔊';
+        audioBtn.onclick = () => speakText(sentence.en);
+
+        header.appendChild(enDiv);
+        header.appendChild(audioBtn);
+
+        const thDiv = document.createElement('div');
+        thDiv.className = 'thai-bridge';
+        thDiv.innerText = sentence.th;
+
+        block.appendChild(header);
+        block.appendChild(thDiv);
+        
         sentencesContainer.appendChild(block);
     });
 }
 
-// 4. Grammar / Syntax Boss Fight (The Quiz)
+// 5. Centralized Speech Function
+function speakText(text) {
+    if (synth.speaking) synth.cancel(); 
+    
+    const utterThis = new SpeechSynthesisUtterance(text);
+    const voices = synth.getVoices();
+    
+    // Attempt to locate standard American Male voices
+    const maleUSIdentifiers = ['David', 'Alex', 'Aaron', 'Google US English'];
+    let selectedVoice = voices.find(v => 
+        v.lang.includes('en-US') && 
+        maleUSIdentifiers.some(id => v.name.includes(id))
+    );
+    
+    if (!selectedVoice) {
+        selectedVoice = voices.find(v => v.lang.includes('en-US'));
+    }
+
+    if (selectedVoice) {
+        utterThis.voice = selectedVoice;
+    }
+    
+    utterThis.rate = 0.9; 
+    synth.speak(utterThis);
+}
+speechSynthesis.onvoiceschanged = () => { synth.getVoices(); };
+
+
+// 6. Grammar / Syntax Boss Fight (The Quiz)
 function startSyntaxQuiz() {
     document.getElementById('study-container').style.display = 'none';
     document.getElementById('quiz-container').style.display = 'flex';
@@ -148,9 +245,6 @@ function checkSyntaxAnswer(btn, selectedOption, correctAnswer) {
                 renderQuizQuestion();
             } else {
                 alert(`Perfect! You've mastered the "${database[currentRootIndex].root}" family.`);
-                document.getElementById('study-container').style.display = 'flex';
-                document.getElementById('quiz-container').style.display = 'none';
-                
                 // Move to next root word
                 currentRootIndex = (currentRootIndex + 1) % database.length;
                 loadRootWord(currentRootIndex);
