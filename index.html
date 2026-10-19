@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>COBUILD A-Z Mastery</title>
+    <title>Word Family Matrix</title>
     <style>
         :root {
             --bg-color: #0d0f12;
@@ -27,95 +27,94 @@
         .app-container {
             width: 100%; max-width: 430px; height: 100%;
             display: flex; flex-direction: column;
-            padding: 20px 20px 40px 20px; box-sizing: border-box;
+            padding: 20px 20px 30px 20px; box-sizing: border-box;
         }
 
-        /* Top Progress Bar */
-        .progress-header { display: flex; flex-direction: column; align-items: center; margin-bottom: 20px; }
-        .az-title { font-size: 14px; font-weight: 800; color: var(--text-sub); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 8px; }
-        .progress-bar { width: 100%; height: 6px; background: var(--surface-color); border-radius: 3px; overflow: hidden; }
-        .progress-fill { height: 100%; background: var(--accent-gold); width: 0%; transition: width 0.3s; }
-        .stats { font-size: 13px; font-weight: 700; color: var(--accent-gold); margin-top: 8px; }
+        /* Top Header */
+        .header { text-align: center; margin-bottom: 20px; }
+        .root-label { font-size: 14px; font-weight: 800; color: var(--text-sub); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 5px; }
+        .target-word { font-size: 42px; font-weight: 800; letter-spacing: -1px; text-transform: uppercase; color: var(--accent-gold); }
 
-        /* Mode Containers */
-        #study-mode, #quiz-mode { display: flex; flex-direction: column; flex-grow: 1; }
-        #quiz-mode { display: none; }
-
-        /* --- STUDY UI --- */
-        .card {
-            background-color: var(--surface-color); border-radius: 24px; padding: 30px 24px;
-            flex-grow: 1; display: flex; flex-direction: column; justify-content: center; position: relative;
+        /* Form Selector (Horizontal Scroll Pills) */
+        .form-selector {
+            display: flex; gap: 10px; overflow-x: auto; padding-bottom: 15px; margin-bottom: 10px;
+            scrollbar-width: none; /* Firefox */
         }
+        .form-selector::-webkit-scrollbar { display: none; /* Safari and Chrome */ }
         
-        .word-header { text-align: center; margin-bottom: 30px; border-bottom: 1px solid #333; padding-bottom: 20px; }
-        .target-word { font-size: 40px; font-weight: 800; letter-spacing: -1px; margin-bottom: 5px; }
-        .word-meta { font-size: 16px; color: var(--text-sub); font-family: monospace; }
-        .pos-badge { font-size: 12px; background: rgba(59, 130, 246, 0.2); color: var(--accent-blue); padding: 4px 8px; border-radius: 12px; text-transform: uppercase; font-weight: 700; margin-left: 8px; }
+        .form-pill {
+            background: var(--surface-color); color: var(--text-main); border: 2px solid transparent;
+            padding: 10px 20px; border-radius: 20px; font-size: 16px; font-weight: 600; cursor: pointer;
+            white-space: nowrap; transition: all 0.2s;
+        }
+        .form-pill.active { background: rgba(59, 130, 246, 0.2); border-color: var(--accent-blue); color: var(--accent-blue); }
 
-        .cobuild-def { font-size: 22px; font-weight: 500; line-height: 1.5; margin-bottom: 20px; }
-        .target-highlight { color: var(--accent-gold); font-weight: 700; }
-        .example-sentence { font-size: 16px; font-style: italic; color: var(--text-sub); margin-bottom: 30px; border-left: 3px solid #444; padding-left: 15px; }
+        /* Study Area */
+        .card {
+            background-color: var(--surface-color); border-radius: 24px; padding: 24px;
+            flex-grow: 1; display: flex; flex-direction: column; overflow-y: auto; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        .form-title { font-size: 28px; font-weight: 800; margin-bottom: 5px; color: var(--accent-blue); }
+        .form-pos { font-size: 14px; font-weight: 700; color: var(--text-sub); text-transform: uppercase; margin-bottom: 15px; border-bottom: 1px solid #333; padding-bottom: 15px; }
+        .form-def { font-size: 18px; line-height: 1.5; margin-bottom: 25px; }
 
-        .thai-reveal { text-align: center; }
-        .reveal-btn { background: none; border: 1px dashed #555; color: var(--text-sub); padding: 10px 20px; border-radius: 20px; font-size: 14px; cursor: pointer; }
-        .thai-text { display: none; font-size: 18px; color: var(--accent-blue); font-weight: 600; }
+        .sentence-block { margin-bottom: 25px; }
+        .english-sentence { font-size: 20px; font-weight: 500; line-height: 1.4; margin-bottom: 8px; }
+        .thai-bridge { font-size: 15px; color: var(--accent-gold); font-weight: 500; }
+        .target-highlight { color: var(--accent-blue); font-weight: 700; text-decoration: underline; }
 
-        .controls { display: flex; gap: 12px; margin-top: 20px; }
-        .btn { border: none; border-radius: 16px; font-size: 18px; font-weight: 700; cursor: pointer; padding: 20px; flex: 1; transition: transform 0.1s; }
-        .btn:active { transform: scale(0.95); }
-        .btn-audio { background-color: var(--surface-color); color: var(--text-main); border: 1px solid #333; flex: 0.4; }
-        .btn-next { background-color: var(--text-main); color: var(--bg-color); }
-        .btn-quiz { background-color: var(--accent-gold); color: #000; display: none; }
-
-        /* --- QUIZ UI --- */
-        .quiz-title { font-size: 14px; color: var(--accent-gold); font-weight: 800; text-transform: uppercase; text-align: center; margin-bottom: 20px; letter-spacing: 2px; }
+        /* Quiz Area (Hidden initially) */
+        #quiz-container { display: none; flex-direction: column; flex-grow: 1; }
+        .quiz-title { font-size: 16px; color: var(--accent-gold); font-weight: 800; text-transform: uppercase; text-align: center; margin-bottom: 30px; letter-spacing: 2px; }
         .quiz-sentence { font-size: 24px; font-weight: 500; line-height: 1.5; text-align: center; margin-bottom: 40px; }
         .blank { display: inline-block; min-width: 100px; border-bottom: 3px solid var(--text-sub); color: transparent; text-align: center; font-weight: 800; }
         
         .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-        .option-btn { background-color: var(--surface-color); color: var(--text-main); border: 2px solid transparent; padding: 20px 10px; border-radius: 16px; font-size: 18px; font-weight: 600; cursor: pointer; transition: all 0.1s ease; }
+        .option-btn { background-color: var(--surface-color); color: var(--text-main); border: 2px solid transparent; padding: 18px 10px; border-radius: 16px; font-size: 18px; font-weight: 600; cursor: pointer; transition: all 0.1s ease; }
         .option-btn.correct { background-color: var(--correct-color); border-color: var(--correct-color); }
         .option-btn.wrong { background-color: var(--wrong-color); border-color: var(--wrong-color); }
+
+        /* Controls */
+        .controls { display: flex; gap: 12px; margin-top: 20px; }
+        .btn { border: none; border-radius: 16px; font-size: 18px; font-weight: 700; cursor: pointer; padding: 20px; flex: 1; transition: transform 0.1s; }
+        .btn:active { transform: scale(0.95); }
+        .btn-quiz { background-color: var(--accent-gold); color: #000; }
+
     </style>
 </head>
 <body>
 
     <div class="app-container">
         
-        <div class="progress-header">
-            <div class="az-title">A-Z Dictionary Completion</div>
-            <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
-            <div class="stats"><span id="mastered-count">0</span> / <span id="total-count">0</span> Words Mastered</div>
+        <div class="header">
+            <div class="root-label">Word Family</div>
+            <div class="target-word" id="root-word">loading</div>
         </div>
 
         <!-- STUDY MODE -->
-        <div id="study-mode">
-            <div class="card">
-                <div class="word-header">
-                    <div class="target-word" id="target-word">loading</div>
-                    <div class="word-meta"><span id="phonetic"></span> <span class="pos-badge" id="pos"></span></div>
-                </div>
+        <div id="study-container" style="display: flex; flex-direction: column; flex-grow: 1; overflow: hidden;">
+            <div class="form-selector" id="form-selector">
+                <!-- Pills generated by JS -->
+            </div>
 
-                <div class="cobuild-def" id="cobuild-def">Loading...</div>
-                <div class="example-sentence" id="example-sentence">Loading...</div>
-
-                <div class="thai-reveal">
-                    <button class="reveal-btn" id="reveal-btn" onclick="revealThai()">Tap for Thai Meaning</button>
-                    <div class="thai-text" id="thai-text"></div>
+            <div class="card" id="study-card">
+                <div class="form-title" id="form-title">Word</div>
+                <div class="form-pos" id="form-pos">Noun</div>
+                <div class="form-def" id="form-def">Definition</div>
+                <div id="sentences-container">
+                    <!-- Sentences generated by JS -->
                 </div>
             </div>
 
             <div class="controls">
-                <button class="btn btn-audio" onclick="playAudio()">🔊</button>
-                <button class="btn btn-next" id="btn-next" onclick="nextStudyWord()">Next ➡️</button>
-                <button class="btn btn-quiz" id="btn-quiz" onclick="startQuizPhase()">Checkpoint ⚔️</button>
+                <button class="btn btn-quiz" onclick="startSyntaxQuiz()">Take Syntax Quiz ⚔️</button>
             </div>
         </div>
 
         <!-- QUIZ MODE -->
-        <div id="quiz-mode">
-            <div class="card" style="justify-content: flex-start; padding-top: 50px;">
-                <div class="quiz-title">Mastery Checkpoint</div>
+        <div id="quiz-container">
+            <div class="card" style="justify-content: flex-start; padding-top: 40px;">
+                <div class="quiz-title">Grammar Boss Fight</div>
                 <div class="quiz-sentence" id="quiz-sentence">Loading...</div>
                 <div class="options-grid" id="options-grid"></div>
             </div>
