@@ -1,28 +1,34 @@
 let database = [];
-let currentMissionIndex = 0;
-
-// Game State
-let correctChunksOrder = [];
-let scrambledChunks = [];
-let userDropZone = []; // Stores the indices of the chunks the user has tapped
-
 const synth = window.speechSynthesis;
 
-// 1. Fetch JSONL Database
+// Player State
+let playerElo = 800;
+let playerXP = 0;
+let playerLevel = 1;
+let streak = 0;
+let usedHint = false;
+
+// Current Match State
+let currentSentence = null;
+let startTime = 0;
+
+// Long Press Variables for Full Thai
+let pressTimer;
+const LONG_PRESS_MS = 500;
+
+// 1. Initialize
 fetch('db.jsonl')
     .then(response => response.text())
     .then(text => {
         const lines = text.split('\n').filter(line => line.trim() !== '');
         database = lines.map(line => JSON.parse(line));
         
-        // Shuffle the database so missions are random
-        database = shuffle(database);
-        
-        loadMission(currentMissionIndex);
+        updateHUD();
+        setupLongPress();
+        loadNextMatch();
     })
     .catch(err => console.error("Error loading DB", err));
 
-// Utility: Shuffle Array
 function shuffle(array) {
     let curId = array.length;
     while (0 !== curId) {
@@ -35,166 +41,211 @@ function shuffle(array) {
     return array;
 }
 
-// 2. Load Mission
-function loadMission(index) {
-    const missionData = database[index];
-    
-    // Reset HUD & Overlays
-    document.getElementById('mission-word').innerText = missionData.root;
-    document.getElementById('overlay-passed').classList.remove('active');
-    document.getElementById('overlay-wasted').classList.remove('active');
-    updateStars();
+// 2. Adaptive Matchmaking (Find a sentence close to Player's Elo)
+function loadNextMatch() {
+    usedHint = false;
+    document.getElementById('full-thai-overlay').style.display = 'none';
 
-    // Reset Subtitles
-    document.getElementById('reveal-btn').style.display = 'flex';
-    document.getElementById('thai-text').style.display = 'none';
-    document.getElementById('thai-text').innerText = missionData.th;
-
-    // Setup Chunks
-    correctChunksOrder = [...missionData.chunks];
-    
-    // Create an array of objects to track original text and scrambled ID
-    scrambledChunks = correctChunksOrder.map((text, i) => ({ id: i, text: text }));
-    scrambledChunks = shuffle(scrambledChunks);
-    
-    userDropZone = [];
-
-    renderBoard();
-    
-    // Auto-play the briefing audio when mission starts
-    setTimeout(playAudio, 500);
-}
-
-// 3. Render the Boards (Bank and Drop Zone)
-function renderBoard() {
-    const bankEl = document.getElementById('chunks-bank');
-    const zoneEl = document.getElementById('drop-zone');
-    
-    bankEl.innerHTML = '';
-    zoneEl.innerHTML = '';
-
-    // Render Bank (Hidden if it's currently in the drop zone)
-    scrambledChunks.forEach((chunkObj, idx) => {
-        const btn = document.createElement('button');
-        btn.className = `chunk-btn ${userDropZone.includes(idx) ? 'hidden' : ''}`;
-        btn.innerText = chunkObj.text;
-        btn.onclick = () => tapBankChunk(idx);
-        bankEl.appendChild(btn);
-    });
-
-    // Render Drop Zone
-    userDropZone.forEach((scrambledIdx, orderIndex) => {
-        const chunkObj = scrambledChunks[scrambledIdx];
-        const btn = document.createElement('button');
-        btn.className = 'chunk-btn in-zone';
-        btn.innerText = chunkObj.text;
-        btn.onclick = () => tapZoneChunk(orderIndex);
-        zoneEl.appendChild(btn);
-    });
-
-    // Auto-Check if Drop Zone is full
-    if (userDropZone.length === correctChunksOrder.length) {
-        checkAnswer();
+    // Find sentences within +- 150 Elo points
+    let eligible = database.filter(s => Math.abs(s.elo - playerElo) <= 150);
+    if (eligible.length === 0) {
+        // Fallback if at extremes
+        eligible = database;
     }
-}
 
-// 4. Tap Interactions
-function tapBankChunk(scrambledIdx) {
-    // Add to drop zone
-    userDropZone.push(scrambledIdx);
-    renderBoard();
-}
-
-function tapZoneChunk(orderIndex) {
-    // Remove from drop zone
-    userDropZone.splice(orderIndex, 1);
-    renderBoard();
-}
-
-// 5. Check Answer
-function checkAnswer() {
-    let isCorrect = true;
+    currentSentence = eligible[Math.floor(Math.random() * eligible.length)];
     
-    // Compare user's placed chunks with the correct order
-    userDropZone.forEach((scrambledIdx, index) => {
-        if (scrambledChunks[scrambledIdx].text !== correctChunksOrder[index]) {
-            isCorrect = false;
+    renderStage();
+    startTime = Date.now();
+    playAudio();
+}
+
+// 3. Render the Tap-to-Fracture Sentence
+function renderStage() {
+    const container = document.getElementById('sentence-container');
+    container.innerHTML = '';
+
+    currentSentence.words.forEach((wordObj, index) => {
+        if (wordObj.en.replace(/[^a-zA-Z]/g, '') === currentSentence.target) {
+            // Render the Blank
+            const blank = document.createElement('span');
+            blank.className = 'blank';
+            blank.id = 'the-blank';
+            blank.innerText = '____';
+            container.appendChild(blank);
+        } else {
+            // Render Tap-to-Translate Words
+            const span = document.createElement('span');
+            span.className = 'tap-word';
+            span.innerText = wordObj.en;
+            
+            // Tooltip
+            const tooltip = document.createElement('div');
+            tooltip.className = 'tooltip';
+            tooltip.innerText = wordObj.th || '?'; // Fallback if no Thai mapped
+            span.appendChild(tooltip);
+
+            // Tap listener for hint
+            span.onclick = (e) => {
+                e.stopPropagation(); // prevent triggering long press
+                usedHint = true;
+                
+                // Hide other tooltips
+                document.querySelectorAll('.tap-word').forEach(w => w.classList.remove('show-tooltip'));
+                
+                span.classList.add('show-tooltip');
+                setTimeout(() => span.classList.remove('show-tooltip'), 2000);
+            };
+
+            container.appendChild(span);
         }
     });
 
-    if (isCorrect) {
-        // Mission Passed!
-        document.getElementById('overlay-passed').classList.add('active');
-        playAudio(); // Play the full sentence again for reinforcement
-    } else {
-        // Wasted!
-        document.getElementById('overlay-wasted').classList.add('active');
+    document.getElementById('full-thai-overlay').innerText = currentSentence.th_full;
+
+    // Generate Distractors
+    let allTargets = database.filter(s => s.target !== currentSentence.target).map(s => s.target);
+    allTargets = shuffle(allTargets);
+    let options = shuffle([currentSentence.target, ...allTargets.slice(0, 3)]);
+
+    const grid = document.getElementById('options-grid');
+    grid.innerHTML = '';
+    options.forEach(opt => {
+        const btn = document.createElement('button');
+        btn.className = 'option-btn';
+        btn.innerText = opt;
+        btn.onclick = () => submitAnswer(btn, opt);
+        grid.appendChild(btn);
+    });
+}
+
+// 4. Long Press Logic (Global Listener)
+function setupLongPress() {
+    const mainContainer = document.getElementById('main-container');
+
+    mainContainer.addEventListener('touchstart', startPress);
+    mainContainer.addEventListener('touchend', cancelPress);
+    mainContainer.addEventListener('touchmove', cancelPress);
+    
+    // Mouse support for PC testing
+    mainContainer.addEventListener('mousedown', startPress);
+    mainContainer.addEventListener('mouseup', cancelPress);
+    mainContainer.addEventListener('mouseleave', cancelPress);
+
+    function startPress(e) {
+        if(e.target.tagName === 'BUTTON') return; // Don't trigger on buttons
+        pressTimer = setTimeout(() => {
+            usedHint = true;
+            document.getElementById('full-thai-overlay').style.display = 'block';
+            if (navigator.vibrate) navigator.vibrate(50); // Haptic pop
+        }, LONG_PRESS_MS);
+    }
+
+    function cancelPress() {
+        clearTimeout(pressTimer);
+    }
+}
+
+// 5. Grading and Elo Math
+function submitAnswer(btn, selectedWord) {
+    const timeTaken = (Date.now() - startTime) / 1000;
+    const blank = document.getElementById('the-blank');
+    blank.innerText = currentSentence.target;
+
+    if (selectedWord === currentSentence.target) {
+        // WIN
+        btn.classList.add('correct');
+        streak++;
         
-        // Shake the phone if supported (Haptic feedback)
+        // Calculate XP
+        let xpGained = 50;
+        if (usedHint) xpGained -= 30; // Penalty for translating
+        if (timeTaken < 3 && !usedHint) xpGained += 20; // Speed bonus
+        
+        playerXP += xpGained;
+        
+        // Elo Matchmaking Math (Standard K-Factor of 32)
+        const expectedScore = 1 / (1 + Math.pow(10, (currentSentence.elo - playerElo) / 400));
+        playerElo = Math.round(playerElo + 32 * (1 - expectedScore));
+
+        // UI Updates
+        document.getElementById('xp-gain-text').innerText = `+${xpGained} RESPECT`;
+        document.getElementById('overlay-passed').classList.add('active');
+        updateHUD();
+        playAudio(); // Read full sentence
+
+        setTimeout(() => {
+            document.getElementById('overlay-passed').classList.remove('active');
+            loadNextMatch();
+        }, 1500);
+
+    } else {
+        // LOSE
+        btn.classList.add('wrong');
+        streak = 0;
+
+        // Reveal correct
+        document.querySelectorAll('.option-btn').forEach(b => {
+            if(b.innerText === currentSentence.target) b.classList.add('correct');
+        });
+
+        // Elo Drop Math
+        const expectedScore = 1 / (1 + Math.pow(10, (currentSentence.elo - playerElo) / 400));
+        playerElo = Math.round(playerElo + 32 * (0 - expectedScore));
+
+        document.getElementById('overlay-wasted').classList.add('active');
         if (navigator.vibrate) navigator.vibrate(200);
+        updateHUD();
 
         setTimeout(() => {
             document.getElementById('overlay-wasted').classList.remove('active');
-            userDropZone = []; // Reset their attempt
-            renderBoard();
-        }, 1500);
+            loadNextMatch(); // Re-rolls an easier sentence due to lower Elo
+        }, 2000);
     }
 }
 
-// 6. Next Mission
-function nextMission() {
-    currentMissionIndex++;
-    if (currentMissionIndex >= database.length) {
-        alert("YOU BEAT THE GAME. RESPECT: 100%");
-        currentMissionIndex = 0;
-        database = shuffle(database);
-    }
-    loadMission(currentMissionIndex);
-}
+// 6. HUD Management
+function updateHUD() {
+    // Ranks based on Elo
+    if (playerElo >= 1500) { document.getElementById('rank-title').innerText = "BOSS (Level 3)"; playerLevel = 3; }
+    else if (playerElo >= 1200) { document.getElementById('rank-title').innerText = "HUSTLER (Level 2)"; playerLevel = 2; }
+    else { document.getElementById('rank-title').innerText = "STREET THUG (Level 1)"; playerLevel = 1; }
 
-// 7. Subtitles Toggle
-function revealThai() {
-    document.getElementById('reveal-btn').style.display = 'none';
-    document.getElementById('thai-text').style.display = 'block';
-}
+    document.getElementById('elo-display').innerText = playerElo;
+    document.getElementById('xp-display').innerText = playerXP;
+    document.getElementById('lvl-display').innerText = playerLevel;
 
-// 8. HUD Stars
-function updateStars() {
-    // Just a fun visual: light up a star for every 2 missions passed
+    // XP Bar (Loops every 1000 XP)
+    const xpPercent = (playerXP % 1000) / 10;
+    document.getElementById('xp-fill').style.width = `${xpPercent}%`;
+
+    // Wanted Stars (Max 5)
     const starsEl = document.getElementById('wanted-stars');
-    const activeCount = (currentMissionIndex % 5) + 1;
     let starsHtml = '';
     for(let i=0; i<5; i++) {
-        if (i < activeCount) starsHtml += '<span class="active">★</span>';
+        if (i < Math.min(streak, 5)) starsHtml += '<span class="active">★</span>';
         else starsHtml += '☆';
     }
     starsEl.innerHTML = starsHtml;
 }
 
-// 9. Text-to-Speech (American Male Priority)
+// 7. Text-to-Speech
 function playAudio() {
     if (synth.speaking) synth.cancel(); 
     
-    const textToSpeak = database[currentMissionIndex].en;
+    // Speak the full English sentence (strip out punctuation for cleaner TTS)
+    const textToSpeak = currentSentence.words.map(w => w.en).join(' ').replace(/[^a-zA-Z ]/g, '');
     const utterThis = new SpeechSynthesisUtterance(textToSpeak);
     
     const voices = synth.getVoices();
     const maleUSIdentifiers = ['David', 'Alex', 'Aaron', 'Google US English'];
     
     let selectedVoice = voices.find(v => 
-        v.lang.includes('en-US') && 
-        maleUSIdentifiers.some(id => v.name.includes(id))
+        v.lang.includes('en-US') && maleUSIdentifiers.some(id => v.name.includes(id))
     );
-    
-    if (!selectedVoice) {
-        selectedVoice = voices.find(v => v.lang.includes('en-US'));
-    }
+    if (!selectedVoice) selectedVoice = voices.find(v => v.lang.includes('en-US'));
 
-    if (selectedVoice) {
-        utterThis.voice = selectedVoice;
-    }
-    
-    // Speed set to 1.0 (Native pace) to train listening skills
+    if (selectedVoice) utterThis.voice = selectedVoice;
     utterThis.rate = 1.0; 
     synth.speak(utterThis);
 }
