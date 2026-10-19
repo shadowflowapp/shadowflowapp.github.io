@@ -104,17 +104,20 @@ function startQuizPhase() {
 function renderQuizCard() {
     const wordObj = currentBatch[quizIndex];
     
-    // Blank out the EXACT grammatical answer in the definition (using wordObj.answer)
-    const regex = new RegExp(`\\b${wordObj.answer}\\b`, 'gi');
+    // FALLBACK FIX: If "answer" is missing in JSON, fall back to "word"
+    const exactAnswer = wordObj.answer || wordObj.word;
+    
+    // Blank out the EXACT grammatical answer in the definition
+    const regex = new RegExp(`\\b${exactAnswer}\\b`, 'gi');
     document.getElementById('quiz-sentence').innerHTML = wordObj.cobuild.replace(regex, `<span class="blank" id="quiz-blank">____</span>`);
 
     // Distractors: Pull 3 random answers from the ENTIRE database
-    // We use .answer so all options fit grammatically (e.g. they all end in 's' or 'ed' if applicable)
-    let otherWords = database.filter(w => w.word !== wordObj.word).map(w => w.answer);
+    // FALLBACK FIX applied to distractors as well
+    let otherWords = database.filter(w => w.word !== wordObj.word).map(w => w.answer || w.word);
     otherWords = shuffle(otherWords);
     
     // Combine the correct answer with 3 distractors and shuffle them
-    let options = shuffle([wordObj.answer, ...otherWords.slice(0, 3)]);
+    let options = shuffle([exactAnswer, ...otherWords.slice(0, 3)]);
 
     const grid = document.getElementById('options-grid');
     grid.innerHTML = '';
@@ -123,7 +126,7 @@ function renderQuizCard() {
         btn.className = 'option-btn';
         btn.innerText = opt;
         // Pass the exact grammatical answer to the validation function
-        btn.onclick = () => checkQuizAnswer(btn, opt, wordObj.answer);
+        btn.onclick = () => checkQuizAnswer(btn, opt, exactAnswer);
         grid.appendChild(btn);
     });
 }
