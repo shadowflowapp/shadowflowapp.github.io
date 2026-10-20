@@ -7,14 +7,17 @@ let playerXP = 0;
 let playerLevel = 1;
 let streak = 0;
 let usedHint = false;
-
-// Current Match State
-let currentSentence = null;
 let startTime = 0;
 
-// Long Press Variables for Full Thai
-let pressTimer;
-const LONG_PRESS_MS = 500;
+// Game Systems
+let currentSentence = null;
+let correctChunksOrder = [];
+let scrambledChunks = [];
+let userDropZone = []; 
+
+// System 4: Cooldown Deck (Prevents repeats)
+let cooldownDeck = []; 
+const COOLDOWN_LIMIT = 15; 
 
 // 1. Initialize
 fetch('db.jsonl')
@@ -24,7 +27,6 @@ fetch('db.jsonl')
         database = lines.map(line => JSON.parse(line));
         
         updateHUD();
-        setupLongPress();
         loadNextMatch();
     })
     .catch(err => console.error("Error loading DB", err));
@@ -41,156 +43,130 @@ function shuffle(array) {
     return array;
 }
 
-// 2. Adaptive Matchmaking (Find a sentence close to Player's Elo)
+// 2. Adaptive Matchmaking with Cooldown Filter
 function loadNextMatch() {
     usedHint = false;
-    document.getElementById('full-thai-overlay').style.display = 'none';
-    
-    // Stop any lingering audio immediately when loading a new card
-    if (synth.speaking) synth.cancel();
+    document.getElementById('reveal-btn').style.display = 'flex';
+    document.getElementById('thai-text').style.display = 'none';
 
-    // Find sentences within +- 150 Elo points
-    let eligible = database.filter(s => Math.abs(s.elo - playerElo) <= 150);
+    // Find sentences within +- 150 Elo points, EXCLUDING the cooldown deck
+    let eligible = database.filter(s => 
+        Math.abs(s.elo - playerElo) <= 150 && 
+        !cooldownDeck.includes(s.id)
+    );
+
+    // Fallback: If we run out of eligible cards (rare, but possible), expand criteria
     if (eligible.length === 0) {
-        eligible = database;
+        eligible = database.filter(s => !cooldownDeck.includes(s.id));
+        if (eligible.length === 0) {
+            cooldownDeck = []; // Emergency reset if they beat the whole database
+            eligible = database;
+        }
     }
 
     currentSentence = eligible[Math.floor(Math.random() * eligible.length)];
     
-    renderStage();
+    // Add to Cooldown Deck
+    cooldownDeck.push(currentSentence.id);
+    if (cooldownDeck.length > COOLDOWN_LIMIT) {
+        cooldownDeck.shift(); // Remove the oldest ID from cooldown
+    }
+
+    // Setup Chunks
+    correctChunksOrder = currentSentence.chunks.map(c => c.en);
+    scrambledChunks = correctChunksOrder.map((text, i) => ({ id: i, text: text }));
+    scrambledChunks = shuffle(scrambledChunks);
+    userDropZone = [];
+
+    document.getElementById('thai-text').innerText = currentSentence.th_full;
+
+    renderBoard();
     startTime = Date.now();
     
-    // Auto-play the briefing audio when mission starts
-    setTimeout(playAudio, 500);
+    // Play Briefing Audio when card loads
+    playAudio(false);
 }
 
-// 3. Render the Tap-to-Fracture Sentence
-function renderStage() {
-    const container = document.getElementById('sentence-container');
-    container.innerHTML = '';
+// 3. Render Boards
+function renderBoard() {
+    const bankEl = document.getElementById('chunks-bank');
+    const zoneEl = document.getElementById('drop-zone');
+    
+    bankEl.innerHTML = '';
+    zoneEl.innerHTML = '';
 
-    currentSentence.words.forEach((wordObj, index) => {
-        if (wordObj.en.replace(/[^a-zA-Z]/g, '') === currentSentence.target) {
-            // Render the Blank
-            const blank = document.createElement('span');
-            blank.className = 'blank';
-            blank.id = 'the-blank';
-            blank.innerText = '____';
-            container.appendChild(blank);
-        } else {
-            // Render Tap-to-Translate Words
-            const span = document.createElement('span');
-            span.className = 'tap-word';
-            span.innerText = wordObj.en;
-            
-            // Tooltip
-            const tooltip = document.createElement('div');
-            tooltip.className = 'tooltip';
-            tooltip.innerText = wordObj.th || '?'; 
-            span.appendChild(tooltip);
+    // Render Bank
+    scrambledChunks.forEach((chunkObj, idx) => {
+        const btn = document.createElement('button');
+        btn.className = `chunk-btn ${userDropZone.includes(idx) ? 'hidden' : ''}`;
+        btn.innerText = chunkObj.text;
+        btn.onclick = () => tapBankChunk(idx);
+        bankEl.appendChild(btn);
+    });
 
-            // Tap listener for hint
-            span.onclick = (e) => {
-                e.stopPropagation(); 
-                usedHint = true;
-                
-                // Hide other tooltips
-                document.querySelectorAll('.tap-word').forEach(w => w.classList.remove('show-tooltip'));
-                
-                span.classList.add('show-tooltip');
-                setTimeout(() => span.classList.remove('show-tooltip'), 2000);
-            };
+    // Render Drop Zone
+    userDropZone.forEach((scrambledIdx, orderIndex) => {
+        const chunkObj = scrambledChunks[scrambledIdx];
+        const btn = document.createElement('button');
+        btn.className = 'chunk-btn in-zone';
+        btn.innerText = chunkObj.text;
+        btn.onclick = () => tapZoneChunk(orderIndex);
+        zoneEl.appendChild(btn);
+    });
 
-            container.appendChild(span);
+    // Auto-Check if Drop Zone is full
+    if (userDropZone.length === correctChunksOrder.length) {
+        checkAnswer();
+    }
+}
+
+// 4. Tap Interactions
+function tapBankChunk(scrambledIdx) {
+    userDropZone.push(scrambledIdx);
+    renderBoard();
+}
+
+function tapZoneChunk(orderIndex) {
+    userDropZone.splice(orderIndex, 1);
+    renderBoard();
+}
+
+// 5. Check Answer
+function checkAnswer() {
+    let isCorrect = true;
+    
+    userDropZone.forEach((scrambledIdx, index) => {
+        if (scrambledChunks[scrambledIdx].text !== correctChunksOrder[index]) {
+            isCorrect = false;
         }
     });
 
-    document.getElementById('full-thai-overlay').innerText = currentSentence.th_full;
-
-    // Generate Distractors
-    let allTargets = database.filter(s => s.target !== currentSentence.target).map(s => s.target);
-    allTargets = shuffle(allTargets);
-    let options = shuffle([currentSentence.target, ...allTargets.slice(0, 3)]);
-
-    const grid = document.getElementById('options-grid');
-    grid.innerHTML = '';
-    options.forEach(opt => {
-        const btn = document.createElement('button');
-        btn.className = 'option-btn';
-        btn.innerText = opt;
-        btn.onclick = () => submitAnswer(btn, opt);
-        grid.appendChild(btn);
-    });
-}
-
-// 4. Long Press Logic (Global Listener)
-function setupLongPress() {
-    const mainContainer = document.getElementById('main-container');
-
-    mainContainer.addEventListener('touchstart', startPress);
-    mainContainer.addEventListener('touchend', cancelPress);
-    mainContainer.addEventListener('touchmove', cancelPress);
-    
-    mainContainer.addEventListener('mousedown', startPress);
-    mainContainer.addEventListener('mouseup', cancelPress);
-    mainContainer.addEventListener('mouseleave', cancelPress);
-
-    function startPress(e) {
-        if(e.target.tagName === 'BUTTON') return; 
-        pressTimer = setTimeout(() => {
-            usedHint = true;
-            document.getElementById('full-thai-overlay').style.display = 'block';
-            if (navigator.vibrate) navigator.vibrate(50); 
-        }, LONG_PRESS_MS);
-    }
-
-    function cancelPress() {
-        clearTimeout(pressTimer);
-    }
-}
-
-// 5. Grading and Elo Math
-function submitAnswer(btn, selectedWord) {
     const timeTaken = (Date.now() - startTime) / 1000;
-    const blank = document.getElementById('the-blank');
-    blank.innerText = currentSentence.target;
 
-    if (selectedWord === currentSentence.target) {
+    if (isCorrect) {
         // WIN
-        btn.classList.add('correct');
         streak++;
         
-        // Calculate XP
         let xpGained = 50;
-        if (usedHint) xpGained -= 30; 
-        if (timeTaken < 3 && !usedHint) xpGained += 20; 
-        
+        if (usedHint) xpGained -= 30;
+        if (timeTaken < 5 && !usedHint) xpGained += 20;
         playerXP += xpGained;
         
-        // Elo Math
         const expectedScore = 1 / (1 + Math.pow(10, (currentSentence.elo - playerElo) / 400));
         playerElo = Math.round(playerElo + 32 * (1 - expectedScore));
 
         document.getElementById('xp-gain-text').innerText = `+${xpGained} RESPECT`;
         document.getElementById('overlay-passed').classList.add('active');
         updateHUD();
-        playAudio(); // Read full sentence
-
-        setTimeout(() => {
-            document.getElementById('overlay-passed').classList.remove('active');
-            loadNextMatch();
-        }, 1500);
+        
+        // System 5: Wait-to-Speak Event Listener
+        // Pass 'true' to trigger the loadNextMatch() ONLY after audio ends
+        playAudio(true); 
 
     } else {
         // LOSE
-        btn.classList.add('wrong');
         streak = 0;
-
-        document.querySelectorAll('.option-btn').forEach(b => {
-            if(b.innerText === currentSentence.target) b.classList.add('correct');
-        });
-
-        // Elo Drop Math
+        
         const expectedScore = 1 / (1 + Math.pow(10, (currentSentence.elo - playerElo) / 400));
         playerElo = Math.round(playerElo + 32 * (0 - expectedScore));
 
@@ -200,21 +176,27 @@ function submitAnswer(btn, selectedWord) {
 
         setTimeout(() => {
             document.getElementById('overlay-wasted').classList.remove('active');
-            loadNextMatch(); 
-        }, 2000);
+            userDropZone = []; // Reset their chunks
+            renderBoard();
+        }, 1500);
     }
 }
 
-// 6. HUD Management
+// 6. Subtitles Toggle
+function revealThai() {
+    usedHint = true;
+    document.getElementById('reveal-btn').style.display = 'none';
+    document.getElementById('thai-text').style.display = 'block';
+}
+
+// 7. HUD Management
 function updateHUD() {
-    if (playerElo >= 1500) { document.getElementById('rank-title').innerText = "BOSS (Level 3)"; playerLevel = 3; }
+    if (playerElo >= 1600) { document.getElementById('rank-title').innerText = "BOSS (Level 3)"; playerLevel = 3; }
     else if (playerElo >= 1200) { document.getElementById('rank-title').innerText = "HUSTLER (Level 2)"; playerLevel = 2; }
     else { document.getElementById('rank-title').innerText = "STREET THUG (Level 1)"; playerLevel = 1; }
 
     document.getElementById('elo-display').innerText = playerElo;
-    document.getElementById('xp-display').innerText = playerXP;
-    document.getElementById('lvl-display').innerText = playerLevel;
-
+    
     const xpPercent = (playerXP % 1000) / 10;
     document.getElementById('xp-fill').style.width = `${xpPercent}%`;
 
@@ -227,17 +209,13 @@ function updateHUD() {
     starsEl.innerHTML = starsHtml;
 }
 
-// 7. Text-to-Speech (DEBUGGED ANTI-OVERLAP)
-function playAudio() {
-    // 1. Check if audio is currently playing and cancel it.
-    if (synth.speaking) {
-        synth.cancel(); 
-    }
+// 8. Event-Driven Audio (Anti-Overlap & Auto-Advance)
+function playAudio(isWinSequence = false) {
+    if (synth.speaking) synth.cancel(); 
     
-    // 2. Wrap the new speech call in a 50ms timeout.
-    // This gives the browser's audio buffer time to completely flush the canceled audio.
+    // Tiny delay ensures the buffer is cleared before sending the new speech command
     setTimeout(() => {
-        const textToSpeak = currentSentence.words.map(w => w.en).join(' ').replace(/[^a-zA-Z ]/g, '');
+        const textToSpeak = correctChunksOrder.join(' ').replace(/[^a-zA-Z0-9 ]/g, '');
         const utterThis = new SpeechSynthesisUtterance(textToSpeak);
         
         const voices = synth.getVoices();
@@ -251,8 +229,23 @@ function playAudio() {
         if (selectedVoice) utterThis.voice = selectedVoice;
         utterThis.rate = 1.0; 
         
+        // This is the Magic: Wait for audio to finish before advancing the game
+        if (isWinSequence) {
+            utterThis.onend = () => {
+                document.getElementById('overlay-passed').classList.remove('active');
+                loadNextMatch();
+            };
+            // Fallback just in case the browser's speech synthesis engine hangs
+            setTimeout(() => {
+                if (document.getElementById('overlay-passed').classList.contains('active')) {
+                    document.getElementById('overlay-passed').classList.remove('active');
+                    loadNextMatch();
+                }
+            }, 5000);
+        }
+
         synth.speak(utterThis);
-    }, 50); 
+    }, 50);
 }
 
 speechSynthesis.onvoiceschanged = () => { synth.getVoices(); };
