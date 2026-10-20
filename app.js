@@ -1,20 +1,21 @@
 let database = [];
 const synth = window.speechSynthesis;
 
-// RPG Player State
+// Player State
 let playerXP = 0;
-let playerLevel = 1;
-let hearts = 3;
+let streak = 0;
 let currentCard = null;
-let currentTier = 1;
+let currentCEFR = "A1";
 
-// Titles & Realms mapping
-const titles = ["Novice Explorer", "Apprentice Mage", "Brave Squire", "Adept Scholar", "Guild Master"];
-const realms = {
-    1: "Goblin Forest (Beginner)",
-    2: "Crystal Caves (Intermediate)",
-    3: "Dragon Peak (Advanced)"
-};
+// Ranks Mapping
+const ranks = [
+    { maxXP: 200, cefr: "A1", title: "Street Thug" },
+    { maxXP: 400, cefr: "A2", title: "Hustler" },
+    { maxXP: 600, cefr: "B1", title: "Hitman" },
+    { maxXP: 800, cefr: "B2", title: "Kingpin" },
+    { maxXP: 1000, cefr: "C1", title: "Boss" },
+    { maxXP: 99999, cefr: "C2", title: "Godfather" }
+];
 
 // 1. Initialize Game
 fetch('db.jsonl')
@@ -28,6 +29,7 @@ fetch('db.jsonl')
     })
     .catch(err => console.error("Error loading DB", err));
 
+// Utility: Shuffle
 function shuffle(array) {
     let curId = array.length;
     while (0 !== curId) {
@@ -40,35 +42,31 @@ function shuffle(array) {
     return array;
 }
 
-// 2. Load Spellbook (Adaptive Difficulty)
+// 2. Load Recon (Study Phase)
 function loadNextCard() {
-    // Determine target tier based on player level
-    // Lvl 1-2 = Tier 1, Lvl 3-4 = Tier 2, Lvl 5+ = Tier 3
-    currentTier = Math.min(3, Math.ceil(playerLevel / 2));
+    // Filter database for words matching the current CEFR tier
+    const eligibleWords = database.filter(w => w.cefr === currentCEFR);
     
-    // Filter database for words matching the current tier
-    const eligibleWords = database.filter(w => w.tier === currentTier);
-    
-    // Fallback just in case tier is empty
+    // Fallback if tier is empty (shouldn't happen with our DB, but safe)
     const pool = eligibleWords.length > 0 ? eligibleWords : database;
     currentCard = pool[Math.floor(Math.random() * pool.length)];
     
-    // Update UI
-    document.getElementById('study-mode').style.display = 'flex';
-    document.getElementById('quiz-mode').style.display = 'none';
+    // UI Switch
+    document.getElementById('recon-mode').style.display = 'flex';
+    document.getElementById('heist-mode').style.display = 'none';
 
+    // Populate Data
     document.getElementById('study-image').src = currentCard.image;
     document.getElementById('target-word').innerText = currentCard.word;
     document.getElementById('phonetic').innerText = currentCard.phonetic;
     document.getElementById('pos').innerText = currentCard.pos;
     document.getElementById('translation').innerText = currentCard.thai;
+    document.getElementById('definition').innerText = `"${currentCard.definition}"`;
     
     // Highlight Target Word in Sentence
     const regex = new RegExp(`\\b(${currentCard.word}[a-z]*)\\b`, 'gi');
-    const highlightedSentence = currentCard.sentence.replace(regex, `<span style="color: var(--action-blue);"><b>$1</b></span>`);
+    const highlightedSentence = currentCard.sentence.replace(regex, `<span style="color: var(--gta-cyan);"><b>$1</b></span>`);
     document.getElementById('study-sentence').innerHTML = highlightedSentence;
-    
-    updateHUD();
 }
 
 // 3. Audio Engine (Anti-Overlap Micro-Delay)
@@ -96,28 +94,20 @@ function playWord() { playAudio(currentCard.word, 0.8); }
 function playSentence() { playAudio(currentCard.sentence, 1.0); }
 speechSynthesis.onvoiceschanged = () => { synth.getVoices(); };
 
-// 4. Enter Battle
-function startBattle() {
+// 4. Enter The Heist (Quiz Phase)
+function startHeist() {
     if (synth.speaking) synth.cancel();
     
-    document.getElementById('study-mode').style.display = 'none';
-    document.getElementById('quiz-mode').style.display = 'flex';
+    document.getElementById('recon-mode').style.display = 'none';
+    document.getElementById('heist-mode').style.display = 'flex';
 
     document.getElementById('quiz-image').src = currentCard.image;
     
-    const regex = new RegExp(`\\b${currentCard.word}\\b`, 'gi');
-    document.getElementById('quiz-sentence').innerHTML = currentCard.sentence.replace(regex, `<span class="blank">_____</span>`);
+    const regex = new RegExp(`\\b${currentCard.word}[a-z]*\\b`, 'gi');
+    document.getElementById('quiz-sentence').innerHTML = currentCard.sentence.replace(regex, `<span class="blank">_______</span>`);
 
-    // DYNAMIC DISTRACTORS: Only pull distractors from the same Tier!
-    let sameTierWords = database.filter(w => w.tier === currentTier && w.word !== currentCard.word).map(w => w.word);
-    
-    // If not enough words in tier, pull from whole DB
-    if(sameTierWords.length < 3) {
-        sameTierWords = database.filter(w => w.word !== currentCard.word).map(w => w.word);
-    }
-    
-    sameTierWords = shuffle(sameTierWords);
-    let options = shuffle([currentCard.word, ...sameTierWords.slice(0, 3)]);
+    // DYNAMIC DISTRACTORS: Pull the hardcoded trick distractors from DB
+    let options = shuffle([currentCard.word, ...currentCard.distractors.slice(0, 3)]);
 
     const grid = document.getElementById('options-grid');
     grid.innerHTML = '';
@@ -126,72 +116,88 @@ function startBattle() {
         const btn = document.createElement('button');
         btn.className = 'option-btn';
         btn.innerText = opt;
-        btn.onclick = () => submitAttack(btn, opt);
+        btn.onclick = () => executeHeist(btn, opt);
         grid.appendChild(btn);
     });
 }
 
-// 5. Battle Grading
-function submitAttack(btn, selectedWord) {
+// 5. Heist Results (Grading & XP)
+function executeHeist(btn, selectedWord) {
     document.querySelectorAll('.option-btn').forEach(b => b.disabled = true);
 
     if (selectedWord === currentCard.word) {
-        // VICTORY
+        // MISSION PASSED
         btn.classList.add('correct');
-        playerXP += 25;
+        playerXP += 20;
+        streak++;
         
-        playAudio("Correct!", 1.2); 
-        document.getElementById('overlay-victory').classList.add('active');
+        playAudio("Got it.", 1.2); 
+        document.getElementById('overlay-passed').classList.add('active');
         
         setTimeout(() => {
-            document.getElementById('overlay-victory').classList.remove('active');
+            document.getElementById('overlay-passed').classList.remove('active');
             updateHUD();
             loadNextCard();
         }, 1500);
 
     } else {
-        // DEFEAT
+        // WASTED
         btn.classList.add('wrong');
-        hearts--;
+        streak = 0;
+        playerXP = Math.max(0, playerXP - 10); // Penalty, but don't drop below 0
         
         document.querySelectorAll('.option-btn').forEach(b => {
             if(b.innerText === currentCard.word) b.classList.add('correct');
         });
 
-        document.getElementById('overlay-defeat').classList.add('active');
+        document.getElementById('overlay-wasted').classList.add('active');
         if (navigator.vibrate) navigator.vibrate(200);
 
         setTimeout(() => {
-            document.getElementById('overlay-defeat').classList.remove('active');
+            document.getElementById('overlay-wasted').classList.remove('active');
             updateHUD();
-            
-            if (hearts <= 0) {
-                alert("Game Over! The monsters defeated you. Restarting Realm...");
-                playerXP = Math.max(0, playerXP - 50); // Penalty, but not total wipe
-                hearts = 3;
-                updateHUD();
-            }
-            loadNextCard(); 
+            loadNextCard(); // Force them to restudy
         }, 2000);
     }
 }
 
-// 6. HUD Logic
+// 6. HUD Logic (CEFR Calculation)
 function updateHUD() {
-    playerLevel = Math.floor(playerXP / 100) + 1;
-    currentTier = Math.min(3, Math.ceil(playerLevel / 2));
-    
-    const titleIndex = Math.min(playerLevel - 1, titles.length - 1);
-    document.getElementById('player-title').innerText = titles[titleIndex];
-    document.getElementById('zone-indicator').innerText = `Current Realm: ${realms[currentTier]}`;
-    
-    document.getElementById('lvl-display').innerText = playerLevel;
-    document.getElementById('xp-display').innerText = playerXP % 100;
-    
-    const xpPercent = playerXP % 100;
-    document.getElementById('xp-fill').style.width = `${xpPercent}%`;
+    // Determine CEFR level and Rank based on XP
+    let currentRankObj = ranks[0];
+    for (let i = 0; i < ranks.length; i++) {
+        if (playerXP < ranks[i].maxXP) {
+            currentRankObj = ranks[i];
+            break;
+        }
+        if (i === ranks.length - 1) currentRankObj = ranks[i]; // Max level
+    }
 
-    let heartsHtml = '';
-    for(let i=0; i<3; i++) { heartsHtml += i < hearts ? '❤️' : '🖤'; }
-    document.getElementById('hearts').innerHTML = heartsHtml;
+    currentCEFR = currentRankObj.cefr;
+    document.getElementById('rank-title').innerText = currentRankObj.title;
+    document.getElementById('cefr-badge').innerText = currentCEFR;
+    
+    document.getElementById('xp-display').innerText = playerXP;
+    
+    // XP Bar (Loops within the current tier bracket)
+    let minXP = 0;
+    let maxXP = currentRankObj.maxXP;
+    if(currentRankObj.title !== "Street Thug") {
+        const prevRank = ranks.find(r => r.cefr === getPreviousCEFR(currentCEFR));
+        minXP = prevRank.maxXP;
+    }
+    
+    const xpPercent = ((playerXP - minXP) / (maxXP - minXP)) * 100;
+    document.getElementById('xp-fill').style.width = `${Math.min(100, Math.max(0, xpPercent))}%`;
+
+    // Wanted Stars (Streak tracking max 5)
+    let starsHtml = '';
+    for(let i=0; i<5; i++) { starsHtml += i < Math.min(streak, 5) ? '<span class="active">★</span>' : '☆'; }
+    document.getElementById('wanted-stars').innerHTML = starsHtml;
+}
+
+function getPreviousCEFR(cefr) {
+    const order = ["A1", "A2", "B1", "B2", "C1", "C2"];
+    const idx = order.indexOf(cefr);
+    return idx > 0 ? order[idx - 1] : "A1";
 }
