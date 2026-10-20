@@ -3,23 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Vocab Quest: Infinite Realms</title>
+    <title>San Andreas Polyglot</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Nunito:wght@400;700;900&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@500;700&family=Roboto:wght@400;700;900&display=swap');
 
         :root {
-            --bg-color: #2b231d; --parchment: #f4e8c1;
-            --wood-dark: #3e2723; --wood-light: #5d4037;
-            --gold: #d4af37; --xp-green: #4caf50;
-            --text-dark: #3e2723; --action-blue: #1976d2; --danger-red: #d32f2f;
+            --gta-black: #0a0a0a; --gta-dark: #1c1c1e;
+            --gta-green: #41d95d; --gta-red: #d94141;
+            --gta-yellow: #f2c80f; --gta-cyan: #0fdbf2; --gta-pink: #f20f8c;
+            --text-light: #f5f5f5; --text-dim: #888888;
         }
 
         body {
-            font-family: 'Nunito', sans-serif; background-color: var(--bg-color);
-            background-image: url('https://www.transparenttextures.com/patterns/wood-pattern.png');
-            color: var(--text-dark); margin: 0; padding: 0;
+            font-family: 'Roboto', sans-serif; background-color: var(--gta-black);
+            color: var(--text-light); margin: 0; padding: 0;
             display: flex; justify-content: center; height: 100dvh; overflow: hidden;
             -webkit-tap-highlight-color: transparent;
+            background-image: radial-gradient(circle at center, #1a1a1a 0%, #000000 100%);
         }
 
         .app-container {
@@ -27,89 +27,100 @@
             display: flex; flex-direction: column; padding: 15px; box-sizing: border-box; position: relative;
         }
 
-        /* RPG HUD */
-        .hud {
-            background: var(--wood-dark); border: 3px solid var(--gold); border-radius: 12px; 
-            padding: 10px 15px; margin-bottom: 15px; box-shadow: 0 4px 8px rgba(0,0,0,0.5);
-            color: #fff; display: flex; flex-direction: column; gap: 8px;
-        }
-        .hud-top { display: flex; justify-content: space-between; align-items: center; }
-        .player-title { font-family: 'Cinzel', serif; font-size: 20px; color: var(--gold); text-shadow: 1px 1px 2px #000; }
-        .hearts { font-size: 18px; color: #ff5252; }
+        /* HUD Header */
+        .hud { margin-bottom: 15px; border-bottom: 2px solid #333; padding-bottom: 15px; }
+        .hud-top { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 10px; }
         
-        .zone-indicator { font-size: 12px; color: #aaa; text-transform: uppercase; letter-spacing: 1px; font-weight: 700; }
+        .rank-title { font-family: 'Oswald', sans-serif; font-size: 24px; font-weight: 700; color: var(--gta-yellow); text-transform: uppercase; text-shadow: 1px 1px 0px #000; }
+        .cefr-badge { font-size: 14px; background: var(--gta-cyan); color: #000; font-weight: 900; padding: 2px 6px; border-radius: 4px; margin-left: 8px;}
         
-        .xp-bar-bg { width: 100%; height: 10px; background: #222; border-radius: 5px; border: 1px solid var(--gold); overflow: hidden; }
-        .xp-bar-fill { height: 100%; background: linear-gradient(90deg, #4caf50, #81c784); width: 0%; transition: width 0.3s ease; }
-        .xp-text { font-size: 12px; text-align: right; color: #ddd; font-weight: 700; margin-top: 2px;}
+        .wanted-stars { color: var(--text-dim); font-size: 20px; letter-spacing: 2px; }
+        .wanted-stars .active { color: #fff; text-shadow: 0 0 8px #fff; }
 
-        /* The Spellbook (Study Phase) */
+        .xp-bar-bg { width: 100%; height: 6px; background: #222; border-radius: 3px; overflow: hidden; }
+        .xp-bar-fill { height: 100%; background: var(--gta-pink); width: 0%; transition: width 0.3s ease; }
+        .xp-text { font-size: 12px; color: var(--text-dim); text-align: right; margin-top: 4px; font-weight: 700; text-transform: uppercase;}
+
+        /* The Recon Stage (Study) */
         .card {
-            background-color: var(--parchment); background-image: url('https://www.transparenttextures.com/patterns/parchment.png');
-            border: 4px solid var(--wood-light); border-radius: 16px; padding: 20px;
-            flex-grow: 1; display: flex; flex-direction: column;
-            box-shadow: 0 8px 16px rgba(0,0,0,0.6); overflow-y: auto; text-align: center; position: relative;
+            background-color: rgba(255,255,255,0.05); border: 2px solid #333;
+            border-radius: 16px; padding: 20px; flex-grow: 1; display: flex; flex-direction: column;
+            overflow-y: auto; text-align: center; position: relative;
         }
 
         .card-image {
             width: 100%; height: 160px; object-fit: cover; border-radius: 8px; 
-            border: 3px solid var(--wood-dark); margin-bottom: 15px; box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-            background-color: #ddd; /* Placeholder color before load */
+            border: 2px solid #444; margin-bottom: 15px; background-color: #222;
         }
 
         .word-header { margin-bottom: 10px; }
-        .target-word { font-family: 'Cinzel', serif; font-size: 36px; color: var(--wood-dark); font-weight: 700; text-transform: lowercase;}
-        .phonetic { font-size: 16px; color: #555; margin-bottom: 5px; font-family: monospace; }
-        .pos-badge { display: inline-block; background: var(--wood-light); color: var(--parchment); padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: 700; text-transform: uppercase; }
+        .target-word { font-family: 'Oswald', sans-serif; font-size: 42px; color: var(--gta-cyan); font-weight: 700; text-transform: uppercase; letter-spacing: 1px;}
+        .phonetic { font-size: 16px; color: var(--text-dim); margin-bottom: 5px; font-family: monospace; }
+        .pos-badge { display: inline-block; border: 1px solid var(--text-dim); color: var(--text-dim); padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: 700; text-transform: uppercase; }
 
-        .translation { font-size: 20px; font-weight: 900; color: var(--action-blue); margin: 10px 0; }
+        .translation { font-size: 20px; font-weight: 900; color: var(--gta-yellow); margin: 10px 0; }
+        .definition { font-size: 14px; color: #ccc; margin-bottom: 15px; font-style: italic;}
         
         .sentence-box {
-            background: rgba(255,255,255,0.5); border: 2px dashed var(--wood-light);
-            padding: 15px; border-radius: 12px; font-size: 18px; font-weight: 700; color: var(--text-dark); margin-bottom: 15px;
+            background: rgba(0,0,0,0.5); border-left: 4px solid var(--gta-pink);
+            padding: 15px; border-radius: 0 8px 8px 0; font-size: 18px; font-weight: 500; color: var(--text-light); margin-bottom: 15px; text-align: left;
         }
 
         .audio-controls { display: flex; justify-content: center; gap: 10px; margin-bottom: 20px; }
         .audio-btn {
-            background: var(--gold); border: 2px solid var(--wood-dark); color: var(--wood-dark); 
-            font-size: 14px; font-weight: 900; padding: 10px 15px; border-radius: 20px; cursor: pointer;
-            box-shadow: 0 4px 0 var(--wood-light); display: flex; align-items: center; gap: 5px; flex: 1; justify-content: center;
+            background: transparent; border: 2px solid #555; color: #fff; 
+            font-size: 14px; font-weight: 900; padding: 10px 15px; border-radius: 8px; cursor: pointer;
+            display: flex; align-items: center; gap: 5px; flex: 1; justify-content: center; text-transform: uppercase;
         }
-        .audio-btn:active { transform: translateY(4px); box-shadow: 0 0 0 var(--wood-light); }
+        .audio-btn:active { background: #333; }
 
-        .battle-btn {
-            background: var(--danger-red); border: 3px solid var(--wood-dark); color: #fff; 
-            font-family: 'Cinzel', serif; font-size: 20px; font-weight: 700; padding: 15px; 
-            border-radius: 12px; cursor: pointer; margin-top: auto; box-shadow: 0 4px 0 #8e0000; text-transform: uppercase;
+        .action-btn {
+            background: var(--gta-pink); border: none; color: #fff; 
+            font-family: 'Oswald', sans-serif; font-size: 20px; font-weight: 700; padding: 15px; 
+            border-radius: 8px; cursor: pointer; margin-top: auto; text-transform: uppercase; letter-spacing: 1px;
         }
-        .battle-btn:active { transform: translateY(4px); box-shadow: 0 0 0 #8e0000; }
+        .action-btn:active { transform: scale(0.98); }
 
-        /* Quiz Mode */
-        #quiz-mode { display: none; }
-        .quiz-title { font-family: 'Cinzel', serif; font-size: 22px; color: var(--danger-red); margin-bottom: 15px; }
-        .blank-sentence { font-size: 20px; font-weight: 900; margin-bottom: 25px; line-height: 1.5; }
-        .blank { display: inline-block; min-width: 80px; border-bottom: 3px solid var(--wood-dark); color: transparent; }
+        /* The Heist Mode (Quiz) */
+        #heist-mode { display: none; }
+        .heist-title { font-family: 'Oswald', sans-serif; font-size: 22px; color: var(--gta-red); margin-bottom: 15px; letter-spacing: 2px; text-transform: uppercase;}
+        .blank-sentence { font-size: 22px; font-weight: 500; margin-bottom: 25px; line-height: 1.5; text-align: left;}
+        .blank { display: inline-block; min-width: 80px; border-bottom: 4px solid var(--gta-cyan); color: transparent; }
 
-        .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: auto; }
+        .options-grid { display: flex; flex-direction: column; gap: 10px; margin-top: auto; }
         .option-btn {
-            background: var(--wood-light); color: var(--parchment); border: 2px solid var(--wood-dark);
-            padding: 15px 10px; border-radius: 10px; font-size: 16px; font-weight: 700; text-transform: lowercase;
-            cursor: pointer; box-shadow: 0 4px 0 var(--wood-dark); transition: all 0.1s;
+            background: var(--gta-dark); color: #fff; border: 2px solid #444;
+            padding: 18px 10px; border-radius: 8px; font-size: 18px; font-weight: 700; text-transform: lowercase;
+            cursor: pointer; transition: all 0.1s; text-align: center;
         }
-        .option-btn:active { transform: translateY(4px); box-shadow: 0 0 0 var(--wood-dark); }
-        .option-btn.correct { background: var(--xp-green); color: #fff; }
-        .option-btn.wrong { background: var(--danger-red); color: #fff; }
+        .option-btn:active { background: #333; }
+        .option-btn.correct { background: var(--gta-green); color: #000; border-color: var(--gta-green); }
+        .option-btn.wrong { background: var(--gta-red); color: #fff; border-color: var(--gta-red); }
 
         /* Overlays */
         .overlay {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
-            z-index: 100; opacity: 0; pointer-events: none; transition: opacity 0.3s; backdrop-filter: blur(4px);
+            z-index: 100; opacity: 0; pointer-events: none; transition: opacity 0.3s; backdrop-filter: blur(5px);
         }
         .overlay.active { opacity: 1; pointer-events: auto; }
-        .victory-bg { background: rgba(76, 175, 80, 0.9); }
-        .defeat-bg { background: rgba(211, 47, 47, 0.9); }
-        .overlay-text { font-family: 'Cinzel', serif; font-size: 40px; color: var(--gold); text-transform: uppercase; text-shadow: 2px 2px 4px #000; margin-bottom: 10px; }
+
+        .passed-bg { background: rgba(0, 0, 0, 0.85); }
+        .passed-text {
+            font-family: 'Impact', 'Oswald', sans-serif; font-size: 48px; color: var(--gta-yellow);
+            text-transform: uppercase; letter-spacing: 2px; text-align: center;
+            text-shadow: 3px 3px 0px #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+            transform: scale(1.5); transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .overlay.active .passed-text { transform: scale(1); }
+        .xp-gain { font-family: 'Oswald', sans-serif; font-size: 24px; color: var(--gta-green); margin-top: 10px; }
+        
+        .wasted-bg { background: rgba(217, 65, 65, 0.4); }
+        .wasted-text {
+            font-family: 'Impact', 'Oswald', sans-serif; font-size: 64px; color: var(--gta-red);
+            text-transform: uppercase; letter-spacing: 4px;
+            text-shadow: 2px 2px 0px #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+        }
 
     </style>
 </head>
@@ -117,22 +128,24 @@
 
     <div class="app-container">
         
-        <!-- RPG HUD -->
+        <!-- HUD -->
         <div class="hud">
             <div class="hud-top">
-                <div class="player-title" id="player-title">Novice Explorer</div>
-                <div class="hearts" id="hearts">❤️❤️❤️</div>
+                <div>
+                    <span class="rank-title" id="rank-title">Street Thug</span>
+                    <span class="cefr-badge" id="cefr-badge">A1</span>
+                </div>
+                <div class="wanted-stars" id="wanted-stars">☆☆☆☆☆</div>
             </div>
-            <div class="zone-indicator" id="zone-indicator">Current Realm: Goblin Forest</div>
             <div>
                 <div class="xp-bar-bg"><div class="xp-bar-fill" id="xp-fill"></div></div>
-                <div class="xp-text">Level <span id="lvl-display">1</span> • XP: <span id="xp-display">0</span> / 100</div>
+                <div class="xp-text">Respect: <span id="xp-display">0</span> XP</div>
             </div>
         </div>
 
-        <!-- STUDY MODE (The Spellbook) -->
-        <div class="card" id="study-mode">
-            <img class="card-image" id="study-image" src="" alt="Word Visual">
+        <!-- RECON MODE (Study) -->
+        <div class="card" id="recon-mode">
+            <img class="card-image" id="study-image" src="" alt="Intel Image">
             
             <div class="word-header">
                 <div class="target-word" id="target-word">loading</div>
@@ -141,21 +154,22 @@
             </div>
 
             <div class="translation" id="translation"></div>
+            <div class="definition" id="definition"></div>
             
             <div class="sentence-box" id="study-sentence"></div>
 
             <div class="audio-controls">
                 <button class="audio-btn" onclick="playWord()">🔊 Word</button>
-                <button class="audio-btn" onclick="playSentence()">🗣️ Sentence</button>
+                <button class="audio-btn" onclick="playSentence()">🗣️ Audio Log</button>
             </div>
 
-            <button class="battle-btn" onclick="startBattle()">⚔️ Enter Battle</button>
+            <button class="action-btn" onclick="startHeist()">Execute Heist</button>
         </div>
 
-        <!-- QUIZ MODE (The Encounter) -->
-        <div class="card" id="quiz-mode">
-            <div class="quiz-title">Wild Encounter!</div>
-            <img class="card-image" id="quiz-image" src="" alt="Encounter Visual">
+        <!-- HEIST MODE (Quiz) -->
+        <div class="card" id="heist-mode">
+            <div class="heist-title">Target Acquired</div>
+            <img class="card-image" id="quiz-image" src="" alt="Heist Target">
             
             <div class="blank-sentence" id="quiz-sentence"></div>
 
@@ -163,14 +177,14 @@
         </div>
 
         <!-- OVERLAYS -->
-        <div class="overlay victory-bg" id="overlay-victory">
-            <div class="overlay-text">VICTORY!</div>
-            <div style="color: #fff; font-size: 20px; font-weight: 700;">+25 XP</div>
+        <div class="overlay passed-bg" id="overlay-passed">
+            <div class="passed-text">MISSION PASSED</div>
+            <div class="xp-gain" id="xp-gain-text">+20 RESPECT</div>
         </div>
 
-        <div class="overlay defeat-bg" id="overlay-defeat">
-            <div class="overlay-text">DEFEAT...</div>
-            <div style="color: #fff; font-size: 20px; font-weight: 700;">Lost 1 Heart</div>
+        <div class="overlay wasted-bg" id="overlay-wasted">
+            <div class="wasted-text">WASTED</div>
+            <div class="xp-gain" style="color: #fff; font-size: 18px;">-10 RESPECT</div>
         </div>
 
     </div>
