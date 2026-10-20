@@ -3,115 +3,137 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Los Santos Lingo: Sniper</title>
+    <title>Vocab Quest</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@500;700&family=Roboto:wght@400;700;900&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Nunito:wght@400;700;900&display=swap');
 
         :root {
-            --gta-black: #0a0a0a; --gta-dark: #1c1c1e;
-            --gta-green: #41d95d; --gta-red: #d94141;
-            --gta-yellow: #f2c80f; --gta-cyan: #0fdbf2; --gta-pink: #f20f8c;
-            --text-light: #f5f5f5; --text-dim: #888888;
+            --bg-color: #2b231d;
+            --parchment: #f4e8c1;
+            --wood-dark: #3e2723;
+            --wood-light: #5d4037;
+            --gold: #d4af37;
+            --xp-green: #4caf50;
+            --text-dark: #3e2723;
+            --action-blue: #1976d2;
+            --danger-red: #d32f2f;
         }
 
         body {
-            font-family: 'Roboto', sans-serif; background-color: var(--gta-black);
-            color: var(--text-light); margin: 0; padding: 0;
-            display: flex; justify-content: center; height: 100dvh; overflow: hidden;
-            -webkit-tap-highlight-color: transparent; user-select: none;
-            background-image: radial-gradient(circle at center, #1a1a1a 0%, #000000 100%);
+            font-family: 'Nunito', sans-serif;
+            background-color: var(--bg-color);
+            background-image: url('https://www.transparenttextures.com/patterns/wood-pattern.png');
+            color: var(--text-dark);
+            margin: 0; padding: 0;
+            display: flex; justify-content: center;
+            height: 100dvh; overflow: hidden;
+            -webkit-tap-highlight-color: transparent;
         }
 
         .app-container {
             width: 100%; max-width: 430px; height: 100%;
-            display: flex; flex-direction: column; padding: 20px 15px; box-sizing: border-box; position: relative;
+            display: flex; flex-direction: column;
+            padding: 15px; box-sizing: border-box;
+            position: relative;
         }
 
-        /* HUD Header */
-        .hud { margin-bottom: 20px; border-bottom: 2px solid #333; padding-bottom: 15px; }
-        .hud-top { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 10px; }
+        /* RPG HUD */
+        .hud {
+            background: var(--wood-dark);
+            border: 3px solid var(--gold);
+            border-radius: 12px; padding: 10px 15px;
+            margin-bottom: 15px; box-shadow: 0 4px 8px rgba(0,0,0,0.5);
+            color: #fff; display: flex; flex-direction: column; gap: 8px;
+        }
+        .hud-top { display: flex; justify-content: space-between; align-items: center; }
+        .player-title { font-family: 'Cinzel', serif; font-size: 20px; color: var(--gold); text-shadow: 1px 1px 2px #000; }
+        .hearts { font-size: 18px; color: #ff5252; }
         
-        .rank-title { font-family: 'Oswald', sans-serif; font-size: 24px; font-weight: 700; color: var(--gta-yellow); text-transform: uppercase; text-shadow: 1px 1px 0px #000; }
-        .elo-score { font-size: 14px; color: var(--gta-cyan); font-weight: 900; letter-spacing: 1px; }
+        .xp-bar-bg { width: 100%; height: 10px; background: #222; border-radius: 5px; border: 1px solid var(--gold); overflow: hidden; }
+        .xp-bar-fill { height: 100%; background: linear-gradient(90deg, #4caf50, #81c784); width: 0%; transition: width 0.3s ease; }
+        .xp-text { font-size: 12px; text-align: right; color: #ddd; font-weight: 700; margin-top: 2px;}
+
+        /* The Spellbook (Flashcard) */
+        .card {
+            background-color: var(--parchment);
+            background-image: url('https://www.transparenttextures.com/patterns/parchment.png');
+            border: 4px solid var(--wood-light);
+            border-radius: 16px; padding: 20px;
+            flex-grow: 1; display: flex; flex-direction: column;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.6);
+            overflow-y: auto; text-align: center; position: relative;
+        }
+
+        .card-image {
+            width: 100%; height: 180px; object-fit: cover;
+            border-radius: 8px; border: 3px solid var(--wood-dark);
+            margin-bottom: 15px; box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        /* Study Mode Elements */
+        .word-header { margin-bottom: 10px; }
+        .target-word { font-family: 'Cinzel', serif; font-size: 36px; color: var(--wood-dark); font-weight: 700; text-transform: capitalize;}
+        .phonetic { font-size: 16px; color: #555; margin-bottom: 5px; font-family: monospace; }
+        .pos-badge {
+            display: inline-block; background: var(--wood-light); color: var(--parchment);
+            padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: 700; text-transform: uppercase;
+        }
+
+        .translation { font-size: 20px; font-weight: 900; color: var(--action-blue); margin: 15px 0; }
         
-        .wanted-stars { color: var(--text-dim); font-size: 20px; letter-spacing: 2px; }
-        .wanted-stars .active { color: #fff; text-shadow: 0 0 8px #fff; }
-
-        .xp-bar-bg { width: 100%; height: 6px; background: #222; border-radius: 3px; overflow: hidden; }
-        .xp-bar-fill { height: 100%; background: var(--gta-pink); width: 0%; transition: width 0.3s ease; }
-
-        /* The Stage (Chunk Sniper) */
-        .stage { flex-grow: 1; display: flex; flex-direction: column; position: relative; }
-
-        .audio-briefing {
-            background: linear-gradient(135deg, #222, var(--gta-dark));
-            border: 2px solid #444; border-radius: 12px;
-            padding: 15px; display: flex; align-items: center; justify-content: center;
-            gap: 15px; cursor: pointer; transition: transform 0.1s;
-            margin-bottom: 25px;
-        }
-        .audio-briefing:active { transform: scale(0.96); background: #333; }
-        .audio-icon { font-size: 28px; }
-        .audio-text { font-family: 'Oswald', sans-serif; font-size: 20px; font-weight: 700; letter-spacing: 1px; color: var(--gta-cyan);}
-
-        /* Drop Zone */
-        .drop-zone {
-            min-height: 140px; background: rgba(255,255,255,0.03);
-            border: 2px dashed #555; border-radius: 12px;
-            padding: 15px; display: flex; flex-wrap: wrap; gap: 8px;
-            align-content: flex-start; margin-bottom: 25px;
+        .sentence-box {
+            background: rgba(255,255,255,0.5); border: 2px dashed var(--wood-light);
+            padding: 15px; border-radius: 12px; font-size: 18px; font-weight: 700; color: var(--text-dark);
+            margin-bottom: 20px;
         }
 
-        /* Chunks Bank */
-        .chunks-bank { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
+        .audio-controls { display: flex; justify-content: center; gap: 15px; margin-bottom: 20px; }
+        .audio-btn {
+            background: var(--gold); border: 2px solid var(--wood-dark);
+            color: var(--wood-dark); font-size: 16px; font-weight: 900;
+            padding: 10px 15px; border-radius: 20px; cursor: pointer;
+            box-shadow: 0 4px 0 var(--wood-light); display: flex; align-items: center; gap: 5px;
+        }
+        .audio-btn:active { transform: translateY(4px); box-shadow: 0 0 0 var(--wood-light); }
+
+        .battle-btn {
+            background: var(--danger-red); border: 3px solid var(--wood-dark);
+            color: #fff; font-family: 'Cinzel', serif; font-size: 20px; font-weight: 700;
+            padding: 15px; border-radius: 12px; cursor: pointer; margin-top: auto;
+            box-shadow: 0 4px 0 #8e0000; text-transform: uppercase;
+        }
+        .battle-btn:active { transform: translateY(4px); box-shadow: 0 0 0 #8e0000; }
+
+        /* Quiz Mode Elements */
+        #quiz-mode { display: none; }
+        .quiz-title { font-family: 'Cinzel', serif; font-size: 22px; color: var(--danger-red); margin-bottom: 15px; }
+        .blank-sentence { font-size: 20px; font-weight: 900; margin-bottom: 25px; line-height: 1.5; }
+        .blank { display: inline-block; min-width: 80px; border-bottom: 3px solid var(--wood-dark); color: transparent; }
+
+        .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .option-btn {
+            background: var(--wood-light); color: var(--parchment); border: 2px solid var(--wood-dark);
+            padding: 15px 10px; border-radius: 10px; font-size: 18px; font-weight: 700; text-transform: capitalize;
+            cursor: pointer; box-shadow: 0 4px 0 var(--wood-dark); transition: all 0.1s;
+        }
+        .option-btn:active { transform: translateY(4px); box-shadow: 0 0 0 var(--wood-dark); }
         
-        .chunk-btn {
-            background-color: var(--gta-dark); color: #fff;
-            border: 2px solid #444; border-radius: 8px;
-            padding: 12px 16px; font-size: 18px; font-weight: 700;
-            cursor: pointer; transition: all 0.1s;
-            box-shadow: 0 4px 0 #111; user-select: none;
-        }
-        .chunk-btn:active { transform: translateY(4px); box-shadow: 0 0 0 #111; }
-        .chunk-btn.in-zone { background-color: var(--gta-cyan); color: #000; border-color: #fff; box-shadow: 0 4px 0 #008f9e; }
-        .chunk-btn.hidden { visibility: hidden; pointer-events: none; position: absolute; }
-
-        /* Subtitles */
-        .subtitles-container {
-            margin-top: auto; text-align: center;
-            background: rgba(0, 0, 0, 0.8); border-radius: 8px;
-            padding: 15px; border-left: 4px solid var(--gta-yellow);
-        }
-        .thai-text { display: none; font-size: 16px; color: var(--gta-yellow); font-weight: 500; }
-        .reveal-btn {
-            background: none; border: none; color: var(--text-dim);
-            font-family: 'Oswald', sans-serif; font-size: 16px; letter-spacing: 1px;
-            cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%;
-        }
+        .option-btn.correct { background: var(--xp-green); color: #fff; }
+        .option-btn.wrong { background: var(--danger-red); color: #fff; }
 
         /* Overlays */
         .overlay {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
-            z-index: 100; opacity: 0; pointer-events: none; transition: opacity 0.3s; backdrop-filter: blur(5px);
+            z-index: 100; opacity: 0; pointer-events: none; transition: opacity 0.3s;
+            backdrop-filter: blur(4px);
         }
         .overlay.active { opacity: 1; pointer-events: auto; }
-
-        .passed-bg { background: rgba(0, 0, 0, 0.85); }
-        .passed-text {
-            font-family: 'Impact', 'Oswald', sans-serif; font-size: 48px; color: var(--gta-yellow);
-            text-transform: uppercase; letter-spacing: 2px; text-align: center;
-            text-shadow: 3px 3px 0px #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
-            transform: scale(1.5); transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-        .overlay.active .passed-text { transform: scale(1); }
-        .xp-gain { font-family: 'Oswald', sans-serif; font-size: 24px; color: var(--gta-green); margin-top: 10px; }
-        
-        .wasted-bg { background: rgba(217, 65, 65, 0.4); }
-        .wasted-text {
-            font-family: 'Impact', 'Oswald', sans-serif; font-size: 64px; color: var(--gta-red);
-            text-transform: uppercase; letter-spacing: 4px;
-            text-shadow: 2px 2px 0px #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+        .victory-bg { background: rgba(76, 175, 80, 0.8); }
+        .defeat-bg { background: rgba(211, 47, 47, 0.8); }
+        .overlay-text {
+            font-family: 'Cinzel', serif; font-size: 40px; color: var(--gold);
+            text-transform: uppercase; text-shadow: 2px 2px 4px #000; margin-bottom: 10px;
         }
 
     </style>
@@ -120,51 +142,61 @@
 
     <div class="app-container">
         
-        <!-- HUD -->
+        <!-- RPG HUD -->
         <div class="hud">
             <div class="hud-top">
-                <div>
-                    <div class="rank-title" id="rank-title">STREET THUG</div>
-                    <div class="elo-score">ELO: <span id="elo-display">800</span></div>
-                </div>
-                <div class="wanted-stars" id="wanted-stars">☆☆☆☆☆</div>
+                <div class="player-title" id="player-title">Novice Explorer</div>
+                <div class="hearts" id="hearts">❤️❤️❤️</div>
             </div>
-            <div class="xp-bar-bg"><div class="xp-bar-fill" id="xp-fill"></div></div>
+            <div>
+                <div class="xp-bar-bg"><div class="xp-bar-fill" id="xp-fill"></div></div>
+                <div class="xp-text">Level <span id="lvl-display">1</span> • XP: <span id="xp-display">0</span> / 100</div>
+            </div>
         </div>
 
-        <!-- Gameplay Stage -->
-        <div class="stage">
+        <!-- STUDY MODE (The Spellbook) -->
+        <div class="card" id="study-mode">
+            <img class="card-image" id="study-image" src="" alt="Word Image">
             
-            <div class="audio-briefing" onclick="playAudio()">
-                <span class="audio-icon">📻</span>
-                <span class="audio-text">PLAY AUDIO BRIEFING</span>
+            <div class="word-header">
+                <div class="target-word" id="target-word">loading</div>
+                <div class="phonetic" id="phonetic"></div>
+                <div class="pos-badge" id="pos"></div>
             </div>
 
-            <!-- Drop Zone for building chunks -->
-            <div class="drop-zone" id="drop-zone"></div>
-
-            <!-- Scrambled Bank -->
-            <div class="chunks-bank" id="chunks-bank"></div>
-
-            <!-- Thai Intel -->
-            <div class="subtitles-container">
-                <button class="reveal-btn" id="reveal-btn" onclick="revealThai()">
-                    <span>👁️</span> REVEAL INTEL
-                </button>
-                <div class="thai-text" id="thai-text">Loading...</div>
+            <div class="translation" id="translation"></div>
+            
+            <div class="audio-controls">
+                <button class="audio-btn" onclick="playWord()">🔊 Word</button>
+                <button class="audio-btn" onclick="playSentence()">🗣️ Sentence</button>
             </div>
 
+            <div class="sentence-box" id="study-sentence"></div>
+
+            <button class="battle-btn" onclick="startBattle()">⚔️ Enter Battle</button>
         </div>
 
-        <!-- Overlays -->
-        <div class="overlay passed-bg" id="overlay-passed">
-            <div class="passed-text">MISSION PASSED</div>
-            <div class="xp-gain" id="xp-gain-text">+50 RESPECT</div>
+        <!-- QUIZ MODE (The Encounter) -->
+        <div class="card" id="quiz-mode">
+            <div class="quiz-title">Wild Encounter!</div>
+            <img class="card-image" id="quiz-image" src="" alt="Quiz Image">
+            
+            <div class="blank-sentence" id="quiz-sentence"></div>
+
+            <div class="options-grid" id="options-grid">
+                <!-- Options injected here -->
+            </div>
         </div>
 
-        <div class="overlay wasted-bg" id="overlay-wasted">
-            <div class="wasted-text">WASTED</div>
-            <div class="xp-gain" style="color: #fff;">ELO DROPPED</div>
+        <!-- OVERLAYS -->
+        <div class="overlay victory-bg" id="overlay-victory">
+            <div class="overlay-text">VICTORY!</div>
+            <div style="color: #fff; font-size: 20px; font-weight: 700;">+20 XP</div>
+        </div>
+
+        <div class="overlay defeat-bg" id="overlay-defeat">
+            <div class="overlay-text">DEFEAT...</div>
+            <div style="color: #fff; font-size: 20px; font-weight: 700;">Lost 1 Heart</div>
         </div>
 
     </div>
