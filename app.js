@@ -45,11 +45,13 @@ function shuffle(array) {
 function loadNextMatch() {
     usedHint = false;
     document.getElementById('full-thai-overlay').style.display = 'none';
+    
+    // Stop any lingering audio immediately when loading a new card
+    if (synth.speaking) synth.cancel();
 
     // Find sentences within +- 150 Elo points
     let eligible = database.filter(s => Math.abs(s.elo - playerElo) <= 150);
     if (eligible.length === 0) {
-        // Fallback if at extremes
         eligible = database;
     }
 
@@ -57,7 +59,9 @@ function loadNextMatch() {
     
     renderStage();
     startTime = Date.now();
-    playAudio();
+    
+    // Auto-play the briefing audio when mission starts
+    setTimeout(playAudio, 500);
 }
 
 // 3. Render the Tap-to-Fracture Sentence
@@ -82,12 +86,12 @@ function renderStage() {
             // Tooltip
             const tooltip = document.createElement('div');
             tooltip.className = 'tooltip';
-            tooltip.innerText = wordObj.th || '?'; // Fallback if no Thai mapped
+            tooltip.innerText = wordObj.th || '?'; 
             span.appendChild(tooltip);
 
             // Tap listener for hint
             span.onclick = (e) => {
-                e.stopPropagation(); // prevent triggering long press
+                e.stopPropagation(); 
                 usedHint = true;
                 
                 // Hide other tooltips
@@ -127,17 +131,16 @@ function setupLongPress() {
     mainContainer.addEventListener('touchend', cancelPress);
     mainContainer.addEventListener('touchmove', cancelPress);
     
-    // Mouse support for PC testing
     mainContainer.addEventListener('mousedown', startPress);
     mainContainer.addEventListener('mouseup', cancelPress);
     mainContainer.addEventListener('mouseleave', cancelPress);
 
     function startPress(e) {
-        if(e.target.tagName === 'BUTTON') return; // Don't trigger on buttons
+        if(e.target.tagName === 'BUTTON') return; 
         pressTimer = setTimeout(() => {
             usedHint = true;
             document.getElementById('full-thai-overlay').style.display = 'block';
-            if (navigator.vibrate) navigator.vibrate(50); // Haptic pop
+            if (navigator.vibrate) navigator.vibrate(50); 
         }, LONG_PRESS_MS);
     }
 
@@ -159,16 +162,15 @@ function submitAnswer(btn, selectedWord) {
         
         // Calculate XP
         let xpGained = 50;
-        if (usedHint) xpGained -= 30; // Penalty for translating
-        if (timeTaken < 3 && !usedHint) xpGained += 20; // Speed bonus
+        if (usedHint) xpGained -= 30; 
+        if (timeTaken < 3 && !usedHint) xpGained += 20; 
         
         playerXP += xpGained;
         
-        // Elo Matchmaking Math (Standard K-Factor of 32)
+        // Elo Math
         const expectedScore = 1 / (1 + Math.pow(10, (currentSentence.elo - playerElo) / 400));
         playerElo = Math.round(playerElo + 32 * (1 - expectedScore));
 
-        // UI Updates
         document.getElementById('xp-gain-text').innerText = `+${xpGained} RESPECT`;
         document.getElementById('overlay-passed').classList.add('active');
         updateHUD();
@@ -184,7 +186,6 @@ function submitAnswer(btn, selectedWord) {
         btn.classList.add('wrong');
         streak = 0;
 
-        // Reveal correct
         document.querySelectorAll('.option-btn').forEach(b => {
             if(b.innerText === currentSentence.target) b.classList.add('correct');
         });
@@ -199,14 +200,13 @@ function submitAnswer(btn, selectedWord) {
 
         setTimeout(() => {
             document.getElementById('overlay-wasted').classList.remove('active');
-            loadNextMatch(); // Re-rolls an easier sentence due to lower Elo
+            loadNextMatch(); 
         }, 2000);
     }
 }
 
 // 6. HUD Management
 function updateHUD() {
-    // Ranks based on Elo
     if (playerElo >= 1500) { document.getElementById('rank-title').innerText = "BOSS (Level 3)"; playerLevel = 3; }
     else if (playerElo >= 1200) { document.getElementById('rank-title').innerText = "HUSTLER (Level 2)"; playerLevel = 2; }
     else { document.getElementById('rank-title').innerText = "STREET THUG (Level 1)"; playerLevel = 1; }
@@ -215,11 +215,9 @@ function updateHUD() {
     document.getElementById('xp-display').innerText = playerXP;
     document.getElementById('lvl-display').innerText = playerLevel;
 
-    // XP Bar (Loops every 1000 XP)
     const xpPercent = (playerXP % 1000) / 10;
     document.getElementById('xp-fill').style.width = `${xpPercent}%`;
 
-    // Wanted Stars (Max 5)
     const starsEl = document.getElementById('wanted-stars');
     let starsHtml = '';
     for(let i=0; i<5; i++) {
@@ -229,25 +227,32 @@ function updateHUD() {
     starsEl.innerHTML = starsHtml;
 }
 
-// 7. Text-to-Speech
+// 7. Text-to-Speech (DEBUGGED ANTI-OVERLAP)
 function playAudio() {
-    if (synth.speaking) synth.cancel(); 
+    // 1. Check if audio is currently playing and cancel it.
+    if (synth.speaking) {
+        synth.cancel(); 
+    }
     
-    // Speak the full English sentence (strip out punctuation for cleaner TTS)
-    const textToSpeak = currentSentence.words.map(w => w.en).join(' ').replace(/[^a-zA-Z ]/g, '');
-    const utterThis = new SpeechSynthesisUtterance(textToSpeak);
-    
-    const voices = synth.getVoices();
-    const maleUSIdentifiers = ['David', 'Alex', 'Aaron', 'Google US English'];
-    
-    let selectedVoice = voices.find(v => 
-        v.lang.includes('en-US') && maleUSIdentifiers.some(id => v.name.includes(id))
-    );
-    if (!selectedVoice) selectedVoice = voices.find(v => v.lang.includes('en-US'));
+    // 2. Wrap the new speech call in a 50ms timeout.
+    // This gives the browser's audio buffer time to completely flush the canceled audio.
+    setTimeout(() => {
+        const textToSpeak = currentSentence.words.map(w => w.en).join(' ').replace(/[^a-zA-Z ]/g, '');
+        const utterThis = new SpeechSynthesisUtterance(textToSpeak);
+        
+        const voices = synth.getVoices();
+        const maleUSIdentifiers = ['David', 'Alex', 'Aaron', 'Google US English'];
+        
+        let selectedVoice = voices.find(v => 
+            v.lang.includes('en-US') && maleUSIdentifiers.some(id => v.name.includes(id))
+        );
+        if (!selectedVoice) selectedVoice = voices.find(v => v.lang.includes('en-US'));
 
-    if (selectedVoice) utterThis.voice = selectedVoice;
-    utterThis.rate = 1.0; 
-    synth.speak(utterThis);
+        if (selectedVoice) utterThis.voice = selectedVoice;
+        utterThis.rate = 1.0; 
+        
+        synth.speak(utterThis);
+    }, 50); 
 }
 
 speechSynthesis.onvoiceschanged = () => { synth.getVoices(); };
