@@ -1,21 +1,27 @@
 let database = [];
 let currentMission = null;
-let maxArmor = 3;
-let currentArmor = 3;
-let isThai = false;
 
-// 1. Initialize Game
+// User Profile (Saved in LocalStorage)
+let totalXP = parseInt(localStorage.getItem('mrbeast_physics_xp')) || 0;
+
+// Session State
+let lives = 3;
+let streak = 0;
+let isThai = false;
+let questionStartTime = 0;
+
+// 1. Initialize App
 fetch('db.jsonl')
     .then(response => response.text())
     .then(text => {
         const lines = text.split('\n').filter(line => line.trim() !== '');
         database = lines.map(line => JSON.parse(line));
         
-        loadNextMission();
+        updateHUD();
+        loadNextQuestion();
     })
-    .catch(err => console.error("Error loading Intel DB", err));
+    .catch(err => console.error("Error loading DB", err));
 
-// Utility: Shuffle
 function shuffle(array) {
     let curId = array.length;
     while (0 !== curId) {
@@ -28,19 +34,21 @@ function shuffle(array) {
     return array;
 }
 
-// 2. Load Mission
-function loadNextMission() {
+// 2. Load Question
+function loadNextQuestion() {
     isThai = false;
-    document.getElementById('decode-btn').innerText = "DECODE (TH)";
+    document.getElementById('translate-btn').innerText = "SHOW THAI TRANSLATION";
     
-    // Pick a random question
+    // Pick random
     currentMission = database[Math.floor(Math.random() * database.length)];
     
     renderObjective();
     renderKeypad();
+    
+    questionStartTime = Date.now(); // Start timer for XP bonus
 }
 
-// 3. Render Objective (Question Text)
+// 3. Render Question & Translation
 function renderObjective() {
     const qText = isThai ? currentMission.th : currentMission.en;
     document.getElementById('question-text').innerText = qText;
@@ -48,13 +56,13 @@ function renderObjective() {
 
 function toggleLanguage() {
     isThai = !isThai;
-    document.getElementById('decode-btn').innerText = isThai ? "ENCRYPT (EN)" : "DECODE (TH)";
+    document.getElementById('translate-btn').innerText = isThai ? "BACK TO ENGLISH" : "SHOW THAI TRANSLATION";
     renderObjective();
 }
 
 // 4. Render 3x3 Keypad
 function renderKeypad() {
-    // We need exactly 9 options: 1 answer + 8 distractors
+    // 1 Answer + 8 Distractors
     let options = [currentMission.answer, ...currentMission.distractors.slice(0, 8)];
     options = shuffle(options);
 
@@ -65,83 +73,87 @@ function renderKeypad() {
         const btn = document.createElement('button');
         btn.className = 'option-btn';
         btn.innerText = opt;
-        btn.onclick = () => executeAction(btn, opt);
+        btn.onclick = () => submitAnswer(btn, opt);
         grid.appendChild(btn);
     });
 }
 
-// 5. Combat Logic (Grading)
-function executeAction(btn, selectedValue) {
-    // Ignore clicks if button is already marked wrong
+// 5. XP Algorithm & Grading
+function submitAnswer(btn, selectedValue) {
     if (btn.classList.contains('wrong') || btn.classList.contains('correct')) return;
 
+    const timeTaken = (Date.now() - questionStartTime) / 1000;
+
     if (selectedValue === currentMission.answer) {
-        // TARGET ELIMINATED (Correct)
+        // CORRECT
         btn.classList.add('correct');
         document.querySelectorAll('.option-btn').forEach(b => b.disabled = true);
         
-        document.getElementById('overlay-cleared').classList.add('active');
+        streak++;
+        
+        // --- XP ALGORITHM ---
+        let baseXP = 1000;
+        
+        // Time Bonus: Max 500 XP if answered instantly, degrades over 10 seconds
+        let timeBonus = Math.max(0, 500 - (timeTaken * 50)); 
+        
+        // Streak Multiplier: +0.2x per streak, max 3.0x
+        let multiplier = Math.min(3.0, 1.0 + (streak * 0.2));
+        
+        let earnedXP = Math.floor((baseXP + timeBonus) * multiplier);
+        
+        // Update Globals
+        totalXP += earnedXP;
+        localStorage.setItem('mrbeast_physics_xp', totalXP); // Save locally for future leaderboards
+        
+        // Show Success
+        document.getElementById('earned-xp-text').innerText = `+${earnedXP.toLocaleString()} XP`;
+        document.getElementById('overlay-correct').classList.add('active');
+        updateHUD();
         
         setTimeout(() => {
-            document.getElementById('overlay-cleared').classList.remove('active');
-            loadNextMission();
+            document.getElementById('overlay-correct').classList.remove('active');
+            loadNextQuestion();
         }, 1500);
 
     } else {
-        // HIT RECEIVED (Wrong)
+        // WRONG
         btn.classList.add('wrong');
-        takeDamage();
-    }
-}
+        streak = 0; // Reset streak multiplier
+        lives--;
+        
+        if (navigator.vibrate) navigator.vibrate(200);
+        updateHUD();
 
-// 6. Damage System
-function takeDamage() {
-    currentArmor--;
-    updateArmorUI();
-
-    // Trigger Visual Effects
-    const overlay = document.getElementById('damage-overlay');
-    const container = document.getElementById('main-container');
-
-    // 1. Blood Flash
-    overlay.classList.add('active');
-    
-    // 2. Camera Shake
-    container.classList.add('shake-effect');
-    
-    // 3. Haptic Vibration (Supported mobiles only)
-    if (navigator.vibrate) {
-        navigator.vibrate([100, 50, 100]); // Two quick, heavy jolts
-    }
-
-    // Clean up effects after animation
-    setTimeout(() => {
-        overlay.classList.remove('active');
-        container.classList.remove('shake-effect');
-    }, 400);
-
-    // Check Death Condition
-    if (currentArmor <= 0) {
-        setTimeout(() => {
-            document.getElementById('overlay-kia').classList.add('active');
-        }, 500);
-    }
-}
-
-function updateArmorUI() {
-    for (let i = 1; i <= maxArmor; i++) {
-        const plate = document.getElementById(`armor-${i}`);
-        if (i <= currentArmor) {
-            plate.classList.remove('lost');
-        } else {
-            plate.classList.add('lost');
+        if (lives <= 0) {
+            setTimeout(() => {
+                document.getElementById('overlay-eliminated').classList.add('active');
+            }, 300);
         }
     }
 }
 
-function restartGame() {
-    currentArmor = maxArmor;
-    updateArmorUI();
-    document.getElementById('overlay-kia').classList.remove('active');
-    loadNextMission();
+// 6. UI Updates
+function updateHUD() {
+    // XP
+    document.getElementById('total-xp').innerText = totalXP.toLocaleString();
+    
+    // Streak
+    let multiplier = Math.min(3.0, 1.0 + (streak * 0.2)).toFixed(1);
+    document.getElementById('streak-mult').innerText = `${multiplier}x`;
+
+    // Lives
+    let heartsHtml = '';
+    for (let i = 0; i < 3; i++) {
+        heartsHtml += i < lives ? '❤️' : '🖤';
+    }
+    document.getElementById('lives-display').innerHTML = heartsHtml;
+}
+
+function restartChallenge() {
+    lives = 3;
+    streak = 0;
+    updateHUD();
+    document.getElementById('overlay-eliminated').classList.remove('active');
+    loadNextQuestion();
 }
