@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>San Andreas Polyglot</title>
+    <title>Urban Polyglot</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@500;700&family=Roboto:wght@400;700;900&display=swap');
 
@@ -41,7 +41,7 @@
         .xp-bar-fill { height: 100%; background: var(--gta-pink); width: 0%; transition: width 0.3s ease; }
         .xp-text { font-size: 12px; color: var(--text-dim); text-align: right; margin-top: 4px; font-weight: 700; text-transform: uppercase;}
 
-        /* The Recon Stage (Study) */
+        /* Study Mode */
         .card {
             background-color: rgba(255,255,255,0.05); border: 2px solid #333;
             border-radius: 16px; padding: 20px; flex-grow: 1; display: flex; flex-direction: column;
@@ -81,9 +81,9 @@
         }
         .action-btn:active { transform: scale(0.98); }
 
-        /* The Heist Mode (Quiz) */
-        #heist-mode { display: none; }
-        .heist-title { font-family: 'Oswald', sans-serif; font-size: 22px; color: var(--gta-red); margin-bottom: 15px; letter-spacing: 2px; text-transform: uppercase;}
+        /* Quiz Mode */
+        #quiz-mode { display: none; }
+        .quiz-title { font-family: 'Oswald', sans-serif; font-size: 22px; color: var(--gta-red); margin-bottom: 15px; letter-spacing: 2px; text-transform: uppercase;}
         .blank-sentence { font-size: 22px; font-weight: 500; margin-bottom: 25px; line-height: 1.5; text-align: left;}
         .blank { display: inline-block; min-width: 80px; border-bottom: 4px solid var(--gta-cyan); color: transparent; }
 
@@ -132,20 +132,20 @@
         <div class="hud">
             <div class="hud-top">
                 <div>
-                    <span class="rank-title" id="rank-title">Street Thug</span>
+                    <span class="rank-title" id="rank-title">Beginner</span>
                     <span class="cefr-badge" id="cefr-badge">A1</span>
                 </div>
                 <div class="wanted-stars" id="wanted-stars">☆☆☆☆☆</div>
             </div>
             <div>
                 <div class="xp-bar-bg"><div class="xp-bar-fill" id="xp-fill"></div></div>
-                <div class="xp-text">Respect: <span id="xp-display">0</span> XP</div>
+                <div class="xp-text"><span id="xp-display">0</span> XP</div>
             </div>
         </div>
 
-        <!-- RECON MODE (Study) -->
-        <div class="card" id="recon-mode">
-            <img class="card-image" id="study-image" src="" alt="Intel Image">
+        <!-- STUDY MODE -->
+        <div class="card" id="study-mode">
+            <img class="card-image" id="study-image" src="" alt="Word Context">
             
             <div class="word-header">
                 <div class="target-word" id="target-word">loading</div>
@@ -160,16 +160,16 @@
 
             <div class="audio-controls">
                 <button class="audio-btn" onclick="playWord()">🔊 Word</button>
-                <button class="audio-btn" onclick="playSentence()">🗣️ Audio Log</button>
+                <button class="audio-btn" onclick="playSentence()">🗣️ Sentence</button>
             </div>
 
-            <button class="action-btn" onclick="startHeist()">Execute Heist</button>
+            <button class="action-btn" onclick="startQuiz()">Take Quiz</button>
         </div>
 
-        <!-- HEIST MODE (Quiz) -->
-        <div class="card" id="heist-mode">
-            <div class="heist-title">Target Acquired</div>
-            <img class="card-image" id="quiz-image" src="" alt="Heist Target">
+        <!-- QUIZ MODE -->
+        <div class="card" id="quiz-mode">
+            <div class="heist-title">Test Your Knowledge</div>
+            <img class="card-image" id="quiz-image" src="" alt="Quiz Context">
             
             <div class="blank-sentence" id="quiz-sentence"></div>
 
@@ -178,13 +178,13 @@
 
         <!-- OVERLAYS -->
         <div class="overlay passed-bg" id="overlay-passed">
-            <div class="passed-text">MISSION PASSED</div>
-            <div class="xp-gain" id="xp-gain-text">+20 RESPECT</div>
+            <div class="passed-text">LESSON PASSED</div>
+            <div class="xp-gain" id="xp-gain-text">+20 XP</div>
         </div>
 
         <div class="overlay wasted-bg" id="overlay-wasted">
-            <div class="wasted-text">WASTED</div>
-            <div class="xp-gain" style="color: #fff; font-size: 18px;">-10 RESPECT</div>
+            <div class="wasted-text">FAILED</div>
+            <div class="xp-gain" style="color: #fff; font-size: 18px;">-10 XP</div>
         </div>
 
     </div>
