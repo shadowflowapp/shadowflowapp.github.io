@@ -1,21 +1,8 @@
 let database = [];
-const synth = window.speechSynthesis;
-
-// Player State
-let playerXP = 0;
-let streak = 0;
-let currentCard = null;
-let currentCEFR = "A1";
-
-// Standard Fluency Ranks
-const ranks = [
-    { maxXP: 200, cefr: "A1", title: "Beginner" },
-    { maxXP: 400, cefr: "A2", title: "Elementary" },
-    { maxXP: 600, cefr: "B1", title: "Intermediate" },
-    { maxXP: 800, cefr: "B2", title: "Upper-Intermediate" },
-    { maxXP: 1000, cefr: "C1", title: "Advanced" },
-    { maxXP: 99999, cefr: "C2", title: "Mastery" }
-];
+let currentMission = null;
+let maxArmor = 3;
+let currentArmor = 3;
+let isThai = false;
 
 // 1. Initialize Game
 fetch('db.jsonl')
@@ -24,10 +11,9 @@ fetch('db.jsonl')
         const lines = text.split('\n').filter(line => line.trim() !== '');
         database = lines.map(line => JSON.parse(line));
         
-        updateHUD();
-        loadNextCard();
+        loadNextMission();
     })
-    .catch(err => console.error("Error loading DB", err));
+    .catch(err => console.error("Error loading Intel DB", err));
 
 // Utility: Shuffle
 function shuffle(array) {
@@ -42,72 +28,35 @@ function shuffle(array) {
     return array;
 }
 
-// 2. Load Study Mode
-function loadNextCard() {
-    // Filter database for words matching the current CEFR tier
-    const eligibleWords = database.filter(w => w.cefr === currentCEFR);
+// 2. Load Mission
+function loadNextMission() {
+    isThai = false;
+    document.getElementById('decode-btn').innerText = "DECODE (TH)";
     
-    // Fallback if tier is empty
-    const pool = eligibleWords.length > 0 ? eligibleWords : database;
-    currentCard = pool[Math.floor(Math.random() * pool.length)];
+    // Pick a random question
+    currentMission = database[Math.floor(Math.random() * database.length)];
     
-    // UI Switch
-    document.getElementById('study-mode').style.display = 'flex';
-    document.getElementById('quiz-mode').style.display = 'none';
-
-    // Populate Data
-    document.getElementById('study-image').src = currentCard.image;
-    document.getElementById('target-word').innerText = currentCard.word;
-    document.getElementById('phonetic').innerText = currentCard.phonetic;
-    document.getElementById('pos').innerText = currentCard.pos;
-    document.getElementById('translation').innerText = currentCard.thai;
-    document.getElementById('definition').innerText = `"${currentCard.definition}"`;
-    
-    // Highlight Target Word in Sentence
-    const regex = new RegExp(`\\b(${currentCard.word}[a-z]*)\\b`, 'gi');
-    const highlightedSentence = currentCard.sentence.replace(regex, `<span style="color: var(--gta-cyan);"><b>$1</b></span>`);
-    document.getElementById('study-sentence').innerHTML = highlightedSentence;
+    renderObjective();
+    renderKeypad();
 }
 
-// 3. Audio Engine (Anti-Overlap Micro-Delay)
-function playAudio(text, rate = 1.0) {
-    if (synth.speaking) synth.cancel(); 
-    
-    setTimeout(() => {
-        const utterThis = new SpeechSynthesisUtterance(text);
-        const voices = synth.getVoices();
-        
-        const maleUSIdentifiers = ['David', 'Alex', 'Aaron', 'Google US English'];
-        let selectedVoice = voices.find(v => 
-            v.lang.includes('en-US') && maleUSIdentifiers.some(id => v.name.includes(id))
-        );
-        if (!selectedVoice) selectedVoice = voices.find(v => v.lang.includes('en-US'));
-
-        if (selectedVoice) utterThis.voice = selectedVoice;
-        utterThis.rate = rate; 
-        
-        synth.speak(utterThis);
-    }, 50);
+// 3. Render Objective (Question Text)
+function renderObjective() {
+    const qText = isThai ? currentMission.th : currentMission.en;
+    document.getElementById('question-text').innerText = qText;
 }
 
-function playWord() { playAudio(currentCard.word, 0.8); }
-function playSentence() { playAudio(currentCard.sentence, 1.0); }
-speechSynthesis.onvoiceschanged = () => { synth.getVoices(); };
+function toggleLanguage() {
+    isThai = !isThai;
+    document.getElementById('decode-btn').innerText = isThai ? "ENCRYPT (EN)" : "DECODE (TH)";
+    renderObjective();
+}
 
-// 4. Enter Quiz Mode
-function startQuiz() {
-    if (synth.speaking) synth.cancel();
-    
-    document.getElementById('study-mode').style.display = 'none';
-    document.getElementById('quiz-mode').style.display = 'flex';
-
-    document.getElementById('quiz-image').src = currentCard.image;
-    
-    const regex = new RegExp(`\\b${currentCard.word}[a-z]*\\b`, 'gi');
-    document.getElementById('quiz-sentence').innerHTML = currentCard.sentence.replace(regex, `<span class="blank">_______</span>`);
-
-    // DYNAMIC DISTRACTORS: Pull the hardcoded trick distractors from DB
-    let options = shuffle([currentCard.word, ...currentCard.distractors.slice(0, 3)]);
+// 4. Render 3x3 Keypad
+function renderKeypad() {
+    // We need exactly 9 options: 1 answer + 8 distractors
+    let options = [currentMission.answer, ...currentMission.distractors.slice(0, 8)];
+    options = shuffle(options);
 
     const grid = document.getElementById('options-grid');
     grid.innerHTML = '';
@@ -116,88 +65,83 @@ function startQuiz() {
         const btn = document.createElement('button');
         btn.className = 'option-btn';
         btn.innerText = opt;
-        btn.onclick = () => executeQuiz(btn, opt);
+        btn.onclick = () => executeAction(btn, opt);
         grid.appendChild(btn);
     });
 }
 
-// 5. Quiz Results (Grading & XP)
-function executeQuiz(btn, selectedWord) {
-    document.querySelectorAll('.option-btn').forEach(b => b.disabled = true);
+// 5. Combat Logic (Grading)
+function executeAction(btn, selectedValue) {
+    // Ignore clicks if button is already marked wrong
+    if (btn.classList.contains('wrong') || btn.classList.contains('correct')) return;
 
-    if (selectedWord === currentCard.word) {
-        // PASSED
+    if (selectedValue === currentMission.answer) {
+        // TARGET ELIMINATED (Correct)
         btn.classList.add('correct');
-        playerXP += 20;
-        streak++;
+        document.querySelectorAll('.option-btn').forEach(b => b.disabled = true);
         
-        playAudio("Correct.", 1.2); 
-        document.getElementById('overlay-passed').classList.add('active');
+        document.getElementById('overlay-cleared').classList.add('active');
         
         setTimeout(() => {
-            document.getElementById('overlay-passed').classList.remove('active');
-            updateHUD();
-            loadNextCard();
+            document.getElementById('overlay-cleared').classList.remove('active');
+            loadNextMission();
         }, 1500);
 
     } else {
-        // FAILED
+        // HIT RECEIVED (Wrong)
         btn.classList.add('wrong');
-        streak = 0;
-        playerXP = Math.max(0, playerXP - 10); // Penalty, but don't drop below 0
-        
-        document.querySelectorAll('.option-btn').forEach(b => {
-            if(b.innerText === currentCard.word) b.classList.add('correct');
-        });
+        takeDamage();
+    }
+}
 
-        document.getElementById('overlay-wasted').classList.add('active');
-        if (navigator.vibrate) navigator.vibrate(200);
+// 6. Damage System
+function takeDamage() {
+    currentArmor--;
+    updateArmorUI();
 
+    // Trigger Visual Effects
+    const overlay = document.getElementById('damage-overlay');
+    const container = document.getElementById('main-container');
+
+    // 1. Blood Flash
+    overlay.classList.add('active');
+    
+    // 2. Camera Shake
+    container.classList.add('shake-effect');
+    
+    // 3. Haptic Vibration (Supported mobiles only)
+    if (navigator.vibrate) {
+        navigator.vibrate([100, 50, 100]); // Two quick, heavy jolts
+    }
+
+    // Clean up effects after animation
+    setTimeout(() => {
+        overlay.classList.remove('active');
+        container.classList.remove('shake-effect');
+    }, 400);
+
+    // Check Death Condition
+    if (currentArmor <= 0) {
         setTimeout(() => {
-            document.getElementById('overlay-wasted').classList.remove('active');
-            updateHUD();
-            loadNextCard(); // Force them to restudy
-        }, 2000);
+            document.getElementById('overlay-kia').classList.add('active');
+        }, 500);
     }
 }
 
-// 6. HUD Logic (CEFR Calculation)
-function updateHUD() {
-    // Determine CEFR level and Rank based on XP
-    let currentRankObj = ranks[0];
-    for (let i = 0; i < ranks.length; i++) {
-        if (playerXP < ranks[i].maxXP) {
-            currentRankObj = ranks[i];
-            break;
+function updateArmorUI() {
+    for (let i = 1; i <= maxArmor; i++) {
+        const plate = document.getElementById(`armor-${i}`);
+        if (i <= currentArmor) {
+            plate.classList.remove('lost');
+        } else {
+            plate.classList.add('lost');
         }
-        if (i === ranks.length - 1) currentRankObj = ranks[i]; // Max level
     }
-
-    currentCEFR = currentRankObj.cefr;
-    document.getElementById('rank-title').innerText = currentRankObj.title;
-    document.getElementById('cefr-badge').innerText = currentCEFR;
-    
-    document.getElementById('xp-display').innerText = playerXP;
-    
-    // XP Bar (Loops within the current tier bracket)
-    let minXP = 0;
-    let maxXP = currentRankObj.maxXP;
-    if(currentRankObj.title !== "Beginner") {
-        const prevRank = ranks.find(r => r.cefr === getPreviousCEFR(currentCEFR));
-        minXP = prevRank.maxXP;
-    }
-    
-    const xpPercent = ((playerXP - minXP) / (maxXP - minXP)) * 100;
-    document.getElementById('xp-fill').style.width = `${Math.min(100, Math.max(0, xpPercent))}%`;
-
-    // Hot Streak Stars
-    let starsHtml = '';
-    for(let i=0; i<5; i++) { starsHtml += i < Math.min(streak, 5) ? '<span class="active">★</span>' : '☆'; }
-    document.getElementById('wanted-stars').innerHTML = starsHtml;
 }
 
-function getPreviousCEFR(cefr) {
-    const order = ["A1", "A2", "B1", "B2", "C1", "C2"];
-    const idx = order.indexOf(cefr);
-    return idx > 0 ? order[idx - 1] : "A1";
+function restartGame() {
+    currentArmor = maxArmor;
+    updateArmorUI();
+    document.getElementById('overlay-kia').classList.remove('active');
+    loadNextMission();
 }
