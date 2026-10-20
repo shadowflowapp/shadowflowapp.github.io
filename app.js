@@ -1,25 +1,22 @@
 let database = [];
 const synth = window.speechSynthesis;
 
-// Player State
-let playerElo = 800;
+// RPG Player State
 let playerXP = 0;
 let playerLevel = 1;
-let streak = 0;
-let usedHint = false;
-let startTime = 0;
+let hearts = 3;
+let currentCard = null;
 
-// Game Systems
-let currentSentence = null;
-let correctChunksOrder = [];
-let scrambledChunks = [];
-let userDropZone = []; 
+// Ranks
+const titles = [
+    "Novice Explorer", 
+    "Apprentice Mage", 
+    "Brave Squire", 
+    "Adept Scholar", 
+    "Guild Master"
+];
 
-// System 4: Cooldown Deck (Prevents repeats)
-let cooldownDeck = []; 
-const COOLDOWN_LIMIT = 15; 
-
-// 1. Initialize
+// 1. Initialize Game
 fetch('db.jsonl')
     .then(response => response.text())
     .then(text => {
@@ -27,10 +24,11 @@ fetch('db.jsonl')
         database = lines.map(line => JSON.parse(line));
         
         updateHUD();
-        loadNextMatch();
+        loadNextCard();
     })
     .catch(err => console.error("Error loading DB", err));
 
+// Utility: Shuffle
 function shuffle(array) {
     let curId = array.length;
     while (0 !== curId) {
@@ -43,209 +41,159 @@ function shuffle(array) {
     return array;
 }
 
-// 2. Adaptive Matchmaking with Cooldown Filter
-function loadNextMatch() {
-    usedHint = false;
-    document.getElementById('reveal-btn').style.display = 'flex';
-    document.getElementById('thai-text').style.display = 'none';
-
-    // Find sentences within +- 150 Elo points, EXCLUDING the cooldown deck
-    let eligible = database.filter(s => 
-        Math.abs(s.elo - playerElo) <= 150 && 
-        !cooldownDeck.includes(s.id)
-    );
-
-    // Fallback: If we run out of eligible cards (rare, but possible), expand criteria
-    if (eligible.length === 0) {
-        eligible = database.filter(s => !cooldownDeck.includes(s.id));
-        if (eligible.length === 0) {
-            cooldownDeck = []; // Emergency reset if they beat the whole database
-            eligible = database;
-        }
-    }
-
-    currentSentence = eligible[Math.floor(Math.random() * eligible.length)];
+// 2. Load Spellbook (Study Phase)
+function loadNextCard() {
+    // Pick random card
+    currentCard = database[Math.floor(Math.random() * database.length)];
     
-    // Add to Cooldown Deck
-    cooldownDeck.push(currentSentence.id);
-    if (cooldownDeck.length > COOLDOWN_LIMIT) {
-        cooldownDeck.shift(); // Remove the oldest ID from cooldown
-    }
+    // UI Switch
+    document.getElementById('study-mode').style.display = 'flex';
+    document.getElementById('quiz-mode').style.display = 'none';
 
-    // Setup Chunks
-    correctChunksOrder = currentSentence.chunks.map(c => c.en);
-    scrambledChunks = correctChunksOrder.map((text, i) => ({ id: i, text: text }));
-    scrambledChunks = shuffle(scrambledChunks);
-    userDropZone = [];
-
-    document.getElementById('thai-text').innerText = currentSentence.th_full;
-
-    renderBoard();
-    startTime = Date.now();
+    // Populate Study Data
+    document.getElementById('study-image').src = currentCard.image;
+    document.getElementById('target-word').innerText = currentCard.word;
+    document.getElementById('phonetic').innerText = currentCard.phonetic;
+    document.getElementById('pos').innerText = currentCard.pos;
+    document.getElementById('translation').innerText = currentCard.thai;
     
-    // Play Briefing Audio when card loads
-    playAudio(false);
+    // Highlight the target word in the sentence
+    const regex = new RegExp(`\\b(${currentCard.word}[a-z]*)\\b`, 'gi');
+    const highlightedSentence = currentCard.sentence.replace(regex, `<span style="color: var(--action-blue);"><b>$1</b></span>`);
+    document.getElementById('study-sentence').innerHTML = highlightedSentence;
 }
 
-// 3. Render Boards
-function renderBoard() {
-    const bankEl = document.getElementById('chunks-bank');
-    const zoneEl = document.getElementById('drop-zone');
-    
-    bankEl.innerHTML = '';
-    zoneEl.innerHTML = '';
-
-    // Render Bank
-    scrambledChunks.forEach((chunkObj, idx) => {
-        const btn = document.createElement('button');
-        btn.className = `chunk-btn ${userDropZone.includes(idx) ? 'hidden' : ''}`;
-        btn.innerText = chunkObj.text;
-        btn.onclick = () => tapBankChunk(idx);
-        bankEl.appendChild(btn);
-    });
-
-    // Render Drop Zone
-    userDropZone.forEach((scrambledIdx, orderIndex) => {
-        const chunkObj = scrambledChunks[scrambledIdx];
-        const btn = document.createElement('button');
-        btn.className = 'chunk-btn in-zone';
-        btn.innerText = chunkObj.text;
-        btn.onclick = () => tapZoneChunk(orderIndex);
-        zoneEl.appendChild(btn);
-    });
-
-    // Auto-Check if Drop Zone is full
-    if (userDropZone.length === correctChunksOrder.length) {
-        checkAnswer();
-    }
-}
-
-// 4. Tap Interactions
-function tapBankChunk(scrambledIdx) {
-    userDropZone.push(scrambledIdx);
-    renderBoard();
-}
-
-function tapZoneChunk(orderIndex) {
-    userDropZone.splice(orderIndex, 1);
-    renderBoard();
-}
-
-// 5. Check Answer
-function checkAnswer() {
-    let isCorrect = true;
-    
-    userDropZone.forEach((scrambledIdx, index) => {
-        if (scrambledChunks[scrambledIdx].text !== correctChunksOrder[index]) {
-            isCorrect = false;
-        }
-    });
-
-    const timeTaken = (Date.now() - startTime) / 1000;
-
-    if (isCorrect) {
-        // WIN
-        streak++;
-        
-        let xpGained = 50;
-        if (usedHint) xpGained -= 30;
-        if (timeTaken < 5 && !usedHint) xpGained += 20;
-        playerXP += xpGained;
-        
-        const expectedScore = 1 / (1 + Math.pow(10, (currentSentence.elo - playerElo) / 400));
-        playerElo = Math.round(playerElo + 32 * (1 - expectedScore));
-
-        document.getElementById('xp-gain-text').innerText = `+${xpGained} RESPECT`;
-        document.getElementById('overlay-passed').classList.add('active');
-        updateHUD();
-        
-        // System 5: Wait-to-Speak Event Listener
-        // Pass 'true' to trigger the loadNextMatch() ONLY after audio ends
-        playAudio(true); 
-
-    } else {
-        // LOSE
-        streak = 0;
-        
-        const expectedScore = 1 / (1 + Math.pow(10, (currentSentence.elo - playerElo) / 400));
-        playerElo = Math.round(playerElo + 32 * (0 - expectedScore));
-
-        document.getElementById('overlay-wasted').classList.add('active');
-        if (navigator.vibrate) navigator.vibrate(200);
-        updateHUD();
-
-        setTimeout(() => {
-            document.getElementById('overlay-wasted').classList.remove('active');
-            userDropZone = []; // Reset their chunks
-            renderBoard();
-        }, 1500);
-    }
-}
-
-// 6. Subtitles Toggle
-function revealThai() {
-    usedHint = true;
-    document.getElementById('reveal-btn').style.display = 'none';
-    document.getElementById('thai-text').style.display = 'block';
-}
-
-// 7. HUD Management
-function updateHUD() {
-    if (playerElo >= 1600) { document.getElementById('rank-title').innerText = "BOSS (Level 3)"; playerLevel = 3; }
-    else if (playerElo >= 1200) { document.getElementById('rank-title').innerText = "HUSTLER (Level 2)"; playerLevel = 2; }
-    else { document.getElementById('rank-title').innerText = "STREET THUG (Level 1)"; playerLevel = 1; }
-
-    document.getElementById('elo-display').innerText = playerElo;
-    
-    const xpPercent = (playerXP % 1000) / 10;
-    document.getElementById('xp-fill').style.width = `${xpPercent}%`;
-
-    const starsEl = document.getElementById('wanted-stars');
-    let starsHtml = '';
-    for(let i=0; i<5; i++) {
-        if (i < Math.min(streak, 5)) starsHtml += '<span class="active">★</span>';
-        else starsHtml += '☆';
-    }
-    starsEl.innerHTML = starsHtml;
-}
-
-// 8. Event-Driven Audio (Anti-Overlap & Auto-Advance)
-function playAudio(isWinSequence = false) {
+// 3. Audio Engine (Dual Buttons)
+function playAudio(text, rate = 1.0) {
     if (synth.speaking) synth.cancel(); 
     
-    // Tiny delay ensures the buffer is cleared before sending the new speech command
     setTimeout(() => {
-        const textToSpeak = correctChunksOrder.join(' ').replace(/[^a-zA-Z0-9 ]/g, '');
-        const utterThis = new SpeechSynthesisUtterance(textToSpeak);
-        
+        const utterThis = new SpeechSynthesisUtterance(text);
         const voices = synth.getVoices();
-        const maleUSIdentifiers = ['David', 'Alex', 'Aaron', 'Google US English'];
         
+        // Ensure American English (Family-friendly tone)
+        const maleUSIdentifiers = ['David', 'Alex', 'Aaron', 'Google US English'];
         let selectedVoice = voices.find(v => 
             v.lang.includes('en-US') && maleUSIdentifiers.some(id => v.name.includes(id))
         );
         if (!selectedVoice) selectedVoice = voices.find(v => v.lang.includes('en-US'));
 
         if (selectedVoice) utterThis.voice = selectedVoice;
-        utterThis.rate = 1.0; 
+        utterThis.rate = rate; 
         
-        // This is the Magic: Wait for audio to finish before advancing the game
-        if (isWinSequence) {
-            utterThis.onend = () => {
-                document.getElementById('overlay-passed').classList.remove('active');
-                loadNextMatch();
-            };
-            // Fallback just in case the browser's speech synthesis engine hangs
-            setTimeout(() => {
-                if (document.getElementById('overlay-passed').classList.contains('active')) {
-                    document.getElementById('overlay-passed').classList.remove('active');
-                    loadNextMatch();
-                }
-            }, 5000);
-        }
-
         synth.speak(utterThis);
     }, 50);
 }
 
+function playWord() {
+    playAudio(currentCard.word, 0.9); // Slower for pronunciation
+}
+
+function playSentence() {
+    playAudio(currentCard.sentence, 1.0); // Native speed
+}
+
 speechSynthesis.onvoiceschanged = () => { synth.getVoices(); };
+
+// 4. Enter Battle (Quiz Phase)
+function startBattle() {
+    if (synth.speaking) synth.cancel();
+    
+    document.getElementById('study-mode').style.display = 'none';
+    document.getElementById('quiz-mode').style.display = 'flex';
+
+    // Populate Quiz Data
+    document.getElementById('quiz-image').src = currentCard.image;
+    
+    // Create Blank Sentence
+    const regex = new RegExp(`\\b${currentCard.word}\\b`, 'gi');
+    document.getElementById('quiz-sentence').innerHTML = currentCard.sentence.replace(regex, `<span class="blank">_____</span>`);
+
+    // Generate Multiple Choice
+    let allWords = database.filter(w => w.word !== currentCard.word).map(w => w.word);
+    allWords = shuffle(allWords);
+    let options = shuffle([currentCard.word, ...allWords.slice(0, 3)]);
+
+    const grid = document.getElementById('options-grid');
+    grid.innerHTML = '';
+    
+    options.forEach(opt => {
+        const btn = document.createElement('button');
+        btn.className = 'option-btn';
+        btn.innerText = opt;
+        btn.onclick = () => submitAttack(btn, opt);
+        grid.appendChild(btn);
+    });
+}
+
+// 5. Battle Results (Grading & XP)
+function submitAttack(btn, selectedWord) {
+    // Disable further clicks
+    document.querySelectorAll('.option-btn').forEach(b => b.disabled = true);
+
+    if (selectedWord === currentCard.word) {
+        // VICTORY
+        btn.classList.add('correct');
+        playerXP += 20;
+        
+        playAudio("Correct!", 1.2); // Small feedback
+        document.getElementById('overlay-victory').classList.add('active');
+        
+        setTimeout(() => {
+            document.getElementById('overlay-victory').classList.remove('active');
+            updateHUD();
+            loadNextCard();
+        }, 1500);
+
+    } else {
+        // DEFEAT
+        btn.classList.add('wrong');
+        hearts--;
+        
+        // Show correct answer
+        document.querySelectorAll('.option-btn').forEach(b => {
+            if(b.innerText === currentCard.word) b.classList.add('correct');
+        });
+
+        document.getElementById('overlay-defeat').classList.add('active');
+        if (navigator.vibrate) navigator.vibrate(200);
+
+        setTimeout(() => {
+            document.getElementById('overlay-defeat').classList.remove('active');
+            updateHUD();
+            
+            if (hearts <= 0) {
+                alert("Game Over! The monsters defeated you. You will restart at Level 1.");
+                playerXP = 0;
+                hearts = 3;
+                updateHUD();
+            }
+            loadNextCard(); // Force them to restudy
+        }, 2000);
+    }
+}
+
+// 6. RPG HUD Logic
+function updateHUD() {
+    // Level Up Math (Every 100 XP is a level)
+    playerLevel = Math.floor(playerXP / 100) + 1;
+    
+    // Assign Title
+    const titleIndex = Math.min(playerLevel - 1, titles.length - 1);
+    document.getElementById('player-title').innerText = titles[titleIndex];
+    
+    // Update Texts
+    document.getElementById('lvl-display').innerText = playerLevel;
+    document.getElementById('xp-display').innerText = playerXP % 100;
+    
+    // XP Bar Visual
+    const xpPercent = playerXP % 100;
+    document.getElementById('xp-fill').style.width = `${xpPercent}%`;
+
+    // Hearts Visual
+    let heartsHtml = '';
+    for(let i=0; i<3; i++) {
+        heartsHtml += i < hearts ? '❤️' : '🖤';
+    }
+    document.getElementById('hearts').innerHTML = heartsHtml;
+}
