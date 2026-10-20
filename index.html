@@ -3,188 +3,182 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Urban Polyglot</title>
+    <title>Operation: PHYSICS</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@500;700&family=Roboto:wght@400;700;900&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Black+Ops+One&display=swap');
 
         :root {
-            --gta-black: #0a0a0a; --gta-dark: #1c1c1e;
-            --gta-green: #41d95d; --gta-red: #d94141;
-            --gta-yellow: #f2c80f; --gta-cyan: #0fdbf2; --gta-pink: #f20f8c;
-            --text-light: #f5f5f5; --text-dim: #888888;
+            --bg-color: #0f1110;
+            --hud-green: #39ff14;
+            --hud-amber: #ffb000;
+            --hud-red: #ff2a2a;
+            --panel-bg: rgba(20, 25, 20, 0.85);
+            --border-color: #334033;
         }
 
         body {
-            font-family: 'Roboto', sans-serif; background-color: var(--gta-black);
-            color: var(--text-light); margin: 0; padding: 0;
-            display: flex; justify-content: center; height: 100dvh; overflow: hidden;
+            font-family: 'Share Tech Mono', monospace;
+            background-color: var(--bg-color);
+            background-image: 
+                linear-gradient(rgba(0, 255, 0, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 255, 0, 0.03) 1px, transparent 1px);
+            background-size: 20px 20px;
+            color: var(--text-light);
+            margin: 0; padding: 0;
+            display: flex; justify-content: center;
+            height: 100dvh; overflow: hidden;
             -webkit-tap-highlight-color: transparent;
-            background-image: radial-gradient(circle at center, #1a1a1a 0%, #000000 100%);
+            user-select: none;
         }
+
+        /* Screen Shake Animation */
+        @keyframes shake {
+            0% { transform: translate(1px, 1px) rotate(0deg); }
+            10% { transform: translate(-1px, -2px) rotate(-1deg); }
+            20% { transform: translate(-3px, 0px) rotate(1deg); }
+            30% { transform: translate(3px, 2px) rotate(0deg); }
+            40% { transform: translate(1px, -1px) rotate(1deg); }
+            50% { transform: translate(-1px, 2px) rotate(-1deg); }
+            60% { transform: translate(-3px, 1px) rotate(0deg); }
+            70% { transform: translate(3px, 1px) rotate(-1deg); }
+            80% { transform: translate(-1px, -1px) rotate(1deg); }
+            90% { transform: translate(1px, 2px) rotate(0deg); }
+            100% { transform: translate(1px, -2px) rotate(-1deg); }
+        }
+
+        .shake-effect { animation: shake 0.4s; }
+
+        /* Blood Damage Overlay */
+        .damage-overlay {
+            position: fixed; inset: 0; z-index: 50; pointer-events: none;
+            background: radial-gradient(circle, transparent 30%, rgba(255, 0, 0, 0.4) 80%, rgba(255, 0, 0, 0.8) 100%);
+            box-shadow: inset 0 0 100px rgba(255,0,0,0.8);
+            opacity: 0; transition: opacity 0.1s ease-out;
+        }
+        .damage-overlay.active { opacity: 1; transition: none; }
 
         .app-container {
             width: 100%; max-width: 430px; height: 100%;
-            display: flex; flex-direction: column; padding: 15px; box-sizing: border-box; position: relative;
+            display: flex; flex-direction: column; padding: 15px; box-sizing: border-box;
+            position: relative; z-index: 10;
         }
 
-        /* HUD Header */
-        .hud { margin-bottom: 15px; border-bottom: 2px solid #333; padding-bottom: 15px; }
-        .hud-top { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 10px; }
+        /* Tactical HUD Header */
+        .hud-header {
+            border-bottom: 2px solid var(--border-color); padding-bottom: 10px; margin-bottom: 15px;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .hud-title {
+            font-family: 'Black Ops One', cursive; color: var(--hud-amber); font-size: 20px; letter-spacing: 2px;
+        }
+        .armor-status {
+            color: var(--hud-green); font-size: 16px; display: flex; align-items: center; gap: 5px;
+        }
+        .armor-plate {
+            width: 15px; height: 20px; background-color: var(--hud-green);
+            border: 1px solid #000; box-shadow: 0 0 5px var(--hud-green);
+        }
+        .armor-plate.lost { background-color: transparent; border-color: var(--hud-red); box-shadow: none; }
+
+        /* Objective Panel */
+        .objective-panel {
+            background: var(--panel-bg); border: 1px solid var(--border-color);
+            border-left: 4px solid var(--hud-amber); padding: 15px; border-radius: 4px;
+            margin-bottom: 20px; position: relative;
+        }
+        .obj-label { color: var(--hud-amber); font-size: 12px; letter-spacing: 1px; margin-bottom: 5px; }
+        .question-text { color: #fff; font-size: 20px; line-height: 1.4; min-height: 80px; }
         
-        .rank-title { font-family: 'Oswald', sans-serif; font-size: 24px; font-weight: 700; color: var(--gta-yellow); text-transform: uppercase; text-shadow: 1px 1px 0px #000; }
-        .cefr-badge { font-size: 14px; background: var(--gta-cyan); color: #000; font-weight: 900; padding: 2px 6px; border-radius: 4px; margin-left: 8px;}
-        
-        .wanted-stars { color: var(--text-dim); font-size: 20px; letter-spacing: 2px; }
-        .wanted-stars .active { color: #fff; text-shadow: 0 0 8px #fff; }
-
-        .xp-bar-bg { width: 100%; height: 6px; background: #222; border-radius: 3px; overflow: hidden; }
-        .xp-bar-fill { height: 100%; background: var(--gta-pink); width: 0%; transition: width 0.3s ease; }
-        .xp-text { font-size: 12px; color: var(--text-dim); text-align: right; margin-top: 4px; font-weight: 700; text-transform: uppercase;}
-
-        /* Study Mode */
-        .card {
-            background-color: rgba(255,255,255,0.05); border: 2px solid #333;
-            border-radius: 16px; padding: 20px; flex-grow: 1; display: flex; flex-direction: column;
-            overflow-y: auto; text-align: center; position: relative;
+        .decode-btn {
+            background: transparent; border: 1px solid var(--hud-amber); color: var(--hud-amber);
+            font-family: 'Share Tech Mono', monospace; padding: 5px 10px; font-size: 12px;
+            cursor: pointer; position: absolute; top: 10px; right: 10px; text-transform: uppercase;
         }
+        .decode-btn:active { background: var(--hud-amber); color: #000; }
 
-        .card-image {
-            width: 100%; height: 160px; object-fit: cover; border-radius: 8px; 
-            border: 2px solid #444; margin-bottom: 15px; background-color: #222;
+        /* 3x3 Keypad Grid */
+        .keypad-container { flex-grow: 1; display: flex; flex-direction: column; justify-content: center; }
+        .options-grid {
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;
         }
-
-        .word-header { margin-bottom: 10px; }
-        .target-word { font-family: 'Oswald', sans-serif; font-size: 42px; color: var(--gta-cyan); font-weight: 700; text-transform: uppercase; letter-spacing: 1px;}
-        .phonetic { font-size: 16px; color: var(--text-dim); margin-bottom: 5px; font-family: monospace; }
-        .pos-badge { display: inline-block; border: 1px solid var(--text-dim); color: var(--text-dim); padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: 700; text-transform: uppercase; }
-
-        .translation { font-size: 20px; font-weight: 900; color: var(--gta-yellow); margin: 10px 0; }
-        .definition { font-size: 14px; color: #ccc; margin-bottom: 15px; font-style: italic;}
-        
-        .sentence-box {
-            background: rgba(0,0,0,0.5); border-left: 4px solid var(--gta-pink);
-            padding: 15px; border-radius: 0 8px 8px 0; font-size: 18px; font-weight: 500; color: var(--text-light); margin-bottom: 15px; text-align: left;
-        }
-
-        .audio-controls { display: flex; justify-content: center; gap: 10px; margin-bottom: 20px; }
-        .audio-btn {
-            background: transparent; border: 2px solid #555; color: #fff; 
-            font-size: 14px; font-weight: 900; padding: 10px 15px; border-radius: 8px; cursor: pointer;
-            display: flex; align-items: center; gap: 5px; flex: 1; justify-content: center; text-transform: uppercase;
-        }
-        .audio-btn:active { background: #333; }
-
-        .action-btn {
-            background: var(--gta-pink); border: none; color: #fff; 
-            font-family: 'Oswald', sans-serif; font-size: 20px; font-weight: 700; padding: 15px; 
-            border-radius: 8px; cursor: pointer; margin-top: auto; text-transform: uppercase; letter-spacing: 1px;
-        }
-        .action-btn:active { transform: scale(0.98); }
-
-        /* Quiz Mode */
-        #quiz-mode { display: none; }
-        .quiz-title { font-family: 'Oswald', sans-serif; font-size: 22px; color: var(--gta-red); margin-bottom: 15px; letter-spacing: 2px; text-transform: uppercase;}
-        .blank-sentence { font-size: 22px; font-weight: 500; margin-bottom: 25px; line-height: 1.5; text-align: left;}
-        .blank { display: inline-block; min-width: 80px; border-bottom: 4px solid var(--gta-cyan); color: transparent; }
-
-        .options-grid { display: flex; flex-direction: column; gap: 10px; margin-top: auto; }
         .option-btn {
-            background: var(--gta-dark); color: #fff; border: 2px solid #444;
-            padding: 18px 10px; border-radius: 8px; font-size: 18px; font-weight: 700; text-transform: lowercase;
-            cursor: pointer; transition: all 0.1s; text-align: center;
+            aspect-ratio: 1 / 0.8; background: rgba(0,0,0,0.6); border: 2px solid var(--border-color);
+            color: #fff; font-family: 'Share Tech Mono', monospace; font-size: 24px; font-weight: bold;
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
+            transition: all 0.1s; border-radius: 4px; box-shadow: inset 0 0 10px rgba(255,255,255,0.05);
         }
-        .option-btn:active { background: #333; }
-        .option-btn.correct { background: var(--gta-green); color: #000; border-color: var(--gta-green); }
-        .option-btn.wrong { background: var(--gta-red); color: #fff; border-color: var(--gta-red); }
+        .option-btn:active { background: var(--border-color); transform: scale(0.95); }
+        .option-btn.correct { background: rgba(57, 255, 20, 0.2); border-color: var(--hud-green); color: var(--hud-green); box-shadow: inset 0 0 20px rgba(57, 255, 20, 0.4); }
+        .option-btn.wrong { background: rgba(255, 42, 42, 0.2); border-color: var(--hud-red); color: var(--hud-red); opacity: 0.5; }
 
         /* Overlays */
-        .overlay {
+        .fullscreen-overlay {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
-            z-index: 100; opacity: 0; pointer-events: none; transition: opacity 0.3s; backdrop-filter: blur(5px);
+            z-index: 100; opacity: 0; pointer-events: none; transition: opacity 0.3s;
+            background: rgba(0,0,0,0.9);
         }
-        .overlay.active { opacity: 1; pointer-events: auto; }
+        .fullscreen-overlay.active { opacity: 1; pointer-events: auto; }
 
-        .passed-bg { background: rgba(0, 0, 0, 0.85); }
-        .passed-text {
-            font-family: 'Impact', 'Oswald', sans-serif; font-size: 48px; color: var(--gta-yellow);
-            text-transform: uppercase; letter-spacing: 2px; text-align: center;
-            text-shadow: 3px 3px 0px #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
-            transform: scale(1.5); transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-        .overlay.active .passed-text { transform: scale(1); }
-        .xp-gain { font-family: 'Oswald', sans-serif; font-size: 24px; color: var(--gta-green); margin-top: 10px; }
-        
-        .wasted-bg { background: rgba(217, 65, 65, 0.4); }
-        .wasted-text {
-            font-family: 'Impact', 'Oswald', sans-serif; font-size: 64px; color: var(--gta-red);
-            text-transform: uppercase; letter-spacing: 4px;
-            text-shadow: 2px 2px 0px #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
-        }
+        .overlay-title { font-family: 'Black Ops One', cursive; font-size: 40px; letter-spacing: 4px; margin-bottom: 10px; }
+        .text-green { color: var(--hud-green); text-shadow: 0 0 15px var(--hud-green); }
+        .text-red { color: var(--hud-red); text-shadow: 0 0 15px var(--hud-red); }
 
+        .action-btn {
+            margin-top: 30px; background: transparent; border: 2px solid #fff; color: #fff;
+            font-family: 'Share Tech Mono', monospace; font-size: 20px; padding: 10px 30px;
+            cursor: pointer; text-transform: uppercase;
+        }
+        .action-btn:active { background: #fff; color: #000; }
+
+        /* Scanline Effect */
+        .scanlines {
+            position: fixed; left: 0; top: 0; width: 100%; height: 100%; pointer-events: none; z-index: 999;
+            background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0) 50%, rgba(0,0,0,0.1) 50%, rgba(0,0,0,0.1));
+            background-size: 100% 4px; opacity: 0.3;
+        }
     </style>
 </head>
 <body>
+    <div class="scanlines"></div>
+    <div class="damage-overlay" id="damage-overlay"></div>
 
-    <div class="app-container">
+    <div class="app-container" id="main-container">
         
-        <!-- HUD -->
-        <div class="hud">
-            <div class="hud-top">
-                <div>
-                    <span class="rank-title" id="rank-title">Beginner</span>
-                    <span class="cefr-badge" id="cefr-badge">A1</span>
-                </div>
-                <div class="wanted-stars" id="wanted-stars">☆☆☆☆☆</div>
-            </div>
-            <div>
-                <div class="xp-bar-bg"><div class="xp-bar-fill" id="xp-fill"></div></div>
-                <div class="xp-text"><span id="xp-display">0</span> XP</div>
+        <!-- HUD Header -->
+        <div class="hud-header">
+            <div class="hud-title">OP: PHYSICS</div>
+            <div class="armor-status" id="armor-status">
+                <div class="armor-plate" id="armor-1"></div>
+                <div class="armor-plate" id="armor-2"></div>
+                <div class="armor-plate" id="armor-3"></div>
             </div>
         </div>
 
-        <!-- STUDY MODE -->
-        <div class="card" id="study-mode">
-            <img class="card-image" id="study-image" src="" alt="Word Context">
-            
-            <div class="word-header">
-                <div class="target-word" id="target-word">loading</div>
-                <div class="phonetic" id="phonetic"></div>
-                <div class="pos-badge" id="pos"></div>
+        <!-- Objective Panel -->
+        <div class="objective-panel">
+            <button class="decode-btn" id="decode-btn" onclick="toggleLanguage()">Decode (TH)</button>
+            <div class="obj-label">CURRENT OBJECTIVE:</div>
+            <div class="question-text" id="question-text">Loading intel...</div>
+        </div>
+
+        <!-- 3x3 Keypad -->
+        <div class="keypad-container">
+            <div class="options-grid" id="options-grid">
+                <!-- Buttons injected here -->
             </div>
-
-            <div class="translation" id="translation"></div>
-            <div class="definition" id="definition"></div>
-            
-            <div class="sentence-box" id="study-sentence"></div>
-
-            <div class="audio-controls">
-                <button class="audio-btn" onclick="playWord()">🔊 Word</button>
-                <button class="audio-btn" onclick="playSentence()">🗣️ Sentence</button>
-            </div>
-
-            <button class="action-btn" onclick="startQuiz()">Take Quiz</button>
         </div>
 
-        <!-- QUIZ MODE -->
-        <div class="card" id="quiz-mode">
-            <div class="heist-title">Test Your Knowledge</div>
-            <img class="card-image" id="quiz-image" src="" alt="Quiz Context">
-            
-            <div class="blank-sentence" id="quiz-sentence"></div>
-
-            <div class="options-grid" id="options-grid"></div>
+        <!-- Overlays -->
+        <div class="fullscreen-overlay" id="overlay-cleared">
+            <div class="overlay-title text-green">TARGET ELIMINATED</div>
+            <div style="color: #ccc; font-size: 18px;">Objective Complete.</div>
         </div>
 
-        <!-- OVERLAYS -->
-        <div class="overlay passed-bg" id="overlay-passed">
-            <div class="passed-text">LESSON PASSED</div>
-            <div class="xp-gain" id="xp-gain-text">+20 XP</div>
-        </div>
-
-        <div class="overlay wasted-bg" id="overlay-wasted">
-            <div class="wasted-text">FAILED</div>
-            <div class="xp-gain" style="color: #fff; font-size: 18px;">-10 XP</div>
+        <div class="fullscreen-overlay" id="overlay-kia">
+            <div class="overlay-title text-red">K.I.A.</div>
+            <div style="color: #ccc; font-size: 18px;">Armor depleted. Mission Failed.</div>
+            <button class="action-btn" onclick="restartGame()">Redeploy</button>
         </div>
 
     </div>
