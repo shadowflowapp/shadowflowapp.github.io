@@ -6,15 +6,15 @@ let playerXP = 0;
 let playerLevel = 1;
 let hearts = 3;
 let currentCard = null;
+let currentTier = 1;
 
-// Ranks
-const titles = [
-    "Novice Explorer", 
-    "Apprentice Mage", 
-    "Brave Squire", 
-    "Adept Scholar", 
-    "Guild Master"
-];
+// Titles & Realms mapping
+const titles = ["Novice Explorer", "Apprentice Mage", "Brave Squire", "Adept Scholar", "Guild Master"];
+const realms = {
+    1: "Goblin Forest (Beginner)",
+    2: "Crystal Caves (Intermediate)",
+    3: "Dragon Peak (Advanced)"
+};
 
 // 1. Initialize Game
 fetch('db.jsonl')
@@ -28,7 +28,6 @@ fetch('db.jsonl')
     })
     .catch(err => console.error("Error loading DB", err));
 
-// Utility: Shuffle
 function shuffle(array) {
     let curId = array.length;
     while (0 !== curId) {
@@ -41,29 +40,38 @@ function shuffle(array) {
     return array;
 }
 
-// 2. Load Spellbook (Study Phase)
+// 2. Load Spellbook (Adaptive Difficulty)
 function loadNextCard() {
-    // Pick random card
-    currentCard = database[Math.floor(Math.random() * database.length)];
+    // Determine target tier based on player level
+    // Lvl 1-2 = Tier 1, Lvl 3-4 = Tier 2, Lvl 5+ = Tier 3
+    currentTier = Math.min(3, Math.ceil(playerLevel / 2));
     
-    // UI Switch
+    // Filter database for words matching the current tier
+    const eligibleWords = database.filter(w => w.tier === currentTier);
+    
+    // Fallback just in case tier is empty
+    const pool = eligibleWords.length > 0 ? eligibleWords : database;
+    currentCard = pool[Math.floor(Math.random() * pool.length)];
+    
+    // Update UI
     document.getElementById('study-mode').style.display = 'flex';
     document.getElementById('quiz-mode').style.display = 'none';
 
-    // Populate Study Data
     document.getElementById('study-image').src = currentCard.image;
     document.getElementById('target-word').innerText = currentCard.word;
     document.getElementById('phonetic').innerText = currentCard.phonetic;
     document.getElementById('pos').innerText = currentCard.pos;
     document.getElementById('translation').innerText = currentCard.thai;
     
-    // Highlight the target word in the sentence
+    // Highlight Target Word in Sentence
     const regex = new RegExp(`\\b(${currentCard.word}[a-z]*)\\b`, 'gi');
     const highlightedSentence = currentCard.sentence.replace(regex, `<span style="color: var(--action-blue);"><b>$1</b></span>`);
     document.getElementById('study-sentence').innerHTML = highlightedSentence;
+    
+    updateHUD();
 }
 
-// 3. Audio Engine (Dual Buttons)
+// 3. Audio Engine (Anti-Overlap Micro-Delay)
 function playAudio(text, rate = 1.0) {
     if (synth.speaking) synth.cancel(); 
     
@@ -71,7 +79,6 @@ function playAudio(text, rate = 1.0) {
         const utterThis = new SpeechSynthesisUtterance(text);
         const voices = synth.getVoices();
         
-        // Ensure American English (Family-friendly tone)
         const maleUSIdentifiers = ['David', 'Alex', 'Aaron', 'Google US English'];
         let selectedVoice = voices.find(v => 
             v.lang.includes('en-US') && maleUSIdentifiers.some(id => v.name.includes(id))
@@ -85,34 +92,32 @@ function playAudio(text, rate = 1.0) {
     }, 50);
 }
 
-function playWord() {
-    playAudio(currentCard.word, 0.9); // Slower for pronunciation
-}
-
-function playSentence() {
-    playAudio(currentCard.sentence, 1.0); // Native speed
-}
-
+function playWord() { playAudio(currentCard.word, 0.8); }
+function playSentence() { playAudio(currentCard.sentence, 1.0); }
 speechSynthesis.onvoiceschanged = () => { synth.getVoices(); };
 
-// 4. Enter Battle (Quiz Phase)
+// 4. Enter Battle
 function startBattle() {
     if (synth.speaking) synth.cancel();
     
     document.getElementById('study-mode').style.display = 'none';
     document.getElementById('quiz-mode').style.display = 'flex';
 
-    // Populate Quiz Data
     document.getElementById('quiz-image').src = currentCard.image;
     
-    // Create Blank Sentence
     const regex = new RegExp(`\\b${currentCard.word}\\b`, 'gi');
     document.getElementById('quiz-sentence').innerHTML = currentCard.sentence.replace(regex, `<span class="blank">_____</span>`);
 
-    // Generate Multiple Choice
-    let allWords = database.filter(w => w.word !== currentCard.word).map(w => w.word);
-    allWords = shuffle(allWords);
-    let options = shuffle([currentCard.word, ...allWords.slice(0, 3)]);
+    // DYNAMIC DISTRACTORS: Only pull distractors from the same Tier!
+    let sameTierWords = database.filter(w => w.tier === currentTier && w.word !== currentCard.word).map(w => w.word);
+    
+    // If not enough words in tier, pull from whole DB
+    if(sameTierWords.length < 3) {
+        sameTierWords = database.filter(w => w.word !== currentCard.word).map(w => w.word);
+    }
+    
+    sameTierWords = shuffle(sameTierWords);
+    let options = shuffle([currentCard.word, ...sameTierWords.slice(0, 3)]);
 
     const grid = document.getElementById('options-grid');
     grid.innerHTML = '';
@@ -126,17 +131,16 @@ function startBattle() {
     });
 }
 
-// 5. Battle Results (Grading & XP)
+// 5. Battle Grading
 function submitAttack(btn, selectedWord) {
-    // Disable further clicks
     document.querySelectorAll('.option-btn').forEach(b => b.disabled = true);
 
     if (selectedWord === currentCard.word) {
         // VICTORY
         btn.classList.add('correct');
-        playerXP += 20;
+        playerXP += 25;
         
-        playAudio("Correct!", 1.2); // Small feedback
+        playAudio("Correct!", 1.2); 
         document.getElementById('overlay-victory').classList.add('active');
         
         setTimeout(() => {
@@ -150,7 +154,6 @@ function submitAttack(btn, selectedWord) {
         btn.classList.add('wrong');
         hearts--;
         
-        // Show correct answer
         document.querySelectorAll('.option-btn').forEach(b => {
             if(b.innerText === currentCard.word) b.classList.add('correct');
         });
@@ -163,37 +166,32 @@ function submitAttack(btn, selectedWord) {
             updateHUD();
             
             if (hearts <= 0) {
-                alert("Game Over! The monsters defeated you. You will restart at Level 1.");
-                playerXP = 0;
+                alert("Game Over! The monsters defeated you. Restarting Realm...");
+                playerXP = Math.max(0, playerXP - 50); // Penalty, but not total wipe
                 hearts = 3;
                 updateHUD();
             }
-            loadNextCard(); // Force them to restudy
+            loadNextCard(); 
         }, 2000);
     }
 }
 
-// 6. RPG HUD Logic
+// 6. HUD Logic
 function updateHUD() {
-    // Level Up Math (Every 100 XP is a level)
     playerLevel = Math.floor(playerXP / 100) + 1;
+    currentTier = Math.min(3, Math.ceil(playerLevel / 2));
     
-    // Assign Title
     const titleIndex = Math.min(playerLevel - 1, titles.length - 1);
     document.getElementById('player-title').innerText = titles[titleIndex];
+    document.getElementById('zone-indicator').innerText = `Current Realm: ${realms[currentTier]}`;
     
-    // Update Texts
     document.getElementById('lvl-display').innerText = playerLevel;
     document.getElementById('xp-display').innerText = playerXP % 100;
     
-    // XP Bar Visual
     const xpPercent = playerXP % 100;
     document.getElementById('xp-fill').style.width = `${xpPercent}%`;
 
-    // Hearts Visual
     let heartsHtml = '';
-    for(let i=0; i<3; i++) {
-        heartsHtml += i < hearts ? '❤️' : '🖤';
-    }
+    for(let i=0; i<3; i++) { heartsHtml += i < hearts ? '❤️' : '🖤'; }
     document.getElementById('hearts').innerHTML = heartsHtml;
 }
