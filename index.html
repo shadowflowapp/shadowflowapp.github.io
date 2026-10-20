@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Los Santos Lingo: Infinite</title>
+    <title>Los Santos Lingo: Sniper</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@500;700&family=Roboto:wght@400;700;900&display=swap');
 
@@ -39,64 +39,55 @@
 
         .xp-bar-bg { width: 100%; height: 6px; background: #222; border-radius: 3px; overflow: hidden; }
         .xp-bar-fill { height: 100%; background: var(--gta-pink); width: 0%; transition: width 0.3s ease; }
-        .xp-text { font-size: 12px; color: var(--text-dim); text-align: right; margin-top: 4px; font-weight: 700; }
 
-        /* The Sentence Stage */
-        .stage {
-            flex-grow: 1; display: flex; flex-direction: column; justify-content: center; position: relative;
+        /* The Stage (Chunk Sniper) */
+        .stage { flex-grow: 1; display: flex; flex-direction: column; position: relative; }
+
+        .audio-briefing {
+            background: linear-gradient(135deg, #222, var(--gta-dark));
+            border: 2px solid #444; border-radius: 12px;
+            padding: 15px; display: flex; align-items: center; justify-content: center;
+            gap: 15px; cursor: pointer; transition: transform 0.1s;
+            margin-bottom: 25px;
         }
+        .audio-briefing:active { transform: scale(0.96); background: #333; }
+        .audio-icon { font-size: 28px; }
+        .audio-text { font-family: 'Oswald', sans-serif; font-size: 20px; font-weight: 700; letter-spacing: 1px; color: var(--gta-cyan);}
+
+        /* Drop Zone */
+        .drop-zone {
+            min-height: 140px; background: rgba(255,255,255,0.03);
+            border: 2px dashed #555; border-radius: 12px;
+            padding: 15px; display: flex; flex-wrap: wrap; gap: 8px;
+            align-content: flex-start; margin-bottom: 25px;
+        }
+
+        /* Chunks Bank */
+        .chunks-bank { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
         
-        /* Interactive Sentence */
-        .sentence-container {
-            font-size: 28px; font-weight: 700; line-height: 1.6; text-align: center;
-            display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-bottom: 40px;
+        .chunk-btn {
+            background-color: var(--gta-dark); color: #fff;
+            border: 2px solid #444; border-radius: 8px;
+            padding: 12px 16px; font-size: 18px; font-weight: 700;
+            cursor: pointer; transition: all 0.1s;
+            box-shadow: 0 4px 0 #111; user-select: none;
         }
-        
-        .tap-word {
-            position: relative; cursor: pointer; border-bottom: 2px dotted #444; padding-bottom: 2px; transition: color 0.1s;
-        }
-        .tap-word:active { color: var(--gta-yellow); }
-        
-        /* Neon Tooltip for Translation */
-        .tooltip {
-            position: absolute; bottom: 110%; left: 50%; transform: translateX(-50%);
-            background: rgba(0,0,0,0.9); border: 1px solid var(--gta-cyan);
-            color: var(--gta-cyan); padding: 6px 12px; border-radius: 6px;
-            font-size: 16px; font-weight: 900; white-space: nowrap;
-            opacity: 0; pointer-events: none; transition: opacity 0.2s;
-            box-shadow: 0 0 10px rgba(15, 219, 242, 0.4); z-index: 10;
-        }
-        .tap-word.show-tooltip .tooltip { opacity: 1; }
+        .chunk-btn:active { transform: translateY(4px); box-shadow: 0 0 0 #111; }
+        .chunk-btn.in-zone { background-color: var(--gta-cyan); color: #000; border-color: #fff; box-shadow: 0 4px 0 #008f9e; }
+        .chunk-btn.hidden { visibility: hidden; pointer-events: none; position: absolute; }
 
-        .blank {
-            display: inline-block; min-width: 100px; border-bottom: 4px solid var(--text-light);
-            color: var(--gta-yellow); text-align: center; padding: 0 10px;
+        /* Subtitles */
+        .subtitles-container {
+            margin-top: auto; text-align: center;
+            background: rgba(0, 0, 0, 0.8); border-radius: 8px;
+            padding: 15px; border-left: 4px solid var(--gta-yellow);
         }
-
-        /* Full Thai Fracture (Long Press) */
-        .full-thai-overlay {
-            display: none; background: rgba(242, 200, 15, 0.1); border-left: 4px solid var(--gta-yellow);
-            padding: 15px; border-radius: 8px; margin-bottom: 30px;
-            font-size: 18px; color: var(--gta-yellow); text-align: center; font-weight: 500;
-            animation: fadeIn 0.2s;
+        .thai-text { display: none; font-size: 16px; color: var(--gta-yellow); font-weight: 500; }
+        .reveal-btn {
+            background: none; border: none; color: var(--text-dim);
+            font-family: 'Oswald', sans-serif; font-size: 16px; letter-spacing: 1px;
+            cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%;
         }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
-
-        /* Options Grid */
-        .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
-        .option-btn {
-            background-color: var(--gta-dark); color: #fff; border: 2px solid #333;
-            padding: 20px 10px; border-radius: 12px; font-size: 18px; font-weight: 700;
-            cursor: pointer; transition: all 0.1s; box-shadow: 0 4px 0 #111;
-        }
-        .option-btn:active { transform: translateY(4px); box-shadow: 0 0 0 #111; }
-        .option-btn.correct { background-color: var(--gta-green); border-color: #fff; color: #000; box-shadow: 0 4px 0 #1b8a30; }
-        .option-btn.wrong { background-color: var(--gta-red); border-color: #fff; box-shadow: 0 4px 0 #8a1b1b; }
-
-        /* Audio Helper */
-        .audio-btn { background: none; border: 2px solid #555; color: #fff; border-radius: 50%; width: 50px; height: 50px; font-size: 24px; margin: 0 auto 20px auto; display: block; }
-        
-        .hint-instruction { text-align: center; color: var(--text-dim); font-size: 12px; text-transform: uppercase; letter-spacing: 1px; }
 
         /* Overlays */
         .overlay {
@@ -127,7 +118,7 @@
 </head>
 <body>
 
-    <div class="app-container" id="main-container">
+    <div class="app-container">
         
         <!-- HUD -->
         <div class="hud">
@@ -139,26 +130,30 @@
                 <div class="wanted-stars" id="wanted-stars">☆☆☆☆☆</div>
             </div>
             <div class="xp-bar-bg"><div class="xp-bar-fill" id="xp-fill"></div></div>
-            <div class="xp-text">LVL <span id="lvl-display">1</span> XP: <span id="xp-display">0</span> / 1000</div>
         </div>
 
         <!-- Gameplay Stage -->
         <div class="stage">
-            <button class="audio-btn" onclick="playAudio()">🔊</button>
             
-            <div class="sentence-container" id="sentence-container">
-                <!-- Words injected here -->
+            <div class="audio-briefing" onclick="playAudio()">
+                <span class="audio-icon">📻</span>
+                <span class="audio-text">PLAY AUDIO BRIEFING</span>
             </div>
 
-            <div class="full-thai-overlay" id="full-thai-overlay">
-                <!-- Full Thai sentence injected here -->
+            <!-- Drop Zone for building chunks -->
+            <div class="drop-zone" id="drop-zone"></div>
+
+            <!-- Scrambled Bank -->
+            <div class="chunks-bank" id="chunks-bank"></div>
+
+            <!-- Thai Intel -->
+            <div class="subtitles-container">
+                <button class="reveal-btn" id="reveal-btn" onclick="revealThai()">
+                    <span>👁️</span> REVEAL INTEL
+                </button>
+                <div class="thai-text" id="thai-text">Loading...</div>
             </div>
 
-            <div class="options-grid" id="options-grid">
-                <!-- Distractors injected here -->
-            </div>
-
-            <div class="hint-instruction">Tap word for hint • Hold screen for full Thai</div>
         </div>
 
         <!-- Overlays -->
