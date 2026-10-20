@@ -7,14 +7,14 @@ let streak = 0;
 let currentCard = null;
 let currentCEFR = "A1";
 
-// Ranks Mapping
+// Standard Fluency Ranks
 const ranks = [
-    { maxXP: 200, cefr: "A1", title: "Street Thug" },
-    { maxXP: 400, cefr: "A2", title: "Hustler" },
-    { maxXP: 600, cefr: "B1", title: "Hitman" },
-    { maxXP: 800, cefr: "B2", title: "Kingpin" },
-    { maxXP: 1000, cefr: "C1", title: "Boss" },
-    { maxXP: 99999, cefr: "C2", title: "Godfather" }
+    { maxXP: 200, cefr: "A1", title: "Beginner" },
+    { maxXP: 400, cefr: "A2", title: "Elementary" },
+    { maxXP: 600, cefr: "B1", title: "Intermediate" },
+    { maxXP: 800, cefr: "B2", title: "Upper-Intermediate" },
+    { maxXP: 1000, cefr: "C1", title: "Advanced" },
+    { maxXP: 99999, cefr: "C2", title: "Mastery" }
 ];
 
 // 1. Initialize Game
@@ -42,18 +42,18 @@ function shuffle(array) {
     return array;
 }
 
-// 2. Load Recon (Study Phase)
+// 2. Load Study Mode
 function loadNextCard() {
     // Filter database for words matching the current CEFR tier
     const eligibleWords = database.filter(w => w.cefr === currentCEFR);
     
-    // Fallback if tier is empty (shouldn't happen with our DB, but safe)
+    // Fallback if tier is empty
     const pool = eligibleWords.length > 0 ? eligibleWords : database;
     currentCard = pool[Math.floor(Math.random() * pool.length)];
     
     // UI Switch
-    document.getElementById('recon-mode').style.display = 'flex';
-    document.getElementById('heist-mode').style.display = 'none';
+    document.getElementById('study-mode').style.display = 'flex';
+    document.getElementById('quiz-mode').style.display = 'none';
 
     // Populate Data
     document.getElementById('study-image').src = currentCard.image;
@@ -94,12 +94,12 @@ function playWord() { playAudio(currentCard.word, 0.8); }
 function playSentence() { playAudio(currentCard.sentence, 1.0); }
 speechSynthesis.onvoiceschanged = () => { synth.getVoices(); };
 
-// 4. Enter The Heist (Quiz Phase)
-function startHeist() {
+// 4. Enter Quiz Mode
+function startQuiz() {
     if (synth.speaking) synth.cancel();
     
-    document.getElementById('recon-mode').style.display = 'none';
-    document.getElementById('heist-mode').style.display = 'flex';
+    document.getElementById('study-mode').style.display = 'none';
+    document.getElementById('quiz-mode').style.display = 'flex';
 
     document.getElementById('quiz-image').src = currentCard.image;
     
@@ -116,22 +116,22 @@ function startHeist() {
         const btn = document.createElement('button');
         btn.className = 'option-btn';
         btn.innerText = opt;
-        btn.onclick = () => executeHeist(btn, opt);
+        btn.onclick = () => executeQuiz(btn, opt);
         grid.appendChild(btn);
     });
 }
 
-// 5. Heist Results (Grading & XP)
-function executeHeist(btn, selectedWord) {
+// 5. Quiz Results (Grading & XP)
+function executeQuiz(btn, selectedWord) {
     document.querySelectorAll('.option-btn').forEach(b => b.disabled = true);
 
     if (selectedWord === currentCard.word) {
-        // MISSION PASSED
+        // PASSED
         btn.classList.add('correct');
         playerXP += 20;
         streak++;
         
-        playAudio("Got it.", 1.2); 
+        playAudio("Correct.", 1.2); 
         document.getElementById('overlay-passed').classList.add('active');
         
         setTimeout(() => {
@@ -141,7 +141,7 @@ function executeHeist(btn, selectedWord) {
         }, 1500);
 
     } else {
-        // WASTED
+        // FAILED
         btn.classList.add('wrong');
         streak = 0;
         playerXP = Math.max(0, playerXP - 10); // Penalty, but don't drop below 0
@@ -182,7 +182,7 @@ function updateHUD() {
     // XP Bar (Loops within the current tier bracket)
     let minXP = 0;
     let maxXP = currentRankObj.maxXP;
-    if(currentRankObj.title !== "Street Thug") {
+    if(currentRankObj.title !== "Beginner") {
         const prevRank = ranks.find(r => r.cefr === getPreviousCEFR(currentCEFR));
         minXP = prevRank.maxXP;
     }
@@ -190,7 +190,7 @@ function updateHUD() {
     const xpPercent = ((playerXP - minXP) / (maxXP - minXP)) * 100;
     document.getElementById('xp-fill').style.width = `${Math.min(100, Math.max(0, xpPercent))}%`;
 
-    // Wanted Stars (Streak tracking max 5)
+    // Hot Streak Stars
     let starsHtml = '';
     for(let i=0; i<5; i++) { starsHtml += i < Math.min(streak, 5) ? '<span class="active">★</span>' : '☆'; }
     document.getElementById('wanted-stars').innerHTML = starsHtml;
