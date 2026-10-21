@@ -1,31 +1,23 @@
 let database = [];
-let currentMission = null;
+const synth = window.speechSynthesis;
 
-// Player Stats (For future Auth / Leaderboard)
-let careerXP = 0;
-let consecutiveKills = 0; // Tracks streak
+let playerXP = 0;
+let currentPatternObj = null;
+let currentFillerIndex = 0;
 
-// Mission State
-let maxArmor = 3;
-let currentArmor = 3;
-let isThai = false;
-let startTime = 0;
-let mistakesMade = 0;
+// Quiz State
+let quizQuestion = null;
 
-// Prevent repeat questions recently answered
-let cooldownDeck = []; 
-
-// 1. Initialize Game
+// 1. Initialize
 fetch('db.jsonl')
     .then(response => response.text())
     .then(text => {
         const lines = text.split('\n').filter(line => line.trim() !== '');
         database = lines.map(line => JSON.parse(line));
         
-        updateHUDStats();
-        loadNextMission();
+        loadNextPattern();
     })
-    .catch(err => console.error("Error loading Intel DB", err));
+    .catch(err => console.error("Error loading DB", err));
 
 function shuffle(array) {
     let curId = array.length;
@@ -39,49 +31,108 @@ function shuffle(array) {
     return array;
 }
 
-// 2. Load Mission
-function loadNextMission() {
-    document.getElementById('overlay-cleared').classList.remove('active');
+// 2. Load Study Mode
+function loadNextPattern() {
+    // Pick a random pattern structure
+    currentPatternObj = database[Math.floor(Math.random() * database.length)];
+    currentFillerIndex = 0; // Reset swipe index
     
-    // Reset mission parameters
-    isThai = false;
-    mistakesMade = 0;
-    currentArmor = maxArmor;
-    updateArmorUI();
-    document.getElementById('decode-btn').innerText = "DECODE (TH)";
+    document.getElementById('study-mode').style.display = 'flex';
+    document.getElementById('quiz-mode').style.display = 'none';
+
+    document.getElementById('level-display').innerText = currentPatternObj.level;
+    document.getElementById('pattern-desc').innerText = currentPatternObj.description;
+
+    renderCurrentSwipe();
     
-    // Pull a random question not in cooldown
-    let eligible = database.filter(q => !cooldownDeck.includes(q.id));
-    if(eligible.length === 0) {
-        cooldownDeck = []; // Reset if we ran through all
-        eligible = database;
+    // Auto-play first variation
+    setTimeout(playAudio, 500);
+}
+
+// 3. Render the Swiped Sentence
+function renderCurrentSwipe() {
+    const fillerObj = currentPatternObj.fillers[currentFillerIndex];
+    
+    // Inject the word into the template blank
+    // If the template has multiple blanks separated by '|', we split it
+    let displayHtml = currentPatternObj.pattern;
+    const wordParts = fillerObj.word.split(' | ');
+    
+    if (wordParts.length === 1) {
+        displayHtml = displayHtml.replace('____', `<span class="filler-slot">${fillerObj.word}</span>`);
+    } else {
+        // Handle double blanks (e.g. "No matter how ____, I will ____")
+        wordParts.forEach(part => {
+            displayHtml = displayHtml.replace('____', `<span class="filler-slot">${part}</span>`);
+        });
     }
-    
-    currentMission = eligible[Math.floor(Math.random() * eligible.length)];
-    cooldownDeck.push(currentMission.id);
-    if(cooldownDeck.length > 5) cooldownDeck.shift(); // Keep last 5 in memory
-    
-    renderObjective();
-    renderKeypad();
-    
-    startTime = Date.now(); // Start speed timer
+
+    document.getElementById('sentence-display').innerHTML = displayHtml;
+    document.getElementById('thai-translation').innerText = fillerObj.th;
 }
 
-// 3. Render UI
-function renderObjective() {
-    const qText = isThai ? currentMission.th : currentMission.en;
-    document.getElementById('question-text').innerText = qText;
+// Navigation (Swipe left/right)
+function nextFiller() {
+    currentFillerIndex = (currentFillerIndex + 1) % currentPatternObj.fillers.length;
+    renderCurrentSwipe();
+    playAudio();
 }
 
-function toggleLanguage() {
-    isThai = !isThai;
-    document.getElementById('decode-btn').innerText = isThai ? "ENCRYPT (EN)" : "DECODE (TH)";
-    renderObjective();
+function prevFiller() {
+    currentFillerIndex = (currentFillerIndex - 1 + currentPatternObj.fillers.length) % currentPatternObj.fillers.length;
+    renderCurrentSwipe();
+    playAudio();
 }
 
-function renderKeypad() {
-    let options = [currentMission.answer, ...currentMission.distractors.slice(0, 8)];
-    options = shuffle(options);
+// 4. Audio Engine
+function playAudio() {
+    if (synth.speaking) synth.cancel(); 
+    
+    setTimeout(() => {
+        const fillerObj = currentPatternObj.fillers[currentFillerIndex];
+        
+        let textToSpeak = currentPatternObj.pattern;
+        const wordParts = fillerObj.word.split(' | ');
+        wordParts.forEach(part => {
+            textToSpeak = textToSpeak.replace('____', part);
+        });
+
+        const utterThis = new SpeechSynthesisUtterance(textToSpeak);
+        
+        const voices = synth.getVoices();
+        const maleUSIdentifiers = ['David', 'Alex', 'Aaron', 'Google US English'];
+        let selectedVoice = voices.find(v => v.lang.includes('en-US') && maleUSIdentifiers.some(id => v.name.includes(id)));
+        if (!selectedVoice) selectedVoice = voices.find(v => v.lang.includes('en-US'));
+
+        if (selectedVoice) utterThis.voice = selectedVoice;
+        utterThis.rate = 1.0; 
+        
+        synth.speak(utterThis);
+    }, 50);
+}
+speechSynthesis.onvoiceschanged = () => { synth.getVoices(); };
+
+
+// 5. Enter Quiz Mode
+function startQuiz() {
+    if (synth.speaking) synth.cancel();
+    
+    document.getElementById('study-mode').style.display = 'none';
+    document.getElementById('quiz-mode').style.display = 'flex';
+
+    // Pick a random variation from the current pattern to test
+    quizQuestion = currentPatternObj.fillers[Math.floor(Math.random() * currentPatternObj.fillers.length)];
+
+    document.getElementById('quiz-target-thai').innerText = quizQuestion.th;
+    
+    // Show template with blank
+    document.getElementById('quiz-template').innerHTML = currentPatternObj.pattern.replace(/____/g, '<span class="quiz-blank">______</span>');
+
+    // Create distractors (Pulling other fillers from the same pattern)
+    let distractors = currentPatternObj.fillers.filter(f => f.word !== quizQuestion.word).map(f => f.word);
+    distractors = shuffle(distractors);
+    
+    let options = shuffle([quizQuestion.word, ...distractors.slice(0, 3)]);
 
     const grid = document.getElementById('options-grid');
     grid.innerHTML = '';
@@ -90,116 +141,50 @@ function renderKeypad() {
         const btn = document.createElement('button');
         btn.className = 'option-btn';
         btn.innerText = opt;
-        btn.onclick = () => executeAction(btn, opt);
+        btn.onclick = () => checkQuizAnswer(btn, opt);
         grid.appendChild(btn);
     });
 }
 
-// 4. Combat Logic & XP Algorithm
-function executeAction(btn, selectedValue) {
-    if (btn.classList.contains('wrong') || btn.classList.contains('correct')) return;
+// 6. Grading
+function checkQuizAnswer(btn, selectedWord) {
+    document.querySelectorAll('.option-btn').forEach(b => b.disabled = true);
 
-    if (selectedValue === currentMission.answer) {
-        // TARGET ELIMINATED
+    if (selectedWord === quizQuestion.word) {
+        // Correct
         btn.classList.add('correct');
-        document.querySelectorAll('.option-btn').forEach(b => b.disabled = true);
+        playerXP += 20;
+        document.getElementById('xp-display').innerText = playerXP;
         
-        calculateXPAndShowReport();
-
-    } else {
-        // HIT RECEIVED
-        btn.classList.add('wrong');
-        mistakesMade++;
-        consecutiveKills = 0; // Streak broken
-        updateHUDStats();
-        takeDamage();
-    }
-}
-
-function calculateXPAndShowReport() {
-    const timeTaken = (Date.now() - startTime) / 1000;
-    
-    // Algorithm Variables
-    let base = currentMission.base_xp || 100;
-    
-    // Speed Bonus: Max 50, decreases by 5 per second, minimum 0
-    let speedBonus = mistakesMade === 0 ? Math.max(0, Math.floor(50 - (timeTaken * 2))) : 0;
-    
-    // Flawless Execution
-    let flawlessBonus = mistakesMade === 0 ? 50 : 0;
-    
-    // Mistake Penalty: Base XP drops 50% for every mistake
-    let penalty = mistakesMade === 1 ? Math.floor(base * 0.5) : (mistakesMade === 2 ? Math.floor(base * 0.75) : 0);
-    let earnedBase = base - penalty;
-
-    // Streak Multiplier: +0.1x per consecutive kill (Max 2.0x)
-    let multiplier = Math.min(2.0, 1.0 + (consecutiveKills * 0.1));
-    
-    let totalMissionXP = Math.floor((earnedBase + speedBonus + flawlessBonus) * multiplier);
-
-    // Update Career Stats
-    careerXP += totalMissionXP;
-    if(mistakesMade === 0) consecutiveKills++;
-
-    updateHUDStats();
-
-    // Populate Combat Report
-    document.getElementById('rep-base').innerText = base;
-    document.getElementById('rep-speed').innerText = `+${speedBonus}`;
-    document.getElementById('rep-flawless').innerText = `+${flawlessBonus}`;
-    document.getElementById('rep-penalty').innerText = `-${penalty}`;
-    document.getElementById('rep-mult').innerText = `x${multiplier.toFixed(1)}`;
-    document.getElementById('rep-total').innerText = `+${totalMissionXP}`;
-
-    document.getElementById('overlay-cleared').classList.add('active');
-}
-
-// 5. Damage System
-function takeDamage() {
-    currentArmor--;
-    updateArmorUI();
-
-    const overlay = document.getElementById('damage-overlay');
-    const container = document.getElementById('main-container');
-
-    overlay.classList.add('active');
-    container.classList.add('shake-effect');
-    
-    if (navigator.vibrate) navigator.vibrate([100, 50, 100]); 
-
-    setTimeout(() => {
-        overlay.classList.remove('active');
-        container.classList.remove('shake-effect');
-    }, 400);
-
-    if (currentArmor <= 0) {
+        // Read the full correct sentence aloud
+        let textToSpeak = currentPatternObj.pattern;
+        const wordParts = quizQuestion.word.split(' | ');
+        wordParts.forEach(part => { textToSpeak = textToSpeak.replace('____', part); });
+        
+        if (synth.speaking) synth.cancel();
         setTimeout(() => {
-            document.getElementById('overlay-kia').classList.add('active');
-        }, 500);
-    }
-}
+            const utterThis = new SpeechSynthesisUtterance(textToSpeak);
+            synth.speak(utterThis);
+        }, 50);
 
-// 6. State Management
-function updateArmorUI() {
-    for (let i = 1; i <= maxArmor; i++) {
-        const plate = document.getElementById(`armor-${i}`);
-        if (i <= currentArmor) plate.classList.remove('lost');
-        else plate.classList.add('lost');
-    }
-}
+        setTimeout(() => {
+            loadNextPattern();
+        }, 1500);
 
-function updateHUDStats() {
-    document.getElementById('career-xp').innerText = careerXP.toLocaleString();
-    let mult = Math.min(2.0, 1.0 + (consecutiveKills * 0.1));
-    document.getElementById('streak-counter').innerText = `x${mult.toFixed(1)}`;
-    if (mult > 1.0) {
-        document.getElementById('streak-counter').style.color = 'var(--hud-green)';
     } else {
-        document.getElementById('streak-counter').style.color = 'var(--hud-amber)';
-    }
-}
+        // Wrong
+        btn.classList.add('wrong');
+        
+        document.querySelectorAll('.option-btn').forEach(b => {
+            if(b.innerText === quizQuestion.word) b.classList.add('correct');
+        });
 
-function redeploy() {
-    document.getElementById('overlay-kia').classList.remove('active');
-    loadNextMission();
+        if (navigator.vibrate) navigator.vibrate(200);
+
+        setTimeout(() => {
+            // Force user back to study mode for this specific pattern
+            document.getElementById('study-mode').style.display = 'flex';
+            document.getElementById('quiz-mode').style.display = 'none';
+        }, 2000);
+    }
 }
