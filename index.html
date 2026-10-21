@@ -3,178 +3,168 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Operation: PHYSICS</title>
+    <title>Pattern Swipe</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Black+Ops+One&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap');
 
         :root {
-            --bg-color: #0f1110;
-            --hud-green: #39ff14;
-            --hud-amber: #ffb000;
-            --hud-red: #ff2a2a;
-            --hud-cyan: #00ffff;
-            --panel-bg: rgba(20, 25, 20, 0.85);
-            --border-color: #334033;
+            --bg-color: #f3f4f6;
+            --card-bg: #ffffff;
+            --text-main: #1f2937;
+            --text-sub: #6b7280;
+            --accent-blue: #3b82f6;
+            --accent-green: #10b981;
+            --accent-red: #ef4444;
+            --border-radius: 20px;
         }
 
         body {
-            font-family: 'Share Tech Mono', monospace; background-color: var(--bg-color);
-            background-image: linear-gradient(rgba(0, 255, 0, 0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(0, 255, 0, 0.03) 1px, transparent 1px);
-            background-size: 20px 20px; color: var(--text-light); margin: 0; padding: 0;
-            display: flex; justify-content: center; height: 100dvh; overflow: hidden;
-            -webkit-tap-highlight-color: transparent; user-select: none;
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            margin: 0; padding: 0;
+            display: flex; justify-content: center;
+            height: 100dvh; overflow: hidden;
+            -webkit-tap-highlight-color: transparent;
         }
-
-        @keyframes shake {
-            0% { transform: translate(1px, 1px) rotate(0deg); }
-            20% { transform: translate(-3px, 0px) rotate(1deg); }
-            40% { transform: translate(1px, -1px) rotate(1deg); }
-            60% { transform: translate(-3px, 1px) rotate(0deg); }
-            80% { transform: translate(-1px, -1px) rotate(1deg); }
-            100% { transform: translate(1px, -2px) rotate(-1deg); }
-        }
-        .shake-effect { animation: shake 0.4s; }
-
-        .damage-overlay {
-            position: fixed; inset: 0; z-index: 50; pointer-events: none;
-            background: radial-gradient(circle, transparent 30%, rgba(255, 0, 0, 0.4) 80%, rgba(255, 0, 0, 0.8) 100%);
-            box-shadow: inset 0 0 100px rgba(255,0,0,0.8);
-            opacity: 0; transition: opacity 0.1s ease-out;
-        }
-        .damage-overlay.active { opacity: 1; transition: none; }
 
         .app-container {
-            width: 100%; max-width: 430px; height: 100%; display: flex; flex-direction: column; 
-            padding: 15px; box-sizing: border-box; position: relative; z-index: 10;
+            width: 100%; max-width: 430px; height: 100%;
+            display: flex; flex-direction: column;
+            padding: 20px; box-sizing: border-box;
+            position: relative;
         }
 
-        /* Tactical HUD Header */
-        .hud-header { border-bottom: 2px solid var(--border-color); padding-bottom: 10px; margin-bottom: 15px; }
-        .hud-top { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 8px;}
-        .hud-title { font-family: 'Black Ops One', cursive; color: var(--hud-amber); font-size: 22px; letter-spacing: 2px; }
+        /* Top Bar */
+        .top-bar {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 20px;
+        }
+        .xp-badge {
+            background: var(--accent-blue); color: #fff;
+            padding: 6px 12px; border-radius: 20px; font-weight: 800; font-size: 14px;
+        }
+        .level-text { font-weight: 600; color: var(--text-sub); }
+
+        /* Card Container */
+        .card {
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+            flex-grow: 1; display: flex; flex-direction: column;
+            padding: 30px 20px; position: relative; overflow: hidden;
+        }
+
+        /* Study Mode */
+        .pattern-header { font-size: 14px; color: var(--text-sub); font-weight: 600; text-transform: uppercase; letter-spacing: 1px; text-align: center; margin-bottom: 10px;}
+        .pattern-desc { text-align: center; font-size: 14px; color: var(--text-sub); margin-bottom: 30px;}
         
-        .armor-status { display: flex; gap: 5px; }
-        .armor-plate { width: 15px; height: 20px; background-color: var(--hud-green); border: 1px solid #000; box-shadow: 0 0 5px var(--hud-green); }
-        .armor-plate.lost { background-color: transparent; border-color: var(--hud-red); box-shadow: none; }
-
-        .hud-stats { display: flex; justify-content: space-between; font-size: 14px; font-weight: bold; color: var(--hud-cyan); text-transform: uppercase;}
-        .streak-text { color: var(--hud-amber); }
-
-        /* Objective Panel */
-        .objective-panel {
-            background: var(--panel-bg); border: 1px solid var(--border-color);
-            border-left: 4px solid var(--hud-amber); padding: 15px; border-radius: 4px;
-            margin-bottom: 20px; position: relative;
+        .swipe-area {
+            display: flex; align-items: center; justify-content: space-between; gap: 10px;
+            margin-bottom: 30px; flex-grow: 1;
         }
-        .obj-label { color: var(--hud-amber); font-size: 12px; letter-spacing: 1px; margin-bottom: 5px; }
-        .question-text { color: #fff; font-size: 20px; line-height: 1.4; min-height: 80px; }
-        
-        .decode-btn {
-            background: transparent; border: 1px solid var(--hud-amber); color: var(--hud-amber);
-            font-family: 'Share Tech Mono', monospace; padding: 5px 10px; font-size: 12px;
-            cursor: pointer; position: absolute; top: 10px; right: 10px; text-transform: uppercase;
+
+        .nav-btn {
+            background: #f3f4f6; border: none; width: 40px; height: 40px;
+            border-radius: 50%; font-size: 20px; cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            color: var(--text-sub); transition: all 0.2s;
         }
-        .decode-btn:active { background: var(--hud-amber); color: #000; }
+        .nav-btn:active { transform: scale(0.9); background: #e5e7eb; }
 
-        /* 3x3 Keypad Grid */
-        .keypad-container { flex-grow: 1; display: flex; flex-direction: column; justify-content: center; }
-        .options-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
-        
-        .option-btn {
-            aspect-ratio: 1 / 0.8; background: rgba(0,0,0,0.6); border: 2px solid var(--border-color);
-            color: #fff; font-family: 'Share Tech Mono', monospace; font-size: 24px; font-weight: bold;
-            cursor: pointer; display: flex; align-items: center; justify-content: center;
-            transition: all 0.1s; border-radius: 4px; box-shadow: inset 0 0 10px rgba(255,255,255,0.05);
+        .sentence-display {
+            text-align: center; font-size: 28px; font-weight: 800; line-height: 1.4;
+            flex-grow: 1;
         }
-        .option-btn:active { background: var(--border-color); transform: scale(0.95); }
-        .option-btn.correct { background: rgba(57, 255, 20, 0.2); border-color: var(--hud-green); color: var(--hud-green); box-shadow: inset 0 0 20px rgba(57, 255, 20, 0.4); }
-        .option-btn.wrong { background: rgba(255, 42, 42, 0.2); border-color: var(--hud-red); color: var(--hud-red); opacity: 0.5; }
-
-        /* Overlays */
-        .fullscreen-overlay {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            z-index: 100; opacity: 0; pointer-events: none; transition: opacity 0.3s; background: rgba(0,0,0,0.95);
+        .filler-slot {
+            color: var(--accent-blue); border-bottom: 3px solid var(--accent-blue);
+            display: inline-block; transition: all 0.3s ease;
         }
-        .fullscreen-overlay.active { opacity: 1; pointer-events: auto; }
 
-        .overlay-title { font-family: 'Black Ops One', cursive; font-size: 40px; letter-spacing: 4px; margin-bottom: 20px; text-align: center;}
-        .text-green { color: var(--hud-green); text-shadow: 0 0 15px var(--hud-green); }
-        .text-red { color: var(--hud-red); text-shadow: 0 0 15px var(--hud-red); }
+        .thai-translation {
+            text-align: center; font-size: 18px; color: var(--text-main); font-weight: 600;
+            background: #f9fafb; padding: 15px; border-radius: 12px; margin-bottom: 20px;
+            min-height: 60px; display: flex; align-items: center; justify-content: center;
+        }
 
-        /* Combat Report (XP Breakdown) */
-        .combat-report { width: 80%; border: 1px solid var(--hud-cyan); padding: 15px; background: rgba(0,255,255,0.05); margin-bottom: 20px;}
-        .report-line { display: flex; justify-content: space-between; font-size: 16px; margin-bottom: 8px; color: #ccc;}
-        .report-line.total { border-top: 1px dashed var(--hud-cyan); padding-top: 8px; font-weight: bold; color: var(--hud-amber); font-size: 20px;}
+        .audio-btn {
+            background: #eff6ff; color: var(--accent-blue); border: none;
+            width: 60px; height: 60px; border-radius: 50%; font-size: 24px;
+            margin: 0 auto 20px auto; cursor: pointer; display: flex; align-items: center; justify-content: center;
+            transition: all 0.2s; box-shadow: 0 4px 10px rgba(59, 130, 246, 0.2);
+        }
+        .audio-btn:active { transform: scale(0.9); }
 
         .action-btn {
-            background: transparent; border: 2px solid #fff; color: #fff;
-            font-family: 'Share Tech Mono', monospace; font-size: 20px; padding: 10px 30px;
-            cursor: pointer; text-transform: uppercase;
+            background: var(--text-main); color: #fff; border: none;
+            padding: 18px; border-radius: 15px; font-size: 18px; font-weight: 800;
+            cursor: pointer; width: 100%; transition: transform 0.1s;
         }
-        .action-btn:active { background: #fff; color: #000; }
+        .action-btn:active { transform: scale(0.98); }
 
-        .scanlines {
-            position: fixed; left: 0; top: 0; width: 100%; height: 100%; pointer-events: none; z-index: 999;
-            background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0) 50%, rgba(0,0,0,0.1) 50%, rgba(0,0,0,0.1));
-            background-size: 100% 4px; opacity: 0.3;
+        /* Quiz Mode */
+        #quiz-mode { display: none; }
+        .quiz-target-thai {
+            font-size: 22px; font-weight: 800; text-align: center; margin-bottom: 20px;
+            color: var(--accent-blue);
         }
+        .quiz-template {
+            font-size: 24px; font-weight: 800; text-align: center; margin-bottom: 40px;
+        }
+        .quiz-blank { color: #d1d5db; border-bottom: 3px solid #d1d5db; }
+        
+        .options-grid { display: flex; flex-direction: column; gap: 12px; margin-top: auto; }
+        .option-btn {
+            background: #f9fafb; border: 2px solid #e5e7eb; color: var(--text-main);
+            padding: 18px 15px; border-radius: 12px; font-size: 18px; font-weight: 600;
+            cursor: pointer; transition: all 0.2s; text-align: center;
+        }
+        .option-btn:active { background: #e5e7eb; }
+        .option-btn.correct { background: #ecfdf5; border-color: var(--accent-green); color: var(--accent-green); }
+        .option-btn.wrong { background: #fef2f2; border-color: var(--accent-red); color: var(--accent-red); }
+
     </style>
 </head>
 <body>
-    <div class="scanlines"></div>
-    <div class="damage-overlay" id="damage-overlay"></div>
 
-    <div class="app-container" id="main-container">
+    <div class="app-container">
         
-        <!-- HUD Header -->
-        <div class="hud-header">
-            <div class="hud-top">
-                <div class="hud-title">OP: PHYSICS</div>
-                <div class="armor-status" id="armor-status">
-                    <div class="armor-plate" id="armor-1"></div>
-                    <div class="armor-plate" id="armor-2"></div>
-                    <div class="armor-plate" id="armor-3"></div>
+        <!-- Top Bar -->
+        <div class="top-bar">
+            <div class="level-text">Structure <span id="level-display">1</span>/3</div>
+            <div class="xp-badge">⭐ <span id="xp-display">0</span> XP</div>
+        </div>
+
+        <!-- STUDY MODE (Swipeable Patterns) -->
+        <div class="card" id="study-mode">
+            <div class="pattern-header">Current Pattern</div>
+            <div class="pattern-desc" id="pattern-desc">Loading description...</div>
+
+            <div class="swipe-area">
+                <button class="nav-btn" onclick="prevFiller()">◀</button>
+                
+                <div class="sentence-display" id="sentence-display">
+                    <!-- Template injected here -->
                 </div>
+                
+                <button class="nav-btn" onclick="nextFiller()">▶</button>
             </div>
-            <div class="hud-stats">
-                <div>CAREER XP: <span id="career-xp" style="color: #fff;">0</span></div>
-                <div class="streak-text">STREAK: <span id="streak-counter" style="color: #fff;">x1.0</span></div>
-            </div>
+
+            <div class="thai-translation" id="thai-translation">Loading...</div>
+
+            <button class="audio-btn" onclick="playAudio()">🔊</button>
+            
+            <button class="action-btn" onclick="startQuiz()">Take Pattern Quiz</button>
         </div>
 
-        <!-- Objective Panel -->
-        <div class="objective-panel">
-            <button class="decode-btn" id="decode-btn" onclick="toggleLanguage()">Decode (TH)</button>
-            <div class="obj-label">CURRENT OBJECTIVE:</div>
-            <div class="question-text" id="question-text">Loading intel...</div>
-        </div>
+        <!-- QUIZ MODE -->
+        <div class="card" id="quiz-mode">
+            <div class="pattern-header">Fill the Blank</div>
+            
+            <div class="quiz-target-thai" id="quiz-target-thai">...</div>
+            <div class="quiz-template" id="quiz-template">...</div>
 
-        <!-- 3x3 Keypad -->
-        <div class="keypad-container">
             <div class="options-grid" id="options-grid"></div>
-        </div>
-
-        <!-- OVERLAYS -->
-        <div class="fullscreen-overlay" id="overlay-cleared">
-            <div class="overlay-title text-green">TARGET<br>ELIMINATED</div>
-            
-            <div class="combat-report">
-                <div class="report-line"><span>Base XP:</span> <span id="rep-base">100</span></div>
-                <div class="report-line"><span>Speed Bonus:</span> <span id="rep-speed" style="color: var(--hud-green);">+50</span></div>
-                <div class="report-line"><span>Flawless Exec:</span> <span id="rep-flawless" style="color: var(--hud-green);">+50</span></div>
-                <div class="report-line"><span>Damage Penalty:</span> <span id="rep-penalty" style="color: var(--hud-red);">-0</span></div>
-                <div class="report-line"><span>Streak Multiplier:</span> <span id="rep-mult" style="color: var(--hud-amber);">x1.0</span></div>
-                <div class="report-line total"><span>TOTAL XP:</span> <span id="rep-total">+200</span></div>
-            </div>
-            
-            <button class="action-btn" onclick="loadNextMission()">Next Target</button>
-        </div>
-
-        <div class="fullscreen-overlay" id="overlay-kia">
-            <div class="overlay-title text-red">K.I.A.</div>
-            <div style="color: #ccc; font-size: 18px; margin-bottom: 30px;">Armor depleted. Zero XP Gained.</div>
-            <button class="action-btn" onclick="redeploy()">Redeploy</button>
         </div>
 
     </div>
