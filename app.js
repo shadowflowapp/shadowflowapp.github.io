@@ -1,12 +1,18 @@
 let database = [];
 const synth = window.speechSynthesis;
 
-let playerXP = 0;
-let currentPatternObj = null;
-let currentFillerIndex = 0;
+// Progress Metrics
+let viewedSentences = new Set();
+let masteredStructures = new Set();
 
-// Quiz State
-let quizQuestion = null;
+// State
+let currentPatternIndex = 0;
+let currentExampleIndex = 0;
+let currentPatternData = null;
+
+// Touch Swipe Handling
+let touchstartX = 0;
+let touchendX = 0;
 
 // 1. Initialize
 fetch('db.jsonl')
@@ -15,176 +21,157 @@ fetch('db.jsonl')
         const lines = text.split('\n').filter(line => line.trim() !== '');
         database = lines.map(line => JSON.parse(line));
         
-        loadNextPattern();
+        loadPattern(0);
+        setupSwipeListeners();
     })
     .catch(err => console.error("Error loading DB", err));
 
-function shuffle(array) {
-    let curId = array.length;
-    while (0 !== curId) {
-        let randId = Math.floor(Math.random() * curId);
-        curId -= 1;
-        let tmp = array[curId];
-        array[curId] = array[randId];
-        array[randId] = tmp;
+// 2. Load a New Pattern
+function loadPattern(index) {
+    if (index >= database.length) {
+        alert("Incredible! You have mastered all available structures.");
+        index = 0; // Loop for MVP
     }
-    return array;
+    
+    currentPatternIndex = index;
+    currentPatternData = database[index];
+    currentExampleIndex = 0;
+
+    document.getElementById('pattern-title').innerText = currentPatternData.patternName;
+    document.getElementById('template-hint').innerText = `Pattern: ${currentPatternData.template}`;
+    
+    // Reset Next Pattern button state
+    const nextPatBtn = document.getElementById('btn-next-pattern');
+    nextPatBtn.classList.remove('active');
+    nextPatBtn.innerText = "Complete All Examples First";
+
+    renderExample();
 }
 
-// 2. Load Study Mode
+// 3. Render the specific sentence card
+function renderExample() {
+    const example = currentPatternData.examples[currentExampleIndex];
+    
+    // Record Metrics
+    viewedSentences.add(example.en);
+    updateMetricsHUD();
+
+    // Dynamically highlight the injected word
+    // We replace the specific word with a styled span
+    const safeWord = example.word.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const regex = new RegExp(`(${safeWord})`, 'i');
+    const highlightedEn = example.en.replace(regex, `<span class="highlight-blank">$1</span>`);
+
+    // UI Updates
+    document.getElementById('english-sentence').innerHTML = highlightedEn;
+    document.getElementById('thai-translation').innerText = example.th;
+
+    // Controls Update
+    document.getElementById('btn-prev').disabled = currentExampleIndex === 0;
+    document.getElementById('btn-next').disabled = currentExampleIndex === currentPatternData.examples.length - 1;
+
+    renderPagination();
+    checkPatternCompletion();
+}
+
+// 4. Navigation
+function prevExample() {
+    if (currentExampleIndex > 0) {
+        currentExampleIndex--;
+        animateCard('left');
+        renderExample();
+    }
+}
+
+function nextExample() {
+    if (currentExampleIndex < currentPatternData.examples.length - 1) {
+        currentExampleIndex++;
+        animateCard('right');
+        renderExample();
+    }
+}
+
 function loadNextPattern() {
-    // Pick a random pattern structure
-    currentPatternObj = database[Math.floor(Math.random() * database.length)];
-    currentFillerIndex = 0; // Reset swipe index
-    
-    document.getElementById('study-mode').style.display = 'flex';
-    document.getElementById('quiz-mode').style.display = 'none';
-
-    document.getElementById('level-display').innerText = currentPatternObj.level;
-    document.getElementById('pattern-desc').innerText = currentPatternObj.description;
-
-    renderCurrentSwipe();
-    
-    // Auto-play first variation
-    setTimeout(playAudio, 500);
+    masteredStructures.add(currentPatternData.id);
+    updateMetricsHUD();
+    loadPattern(currentPatternIndex + 1);
 }
 
-// 3. Render the Swiped Sentence
-function renderCurrentSwipe() {
-    const fillerObj = currentPatternObj.fillers[currentFillerIndex];
-    
-    // Inject the word into the template blank
-    // If the template has multiple blanks separated by '|', we split it
-    let displayHtml = currentPatternObj.pattern;
-    const wordParts = fillerObj.word.split(' | ');
-    
-    if (wordParts.length === 1) {
-        displayHtml = displayHtml.replace('____', `<span class="filler-slot">${fillerObj.word}</span>`);
-    } else {
-        // Handle double blanks (e.g. "No matter how ____, I will ____")
-        wordParts.forEach(part => {
-            displayHtml = displayHtml.replace('____', `<span class="filler-slot">${part}</span>`);
-        });
+// 5. Check Completion
+function checkPatternCompletion() {
+    // If they reached the last card of the pattern
+    if (currentExampleIndex === currentPatternData.examples.length - 1) {
+        const nextPatBtn = document.getElementById('btn-next-pattern');
+        nextPatBtn.classList.add('active');
+        nextPatBtn.innerText = "Next Structure ➔";
     }
-
-    document.getElementById('sentence-display').innerHTML = displayHtml;
-    document.getElementById('thai-translation').innerText = fillerObj.th;
 }
 
-// Navigation (Swipe left/right)
-function nextFiller() {
-    currentFillerIndex = (currentFillerIndex + 1) % currentPatternObj.fillers.length;
-    renderCurrentSwipe();
-    playAudio();
+// 6. Pagination & Animations
+function renderPagination() {
+    const pagContainer = document.getElementById('pagination');
+    pagContainer.innerHTML = '';
+    for (let i = 0; i < currentPatternData.examples.length; i++) {
+        const dot = document.createElement('div');
+        dot.className = `dot ${i === currentExampleIndex ? 'active' : ''}`;
+        pagContainer.appendChild(dot);
+    }
 }
 
-function prevFiller() {
-    currentFillerIndex = (currentFillerIndex - 1 + currentPatternObj.fillers.length) % currentPatternObj.fillers.length;
-    renderCurrentSwipe();
-    playAudio();
+function animateCard(direction) {
+    const card = document.getElementById('flashcard');
+    card.style.transform = direction === 'right' ? 'translateX(20px)' : 'translateX(-20px)';
+    card.style.opacity = '0.5';
+    setTimeout(() => {
+        card.style.transform = 'translateX(0)';
+        card.style.opacity = '1';
+    }, 150);
 }
 
-// 4. Audio Engine
+// 7. Metrics HUD Update
+function updateMetricsHUD() {
+    document.getElementById('metric-sentences').innerText = viewedSentences.size;
+    document.getElementById('metric-structures').innerText = masteredStructures.size;
+}
+
+// 8. Swipe Listeners for Mobile
+function setupSwipeListeners() {
+    const card = document.getElementById('flashcard');
+    card.addEventListener('touchstart', e => {
+        touchstartX = e.changedTouches[0].screenX;
+    });
+    card.addEventListener('touchend', e => {
+        touchendX = e.changedTouches[0].screenX;
+        handleSwipe();
+    });
+}
+
+function handleSwipe() {
+    const threshold = 50;
+    if (touchstartX - touchendX > threshold) nextExample(); // Swipe Left
+    if (touchendX - touchstartX > threshold) prevExample(); // Swipe Right
+}
+
+// 9. Audio Engine (Anti-Overlap)
 function playAudio() {
     if (synth.speaking) synth.cancel(); 
     
     setTimeout(() => {
-        const fillerObj = currentPatternObj.fillers[currentFillerIndex];
-        
-        let textToSpeak = currentPatternObj.pattern;
-        const wordParts = fillerObj.word.split(' | ');
-        wordParts.forEach(part => {
-            textToSpeak = textToSpeak.replace('____', part);
-        });
-
+        const textToSpeak = currentPatternData.examples[currentExampleIndex].en;
         const utterThis = new SpeechSynthesisUtterance(textToSpeak);
-        
         const voices = synth.getVoices();
+        
         const maleUSIdentifiers = ['David', 'Alex', 'Aaron', 'Google US English'];
-        let selectedVoice = voices.find(v => v.lang.includes('en-US') && maleUSIdentifiers.some(id => v.name.includes(id)));
+        let selectedVoice = voices.find(v => 
+            v.lang.includes('en-US') && maleUSIdentifiers.some(id => v.name.includes(id))
+        );
         if (!selectedVoice) selectedVoice = voices.find(v => v.lang.includes('en-US'));
 
         if (selectedVoice) utterThis.voice = selectedVoice;
-        utterThis.rate = 1.0; 
+        utterThis.rate = 0.95; // Slightly clear pacing
         
         synth.speak(utterThis);
     }, 50);
 }
+
 speechSynthesis.onvoiceschanged = () => { synth.getVoices(); };
-
-
-// 5. Enter Quiz Mode
-function startQuiz() {
-    if (synth.speaking) synth.cancel();
-    
-    document.getElementById('study-mode').style.display = 'none';
-    document.getElementById('quiz-mode').style.display = 'flex';
-
-    // Pick a random variation from the current pattern to test
-    quizQuestion = currentPatternObj.fillers[Math.floor(Math.random() * currentPatternObj.fillers.length)];
-
-    document.getElementById('quiz-target-thai').innerText = quizQuestion.th;
-    
-    // Show template with blank
-    document.getElementById('quiz-template').innerHTML = currentPatternObj.pattern.replace(/____/g, '<span class="quiz-blank">______</span>');
-
-    // Create distractors (Pulling other fillers from the same pattern)
-    let distractors = currentPatternObj.fillers.filter(f => f.word !== quizQuestion.word).map(f => f.word);
-    distractors = shuffle(distractors);
-    
-    let options = shuffle([quizQuestion.word, ...distractors.slice(0, 3)]);
-
-    const grid = document.getElementById('options-grid');
-    grid.innerHTML = '';
-    
-    options.forEach(opt => {
-        const btn = document.createElement('button');
-        btn.className = 'option-btn';
-        btn.innerText = opt;
-        btn.onclick = () => checkQuizAnswer(btn, opt);
-        grid.appendChild(btn);
-    });
-}
-
-// 6. Grading
-function checkQuizAnswer(btn, selectedWord) {
-    document.querySelectorAll('.option-btn').forEach(b => b.disabled = true);
-
-    if (selectedWord === quizQuestion.word) {
-        // Correct
-        btn.classList.add('correct');
-        playerXP += 20;
-        document.getElementById('xp-display').innerText = playerXP;
-        
-        // Read the full correct sentence aloud
-        let textToSpeak = currentPatternObj.pattern;
-        const wordParts = quizQuestion.word.split(' | ');
-        wordParts.forEach(part => { textToSpeak = textToSpeak.replace('____', part); });
-        
-        if (synth.speaking) synth.cancel();
-        setTimeout(() => {
-            const utterThis = new SpeechSynthesisUtterance(textToSpeak);
-            synth.speak(utterThis);
-        }, 50);
-
-        setTimeout(() => {
-            loadNextPattern();
-        }, 1500);
-
-    } else {
-        // Wrong
-        btn.classList.add('wrong');
-        
-        document.querySelectorAll('.option-btn').forEach(b => {
-            if(b.innerText === quizQuestion.word) b.classList.add('correct');
-        });
-
-        if (navigator.vibrate) navigator.vibrate(200);
-
-        setTimeout(() => {
-            // Force user back to study mode for this specific pattern
-            document.getElementById('study-mode').style.display = 'flex';
-            document.getElementById('quiz-mode').style.display = 'none';
-        }, 2000);
-    }
-}
