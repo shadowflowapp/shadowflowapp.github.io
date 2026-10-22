@@ -400,3 +400,103 @@
 {"chunks": ["He", "tends to wake up early", "when he is stressed."], "th": "เขามักจะตื่นเช้าเวลาที่เขาเครียด"}
 {"chunks": ["He", "tends to wake up early", "for morning practice."], "th": "เขามักจะตื่นเช้าเพื่อฝึกซ้อมรอบเช้า"}
 {"chunks": ["He", "tends to wake up early", "every single day."], "th": "เขามักจะตื่นเช้าในทุกๆ วัน"}
+{"chunks": ["I would have", "called you earlier", "if I had known."], "th": "ฉันคงโทรหาคุณเร็วกว่านี้แล้วถ้าฉันรู้"}
+{"chunks": ["He would have", "called you earlier", "if he had known."], "th": "เขาคงโทรหาคุณเร็วกว่านี้แล้วถ้าเขารู้"}
+{"chunks": ["She would have", "called you earlier", "if she had known."], "th": "เธอคงโทรหาคุณเร็วกว่านี้แล้วถ้าเธอรู้"}
+{"chunks": ["We would have", "called you earlier", "if we had known."], "th": "พวกเราคงโทรหาคุณเร็วกว่านี้แล้วถ้าพวกเรารู้"}
+{"chunks": ["They would have", "called you earlier", "if they had known."], "th": "พวกเขาคงโทรหาคุณเร็วกว่านี้แล้วถ้าพวกเขารู้"}
+{"chunks": ["I would have", "called you earlier", "before the meeting."], "th": "ฉันคงโทรหาคุณเร็วกว่านี้ก่อนการประชุมแล้ว"}
+{"chunks": ["He would have", "called you earlier", "before the meeting."], "th": "เขาคงโทรหาคุณเร็วกว่านี้ก่อนการประชุมแล้ว"}
+{"chunks": ["She would have", "called you earlier", "before the meeting."], "th": "เธอคงโทรหาคุณเร็วกว่านี้ก่อนการประชุมแล้ว"}
+{"chunks": ["We would have", "called you earlier", "before the meeting."], "th": "พวกเราคงโทรหาคุณเร็วกว่านี้ก่อนการประชุมแล้ว"}
+{"chunks": ["They would have", "called you earlier", "before the meeting."], "th": "พวกเขาคงโทรหาคุณเร็วกว่านี้ก่อนการประชุมแล้ว"}
+{"chunks": ["I would have", "come to the party", "if I had known."], "th": "ฉันคงมาร่วมงานปาร์ตี้แล้วถ้าฉันรู้"}
+{"chunks": ["He would have", "come to the party", "if he had known."], "th": "เขาคงมาร่วมงานปาร์ตี้แล้วถ้าเขารู้"}
+{"chunks": ["She would have", "come to the party", "if she had known."], "th": "เธอคงมาร่วมงานปาร์ตี้แล้วถ้าเธอรู้"}
+{"chunks": ["We would have", "come to the party", "if we had known."], "th": "พวกเราคงมาร่วมงานปาร์ตี้แล้วถ้าพวกเรารู้"}
+{"chunks": ["They would have", "come to the party", "if they had known."], "th": "พวกเขาคงมาร่วมงานปาร์ตี้แล้วถ้าพวกเขารู้"}
+{"chunks": ["I would have", "come to the party", "on Friday night."], "th": "ฉันคงมาร่วมงานปาร์ตี้ในคืนวันศุกร์แล้ว"}
+{"chunks": ["He would have", "come to the party", "on Friday night."], "th": "เขาคงมาร่วมงานปาร์ตี้ในคืนวันศุกร์แล้ว"}
+{"chunks": ["She would have", "come to the party", "on Friday night."], "th": "เธอคงมาร่วมงานปาร์ตี้ในคืนวันศุกร์แล้ว"}
+{"chunks": ["We would have", "come to the party", "on Friday night."], "th": "พวกเราคงมาร่วมงานปาร์ตี้ในคืนวันศุกร์แล้ว"}
+{"chunks": ["They would have", "come to the party", "on Friday night."], "th": "พวกเขาคงมาร่วมงานปาร์ตี้ในคืนวันศุกร์แล้ว"}
+{"chunks": ["I would have", "picked up the kids", "from school today."], "th": "ฉันคงไปรับเด็กๆ จากโรงเรียนวันนี้แล้ว"}
+{"chunks": ["He would have", "picked up the kids", "from school today."], "th": "เขาคงไปรับเด็กๆ จากโรงเรียนวันนี้แล้ว"}
+{"chunks": ["She would have", "picked up the kids", "from school today."], "th": "เธอคงไปรับเด็กๆ จากโรงเรียนวันนี้แล้ว"}
+{"chunks": ["We would have", "picked up the kids", "from school today."], "th": "พวกเราคงไปรับเด็กๆ จากโรงเรียนวันนี้แล้ว"}
+{"chunks": ["They would have", "picked up the kids", "from school today."], "th": "พวกเขาคงไปรับเด็กๆ จากโรงเรียนวันนี้แล้ว"}
+{"chunks": ["I would have", "picked up the kids", "on my way home."], "th": "ฉันคงแวะรับเด็กๆ ระหว่างทางกลับบ้านแล้ว"}
+{"chunks": ["He would have", "picked up the kids", "on his way home."], "th": "เขาคงแวะรับเด็กๆ ระหว่างทางกลับบ้านแล้ว"}
+{"chunks": ["She would have", "picked up the kids", "on her way home."], "th": "เธอคงแวะรับเด็กๆ ระหว่างทางกลับบ้านแล้ว"}
+{"chunks": ["We would have", "picked up the kids", "on our way home."], "th": "พวกเราคงแวะรับเด็กๆ ระหว่างทางกลับบ้านแล้ว"}
+{"chunks": ["They would have", "picked up the kids", "on their way home."], "th": "พวกเขาคงแวะรับเด็กๆ ระหว่างทางกลับบ้านแล้ว"}
+{"chunks": ["I would have", "helped you out", "if you had asked."], "th": "ฉันคงช่วยคุณไปแล้วถ้าคุณเอ่ยปากถาม"}
+{"chunks": ["He would have", "helped you out", "if you had asked."], "th": "เขาคงช่วยคุณไปแล้วถ้าคุณเอ่ยปากถาม"}
+{"chunks": ["She would have", "helped you out", "if you had asked."], "th": "เธอคงช่วยคุณไปแล้วถ้าคุณเอ่ยปากถาม"}
+{"chunks": ["We would have", "helped you out", "if you had asked."], "th": "พวกเราคงช่วยคุณไปแล้วถ้าคุณเอ่ยปากถาม"}
+{"chunks": ["They would have", "helped you out", "if you had asked."], "th": "พวกเขาคงช่วยคุณไปแล้วถ้าคุณเอ่ยปากถาม"}
+{"chunks": ["I would have", "helped you out", "as soon as possible."], "th": "ฉันคงช่วยคุณไปแล้วให้เร็วที่สุด"}
+{"chunks": ["He would have", "helped you out", "as soon as possible."], "th": "เขาคงช่วยคุณไปแล้วให้เร็วที่สุด"}
+{"chunks": ["She would have", "helped you out", "as soon as possible."], "th": "เธอคงช่วยคุณไปแล้วให้เร็วที่สุด"}
+{"chunks": ["We would have", "helped you out", "as soon as possible."], "th": "พวกเราคงช่วยคุณไปแล้วให้เร็วที่สุด"}
+{"chunks": ["They would have", "helped you out", "as soon as possible."], "th": "พวกเขาคงช่วยคุณไปแล้วให้เร็วที่สุด"}
+{"chunks": ["I would have", "grabbed some coffee", "before the meeting."], "th": "ฉันคงไปซื้อกาแฟแล้วก่อนเข้าประชุม"}
+{"chunks": ["He would have", "grabbed some coffee", "before the meeting."], "th": "เขาคงไปซื้อกาแฟแล้วก่อนเข้าประชุม"}
+{"chunks": ["She would have", "grabbed some coffee", "before the meeting."], "th": "เธอคงไปซื้อกาแฟแล้วก่อนเข้าประชุม"}
+{"chunks": ["We would have", "grabbed some coffee", "before the meeting."], "th": "พวกเราคงไปซื้อกาแฟแล้วก่อนเข้าประชุม"}
+{"chunks": ["They would have", "grabbed some coffee", "before the meeting."], "th": "พวกเขาคงไปซื้อกาแฟแล้วก่อนเข้าประชุม"}
+{"chunks": ["I would have", "grabbed some coffee", "on my way to work."], "th": "ฉันคงแวะซื้อกาแฟแล้วระหว่างทางไปทำงาน"}
+{"chunks": ["He would have", "grabbed some coffee", "on his way to work."], "th": "เขาคงแวะซื้อกาแฟแล้วระหว่างทางไปทำงาน"}
+{"chunks": ["She would have", "grabbed some coffee", "on her way to work."], "th": "เธอคงแวะซื้อกาแฟแล้วระหว่างทางไปทำงาน"}
+{"chunks": ["We would have", "grabbed some coffee", "on our way to work."], "th": "พวกเราคงแวะซื้อกาแฟแล้วระหว่างทางไปทำงาน"}
+{"chunks": ["They would have", "grabbed some coffee", "on their way to work."], "th": "พวกเขาคงแวะซื้อกาแฟแล้วระหว่างทางไปทำงาน"}
+{"chunks": ["I would have", "finished the project", "by last Friday."], "th": "ฉันคงทำโปรเจกต์เสร็จไปแล้วภายในวันศุกร์ที่แล้ว"}
+{"chunks": ["He would have", "finished the project", "by last Friday."], "th": "เขาคงทำโปรเจกต์เสร็จไปแล้วภายในวันศุกร์ที่แล้ว"}
+{"chunks": ["She would have", "finished the project", "by last Friday."], "th": "เธอคงทำโปรเจกต์เสร็จไปแล้วภายในวันศุกร์ที่แล้ว"}
+{"chunks": ["We would have", "finished the project", "by last Friday."], "th": "พวกเราคงทำโปรเจกต์เสร็จไปแล้วภายในวันศุกร์ที่แล้ว"}
+{"chunks": ["They would have", "finished the project", "by last Friday."], "th": "พวกเขาคงทำโปรเจกต์เสร็จไปแล้วภายในวันศุกร์ที่แล้ว"}
+{"chunks": ["I would have", "finished the project", "without your help."], "th": "ฉันคงทำโปรเจกต์เสร็จไปแล้วโดยไม่ต้องพึ่งความช่วยเหลือของคุณ"}
+{"chunks": ["He would have", "finished the project", "without your help."], "th": "เขาคงทำโปรเจกต์เสร็จไปแล้วโดยไม่ต้องพึ่งความช่วยเหลือของคุณ"}
+{"chunks": ["She would have", "finished the project", "without your help."], "th": "เธอคงทำโปรเจกต์เสร็จไปแล้วโดยไม่ต้องพึ่งความช่วยเหลือของคุณ"}
+{"chunks": ["We would have", "finished the project", "without your help."], "th": "พวกเราคงทำโปรเจกต์เสร็จไปแล้วโดยไม่ต้องพึ่งความช่วยเหลือของคุณ"}
+{"chunks": ["They would have", "finished the project", "without your help."], "th": "พวกเขาคงทำโปรเจกต์เสร็จไปแล้วโดยไม่ต้องพึ่งความช่วยเหลือของคุณ"}
+{"chunks": ["I would have", "picked up the tab", "at the restaurant."], "th": "ฉันคงจ่ายค่าอาหารให้แล้วที่ร้านอาหาร"}
+{"chunks": ["He would have", "picked up the tab", "at the restaurant."], "th": "เขาคงจ่ายค่าอาหารให้แล้วที่ร้านอาหาร"}
+{"chunks": ["She would have", "picked up the tab", "at the restaurant."], "th": "เธอคงจ่ายค่าอาหารให้แล้วที่ร้านอาหาร"}
+{"chunks": ["We would have", "picked up the tab", "at the restaurant."], "th": "พวกเราคงจ่ายค่าอาหารให้แล้วที่ร้านอาหาร"}
+{"chunks": ["They would have", "picked up the tab", "at the restaurant."], "th": "พวกเขาคงจ่ายค่าอาหารให้แล้วที่ร้านอาหาร"}
+{"chunks": ["I would have", "picked up the tab", "for dinner tonight."], "th": "ฉันคงเป็นคนออกค่าอาหารเย็นคืนนี้ให้แล้ว"}
+{"chunks": ["He would have", "picked up the tab", "for dinner tonight."], "th": "เขาคงเป็นคนออกค่าอาหารเย็นคืนนี้ให้แล้ว"}
+{"chunks": ["She would have", "picked up the tab", "for dinner tonight."], "th": "เธอคงเป็นคนออกค่าอาหารเย็นคืนนี้ให้แล้ว"}
+{"chunks": ["We would have", "picked up the tab", "for dinner tonight."], "th": "พวกเราคงเป็นคนออกค่าอาหารเย็นคืนนี้ให้แล้ว"}
+{"chunks": ["They would have", "picked up the tab", "for dinner tonight."], "th": "พวกเขาคงเป็นคนออกค่าอาหารเย็นคืนนี้ให้แล้ว"}
+{"chunks": ["I would have", "traveled to New York", "for the conference."], "th": "ฉันคงเดินทางไปนิวยอร์กเพื่องานประชุมแล้ว"}
+{"chunks": ["He would have", "traveled to New York", "for the conference."], "th": "เขาคงเดินทางไปนิวยอร์กเพื่องานประชุมแล้ว"}
+{"chunks": ["She would have", "traveled to New York", "for the conference."], "th": "เธอคงเดินทางไปนิวยอร์กเพื่องานประชุมแล้ว"}
+{"chunks": ["We would have", "traveled to New York", "for the conference."], "th": "พวกเราคงเดินทางไปนิวยอร์กเพื่องานประชุมแล้ว"}
+{"chunks": ["They would have", "traveled to New York", "for the conference."], "th": "พวกเขาคงเดินทางไปนิวยอร์กเพื่องานประชุมแล้ว"}
+{"chunks": ["I would have", "traveled to New York", "during the holidays."], "th": "ฉันคงเดินทางไปเที่ยวนิวยอร์กช่วงวันหยุดแล้ว"}
+{"chunks": ["He would have", "traveled to New York", "during the holidays."], "th": "เขาคงเดินทางไปเที่ยวนิวยอร์กช่วงวันหยุดแล้ว"}
+{"chunks": ["She would have", "traveled to New York", "during the holidays."], "th": "เธอคงเดินทางไปเที่ยวนิวยอร์กช่วงวันหยุดแล้ว"}
+{"chunks": ["We would have", "traveled to New York", "during the holidays."], "th": "พวกเราคงเดินทางไปเที่ยวนิวยอร์กช่วงวันหยุดแล้ว"}
+{"chunks": ["They would have", "traveled to New York", "during the holidays."], "th": "พวกเขาคงเดินทางไปเที่ยวนิวยอร์กช่วงวันหยุดแล้ว"}
+{"chunks": ["I would have", "told you the truth", "if you had asked."], "th": "ฉันคงบอกความจริงกับคุณแล้วถ้าคุณถาม"}
+{"chunks": ["He would have", "told you the truth", "if you had asked."], "th": "เขาคงบอกความจริงกับคุณแล้วถ้าคุณถาม"}
+{"chunks": ["She would have", "told you the truth", "if you had asked."], "th": "เธอคงบอกความจริงกับคุณแล้วถ้าคุณถาม"}
+{"chunks": ["We would have", "told you the truth", "if you had asked."], "th": "พวกเราคงบอกความจริงกับคุณแล้วถ้าคุณถาม"}
+{"chunks": ["They would have", "told you the truth", "if you had asked."], "th": "พวกเขาคงบอกความจริงกับคุณแล้วถ้าคุณถาม"}
+{"chunks": ["I would have", "told you the truth", "right away."], "th": "ฉันคงบอกความจริงกับคุณทันทีแล้ว"}
+{"chunks": ["He would have", "told you the truth", "right away."], "th": "เขาคงบอกความจริงกับคุณทันทีแล้ว"}
+{"chunks": ["She would have", "told you the truth", "right away."], "th": "เธอคงบอกความจริงกับคุณทันทีแล้ว"}
+{"chunks": ["We would have", "told you the truth", "right away."], "th": "พวกเราคงบอกความจริงกับคุณทันทีแล้ว"}
+{"chunks": ["They would have", "told you the truth", "right away."], "th": "พวกเขาคงบอกความจริงกับคุณทันทีแล้ว"}
+{"chunks": ["I would have", "missed the flight", "without your reminder."], "th": "ฉันคงตกเที่ยวบินไปแล้วถ้าไม่มีการเตือนจากคุณ"}
+{"chunks": ["He would have", "missed the flight", "without your reminder."], "th": "เขาคงตกเที่ยวบินไปแล้วถ้าไม่มีการเตือนจากคุณ"}
+{"chunks": ["She would have", "missed the flight", "without your reminder."], "th": "เธอคงตกเที่ยวบินไปแล้วถ้าไม่มีการเตือนจากคุณ"}
+{"chunks": ["We would have", "missed the flight", "without your reminder."], "th": "พวกเราคงตกเที่ยวบินไปแล้วถ้าไม่มีการเตือนจากคุณ"}
+{"chunks": ["They would have", "missed the flight", "without your reminder."], "th": "พวกเขาคงตกเที่ยวบินไปแล้วถ้าไม่มีการเตือนจากคุณ"}
+{"chunks": ["I would have", "missed the flight", "due to the heavy traffic."], "th": "ฉันคงตกเที่ยวบินไปแล้วเนื่องจากรถติดหนัก"}
+{"chunks": ["He would have", "missed the flight", "due to the heavy traffic."], "th": "เขาคงตกเที่ยวบินไปแล้วเนื่องจากรถติดหนัก"}
+{"chunks": ["She would have", "missed the flight", "due to the heavy traffic."], "th": "เธอคงตกเที่ยวบินไปแล้วเนื่องจากรถติดหนัก"}
+{"chunks": ["We would have", "missed the flight", "due to the heavy traffic."], "th": "พวกเราคงตกเที่ยวบินไปแล้วเนื่องจากรถติดหนัก"}
+{"chunks": ["They would have", "missed the flight", "due to the heavy traffic."], "th": "พวกเขาคงตกเที่ยวบินไปแล้วเนื่องจากรถติดหนัก"}
