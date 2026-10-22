@@ -33,7 +33,6 @@ function shuffle(array) {
 
 // 2. Load Mission
 function loadNextMission() {
-    // Pick random sentence from DB
     currentMission = database[Math.floor(Math.random() * database.length)];
 
     // Render Intel
@@ -76,14 +75,14 @@ function executeDecryption(btn, selectedPhrase) {
         
         document.getElementById('overlay-passed').classList.add('active');
         
-        // Play audio of full sentence immediately on win
+        // Read full English sentence out loud
         playAudio(currentMission.en_full);
         
         setTimeout(() => {
             document.getElementById('overlay-passed').classList.remove('active');
             updateHUD();
             loadNextMission();
-        }, 2000);
+        }, 2500); // Give enough time for the audio to play
 
     } else {
         // LOSE
@@ -94,7 +93,9 @@ function executeDecryption(btn, selectedPhrase) {
         document.querySelectorAll('.option-btn').forEach(b => {
             if(b.innerText === currentMission.answer) b.classList.add('correct');
         });
-        blankSlot.innerText = currentMission.answer; // Show correct word in blank
+        
+        // Inject correct word into the blank so they see the right sentence
+        blankSlot.innerText = currentMission.answer; 
         blankSlot.style.color = 'var(--gta-green)';
         blankSlot.style.borderBottomColor = 'var(--gta-green)';
 
@@ -105,7 +106,7 @@ function executeDecryption(btn, selectedPhrase) {
             document.getElementById('overlay-wasted').classList.remove('active');
             updateHUD();
             loadNextMission(); 
-        }, 2500);
+        }, 3000);
     }
 }
 
@@ -136,7 +137,7 @@ function playAudio(text) {
         if (!selectedVoice) selectedVoice = voices.find(v => v.lang.includes('en-US'));
 
         if (selectedVoice) utterThis.voice = selectedVoice;
-        utterThis.rate = 1.0; 
+        utterThis.rate = 0.95; // Slightly slower for clear learning
         
         synth.speak(utterThis);
     }, 50);
