@@ -29,7 +29,7 @@ fetch('db.jsonl')
 // 2. Load a New Pattern
 function loadPattern(index) {
     if (index >= database.length) {
-        alert("Incredible! You have mastered all available structures.");
+        alert("RESPECT MAXED. You have mastered all intel.");
         index = 0; // Loop for MVP
     }
     
@@ -38,33 +38,40 @@ function loadPattern(index) {
     currentExampleIndex = 0;
 
     document.getElementById('pattern-title').innerText = currentPatternData.patternName;
-    document.getElementById('template-hint').innerText = `Pattern: ${currentPatternData.template}`;
+    document.getElementById('template-hint').innerText = `FORMAT: ${currentPatternData.template}`;
     
     // Reset Next Pattern button state
     const nextPatBtn = document.getElementById('btn-next-pattern');
     nextPatBtn.classList.remove('active');
-    nextPatBtn.innerText = "Complete All Examples First";
+    nextPatBtn.innerText = "Review All Intel First";
 
-    renderExample();
+    renderExample(false);
 }
 
-// 3. Render the specific sentence card
-function renderExample() {
+// 3. Render the specific sentence card (With Smooth Fade)
+function renderExample(animate = true) {
     const example = currentPatternData.examples[currentExampleIndex];
+    const cardContent = document.getElementById('card-content');
     
     // Record Metrics
     viewedSentences.add(example.en);
     updateMetricsHUD();
 
-    // Dynamically highlight the injected word
-    // We replace the specific word with a styled span
+    // Color Coding Logic (Template = White, Injected Word = Neon Pink)
     const safeWord = example.word.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     const regex = new RegExp(`(${safeWord})`, 'i');
-    const highlightedEn = example.en.replace(regex, `<span class="highlight-blank">$1</span>`);
+    const highlightedEn = example.en.replace(regex, `<span class="gta-highlight">$1</span>`);
 
-    // UI Updates
-    document.getElementById('english-sentence').innerHTML = highlightedEn;
-    document.getElementById('thai-translation').innerText = example.th;
+    // Smooth Fade Transition (No Shaking)
+    if (animate) {
+        cardContent.style.opacity = '0';
+        setTimeout(() => {
+            updateDOMContent(highlightedEn, example.th);
+            cardContent.style.opacity = '1';
+        }, 150); // Fast 150ms crossfade
+    } else {
+        updateDOMContent(highlightedEn, example.th);
+    }
 
     // Controls Update
     document.getElementById('btn-prev').disabled = currentExampleIndex === 0;
@@ -74,20 +81,23 @@ function renderExample() {
     checkPatternCompletion();
 }
 
+function updateDOMContent(enHtml, thText) {
+    document.getElementById('english-sentence').innerHTML = enHtml;
+    document.getElementById('thai-translation').innerText = thText;
+}
+
 // 4. Navigation
 function prevExample() {
     if (currentExampleIndex > 0) {
         currentExampleIndex--;
-        animateCard('left');
-        renderExample();
+        renderExample(true);
     }
 }
 
 function nextExample() {
     if (currentExampleIndex < currentPatternData.examples.length - 1) {
         currentExampleIndex++;
-        animateCard('right');
-        renderExample();
+        renderExample(true);
     }
 }
 
@@ -99,15 +109,14 @@ function loadNextPattern() {
 
 // 5. Check Completion
 function checkPatternCompletion() {
-    // If they reached the last card of the pattern
     if (currentExampleIndex === currentPatternData.examples.length - 1) {
         const nextPatBtn = document.getElementById('btn-next-pattern');
         nextPatBtn.classList.add('active');
-        nextPatBtn.innerText = "Next Structure ➔";
+        nextPatBtn.innerText = "Next Target ➔";
     }
 }
 
-// 6. Pagination & Animations
+// 6. Pagination
 function renderPagination() {
     const pagContainer = document.getElementById('pagination');
     pagContainer.innerHTML = '';
@@ -116,16 +125,6 @@ function renderPagination() {
         dot.className = `dot ${i === currentExampleIndex ? 'active' : ''}`;
         pagContainer.appendChild(dot);
     }
-}
-
-function animateCard(direction) {
-    const card = document.getElementById('flashcard');
-    card.style.transform = direction === 'right' ? 'translateX(20px)' : 'translateX(-20px)';
-    card.style.opacity = '0.5';
-    setTimeout(() => {
-        card.style.transform = 'translateX(0)';
-        card.style.opacity = '1';
-    }, 150);
 }
 
 // 7. Metrics HUD Update
@@ -147,12 +146,12 @@ function setupSwipeListeners() {
 }
 
 function handleSwipe() {
-    const threshold = 50;
+    const threshold = 40;
     if (touchstartX - touchendX > threshold) nextExample(); // Swipe Left
     if (touchendX - touchstartX > threshold) prevExample(); // Swipe Right
 }
 
-// 9. Audio Engine (Anti-Overlap)
+// 9. Audio Engine (Anti-Overlap Micro-Delay)
 function playAudio() {
     if (synth.speaking) synth.cancel(); 
     
@@ -168,7 +167,7 @@ function playAudio() {
         if (!selectedVoice) selectedVoice = voices.find(v => v.lang.includes('en-US'));
 
         if (selectedVoice) utterThis.voice = selectedVoice;
-        utterThis.rate = 0.95; // Slightly clear pacing
+        utterThis.rate = 0.95; 
         
         synth.speak(utterThis);
     }, 50);
