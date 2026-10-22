@@ -21,9 +21,13 @@ fetch('db.jsonl')
         
         buildReverseIndex();
         
-        // Randomly select the starting phrase from the index
+        // Randomly select the starting phrase from the index that has multiple connections
         const allKeys = Object.keys(reverseIndex);
-        currentBubble = allKeys[Math.floor(Math.random() * allKeys.length)];
+        const validKeys = allKeys.filter(k => reverseIndex[k].length > 1);
+        
+        currentBubble = validKeys.length > 0 
+            ? validKeys[Math.floor(Math.random() * validKeys.length)] 
+            : allKeys[0];
         
         loadSentenceInBubble();
     })
@@ -118,6 +122,13 @@ function renderBoard() {
         
         if (isSolved) {
             btn.className = 'chunk solved';
+            
+            // MAGIC: Check if this chunk is a portal to multiple sentences
+            const cleanKey = cleanString(chunkObj.text);
+            if (reverseIndex[cleanKey] && reverseIndex[cleanKey].length > 1) {
+                btn.classList.add('has-bubble');
+            }
+
             btn.innerText = chunkObj.text;
             btn.onclick = () => loadSentenceInBubble(chunkObj.text);
         } else {
