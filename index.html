@@ -3,161 +3,137 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Syntax Hacker: Phrase Decryptor</title>
+    <title>Syntax Web</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@500;700&family=Roboto:wght@400;700;900&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap');
 
         :root {
-            --gta-black: #0a0a0a; --gta-dark: #1c1c1e;
-            --gta-green: #41d95d; --gta-red: #d94141;
-            --gta-yellow: #f2c80f; --gta-cyan: #0fdbf2; --gta-pink: #f20f8c;
-            --text-light: #ffffff; --text-dim: #888888;
+            --bg-main: #f8fafc; --bg-card: #ffffff;
+            --text-main: #0f172a; --text-sub: #64748b;
+            --accent: #3b82f6; --accent-hover: #2563eb;
+            --success: #10b981; --border: #e2e8f0;
         }
 
         body {
-            font-family: 'Roboto', sans-serif; background-color: var(--gta-black);
-            color: var(--text-light); margin: 0; padding: 0;
+            font-family: 'Inter', sans-serif; background-color: var(--bg-main);
+            color: var(--text-main); margin: 0; padding: 0;
             display: flex; justify-content: center; height: 100dvh; overflow: hidden;
             -webkit-tap-highlight-color: transparent; user-select: none;
-            background-image: radial-gradient(circle at center, #1a1a1a 0%, #000000 100%);
         }
 
         .app-container {
-            width: 100%; max-width: 430px; height: 100%;
+            width: 100%; max-width: 480px; height: 100%;
             display: flex; flex-direction: column; padding: 20px; box-sizing: border-box;
         }
 
-        /* HUD */
+        /* Top HUD */
         .hud {
             display: flex; justify-content: space-between; align-items: center;
-            background: rgba(255, 255, 255, 0.05); border: 2px solid #333; border-radius: 12px;
-            padding: 15px 20px; margin-bottom: 20px;
+            background: var(--bg-card); border-radius: 16px; padding: 15px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); margin-bottom: 20px;
+            border: 1px solid var(--border);
         }
-        .hud-left { display: flex; flex-direction: column; }
-        .hud-right { text-align: right; }
+        .bubble-indicator { font-size: 13px; font-weight: 600; color: var(--text-sub); }
+        .current-bubble { color: var(--accent); font-weight: 800; font-size: 16px; display: block; margin-top: 4px; text-transform: uppercase;}
         
-        .hud-label { font-size: 12px; font-weight: 700; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px; }
-        .hud-value { font-family: 'Oswald', sans-serif; font-size: 24px; font-weight: 700; color: var(--gta-cyan); }
-        .wanted-stars { color: var(--text-dim); font-size: 18px; letter-spacing: 2px; margin-top: 4px;}
-        .wanted-stars .active { color: #fff; text-shadow: 0 0 8px #fff; }
-
-        .mission-title {
-            text-align: center; font-family: 'Oswald', sans-serif; color: var(--gta-yellow); 
-            font-size: 18px; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 15px;
+        /* Interactive Stage */
+        .stage {
+            flex-grow: 1; display: flex; flex-direction: column;
         }
 
-        /* The Terminal (Question Box) */
-        .terminal {
-            background: var(--gta-dark); border: 2px solid var(--gta-cyan); border-radius: 16px;
-            box-shadow: 0 0 15px rgba(15, 219, 242, 0.1); padding: 30px 20px;
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
+        .mission-card {
+            background: var(--bg-card); border-radius: 20px; padding: 25px 20px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); border: 1px solid var(--border);
+            display: flex; flex-direction: column; align-items: center; text-align: center;
             margin-bottom: 20px; position: relative;
         }
 
-        .intel-badge {
-            position: absolute; top: -12px; background: var(--gta-cyan); color: #000;
-            font-family: 'Oswald', sans-serif; font-weight: 700; padding: 4px 12px; border-radius: 8px;
-            font-size: 14px; text-transform: uppercase; letter-spacing: 1px;
-        }
-
-        .thai-meaning {
-            font-size: 20px; color: var(--gta-yellow); text-align: center; font-weight: 700;
-            margin-bottom: 25px; line-height: 1.4; text-shadow: 1px 1px 0 #000;
-        }
-
-        .english-template {
-            font-size: 22px; font-weight: 700; text-align: center;
-            line-height: 1.5; color: var(--text-light);
-        }
-
-        .blank-slot {
-            display: inline-block; min-width: 100px; border-bottom: 4px solid var(--gta-pink);
-            color: var(--gta-pink); text-align: center; padding: 0 10px; margin: 0 5px;
-            word-wrap: break-word;
-        }
-
-        /* Options Stack (1 Column for long text) */
-        .options-stack {
-            display: flex; flex-direction: column; gap: 12px; margin-top: auto; overflow-y: auto;
-        }
+        .thai-text { font-size: 20px; font-weight: 700; color: var(--text-main); margin-bottom: 20px; line-height: 1.4; }
         
-        .option-btn {
-            background: #222; border: 2px solid #444; color: var(--text-light);
-            padding: 16px 15px; border-radius: 12px; font-size: 16px; font-weight: 700;
-            cursor: pointer; transition: all 0.1s; box-shadow: 0 4px 0 #111; text-align: left;
+        .audio-btn {
+            background: var(--accent); color: white; border: none;
+            width: 50px; height: 50px; border-radius: 25px; font-size: 20px;
+            cursor: pointer; box-shadow: 0 4px 10px rgba(59, 130, 246, 0.3);
+            margin-bottom: 20px; transition: transform 0.1s;
         }
-        .option-btn:active { transform: translateY(4px); box-shadow: 0 0 0 #111; }
-        .option-btn.correct { background: var(--gta-green); border-color: #fff; color: #000; box-shadow: 0 4px 0 #1b8a30; }
-        .option-btn.wrong { background: var(--gta-red); border-color: #fff; box-shadow: 0 4px 0 #8a1b1b; }
+        .audio-btn:active { transform: scale(0.95); }
 
-        /* Overlays */
-        .overlay {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            z-index: 100; opacity: 0; pointer-events: none; transition: opacity 0.3s; backdrop-filter: blur(5px);
+        /* Drop Zone (Built Sentence) */
+        .drop-zone {
+            display: flex; flex-wrap: wrap; gap: 8px; justify-content: center;
+            min-height: 60px; width: 100%; border-bottom: 2px dashed var(--border);
+            padding-bottom: 20px; margin-bottom: 20px;
         }
-        .overlay.active { opacity: 1; pointer-events: auto; }
 
-        .passed-bg { background: rgba(0, 0, 0, 0.85); }
-        .passed-text {
-            font-family: 'Impact', 'Oswald', sans-serif; font-size: 48px; color: var(--gta-yellow);
-            text-transform: uppercase; letter-spacing: 2px; text-align: center;
-            text-shadow: 3px 3px 0px #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
-            transform: scale(1.5); transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        /* Scrambled Bank */
+        .word-bank {
+            display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; width: 100%;
         }
-        .overlay.active .passed-text { transform: scale(1); }
-        .xp-gain { font-family: 'Oswald', sans-serif; font-size: 24px; color: var(--gta-green); margin-top: 10px; }
+
+        /* Chunks */
+        .chunk {
+            background: #f1f5f9; border: 2px solid var(--border); color: var(--text-main);
+            padding: 12px 18px; border-radius: 12px; font-size: 16px; font-weight: 600;
+            cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 0 var(--border);
+        }
+        .chunk:active { transform: translateY(4px); box-shadow: 0 0 0 var(--border); }
         
-        .wasted-bg { background: rgba(217, 65, 65, 0.4); }
-        .wasted-text {
-            font-family: 'Impact', 'Oswald', sans-serif; font-size: 64px; color: var(--gta-red);
-            text-transform: uppercase; letter-spacing: 4px;
-            text-shadow: 2px 2px 0px #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+        .chunk.in-zone { background: #fff; border-color: var(--accent); box-shadow: 0 4px 0 var(--accent); color: var(--accent); }
+        .chunk.hidden { visibility: hidden; position: absolute; pointer-events: none; }
+        
+        /* Post-Win State (The Web) */
+        .chunk.solved {
+            background: var(--success); border-color: var(--success); color: #fff;
+            box-shadow: 0 4px 0 #059669; transform: none; cursor: pointer;
         }
+        .chunk.solved:active { transform: scale(0.95); box-shadow: 0 0 0 #059669; }
+        
+        .web-hint {
+            font-size: 14px; color: var(--success); font-weight: 600; margin-top: 20px;
+            display: none; animation: fadeIn 0.5s;
+        }
+
+        .next-btn {
+            background: var(--accent); color: #fff; border: none;
+            padding: 16px; border-radius: 12px; font-size: 16px; font-weight: 800;
+            cursor: pointer; margin-top: auto; box-shadow: 0 4px 10px rgba(59, 130, 246, 0.3);
+            text-transform: uppercase; display: none;
+        }
+        .next-btn:active { transform: scale(0.98); }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
     </style>
 </head>
 <body>
 
-    <div class="app-container" id="main-container">
+    <div class="app-container">
         
         <!-- HUD -->
         <div class="hud">
-            <div class="hud-left">
-                <span class="hud-label">Respect</span>
-                <span class="hud-value" id="xp-display">0 XP</span>
+            <div>
+                <span class="bubble-indicator">Current Bubble:</span>
+                <span class="current-bubble" id="current-bubble">"FLEW OUT"</span>
             </div>
-            <div class="hud-right">
-                <span class="hud-label">Heat Level</span>
-                <div class="wanted-stars" id="wanted-stars">☆☆☆☆☆</div>
-            </div>
-        </div>
-
-        <div class="mission-title">Decrypt The Intel</div>
-
-        <!-- Terminal (Question Board) -->
-        <div class="terminal">
-            <div class="intel-badge">Intercepted Target</div>
-            <div class="thai-meaning" id="thai-meaning">กำลังโหลด...</div>
-            <div class="english-template" id="english-template">
-                [ <span class="blank-slot">_____</span> ]
+            <div>
+                <span class="bubble-indicator">Connections:</span>
+                <span class="current-bubble" id="bubble-count" style="color: var(--text-main);">0</span>
             </div>
         </div>
 
-        <!-- Options Stack (Vertical for long phrases) -->
-        <div class="options-stack" id="options-grid">
-            <!-- Buttons Injected via JS -->
-        </div>
+        <!-- Stage -->
+        <div class="stage">
+            <div class="mission-card">
+                <div class="thai-text" id="thai-text">กำลังโหลด...</div>
+                <button class="audio-btn" onclick="playAudio()">🔊</button>
+                
+                <div class="drop-zone" id="drop-zone"></div>
+                <div class="word-bank" id="word-bank"></div>
 
-        <!-- Overlays -->
-        <div class="overlay passed-bg" id="overlay-passed">
-            <div class="passed-text">CODE CRACKED</div>
-            <div class="xp-gain" id="xp-gain-text">+20 RESPECT</div>
-        </div>
+                <div class="web-hint" id="web-hint">Tap any chunk above to explore its bubble!</div>
+            </div>
 
-        <div class="overlay wasted-bg" id="overlay-wasted">
-            <div class="wasted-text">WASTED</div>
-            <div class="xp-gain" style="color: #fff; font-size: 18px;">Intel Lost</div>
+            <button class="next-btn" id="next-btn" onclick="loadSentenceInBubble()">Next in Bubble ➔</button>
         </div>
 
     </div>
