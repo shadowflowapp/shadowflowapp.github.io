@@ -1,10 +1,100 @@
-{"chunks": ["The CEO", "flew out", "to New York", "for the conference."], "th": "ซีอีโอขึ้นเครื่องบินไปนิวยอร์กเพื่อร่วมงานประชุม"}
-{"chunks": ["A startled moth", "flew out", "from the dark closet."], "th": "ผีเสื้อกลางคืนที่ตกใจบินออกมาจากตู้เสื้อผ้าที่มืดทึบ"}
-{"chunks": ["The bird", "flew out", "of the open window."], "th": "นกบินออกไปทางหน้าต่างที่เปิดอยู่"}
-{"chunks": ["She", "flew out", "to visit her family", "for the holidays."], "th": "เธอขึ้นเครื่องบินไปเยี่ยมครอบครัวในช่วงวันหยุด"}
-{"chunks": ["I plan", "to visit her family", "in London", "next month."], "th": "ฉันวางแผนที่จะไปเยี่ยมครอบครัวของเธอที่ลอนดอนเดือนหน้า"}
-{"chunks": ["The CEO", "announced", "a new product", "for the holidays."], "th": "ซีอีโอประกาศเปิดตัวผลิตภัณฑ์ใหม่สำหรับช่วงวันหยุด"}
-{"chunks": ["We", "are going", "to New York", "tomorrow morning."], "th": "พวกเรากำลังจะไปนิวยอร์กพรุ่งนี้เช้า"}
-{"chunks": ["A swarm of bees", "flew out", "from the old beehive."], "th": "ฝูงผึ้งบินกรูออกมาจากรังผึ้งเก่า"}
-{"chunks": ["Please close", "the open window.", "It is raining."], "th": "กรุณาปิดหน้าต่างที่เปิดอยู่ ฝนกำลังตก"}
-{"chunks": ["The CEO", "will travel", "to New York", "for a meeting."], "th": "ซีอีโอจะเดินทางไปนิวยอร์กเพื่อประชุม"}
+{"chunks": ["I need to get", "some coffee", "before the meeting."], "th": "ฉันต้องไปเอากาแฟก่อนเข้าประชุม"}
+{"chunks": ["We need to get", "some coffee", "first thing in the morning."], "th": "พวกเราต้องไปเอากาแฟเป็นสิ่งแรกในตอนเช้า"}
+{"chunks": ["She wants to grab", "some coffee", "on the way to work."], "th": "เธออยากแวะซื้อกาแฟระหว่างทางไปทำงาน"}
+{"chunks": ["He decided to make", "some coffee", "for everyone in the office."], "th": "เขาตัดสินใจชงกาแฟให้ทุกคนในออฟฟิศ"}
+{"chunks": ["Do you want", "some coffee", "before we leave?"], "th": "คุณอยากได้กาแฟสักหน่อยไหมก่อนที่เราจะออกไป"}
+{"chunks": ["Can I get you", "some coffee", "while you wait?"], "th": "ให้ฉันเอากาแฟให้คุณสักแก้วไหมระหว่างที่คุณรอ"}
+{"chunks": ["Let's go grab", "some coffee", "around the corner."], "th": "ไปหากาแฟดื่มตรงหัวมุมถนนกันเถอะ"}
+{"chunks": ["I stopped to pick up", "some coffee", "on my way here."], "th": "ฉันแวะซื้อกาแฟระหว่างทางมาที่นี่"}
+{"chunks": ["They are brewing", "some coffee", "in the break room."], "th": "พวกเขากำลังชงกาแฟอยู่ในห้องพักเบรก"}
+{"chunks": ["Would you like", "some coffee", "with your breakfast?"], "th": "คุณอยากรับกาแฟพร้อมอาหารเช้าไหม"}
+{"chunks": ["I usually drink", "some coffee", "right after waking up."], "th": "ฉันมักจะดื่มกาแฟทันทีหลังจากตื่นนอน"}
+{"chunks": ["She went downstairs to buy", "some coffee", "for the team."], "th": "เธอลงไปข้างล่างเพื่อซื้อกาแฟให้ทีม"}
+{"chunks": ["He offered me", "some coffee", "as soon as I arrived."], "th": "เขาเสนอกาแฟให้ฉันทันทีที่ฉันมาถึง"}
+{"chunks": ["We could really use", "some coffee", "right about now."], "th": "พวกเราต้องการกาแฟมากจริงๆ ในตอนนี้"}
+{"chunks": ["I always make", "some coffee", "before starting my day."], "th": "ฉันชงกาแฟเสมอก่อนเริ่มวันใหม่"}
+{"chunks": ["Let's sit down and have", "some coffee", "at the local cafe."], "th": "มานั่งคุยดื่มกาแฟกันที่คาเฟ่แถวนี้เถอะ"}
+{"chunks": ["Do you mind grabbing", "some coffee", "on your way back?"], "th": "คุณช่วยซื้อกาแฟตอนขากลับมาหน่อยได้ไหม"}
+{"chunks": ["I forgot to make", "some coffee", "this morning at home."], "th": "ฉันลืมชงกาแฟที่บ้านเมื่อเช้านี้"}
+{"chunks": ["He stepped out to get", "some coffee", "during the break."], "th": "เขาเดินออกไปซื้อกาแฟช่วงเวลาพัก"}
+{"chunks": ["We should go get", "some coffee", "after this call ends."], "th": "เราควรไปหากาแฟดื่มหลังจากสายนี้วางเสร็จ"}
+{"chunks": ["Can you pour me", "some coffee", "into this mug?"], "th": "คุณช่วยรินกาแฟใส่แก้วนี้ให้ฉันหน่อยได้ไหม"}
+{"chunks": ["She asked for", "some coffee", "with cream and sugar."], "th": "เธอขอกาแฟใส่นมและน้ำตาล"}
+{"chunks": ["I am going to fix", "some coffee", "in the kitchen."], "th": "ฉันกำลังจะไปชงกาแฟในครัว"}
+{"chunks": ["Why don't we grab", "some coffee", "and talk about it?"], "th": "ทำไมเราไม่ไปซื้อกาแฟแล้วคุยเรื่องนี้กันล่ะ"}
+{"chunks": ["He brought in", "some coffee", "for his coworkers."], "th": "เขาเอากาแฟมาฝากเพื่อนร่วมงานของเขา"}
+{"chunks": ["I am craving", "some coffee", "this afternoon."], "th": "ฉันรู้สึกอยากดื่มกาแฟมากบ่ายนี้"}
+{"chunks": ["Let's pause to drink", "some coffee", "before we continue."], "th": "พักดื่มกาแฟกันก่อนที่เราจะทำต่อเถอะ"}
+{"chunks": ["Did anyone make", "some coffee", "in the break room?"], "th": "มีใครชงกาแฟไว้ในห้องพักเบรกบ้างไหม"}
+{"chunks": ["You look like you need", "some coffee", "to wake up."], "th": "คุณดูเหมือนต้องดื่มกาแฟสักหน่อยเพื่อจะได้ตื่น"}
+{"chunks": ["I just ordered", "some coffee", "from that new place."], "th": "ฉันเพิ่งสั่งกาแฟจากร้านใหม่ร้านนั้นไป"}
+{"chunks": ["She likes having", "some coffee", "while reading the news."], "th": "เธอชอบดื่มกาแฟไปพลางอ่านข่าวไปพลาง"}
+{"chunks": ["We ended up having", "some coffee", "across the street."], "th": "สุดท้ายพวกเราก็ไปดื่มกาแฟกันที่ฝั่งตรงข้ามถนน"}
+{"chunks": ["I have time for", "some coffee", "before my next appointment."], "th": "ฉันพอมีเวลาดื่มกาแฟก่อนถึงนัดถัดไป"}
+{"chunks": ["He walked over to buy", "some coffee", "at the corner store."], "th": "เขาเดินไปซื้อกาแฟที่ร้านตรงหัวมุม"}
+{"chunks": ["Please bring me", "some coffee", "when you come upstairs."], "th": "ช่วยเอากาแฟขึ้นมาให้ฉันหน่อยนะตอนคุณขึ้นมาข้างบน"}
+{"chunks": ["I just finished", "some coffee", "at my desk."], "th": "ฉันเพิ่งดื่มกาแฟหมดไปที่โต๊ะทำงาน"}
+{"chunks": ["They served us", "some coffee", "during the interview."], "th": "พวกเขาเสิร์ฟกาแฟให้พวกเราในระหว่างการสัมภาษณ์"}
+{"chunks": ["Let's meet up for", "some coffee", "later this afternoon."], "th": "บ่ายวันนี้เรานัดเจอกันดื่มกาแฟนะ"}
+{"chunks": ["I am brewing", "some coffee", "right this second."], "th": "ฉันกำลังต้มกาแฟอยู่เดี๋ยวนี้เลย"}
+{"chunks": ["Could we please get", "some coffee", "for the conference room?"], "th": "ขอช่วยเอากาแฟมาที่ห้องประชุมหน่อยได้ไหม"}
+{"chunks": ["She rarely drinks", "some coffee", "in the late evening."], "th": "เธอแทบจะไม่ดื่มกาแฟในช่วงดึกเลย"}
+{"chunks": ["He promised to buy", "some coffee", "on his way over."], "th": "เขาสัญญาว่าจะซื้อกาแฟมาระหว่างทางที่มาที่นี่"}
+{"chunks": ["I ran out to get", "some coffee", "before the rain started."], "th": "ฉันรีบวิ่งออกไปซื้อกาแฟก่อนที่ฝนจะตก"}
+{"chunks": ["We sat down over", "some coffee", "to discuss the project."], "th": "เรานั่งคุยเรื่องโปรเจกต์กันพลางจิบกาแฟไปด้วย"}
+{"chunks": ["Do they have", "some coffee", "ready for the guests?"], "th": "พวกเขามีกาแฟเตรียมไว้ให้แขกหรือยัง"}
+{"chunks": ["I will just have", "some coffee", "instead of lunch."], "th": "ฉันจะดื่มแค่กาแฟแทนอาหารกลางวัน"}
+{"chunks": ["She always offers", "some coffee", "to anyone who visits."], "th": "เธอมักจะเสนอกาแฟให้ทุกคนที่มาเยี่ยมเสมอ"}
+{"chunks": ["You should drink", "some coffee", "before driving home."], "th": "คุณควรดื่มกาแฟสักหน่อยก่อนขับรถกลับบ้าน"}
+{"chunks": ["I managed to find", "some coffee", "near the train station."], "th": "ฉันบังเอิญเจอกาแฟใกล้ๆ สถานีรถไฟ"}
+{"chunks": ["Let's order", "some coffee", "through the delivery app."], "th": "สั่งกาแฟผ่านแอปเดลิเวอรีกันเถอะ"}
+{"chunks": ["He is fixing", "some coffee", "for his parents."], "th": "เขากำลังชงกาแฟให้พ่อแม่ของเขา"}
+{"chunks": ["I desperately need", "some coffee", "after that long flight."], "th": "ฉันต้องการกาแฟอย่างยิ่งหลังจากเที่ยวบินอันยาวนานนั้น"}
+{"chunks": ["We decided to pick up", "some coffee", "on the way to the park."], "th": "พวกเราตัดสินใจแวะซื้อกาแฟระหว่างทางไปสวนสาธารณะ"}
+{"chunks": ["Can you share", "some coffee", "with your brother?"], "th": "คุณแบ่งกาแฟให้น้องชายของคุณหน่อยได้ไหม"}
+{"chunks": ["She poured herself", "some coffee", "and sat by the window."], "th": "เธอรินกาแฟให้ตัวเองแล้วไปนั่งข้างหน้าต่าง"}
+{"chunks": ["I might get", "some coffee", "if you are heading out."], "th": "ฉันอาจจะฝากซื้อกาแฟหน่อยถ้าคุณกำลังจะออกไปข้างนอก"}
+{"chunks": ["He offered to pay for", "some coffee", "at the register."], "th": "เขาเสนอตัวจ่ายค่ากาแฟให้ที่เคาน์เตอร์"}
+{"chunks": ["Let's enjoy", "some coffee", "out on the patio."], "th": "มาเพลิดเพลินกับกาแฟตรงเฉลียงกันเถอะ"}
+{"chunks": ["I was hoping for", "some coffee", "before the presentation."], "th": "ฉันแอบหวังว่าจะได้ดื่มกาแฟสักแก้วก่อนเริ่มพรีเซนต์งาน"}
+{"chunks": ["They bought", "some coffee", "to stay awake tonight."], "th": "พวกเขาซื้อกาแฟเพื่อจะตื่นทำงานคืนนี้"}
+{"chunks": ["Could you recommend", "some coffee", "from this local roaster?"], "th": "คุณช่วยแนะนำกาแฟจากโรงคั่วท้องถิ่นนี้หน่อยได้ไหม"}
+{"chunks": ["I always appreciate", "some coffee", "on a chilly morning."], "th": "ฉันรู้สึกดีเสมอที่มีกาแฟในเช้าที่อากาศเย็น"}
+{"chunks": ["We walked down to grab", "some coffee", "around the corner."], "th": "พวกเราเดินลงไปซื้อกาแฟตรงหัวมุมถนน"}
+{"chunks": ["She prepared", "some coffee", "for the early meeting."], "th": "เธอเตรียมกาแฟไว้สำหรับการประชุมแต่เช้า"}
+{"chunks": ["Do you fancy", "some coffee", "after we finish eating?"], "th": "คุณอยากดื่มกาแฟไหมหลังจากพวกเราทานเสร็จ"}
+{"chunks": ["I went out for", "some coffee", "with my teammates."], "th": "ฉันออกไปดื่มกาแฟกับเพื่อนร่วมทีม"}
+{"chunks": ["He spilled", "some coffee", "all over his laptop."], "th": "เขาทำกาแฟหกใส่แล็ปท็อปของเขาเต็มไปหมด"}
+{"chunks": ["We are waiting for", "some coffee", "at the drive-thru."], "th": "พวกเรากำลังรอกาแฟอยู่ที่ช่องไดรฟ์ทรู"}
+{"chunks": ["I would love", "some coffee", "right about now."], "th": "ฉันอยากได้กาแฟสักแก้วมากตอนนี้"}
+{"chunks": ["She brought back", "some coffee", "from her favorite cafe."], "th": "เธอซื้อกาแฟกลับมาจากคาเฟ่ร้านโปรดของเธอ"}
+{"chunks": ["Can we get", "some coffee", "before getting on the train?"], "th": "เราแวะซื้อกาแฟก่อนขึ้นรถไฟได้ไหม"}
+{"chunks": ["He always saves", "some coffee", "for his wife."], "th": "เขาเหลือกาแฟไว้ให้ภรรยาของเขาเสมอ"}
+{"chunks": ["I came down to have", "some coffee", "in the lobby."], "th": "ฉันลงมาดื่มกาแฟที่ล็อบบี้"}
+{"chunks": ["Let's bring", "some coffee", "to the study session."], "th": "เอากาแฟไปที่ห้องติวหนังสือกันเถอะ"}
+{"chunks": ["They smelled", "some coffee", "coming from the kitchen."], "th": "พวกเขาได้กลิ่นกาแฟโชยมาจากห้องครัว"}
+{"chunks": ["I will brew", "some coffee", "as soon as water boils."], "th": "ฉันจะชงกาแฟทันทีที่น้ำเดือด"}
+{"chunks": ["She refused to have", "some coffee", "so late in the day."], "th": "เธอปฏิเสธที่จะดื่มกาแฟในช่วงเวลาที่ดึกขนาดนี้"}
+{"chunks": ["We treated ourselves to", "some coffee", "after finishing the test."], "th": "พวกเราให้รางวัลตัวเองด้วยกาแฟหลังสอบเสร็จ"}
+{"chunks": ["Did you pick up", "some coffee", "on your way here?"], "th": "คุณได้แวะซื้อกาแฟมาระหว่างทางมาที่นี่หรือเปล่า"}
+{"chunks": ["I always sip", "some coffee", "while reading emails."], "th": "ฉันมักจะจิบกาแฟไปพร้อมกับอ่านอีเมลเสมอ"}
+{"chunks": ["He offered her", "some coffee", "to keep warm outside."], "th": "เขาเสนอกาแฟให้เธอเพื่อคลายหนาวข้างนอก"}
+{"chunks": ["We went looking for", "some coffee", "in the shopping mall."], "th": "พวกเราเดินตามหากาแฟในห้างสรรพสินค้า"}
+{"chunks": ["I am ready for", "some coffee", "after that tough workout."], "th": "ฉันพร้อมสำหรับกาแฟแล้วหลังจากออกกำลังกายหนักมา"}
+{"chunks": ["She headed out to grab", "some coffee", "before the library closed."], "th": "เธอรีบออกไปซื้อกาแฟก่อนที่ห้องสมุดจะปิด"}
+{"chunks": ["Could I trouble you for", "some coffee", "with a splash of milk?"], "th": "ขอรบกวนกาแฟเติมนมนิดหน่อยให้ฉันได้ไหม"}
+{"chunks": ["They gathered over", "some coffee", "to share new ideas."], "th": "พวกเขามารวมตัวดื่มกาแฟเพื่อแลกเปลี่ยนไอเดียใหม่ๆ"}
+{"chunks": ["I am going to need", "some coffee", "to get through today."], "th": "ฉันคงต้องพึ่งกาแฟสักหน่อยเพื่อให้อยู่รอดได้ในวันนี้"}
+{"chunks": ["We stopped by to drink", "some coffee", "with our old neighbors."], "th": "เราแวะดื่มกาแฟกับเพื่อนบ้านเก่าของเรา"}
+{"chunks": ["He made sure to prepare", "some coffee", "for the client visit."], "th": "เขาไม่ลืมเตรียมกาแฟไว้สำหรับการมาเยือนของลูกค้า"}
+{"chunks": ["I could certainly go for", "some coffee", "at this moment."], "th": "ตอนนี้ฉันอยากดื่มกาแฟสักแก้วจริงๆ"}
+{"chunks": ["She bought", "some coffee", "to go with the pastry."], "th": "เธอซื้อกาแฟมาทานคู่กับขนมอบ"}
+{"chunks": ["Let's warm up with", "some coffee", "after coming out of the snow."], "th": "มาทำร่างกายให้อบอุ่นด้วยกาแฟหลังจากลุยหิมะมาเถอะ"}
+{"chunks": ["I prefer having", "some coffee", "without any sweeteners."], "th": "ฉันชอบดื่มกาแฟแบบไม่ใส่สารให้ความหวานใดๆ"}
+{"chunks": ["He grabbed", "some coffee", "right before the doors closed."], "th": "เขาคว้ากาแฟมาได้ทันก่อนที่ประตูจะปิด"}
+{"chunks": ["We can order", "some coffee", "while we look at the menu."], "th": "พวกเราสั่งกาแฟพลางดูเมนูอาหารไปก่อนได้นะ"}
+{"chunks": ["She handed me", "some coffee", "in a paper cup."], "th": "เธอยื่นกาแฟในแก้วกระดาษให้ฉัน"}
+{"chunks": ["I am heading over to get", "some coffee", "right across the street."], "th": "ฉันกำลังเดินข้ามถนนไปซื้อกาแฟฝั่งตรงข้าม"}
+{"chunks": ["Would anyone care for", "some coffee", "before we pack up?"], "th": "มีใครอยากได้กาแฟสักหน่อยไหมก่อนที่เราจะเก็บของ"}
+{"chunks": ["He finally sat down with", "some coffee", "to relax for the evening."], "th": "ในที่สุดเขาก็นั่งลงพร้อมกาแฟเพื่อพักผ่อนในตอนเย็น"}
+{"chunks": ["Let's quickly pick up", "some coffee", "on the way to work."], "th": "แวะซื้อกาแฟเร็วๆ ระหว่างทางไปทำงานกันเถอะ"}
