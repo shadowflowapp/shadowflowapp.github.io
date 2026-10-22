@@ -300,3 +300,103 @@
 {"chunks": ["Neighbors", "tend to avoid conflict", "to keep the peace."], "th": "เพื่อนบ้านมักจะหลีกเลี่ยงความขัดแย้งเพื่อรักษาความสงบสุข"}
 {"chunks": ["They", "tend to avoid conflict", "by agreeing to disagree."], "th": "พวกเขามักจะหลีกเลี่ยงความขัดแย้งโดยการยอมรับความเห็นต่าง"}
 {"chunks": ["Diplomats", "tend to avoid conflict", "through careful negotiation."], "th": "นักการทูตมักจะหลีกเลี่ยงความขัดแย้งผ่านการเจรจาอย่างรอบคอบ"}
+{"chunks": ["He decided to", "grab some coffee", "before the meeting."], "th": "เขาตัดสินใจไปซื้อกาแฟก่อนเข้าประชุม"}
+{"chunks": ["He decided to", "grab some coffee", "on his way home."], "th": "เขาตัดสินใจไปซื้อกาแฟระหว่างทางกลับบ้าน"}
+{"chunks": ["He decided to", "grab some coffee", "after work today."], "th": "เขาตัดสินใจไปซื้อกาแฟหลังเลิกงานวันนี้"}
+{"chunks": ["He decided to", "grab some coffee", "first thing in the morning."], "th": "เขาตัดสินใจไปซื้อกาแฟเป็นสิ่งแรกในตอนเช้า"}
+{"chunks": ["He decided to", "grab some coffee", "with his coworkers."], "th": "เขาตัดสินใจไปซื้อกาแฟกับเพื่อนร่วมงานของเขา"}
+{"chunks": ["He decided to", "grab some coffee", "at the local cafe."], "th": "เขาตัดสินใจไปซื้อกาแฟที่คาเฟ่แถวบ้าน"}
+{"chunks": ["He decided to", "grab some coffee", "across the street."], "th": "เขาตัดสินใจไปซื้อกาแฟที่ฝั่งตรงข้ามถนน"}
+{"chunks": ["He decided to", "grab some coffee", "around the corner."], "th": "เขาตัดสินใจไปซื้อกาแฟตรงหัวมุมถนน"}
+{"chunks": ["He decided to", "grab some coffee", "this weekend."], "th": "เขาตัดสินใจไปซื้อกาแฟสุดสัปดาห์นี้"}
+{"chunks": ["He decided to", "grab some coffee", "tomorrow afternoon."], "th": "เขาตัดสินใจไปซื้อกาแฟบ่ายพรุ่งนี้"}
+{"chunks": ["He forgot to", "pick up the kids", "before the meeting."], "th": "เขาลืมไปรับลูกๆ ก่อนการประชุม"}
+{"chunks": ["He forgot to", "pick up the kids", "on his way home."], "th": "เขาลืมไปรับลูกๆ ระหว่างทางกลับบ้าน"}
+{"chunks": ["He forgot to", "pick up the kids", "after work today."], "th": "เขาลืมไปรับลูกๆ หลังเลิกงานวันนี้"}
+{"chunks": ["He forgot to", "pick up the kids", "first thing in the morning."], "th": "เขาลืมไปรับลูกๆ เป็นสิ่งแรกในตอนเช้า"}
+{"chunks": ["He forgot to", "pick up the kids", "from school today."], "th": "เขาลืมไปรับลูกๆ จากโรงเรียนวันนี้"}
+{"chunks": ["He forgot to", "pick up the kids", "this weekend."], "th": "เขาลืมไปรับลูกๆ สุดสัปดาห์นี้"}
+{"chunks": ["He forgot to", "pick up the kids", "tomorrow afternoon."], "th": "เขาลืมไปรับลูกๆ บ่ายพรุ่งนี้"}
+{"chunks": ["He forgot to", "pick up the kids", "on Friday night."], "th": "เขาลืมไปรับลูกๆ ในคืนวันศุกร์"}
+{"chunks": ["He forgot to", "pick up the kids", "as soon as possible."], "th": "เขาลืมไปรับลูกๆ ให้เร็วที่สุด"}
+{"chunks": ["He forgot to", "pick up the kids", "without an excuse."], "th": "เขาลืมไปรับลูกๆ โดยไม่มีข้อแก้ตัว"}
+{"chunks": ["He wants to", "call the client", "before the meeting."], "th": "เขาอยากโทรหาลูกค้าก่อนการประชุม"}
+{"chunks": ["He wants to", "call the client", "on his way home."], "th": "เขาอยากโทรหาลูกค้าระหว่างทางกลับบ้าน"}
+{"chunks": ["He wants to", "call the client", "after work today."], "th": "เขาอยากโทรหาลูกค้าหลังเลิกงานวันนี้"}
+{"chunks": ["He wants to", "call the client", "first thing in the morning."], "th": "เขาอยากโทรหาลูกค้าเป็นสิ่งแรกในตอนเช้า"}
+{"chunks": ["He wants to", "call the client", "with his coworkers."], "th": "เขาอยากโทรหาลูกค้าพร้อมกับเพื่อนร่วมงานของเขา"}
+{"chunks": ["He wants to", "call the client", "at the local cafe."], "th": "เขาอยากโทรหาลูกค้าที่คาเฟ่แถวบ้าน"}
+{"chunks": ["He wants to", "call the client", "this weekend."], "th": "เขาอยากโทรหาลูกค้าสุดสัปดาห์นี้"}
+{"chunks": ["He wants to", "call the client", "tomorrow afternoon."], "th": "เขาอยากโทรหาลูกค้าบ่ายพรุ่งนี้"}
+{"chunks": ["He wants to", "call the client", "as soon as possible."], "th": "เขาอยากโทรหาลูกค้าให้เร็วที่สุด"}
+{"chunks": ["He wants to", "call the client", "right now."], "th": "เขาอยากโทรหาลูกค้าตอนนี้เลย"}
+{"chunks": ["He is going to", "finish the report", "before the meeting."], "th": "เขากำลังจะทำรายงานให้เสร็จก่อนการประชุม"}
+{"chunks": ["He is going to", "finish the report", "after work today."], "th": "เขากำลังจะทำรายงานให้เสร็จหลังเลิกงานวันนี้"}
+{"chunks": ["He is going to", "finish the report", "first thing in the morning."], "th": "เขากำลังจะทำรายงานให้เสร็จเป็นสิ่งแรกในตอนเช้า"}
+{"chunks": ["He is going to", "finish the report", "with his coworkers."], "th": "เขากำลังจะทำรายงานให้เสร็จกับเพื่อนร่วมงานของเขา"}
+{"chunks": ["He is going to", "finish the report", "this weekend."], "th": "เขากำลังจะทำรายงานให้เสร็จสุดสัปดาห์นี้"}
+{"chunks": ["He is going to", "finish the report", "tomorrow afternoon."], "th": "เขากำลังจะทำรายงานให้เสร็จบ่ายพรุ่งนี้"}
+{"chunks": ["He is going to", "finish the report", "on Friday night."], "th": "เขากำลังจะทำรายงานให้เสร็จในคืนวันศุกร์"}
+{"chunks": ["He is going to", "finish the report", "as soon as possible."], "th": "เขากำลังจะทำรายงานให้เสร็จให้เร็วที่สุด"}
+{"chunks": ["He is going to", "finish the report", "right now."], "th": "เขากำลังจะทำรายงานให้เสร็จตอนนี้"}
+{"chunks": ["He is going to", "finish the report", "at his desk."], "th": "เขากำลังจะทำรายงานให้เสร็จที่โต๊ะทำงานของเขา"}
+{"chunks": ["He needs to", "pick up some groceries", "on his way home."], "th": "เขาต้องแวะซื้อของชำระหว่างทางกลับบ้าน"}
+{"chunks": ["He needs to", "pick up some groceries", "after work today."], "th": "เขาต้องแวะซื้อของชำหลังเลิกงานวันนี้"}
+{"chunks": ["He needs to", "pick up some groceries", "first thing in the morning."], "th": "เขาต้องแวะซื้อของชำเป็นสิ่งแรกในตอนเช้า"}
+{"chunks": ["He needs to", "pick up some groceries", "at the grocery store."], "th": "เขาต้องไปซื้อของชำที่ร้านขายของชำ"}
+{"chunks": ["He needs to", "pick up some groceries", "around the corner."], "th": "เขาต้องแวะซื้อของชำตรงหัวมุมถนน"}
+{"chunks": ["He needs to", "pick up some groceries", "this weekend."], "th": "เขาต้องซื้อของชำสุดสัปดาห์นี้"}
+{"chunks": ["He needs to", "pick up some groceries", "tomorrow afternoon."], "th": "เขาต้องซื้อของชำบ่ายพรุ่งนี้"}
+{"chunks": ["He needs to", "pick up some groceries", "on Friday night."], "th": "เขาต้องซื้อของชำในคืนวันศุกร์"}
+{"chunks": ["He needs to", "pick up some groceries", "as soon as possible."], "th": "เขาต้องแวะซื้อของชำให้เร็วที่สุด"}
+{"chunks": ["He needs to", "pick up some groceries", "with his wife."], "th": "เขาต้องไปซื้อของชำกับภรรยาของเขา"}
+{"chunks": ["He offered to", "pick up the tab", "before the meeting."], "th": "เขาเสนอตัวจะจ่ายค่าอาหารก่อนเข้าประชุม"}
+{"chunks": ["He offered to", "pick up the tab", "after work today."], "th": "เขาเสนอตัวจะจ่ายค่าอาหารหลังเลิกงานวันนี้"}
+{"chunks": ["He offered to", "pick up the tab", "with his coworkers."], "th": "เขาเสนอตัวจะจ่ายค่าอาหารให้เพื่อนร่วมงานของเขา"}
+{"chunks": ["He offered to", "pick up the tab", "at the local cafe."], "th": "เขาเสนอตัวจะจ่ายค่าอาหารที่คาเฟ่แถวบ้าน"}
+{"chunks": ["He offered to", "pick up the tab", "across the street."], "th": "เขาเสนอตัวจะจ่ายค่าอาหารที่ร้านฝั่งตรงข้ามถนน"}
+{"chunks": ["He offered to", "pick up the tab", "for dinner tonight."], "th": "เขาเสนอตัวว่าจะจ่ายค่าอาหารเย็นคืนนี้ให้"}
+{"chunks": ["He offered to", "pick up the tab", "on Friday night."], "th": "เขาเสนอตัวจะจ่ายค่าอาหารในคืนวันศุกร์"}
+{"chunks": ["He offered to", "pick up the tab", "at the bar."], "th": "เขาเสนอตัวจะจ่ายค่าเครื่องดื่มให้ที่บาร์"}
+{"chunks": ["He offered to", "pick up the tab", "at the restaurant."], "th": "เขาเสนอตัวจะจ่ายค่าอาหารที่ร้านอาหาร"}
+{"chunks": ["He offered to", "pick up the tab", "as a generous gesture."], "th": "เขาเสนอตัวจะจ่ายค่าอาหารเพื่อแสดงน้ำใจ"}
+{"chunks": ["He managed to", "pick up a new hobby", "this weekend."], "th": "เขาสามารถเริ่มทำงานอดิเรกใหม่ได้สุดสัปดาห์นี้"}
+{"chunks": ["He managed to", "pick up a new hobby", "after work today."], "th": "เขาหาเวลาเริ่มทำงานอดิเรกใหม่ได้หลังเลิกงานวันนี้"}
+{"chunks": ["He managed to", "pick up a new hobby", "over the summer."], "th": "เขาเริ่มฝึกงานอดิเรกใหม่ได้ในช่วงฤดูร้อน"}
+{"chunks": ["He managed to", "pick up a new hobby", "to stay active."], "th": "เขาหางานอดิเรกใหม่ทำได้เพื่อจะได้กระฉับกระเฉง"}
+{"chunks": ["He managed to", "pick up a new hobby", "with his friends."], "th": "เขาเริ่มทำงานอดิเรกใหม่ร่วมกับเพื่อนๆ ของเขาได้"}
+{"chunks": ["He managed to", "pick up a new hobby", "in college."], "th": "เขาเริ่มทำงานอดิเรกใหม่ได้ตอนอยู่มหาวิทยาลัย"}
+{"chunks": ["He managed to", "pick up a new hobby", "during the break."], "th": "เขาเริ่มหางานอดิเรกใหม่ทำได้ในช่วงเวลาพัก"}
+{"chunks": ["He managed to", "pick up a new hobby", "to relax for the evening."], "th": "เขาเริ่มทำงานอดิเรกใหม่ได้เพื่อผ่อนคลายในตอนเย็น"}
+{"chunks": ["He managed to", "pick up a new hobby", "quite recently."], "th": "เขาเพิ่งเริ่มงานอดิเรกใหม่ได้เมื่อไม่นานมานี้เอง"}
+{"chunks": ["He managed to", "pick up a new hobby", "without spending much money."], "th": "เขาสามารถเริ่มงานอดิเรกใหม่ได้โดยไม่ต้องเสียเงินเยอะ"}
+{"chunks": ["He stopped by to", "say hello to everyone", "before the meeting."], "th": "เขาแวะมาทักทายทุกคนก่อนเริ่มการประชุม"}
+{"chunks": ["He stopped by to", "say hello to everyone", "on his way home."], "th": "เขาแวะมาทักทายทุกคนระหว่างทางกลับบ้าน"}
+{"chunks": ["He stopped by to", "say hello to everyone", "after work today."], "th": "เขาแวะมาทักทายทุกคนหลังเลิกงานวันนี้"}
+{"chunks": ["He stopped by to", "say hello to everyone", "first thing in the morning."], "th": "เขาแวะมาทักทายทุกคนเป็นสิ่งแรกในตอนเช้า"}
+{"chunks": ["He stopped by to", "say hello to everyone", "at the local cafe."], "th": "เขาแวะมาทักทายทุกคนที่คาเฟ่แถวบ้าน"}
+{"chunks": ["He stopped by to", "say hello to everyone", "in the office."], "th": "เขาแวะมาทักทายทุกคนในที่ทำงาน"}
+{"chunks": ["He stopped by to", "say hello to everyone", "during the break."], "th": "เขาแวะมาทักทายทุกคนในช่วงเวลาพัก"}
+{"chunks": ["He stopped by to", "say hello to everyone", "on Friday night."], "th": "เขาแวะมาทักทายทุกคนในคืนวันศุกร์"}
+{"chunks": ["He stopped by to", "say hello to everyone", "yesterday afternoon."], "th": "เขาแวะมาทักทายทุกคนเมื่อวานตอนบ่าย"}
+{"chunks": ["He stopped by to", "say hello to everyone", "before he left."], "th": "เขาแวะมาทักทายทุกคนก่อนที่เขาจะออกไป"}
+{"chunks": ["He loves to", "travel to New York", "this weekend."], "th": "เขาชอบไปเที่ยวนิวยอร์กสุดสัปดาห์นี้"}
+{"chunks": ["He loves to", "travel to New York", "in the summer."], "th": "เขาชอบไปเที่ยวนิวยอร์กในฤดูร้อน"}
+{"chunks": ["He loves to", "travel to New York", "during the holidays."], "th": "เขาชอบไปเที่ยวนิวยอร์กช่วงวันหยุดเทศกาล"}
+{"chunks": ["He loves to", "travel to New York", "for the conference."], "th": "เขาชอบเดินทางไปนิวยอร์กเพื่องานประชุม"}
+{"chunks": ["He loves to", "travel to New York", "with his friends."], "th": "เขาชอบไปเที่ยวนิวยอร์กกับเพื่อนของเขา"}
+{"chunks": ["He loves to", "travel to New York", "by train."], "th": "เขาชอบเดินทางไปนิวยอร์กโดยรถไฟ"}
+{"chunks": ["He loves to", "travel to New York", "every single year."], "th": "เขาชอบไปเที่ยวนิวยอร์กทุกๆ ปี"}
+{"chunks": ["He loves to", "travel to New York", "in the winter."], "th": "เขาชอบไปเที่ยวนิวยอร์กในฤดูหนาว"}
+{"chunks": ["He loves to", "travel to New York", "for business."], "th": "เขาชอบเดินทางไปนิวยอร์กเพื่อคุยธุรกิจ"}
+{"chunks": ["He loves to", "travel to New York", "on his vacation."], "th": "เขาชอบไปเที่ยวนิวยอร์กในช่วงวันหยุดพักผ่อนของเขา"}
+{"chunks": ["He", "tends to wake up early", "before the meeting."], "th": "เขามักจะตื่นเช้าก่อนการประชุม"}
+{"chunks": ["He", "tends to wake up early", "on weekday mornings."], "th": "เขามักจะตื่นเช้าในเช้าวันธรรมดา"}
+{"chunks": ["He", "tends to wake up early", "on the weekends."], "th": "เขามักจะตื่นเช้าในวันหยุดสุดสัปดาห์"}
+{"chunks": ["He", "tends to wake up early", "in the summer."], "th": "เขามักจะตื่นเช้าในฤดูร้อน"}
+{"chunks": ["He", "tends to wake up early", "without an alarm."], "th": "เขามักจะตื่นเช้าโดยไม่ต้องใช้นาฬิกาปลุก"}
+{"chunks": ["He", "tends to wake up early", "to beat the traffic."], "th": "เขามักจะตื่นเช้าเพื่อเลี่ยงรถติด"}
+{"chunks": ["He", "tends to wake up early", "to get things done."], "th": "เขามักจะตื่นเช้าเพื่อเคลียร์งานให้เสร็จ"}
+{"chunks": ["He", "tends to wake up early", "when he is stressed."], "th": "เขามักจะตื่นเช้าเวลาที่เขาเครียด"}
+{"chunks": ["He", "tends to wake up early", "for morning practice."], "th": "เขามักจะตื่นเช้าเพื่อฝึกซ้อมรอบเช้า"}
+{"chunks": ["He", "tends to wake up early", "every single day."], "th": "เขามักจะตื่นเช้าในทุกๆ วัน"}
