@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Operation: Syntax</title>
+    <title>Syntax Hacker: Phrase Decryptor</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@500;700&family=Roboto:wght@400;700;900&display=swap');
 
@@ -61,29 +61,30 @@
         }
 
         .thai-meaning {
-            font-size: 22px; color: var(--gta-yellow); text-align: center; font-weight: 700;
+            font-size: 20px; color: var(--gta-yellow); text-align: center; font-weight: 700;
             margin-bottom: 25px; line-height: 1.4; text-shadow: 1px 1px 0 #000;
         }
 
         .english-template {
-            font-size: 26px; font-weight: 700; text-align: center;
+            font-size: 22px; font-weight: 700; text-align: center;
             line-height: 1.5; color: var(--text-light);
         }
 
         .blank-slot {
-            display: inline-block; min-width: 80px; border-bottom: 4px solid var(--gta-pink);
+            display: inline-block; min-width: 100px; border-bottom: 4px solid var(--gta-pink);
             color: var(--gta-pink); text-align: center; padding: 0 10px; margin: 0 5px;
+            word-wrap: break-word;
         }
 
-        /* Options Grid */
-        .options-grid {
-            display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: auto;
+        /* Options Stack (1 Column for long text) */
+        .options-stack {
+            display: flex; flex-direction: column; gap: 12px; margin-top: auto; overflow-y: auto;
         }
         
         .option-btn {
             background: #222; border: 2px solid #444; color: var(--text-light);
-            padding: 20px 10px; border-radius: 12px; font-size: 18px; font-weight: 700;
-            cursor: pointer; transition: all 0.1s; box-shadow: 0 4px 0 #111;
+            padding: 16px 15px; border-radius: 12px; font-size: 16px; font-weight: 700;
+            cursor: pointer; transition: all 0.1s; box-shadow: 0 4px 0 #111; text-align: left;
         }
         .option-btn:active { transform: translateY(4px); box-shadow: 0 0 0 #111; }
         .option-btn.correct { background: var(--gta-green); border-color: #fff; color: #000; box-shadow: 0 4px 0 #1b8a30; }
@@ -143,14 +144,14 @@
             </div>
         </div>
 
-        <!-- Options Grid -->
-        <div class="options-grid" id="options-grid">
+        <!-- Options Stack (Vertical for long phrases) -->
+        <div class="options-stack" id="options-grid">
             <!-- Buttons Injected via JS -->
         </div>
 
         <!-- Overlays -->
         <div class="overlay passed-bg" id="overlay-passed">
-            <div class="passed-text">MISSION PASSED</div>
+            <div class="passed-text">CODE CRACKED</div>
             <div class="xp-gain" id="xp-gain-text">+20 RESPECT</div>
         </div>
 
