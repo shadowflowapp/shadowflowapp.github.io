@@ -16,6 +16,7 @@
             --accent: #3b82f6; 
             --accent-hover: #2563eb;
             --success: #10b981; 
+            --success-glow: rgba(16, 185, 129, 0.6);
             --border: #334155;
             --chunk-bg: #334155;
         }
@@ -93,6 +94,18 @@
             box-shadow: 0 4px 0 #047857; transform: none; cursor: pointer;
         }
         .chunk.solved:active { transform: scale(0.95); box-shadow: 0 0 0 #047857; }
+
+        /* Pulsating Portal Effect for Chunks with Multiple Sentences */
+        @keyframes pulseGlow {
+            0% { box-shadow: 0 0 0 0 var(--success-glow), 0 4px 0 #047857; }
+            50% { box-shadow: 0 0 15px 5px var(--success-glow), 0 4px 0 #047857; }
+            100% { box-shadow: 0 0 0 0 var(--success-glow), 0 4px 0 #047857; }
+        }
+        
+        .chunk.solved.has-bubble {
+            animation: pulseGlow 1.5s infinite ease-in-out;
+            border-color: #34d399; /* Slightly brighter green border to pop */
+        }
         
         .web-hint {
             font-size: 15px; color: var(--success); font-weight: 600; margin-top: 20px;
@@ -136,7 +149,7 @@
                 <div class="drop-zone" id="drop-zone"></div>
                 <div class="word-bank" id="word-bank"></div>
 
-                <div class="web-hint" id="web-hint">Tap any chunk above to explore its bubble!</div>
+                <div class="web-hint" id="web-hint">Tap a glowing chunk to explore its bubble!</div>
             </div>
 
             <button class="next-btn" id="next-btn" onclick="loadSentenceInBubble()">Next in Bubble ➔</button>
