@@ -1,7 +1,10 @@
-{"chunks": ["The CEO", "flew out", "to New York", "for the conference"], "th": "ซีอีโอขึ้นเครื่องบินไปนิวยอร์กเพื่อร่วมงานประชุม"}
-{"chunks": ["The bird", "flew out", "of the open window"], "th": "นกบินออกไปทางหน้าต่างที่เปิดอยู่"}
-{"chunks": ["She", "flew out", "to visit her family", "for the holidays"], "th": "เธอขึ้นเครื่องบินไปเยี่ยมครอบครัวในช่วงวันหยุด"}
-{"chunks": ["A swarm of bees", "flew out", "from the old beehive"], "th": "ฝูงผึ้งบินกรูออกมาจากรังผึ้งเก่า"}
-{"chunks": ["I need", "to New York", "to visit her family"], "th": "ฉันต้องไปนิวยอร์กเพื่อเยี่ยมครอบครัวของเธอ"}
-{"chunks": ["The CEO", "decided to stay", "for the conference"], "th": "ซีอีโอตัดสินใจอยู่ต่อเพื่อร่วมงานประชุม"}
-{"chunks": ["A startled moth", "flew out", "from the dark closet"], "th": "ผีเสื้อกลางคืนที่ตกใจบินออกมาจากตู้เสื้อผ้าที่มืดทึบ"}
+{"chunks": ["The CEO", "flew out", "to New York", "for the conference."], "th": "ซีอีโอขึ้นเครื่องบินไปนิวยอร์กเพื่อร่วมงานประชุม"}
+{"chunks": ["A startled moth", "flew out", "from the dark closet."], "th": "ผีเสื้อกลางคืนที่ตกใจบินออกมาจากตู้เสื้อผ้าที่มืดทึบ"}
+{"chunks": ["The bird", "flew out", "of the open window."], "th": "นกบินออกไปทางหน้าต่างที่เปิดอยู่"}
+{"chunks": ["She", "flew out", "to visit her family", "for the holidays."], "th": "เธอขึ้นเครื่องบินไปเยี่ยมครอบครัวในช่วงวันหยุด"}
+{"chunks": ["I plan", "to visit her family", "in London", "next month."], "th": "ฉันวางแผนที่จะไปเยี่ยมครอบครัวของเธอที่ลอนดอนเดือนหน้า"}
+{"chunks": ["The CEO", "announced", "a new product", "for the holidays."], "th": "ซีอีโอประกาศเปิดตัวผลิตภัณฑ์ใหม่สำหรับช่วงวันหยุด"}
+{"chunks": ["We", "are going", "to New York", "tomorrow morning."], "th": "พวกเรากำลังจะไปนิวยอร์กพรุ่งนี้เช้า"}
+{"chunks": ["A swarm of bees", "flew out", "from the old beehive."], "th": "ฝูงผึ้งบินกรูออกมาจากรังผึ้งเก่า"}
+{"chunks": ["Please close", "the open window.", "It is raining."], "th": "กรุณาปิดหน้าต่างที่เปิดอยู่ ฝนกำลังตก"}
+{"chunks": ["The CEO", "will travel", "to New York", "for a meeting."], "th": "ซีอีโอจะเดินทางไปนิวยอร์กเพื่อประชุม"}
