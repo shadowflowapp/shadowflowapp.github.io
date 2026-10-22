@@ -3,136 +3,116 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Syntax Swipe: San Andreas</title>
+    <title>Syntax Hacker: San Andreas</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@500;700&family=Roboto:wght@400;700;900&display=swap');
 
         :root {
-            --gta-black: #0a0a0a;
-            --gta-dark: #1c1c1e;
-            --gta-green: #41d95d;
-            --gta-red: #d94141;
-            --gta-yellow: #f2c80f;
-            --gta-cyan: #0fdbf2;
-            --gta-pink: #f20f8c;
-            --text-light: #ffffff;
-            --text-dim: #888888;
+            --gta-black: #0a0a0a; --gta-dark: #1c1c1e;
+            --gta-green: #41d95d; --gta-red: #d94141;
+            --gta-yellow: #f2c80f; --gta-cyan: #0fdbf2; --gta-pink: #f20f8c;
+            --text-light: #ffffff; --text-dim: #888888;
         }
 
         body {
-            font-family: 'Roboto', sans-serif;
-            background-color: var(--gta-black);
-            color: var(--text-light);
-            margin: 0; padding: 0;
-            display: flex; justify-content: center;
-            height: 100dvh; overflow: hidden;
-            -webkit-tap-highlight-color: transparent;
-            user-select: none;
+            font-family: 'Roboto', sans-serif; background-color: var(--gta-black);
+            color: var(--text-light); margin: 0; padding: 0;
+            display: flex; justify-content: center; height: 100dvh; overflow: hidden;
+            -webkit-tap-highlight-color: transparent; user-select: none;
             background-image: radial-gradient(circle at center, #1a1a1a 0%, #000000 100%);
         }
 
         .app-container {
             width: 100%; max-width: 430px; height: 100%;
-            display: flex; flex-direction: column;
-            padding: 20px; box-sizing: border-box;
+            display: flex; flex-direction: column; padding: 20px; box-sizing: border-box;
         }
 
-        /* GTA Style HUD */
+        /* HUD */
         .hud {
             display: flex; justify-content: space-between; align-items: center;
             background: rgba(255, 255, 255, 0.05); border: 2px solid #333; border-radius: 12px;
             padding: 15px 20px; margin-bottom: 20px;
         }
-        .metric { display: flex; flex-direction: column; align-items: center; }
-        .metric-value { font-family: 'Oswald', sans-serif; font-size: 26px; font-weight: 700; color: var(--gta-cyan); }
-        .metric-label { font-size: 12px; font-weight: 700; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px; }
-        .divider { width: 2px; height: 30px; background: #333; }
+        .hud-left { display: flex; flex-direction: column; }
+        .hud-right { text-align: right; }
+        
+        .hud-label { font-size: 12px; font-weight: 700; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px; }
+        .hud-value { font-family: 'Oswald', sans-serif; font-size: 24px; font-weight: 700; color: var(--gta-cyan); }
+        .wanted-stars { color: var(--text-dim); font-size: 18px; letter-spacing: 2px; margin-top: 4px;}
+        .wanted-stars .active { color: #fff; text-shadow: 0 0 8px #fff; }
 
-        /* Stage */
-        .stage {
-            flex-grow: 1; display: flex; flex-direction: column; position: relative;
-        }
-
-        .pattern-title {
+        .mission-title {
             text-align: center; font-family: 'Oswald', sans-serif; color: var(--gta-yellow); 
-            font-size: 20px; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 15px;
-            text-shadow: 1px 1px 0px #000;
+            font-size: 18px; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 15px;
         }
 
-        /* Flashcard (Intel Panel) */
-        .flashcard {
+        /* The Terminal (Question Box) */
+        .terminal {
             background: var(--gta-dark); border: 2px solid var(--gta-cyan); border-radius: 16px;
-            box-shadow: 0 0 15px rgba(15, 219, 242, 0.2); padding: 30px 20px;
+            box-shadow: 0 0 15px rgba(15, 219, 242, 0.1); padding: 30px 20px;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
-            min-height: 350px; position: relative;
+            margin-bottom: 20px; position: relative;
         }
 
-        .template-hint {
-            font-family: 'Oswald', sans-serif; font-size: 16px; color: var(--gta-yellow);
-            margin-bottom: 30px; text-align: center; padding: 10px;
-            background: rgba(0,0,0,0.5); border-radius: 8px; width: 100%; box-sizing: border-box;
-            border-left: 4px solid var(--gta-yellow); letter-spacing: 1px;
+        .intel-badge {
+            position: absolute; top: -12px; background: var(--gta-cyan); color: #000;
+            font-family: 'Oswald', sans-serif; font-weight: 700; padding: 4px 12px; border-radius: 8px;
+            font-size: 14px; text-transform: uppercase; letter-spacing: 1px;
         }
 
-        /* Smooth Content Wrapper */
-        .card-content {
-            display: flex; flex-direction: column; align-items: center; width: 100%;
-            transition: opacity 0.2s ease-in-out;
+        .thai-meaning {
+            font-size: 22px; color: var(--gta-yellow); text-align: center; font-weight: 700;
+            margin-bottom: 25px; line-height: 1.4; text-shadow: 1px 1px 0 #000;
         }
 
-        /* Color Coded Sentence */
-        .english-sentence {
-            font-size: 28px; font-weight: 700; text-align: center;
-            line-height: 1.4; color: var(--text-light); margin-bottom: 20px;
+        .english-template {
+            font-size: 26px; font-weight: 700; text-align: center;
+            line-height: 1.5; color: var(--text-light);
         }
 
-        .gta-highlight { 
-            color: var(--gta-pink); font-weight: 900; 
-            text-shadow: 0 0 8px rgba(242, 15, 140, 0.4);
+        .blank-slot {
+            display: inline-block; min-width: 80px; border-bottom: 4px solid var(--gta-pink);
+            color: var(--gta-pink); text-align: center; padding: 0 10px; margin: 0 5px;
         }
 
-        .thai-translation {
-            font-size: 18px; color: var(--text-dim); text-align: center; font-weight: 500;
+        /* Options Grid */
+        .options-grid {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: auto;
         }
-
-        /* Controls */
-        .card-controls {
-            display: flex; justify-content: space-between; align-items: center;
-            width: 100%; margin-top: 40px;
-        }
-
-        .swipe-btn {
+        
+        .option-btn {
             background: #222; border: 2px solid #444; color: var(--text-light);
-            width: 50px; height: 50px; border-radius: 8px; font-size: 20px;
-            display: flex; align-items: center; justify-content: center;
-            cursor: pointer; transition: all 0.1s;
+            padding: 20px 10px; border-radius: 12px; font-size: 18px; font-weight: 700;
+            cursor: pointer; transition: all 0.1s; box-shadow: 0 4px 0 #111;
         }
-        .swipe-btn:active { background: #444; border-color: var(--gta-cyan); }
-        .swipe-btn:disabled { opacity: 0.2; pointer-events: none; }
+        .option-btn:active { transform: translateY(4px); box-shadow: 0 0 0 #111; }
+        .option-btn.correct { background: var(--gta-green); border-color: #fff; color: #000; box-shadow: 0 4px 0 #1b8a30; }
+        .option-btn.wrong { background: var(--gta-red); border-color: #fff; box-shadow: 0 4px 0 #8a1b1b; }
 
-        .audio-btn {
-            background: transparent; border: 2px solid var(--gta-cyan); color: var(--gta-cyan);
-            height: 50px; padding: 0 25px; border-radius: 8px; font-size: 16px; font-weight: 900;
-            font-family: 'Oswald', sans-serif; text-transform: uppercase; letter-spacing: 1px;
-            display: flex; align-items: center; justify-content: center;
-            cursor: pointer; transition: background 0.1s;
+        /* Overlays */
+        .overlay {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            z-index: 100; opacity: 0; pointer-events: none; transition: opacity 0.3s; backdrop-filter: blur(5px);
         }
-        .audio-btn:active { background: var(--gta-cyan); color: #000; }
+        .overlay.active { opacity: 1; pointer-events: auto; }
 
-        /* Next Structure Button */
-        .next-pattern-btn {
-            margin-top: 25px; background: var(--gta-green); color: #000;
-            border: none; padding: 18px; border-radius: 8px; font-size: 20px; font-weight: 700;
-            font-family: 'Oswald', sans-serif; cursor: pointer; text-transform: uppercase; letter-spacing: 1px;
-            transition: opacity 0.3s; opacity: 0.3; pointer-events: none;
+        .passed-bg { background: rgba(0, 0, 0, 0.85); }
+        .passed-text {
+            font-family: 'Impact', 'Oswald', sans-serif; font-size: 48px; color: var(--gta-yellow);
+            text-transform: uppercase; letter-spacing: 2px; text-align: center;
+            text-shadow: 3px 3px 0px #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+            transform: scale(1.5); transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
-        .next-pattern-btn.active { opacity: 1; pointer-events: auto; }
-        .next-pattern-btn:active { transform: scale(0.98); }
-
-        /* Pagination Dots */
-        .pagination { display: flex; gap: 8px; position: absolute; bottom: 15px; }
-        .dot { width: 8px; height: 8px; border-radius: 4px; background: #444; transition: all 0.3s;}
-        .dot.active { background: var(--gta-pink); width: 24px; box-shadow: 0 0 5px var(--gta-pink);}
+        .overlay.active .passed-text { transform: scale(1); }
+        .xp-gain { font-family: 'Oswald', sans-serif; font-size: 24px; color: var(--gta-green); margin-top: 10px; }
+        
+        .wasted-bg { background: rgba(217, 65, 65, 0.4); }
+        .wasted-text {
+            font-family: 'Impact', 'Oswald', sans-serif; font-size: 64px; color: var(--gta-red);
+            text-transform: uppercase; letter-spacing: 4px;
+            text-shadow: 2px 2px 0px #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+        }
 
     </style>
 </head>
@@ -140,43 +120,43 @@
 
     <div class="app-container" id="main-container">
         
-        <!-- Metrics HUD -->
+        <!-- HUD -->
         <div class="hud">
-            <div class="metric">
-                <span class="metric-value" id="metric-structures">0</span>
-                <span class="metric-label">Patterns</span>
+            <div class="hud-left">
+                <span class="hud-label">Respect</span>
+                <span class="hud-value" id="xp-display">0 XP</span>
             </div>
-            <div class="divider"></div>
-            <div class="metric">
-                <span class="metric-value" id="metric-sentences">0</span>
-                <span class="metric-label">Sentences</span>
+            <div class="hud-right">
+                <span class="hud-label">Heat Level</span>
+                <div class="wanted-stars" id="wanted-stars">☆☆☆☆☆</div>
             </div>
         </div>
 
-        <div class="pattern-title" id="pattern-title">Loading Intel...</div>
+        <div class="mission-title">Decrypt The Intel</div>
 
-        <!-- Stage -->
-        <div class="stage" id="stage">
-            
-            <div class="flashcard" id="flashcard">
-                <div class="template-hint" id="template-hint">Template: ...</div>
-                
-                <!-- Smooth Fading Content Wrapper -->
-                <div class="card-content" id="card-content">
-                    <div class="english-sentence" id="english-sentence">Loading...</div>
-                    <div class="thai-translation" id="thai-translation">กำลังโหลด...</div>
-                </div>
-
-                <div class="card-controls">
-                    <button class="swipe-btn" id="btn-prev" onclick="prevExample()">❮</button>
-                    <button class="audio-btn" onclick="playAudio()">🔊 Audio Log</button>
-                    <button class="swipe-btn" id="btn-next" onclick="nextExample()">❯</button>
-                </div>
-
-                <div class="pagination" id="pagination"></div>
+        <!-- Terminal (Question Board) -->
+        <div class="terminal">
+            <div class="intel-badge">Intercepted Target</div>
+            <div class="thai-meaning" id="thai-meaning">กำลังโหลด...</div>
+            <div class="english-template" id="english-template">
+                [ <span class="blank-slot">_____</span> ]
             </div>
+        </div>
 
-            <button class="next-pattern-btn" id="btn-next-pattern" onclick="loadNextPattern()">Next Target ➔</button>
+        <!-- Options Grid -->
+        <div class="options-grid" id="options-grid">
+            <!-- Buttons Injected via JS -->
+        </div>
+
+        <!-- Overlays -->
+        <div class="overlay passed-bg" id="overlay-passed">
+            <div class="passed-text">CODE CRACKED</div>
+            <div class="xp-gain" id="xp-gain-text">+20 RESPECT</div>
+        </div>
+
+        <div class="overlay wasted-bg" id="overlay-wasted">
+            <div class="wasted-text">WASTED</div>
+            <div class="xp-gain" style="color: #fff; font-size: 18px;">Intel Lost</div>
         </div>
 
     </div>
