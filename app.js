@@ -1,24 +1,45 @@
-let database = [];
+let sentences = [];
+let reverseIndex = {}; // Maps { "clean phrase" -> [sentence objects] }
+
+// State
+let currentBubble = "flew out"; // Default starting phrase
+let currentSentence = null;
+let correctOrder = [];
+let scrambledChunks = [];
+let userDropZone = []; 
+let isSolved = false;
+let recentlyPlayed = []; // Prevents immediate repeats within a bubble
+
 const synth = window.speechSynthesis;
 
-// Player State
-let playerXP = 0;
-let streak = 0;
-let currentMission = null;
-
-// 1. Initialize
+// 1. Initialize & Build Reverse Index
 fetch('db.jsonl')
     .then(response => response.text())
     .then(text => {
         const lines = text.split('\n').filter(line => line.trim() !== '');
-        database = lines.map(line => JSON.parse(line));
+        sentences = lines.map(line => JSON.parse(line));
         
-        updateHUD();
-        loadNextMission();
+        buildReverseIndex();
+        loadSentenceInBubble();
     })
     .catch(err => console.error("Error loading DB", err));
 
-// Utility: Shuffle Array
+function cleanString(str) {
+    // Removes punctuation and lowers case to ensure chunks match perfectly
+    return str.replace(/[.,!?"]/g, '').trim().toLowerCase();
+}
+
+function buildReverseIndex() {
+    reverseIndex = {};
+    sentences.forEach(sentence => {
+        sentence.chunks.forEach(chunk => {
+            let key = cleanString(chunk);
+            if (!reverseIndex[key]) reverseIndex[key] = [];
+            reverseIndex[key].push(sentence);
+        });
+    });
+}
+
 function shuffle(array) {
     let curId = array.length;
     while (0 !== curId) {
@@ -31,103 +52,149 @@ function shuffle(array) {
     return array;
 }
 
-// 2. Load Mission
-function loadNextMission() {
-    currentMission = database[Math.floor(Math.random() * database.length)];
+// 2. Load a Sentence within the Current Bubble
+function loadSentenceInBubble(forcedTargetChunk = null) {
+    isSolved = false;
+    userDropZone = [];
+    document.getElementById('web-hint').style.display = 'none';
+    document.getElementById('next-btn').style.display = 'none';
 
-    // Render Intel
-    document.getElementById('thai-meaning').innerText = currentMission.th;
+    // If user clicked a chunk to pivot, change the active bubble
+    if (forcedTargetChunk) {
+        currentBubble = cleanString(forcedTargetChunk);
+        recentlyPlayed = []; // Reset history for new bubble
+    }
+
+    let availableSentences = reverseIndex[currentBubble] || [];
     
-    // Render the Template with the visual blank slot
-    const templateHTML = currentMission.en_template.replace(
-        '[ _____ ]', 
-        '<span class="blank-slot" id="blank-slot">_____</span>'
-    );
-    document.getElementById('english-template').innerHTML = templateHTML;
+    // Filter out recently played sentences if we have enough options
+    let eligible = availableSentences.filter(s => !recentlyPlayed.includes(s.th));
+    if (eligible.length === 0) {
+        recentlyPlayed = []; // Reset if we exhausted the bubble
+        eligible = availableSentences;
+    }
 
-    // Generate 4 Options (1 Answer + 3 Distractors)
-    let options = shuffle([currentMission.answer, ...currentMission.distractors.slice(0, 3)]);
+    currentSentence = eligible[Math.floor(Math.random() * eligible.length)];
+    recentlyPlayed.push(currentSentence.th);
 
-    const grid = document.getElementById('options-grid');
-    grid.innerHTML = '';
+    // Update HUD
+    document.getElementById('current-bubble').innerText = `"${currentBubble}"`;
+    document.getElementById('bubble-count').innerText = availableSentences.length;
+    document.getElementById('thai-text').innerText = currentSentence.th;
+
+    // Prepare Chunks
+    correctOrder = [...currentSentence.chunks];
+    scrambledChunks = correctOrder.map((text, i) => ({ id: i, text: text }));
+    scrambledChunks = shuffle(scrambledChunks);
+
+    renderBoard();
     
-    options.forEach(opt => {
-        const btn = document.createElement('button');
-        btn.className = 'option-btn';
-        btn.innerText = opt;
-        btn.onclick = () => executeDecryption(btn, opt);
-        grid.appendChild(btn);
-    });
+    // Auto-play audio at start (Optional, but good for learning)
+    // playAudio(); 
 }
 
-// 3. Game Logic
-function executeDecryption(btn, selectedPhrase) {
-    document.querySelectorAll('.option-btn').forEach(b => b.disabled = true);
+// 3. Render the Tap-to-Build Board
+function renderBoard() {
+    const bankEl = document.getElementById('word-bank');
+    const zoneEl = document.getElementById('drop-zone');
+    
+    bankEl.innerHTML = '';
+    zoneEl.innerHTML = '';
 
-    const blankSlot = document.getElementById('blank-slot');
-    blankSlot.innerText = selectedPhrase;
+    // Render Scrambled Bank
+    scrambledChunks.forEach((chunkObj, idx) => {
+        const btn = document.createElement('button');
+        btn.className = `chunk ${userDropZone.includes(idx) ? 'hidden' : ''}`;
+        btn.innerText = chunkObj.text;
+        btn.onclick = () => tapBankChunk(idx);
+        bankEl.appendChild(btn);
+    });
 
-    if (selectedPhrase === currentMission.answer) {
-        // WIN
-        btn.classList.add('correct');
-        playerXP += 20;
-        streak++;
+    // Render Drop Zone (User's built sentence)
+    userDropZone.forEach((scrambledIdx, orderIndex) => {
+        const chunkObj = scrambledChunks[scrambledIdx];
+        const btn = document.createElement('button');
         
-        document.getElementById('overlay-passed').classList.add('active');
+        if (isSolved) {
+            // Post-Win State: Tags are green and pivot the bubble
+            btn.className = 'chunk solved';
+            btn.innerText = chunkObj.text;
+            btn.onclick = () => loadSentenceInBubble(chunkObj.text);
+        } else {
+            // Building State: Click to return to bank
+            btn.className = 'chunk in-zone';
+            btn.innerText = chunkObj.text;
+            btn.onclick = () => tapZoneChunk(orderIndex);
+        }
         
-        // Read full English sentence out loud
-        playAudio(currentMission.en_full);
+        zoneEl.appendChild(btn);
+    });
+
+    // Hide bank completely if solved
+    if (isSolved) bankEl.style.display = 'none';
+    else bankEl.style.display = 'flex';
+
+    if (!isSolved && userDropZone.length === correctOrder.length) {
+        checkAnswer();
+    }
+}
+
+// 4. Tap Interactions
+function tapBankChunk(scrambledIdx) {
+    if (isSolved) return;
+    userDropZone.push(scrambledIdx);
+    renderBoard();
+}
+
+function tapZoneChunk(orderIndex) {
+    if (isSolved) return;
+    userDropZone.splice(orderIndex, 1);
+    renderBoard();
+}
+
+// 5. Check Answer
+function checkAnswer() {
+    let isCorrect = true;
+    
+    userDropZone.forEach((scrambledIdx, index) => {
+        if (scrambledChunks[scrambledIdx].text !== correctOrder[index]) {
+            isCorrect = false;
+        }
+    });
+
+    if (isCorrect) {
+        isSolved = true;
         
-        setTimeout(() => {
-            document.getElementById('overlay-passed').classList.remove('active');
-            updateHUD();
-            loadNextMission();
-        }, 2500); // Give enough time for the audio to play
+        // Show success UI
+        document.getElementById('web-hint').style.display = 'block';
+        document.getElementById('next-btn').style.display = 'block';
+        
+        if (navigator.vibrate) navigator.vibrate(50); // Haptic success
+        
+        renderBoard(); // Rerender as solved
+        playAudio();   // Read the completed sentence
 
     } else {
-        // LOSE
-        btn.classList.add('wrong');
-        streak = 0;
+        // Wrong order - flash red and kick them all back to bank
+        const zoneEl = document.getElementById('drop-zone');
+        zoneEl.style.borderColor = 'var(--gta-red)';
+        if (navigator.vibrate) navigator.vibrate([100, 50, 100]); // Haptic error
         
-        // Reveal the correct answer to the user
-        document.querySelectorAll('.option-btn').forEach(b => {
-            if(b.innerText === currentMission.answer) b.classList.add('correct');
-        });
-        
-        // Inject correct word into the blank so they see the right sentence
-        blankSlot.innerText = currentMission.answer; 
-        blankSlot.style.color = 'var(--gta-green)';
-        blankSlot.style.borderBottomColor = 'var(--gta-green)';
-
-        document.getElementById('overlay-wasted').classList.add('active');
-        if (navigator.vibrate) navigator.vibrate(200);
-
         setTimeout(() => {
-            document.getElementById('overlay-wasted').classList.remove('active');
-            updateHUD();
-            loadNextMission(); 
-        }, 3000);
+            zoneEl.style.borderColor = 'var(--border)';
+            userDropZone = [];
+            renderBoard();
+        }, 500);
     }
 }
 
-// 4. Update HUD
-function updateHUD() {
-    document.getElementById('xp-display').innerText = `${playerXP} XP`;
-    
-    // Wanted Stars (Max 5)
-    let starsHtml = '';
-    for(let i=0; i<5; i++) {
-        starsHtml += i < Math.min(streak, 5) ? '<span class="active">★</span>' : '☆';
-    }
-    document.getElementById('wanted-stars').innerHTML = starsHtml;
-}
-
-// 5. Audio Engine (Anti-Overlap Micro-Delay)
-function playAudio(text) {
+// 6. Audio Engine
+function playAudio() {
     if (synth.speaking) synth.cancel(); 
     
     setTimeout(() => {
-        const utterThis = new SpeechSynthesisUtterance(text);
+        const textToSpeak = correctOrder.join(' '); // Join the chunks to read full sentence
+        const utterThis = new SpeechSynthesisUtterance(textToSpeak);
         const voices = synth.getVoices();
         
         const maleUSIdentifiers = ['David', 'Alex', 'Aaron', 'Google US English'];
@@ -137,7 +204,7 @@ function playAudio(text) {
         if (!selectedVoice) selectedVoice = voices.find(v => v.lang.includes('en-US'));
 
         if (selectedVoice) utterThis.voice = selectedVoice;
-        utterThis.rate = 0.95; // Slightly slower for clear learning
+        utterThis.rate = 0.95; 
         
         synth.speak(utterThis);
     }, 50);
