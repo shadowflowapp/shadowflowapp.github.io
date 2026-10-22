@@ -1,10 +1,10 @@
-{"id": 1, "target": "This is", "th": "นี่คือเพื่อนของฉัน จอห์น", "en_template": "[ _____ ] my friend, John.", "en_full": "This is my friend, John.", "answer": "This is", "distractors": ["That is", "He is", "These are"]}
-{"id": 2, "target": "This is", "th": "นี่คือวันที่ดีที่สุดในชีวิตของฉัน", "en_template": "[ _____ ] the best day of my life.", "en_full": "This is the best day of my life.", "answer": "This is", "distractors": ["It is", "There is", "That is"]}
-{"id": 3, "target": "This is", "th": "นี่คือรถคันใหม่ของฉัน", "en_template": "[ _____ ] my new car.", "en_full": "This is my new car.", "answer": "This is", "distractors": ["These are", "That is", "There is"]}
-{"id": 4, "target": "This is", "th": "นี่คือสิ่งที่คุณกำลังมองหาใช่ไหม?", "en_template": "[ _____ ] what you are looking for, right?", "en_full": "This is what you are looking for, right?", "answer": "This is", "distractors": ["That is", "It is", "These are"]}
-{"id": 5, "target": "This is", "th": "นี่เป็นครั้งแรกของฉันในกรุงเทพฯ", "en_template": "[ _____ ] my first time in Bangkok.", "en_full": "This is my first time in Bangkok.", "answer": "This is", "distractors": ["It is", "There is", "Here is"]}
-{"id": 6, "target": "This is", "th": "นี่คือเหตุผลที่ฉันมาสาย", "en_template": "[ _____ ] the reason why I am late.", "en_full": "This is the reason why I am late.", "answer": "This is", "distractors": ["That is", "Because", "It is"]}
-{"id": 7, "target": "This is", "th": "นี่มันบ้าไปแล้ว!", "en_template": "[ _____ ] crazy!", "en_full": "This is crazy!", "answer": "This is", "distractors": ["That is", "There is", "These are"]}
-{"id": 8, "target": "This is", "th": "นี่คือทั้งหมดที่ฉันมี", "en_template": "[ _____ ] all I have.", "en_full": "This is all I have.", "answer": "This is", "distractors": ["It is", "That is", "These are"]}
-{"id": 9, "target": "This is", "th": "นี่ไม่ใช่เรื่องตลกนะ", "en_template": "[ _____ ] not a joke.", "en_full": "This is not a joke.", "answer": "This is", "distractors": ["It is", "That is", "There is"]}
-{"id": 10, "target": "This is", "th": "นี่คือวิธีที่คุณทำมัน", "en_template": "[ _____ ] how you do it.", "en_full": "This is how you do it.", "answer": "This is", "distractors": ["That is", "It is", "Way is"]}
+{"id": 1, "th": "นี่คือแมว", "en_template": "This is [ _____ ].", "en_full": "This is a cat.", "answer": "a cat", "distractors": ["a dog", "a bird", "a fish"]}
+{"id": 2, "th": "ฉันอยากจะกินพิซซ่า", "en_template": "I want to eat [ _____ ].", "en_full": "I want to eat pizza.", "answer": "pizza", "distractors": ["water", "a book", "a car"]}
+{"id": 3, "th": "เขากำลังขับรถสีแดง", "en_template": "He is driving a [ _____ ].", "en_full": "He is driving a red car.", "answer": "red car", "distractors": ["blue bike", "fast train", "black truck"]}
+{"id": 4, "th": "พวกเราไปโรงเรียนทุกวัน", "en_template": "We go to [ _____ ] every day.", "en_full": "We go to school every day.", "answer": "school", "distractors": ["sleep", "the moon", "angry"]}
+{"id": 5, "th": "กรุณาเปิดประตูให้ฉันหน่อย", "en_template": "Please open the [ _____ ] for me.", "en_full": "Please open the door for me.", "answer": "door", "distractors": ["window", "book", "eyes"]}
+{"id": 6, "th": "เธอมีเงินเยอะมาก", "en_template": "She has a lot of [ _____ ].", "en_full": "She has a lot of money.", "answer": "money", "distractors": ["water", "sadness", "running"]}
+{"id": 7, "th": "คุณต้องตื่นแต่เช้า", "en_template": "You must wake up [ _____ ].", "en_full": "You must wake up early.", "answer": "early", "distractors": ["late", "night", "slowly"]}
+{"id": 8, "th": "นั่นคือคอมพิวเตอร์ของฉัน", "en_template": "That is my [ _____ ].", "en_full": "That is my computer.", "answer": "computer", "distractors": ["cat", "shoes", "glasses"]}
+{"id": 9, "th": "ท้องฟ้าสีฟ้าสวยงามมาก", "en_template": "The [ _____ ] is very beautiful.", "en_full": "The blue sky is very beautiful.", "answer": "blue sky", "distractors": ["green grass", "dark night", "red car"]}
+{"id": 10, "th": "ฉันกำลังมองหากุญแจของฉัน", "en_template": "I am looking for my [ _____ ].", "en_full": "I am looking for my keys.", "answer": "keys", "distractors": ["friends", "house", "sleep"]}
