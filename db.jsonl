@@ -1,20 +1,100 @@
-{"bubble": "heard that", "en": "I /heard that/ you are moving to New York.", "th": "ฉันได้ยินมาว่าคุณกำลังจะย้ายไปนิวยอร์ก"}
-{"bubble": "heard that", "en": "She /heard that/ the meeting was canceled.", "th": "เธอได้ยินมาว่าการประชุมถูกยกเลิกแล้ว"}
-{"bubble": "heard that", "en": "We /heard that/ the restaurant closed down.", "th": "พวกเราได้ยินมาว่าร้านอาหารนั้นปิดตัวลงแล้ว"}
-{"bubble": "heard that", "en": "Have you /heard that/ they are getting married?", "th": "คุณได้ยินไหมว่าพวกเขากำลังจะแต่งงานกัน?"}
-{"bubble": "heard that", "en": "He just /heard that/ he got the promotion.", "th": "เขาเพิ่งได้ยินมาว่าเขาได้เลื่อนตำแหน่ง"}
-{"bubble": "heard that", "en": "I /heard that/ the new movie is amazing.", "th": "ฉันได้ยินมาว่าหนังใหม่เรื่องนั้นสนุกมาก"}
-{"bubble": "heard that", "en": "They /heard that/ the weather will be terrible tomorrow.", "th": "พวกเขาได้ยินมาว่าพรุ่งนี้อากาศจะแย่มาก"}
-{"bubble": "heard that", "en": "I /heard that/ you need some help with your project.", "th": "ฉันได้ยินมาว่าคุณต้องการความช่วยเหลือเกี่ยวกับโปรเจกต์ของคุณ"}
-{"bubble": "heard that", "en": "Everyone /heard that/ the boss is stepping down.", "th": "ทุกคนได้ยินมาว่าเจ้านายกำลังจะลาออก"}
-{"bubble": "heard that", "en": "I /heard that/ she won the lottery.", "th": "ฉันได้ยินมาว่าเธอถูกล็อตเตอรี่"}
-{"bubble": "heard that", "en": "We /heard that/ the concert was completely sold out.", "th": "พวกเราได้ยินมาว่าตั๋วคอนเสิร์ตขายหมดเกลี้ยงแล้ว"}
-{"bubble": "heard that", "en": "I /heard that/ you bought a new house.", "th": "ฉันได้ยินมาว่าคุณซื้อบ้านใหม่"}
-{"bubble": "heard that", "en": "He /heard that/ the flight was delayed by two hours.", "th": "เขาได้ยินมาว่าเที่ยวบินล่าช้าไปสองชั่วโมง"}
-{"bubble": "heard that", "en": "I /heard that/ the traffic is really bad on the highway.", "th": "ฉันได้ยินมาว่ารถติดหนักมากบนทางหลวง"}
-{"bubble": "heard that", "en": "She /heard that/ the store is giving away free samples.", "th": "เธอได้ยินมาว่าร้านกำลังแจกสินค้าตัวอย่างฟรี"}
-{"bubble": "heard that", "en": "Did you /hear that/ John is taking a gap year?", "th": "คุณได้ยินไหมว่าจอห์นกำลังจะหยุดพักเรียนหนึ่งปี?"}
-{"bubble": "heard that", "en": "I /heard that/ it's going to rain all weekend.", "th": "ฉันได้ยินมาว่าฝนจะตกตลอดสุดสัปดาห์นี้"}
-{"bubble": "heard that", "en": "They /heard that/ the road is blocked due to an accident.", "th": "พวกเขาได้ยินมาว่าถนนถูกปิดกั้นเนื่องจากอุบัติเหตุ"}
-{"bubble": "heard that", "en": "I /heard that/ you are a great cook.", "th": "ฉันได้ยินมาว่าคุณทำอาหารเก่งมาก"}
-{"bubble": "heard that", "en": "We /heard that/ the company is expanding to Asia.", "th": "พวกเราได้ยินมาว่าบริษัทกำลังขยายสาขาไปที่เอเชีย"}
+{"bubble": "west", "en": "The sun always sets in the /west/.", "th": "ดวงอาทิตย์ตกทางทิศตะวันตกเสมอ"}
+{"bubble": "west", "en": "We drove /west/ for three days to reach California.", "th": "เราขับรถไปทางทิศตะวันตกสามวันเพื่อไปให้ถึงแคลิฟอร์เนีย"}
+{"bubble": "west", "en": "Look to the /west/ and you will see the mountains.", "th": "มองไปทางทิศตะวันตกแล้วคุณจะเห็นภูเขา"}
+{"bubble": "west", "en": "They live on the /west/ side of the city.", "th": "พวกเขาอาศัยอยู่ทางฝั่งตะวันตกของเมือง"}
+{"bubble": "west", "en": "The wind is blowing from the /west/ today.", "th": "วันนี้ลมพัดมาจากทิศตะวันตก"}
+{"bubble": "west", "en": "He moved out /west/ to find a new job.", "th": "เขาย้ายไปทางตะวันตกเพื่อหางานใหม่"}
+{"bubble": "west", "en": "My sister attends college in the /west/.", "th": "น้องสาวของฉันเรียนมหาวิทยาลัยในภาคตะวันตก"}
+{"bubble": "west", "en": "The storm is moving towards the /west/.", "th": "พายุกำลังเคลื่อนตัวไปทางทิศตะวันตก"}
+{"bubble": "west", "en": "Seattle is located on the /West/ Coast.", "th": "ซีแอตเทิลตั้งอยู่บนชายฝั่งตะวันตก"}
+{"bubble": "west", "en": "Head /west/ on Main Street for two miles.", "th": "มุ่งหน้าไปทางทิศตะวันตกบนถนนเมนเป็นระยะทางสองไมล์"}
+{"bubble": "west", "en": "The bird migrated /west/ for the winter.", "th": "นกอพยพไปทางทิศตะวันตกในช่วงฤดูหนาว"}
+{"bubble": "west", "en": "We are heading /west/ this summer for vacation.", "th": "ช่วงซัมเมอร์นี้เราจะมุ่งหน้าไปทางตะวันตกเพื่อพักผ่อน"}
+{"bubble": "west", "en": "Is the beach to the east or the /west/?", "th": "ชายหาดอยู่ทางทิศตะวันออกหรือทิศตะวันตก?"}
+{"bubble": "west", "en": "Turn left and walk /west/ until you see the bank.", "th": "เลี้ยวซ้ายแล้วเดินไปทางทิศตะวันตกจนกว่าคุณจะเห็นธนาคาร"}
+{"bubble": "west", "en": "A cold front is coming from the /west/.", "th": "มวลอากาศเย็นกำลังมาจากทางทิศตะวันตก"}
+{"bubble": "west", "en": "They bought a farm out /west/.", "th": "พวกเขาซื้อฟาร์มทางแถบตะวันตก"}
+{"bubble": "west", "en": "The pioneers traveled /west/ in covered wagons.", "th": "ผู้บุกเบิกเดินทางไปทางทิศตะวันตกด้วยรถม้าที่มีหลังคาคลุม"}
+{"bubble": "west", "en": "This train goes /west/ to Chicago.", "th": "รถไฟขบวนนี้ไปทางทิศตะวันตกสู่ชิคาโก"}
+{"bubble": "west", "en": "I prefer the /west/ side of the building.", "th": "ฉันชอบฝั่งตะวันตกของตึกมากกว่า"}
+{"bubble": "west", "en": "The /west/ entrance is closed for construction.", "th": "ทางเข้าทิศตะวันตกปิดเพื่อก่อสร้าง"}
+{"bubble": "west", "en": "She grew up in the American /West/.", "th": "เธอเติบโตมาในแถบตะวันตกของอเมริกา"}
+{"bubble": "west", "en": "Wildfires are a big problem out /west/.", "th": "ไฟป่าเป็นปัญหาใหญ่ทางฝั่งตะวันตก"}
+{"bubble": "west", "en": "Keep driving /west/ until the road ends.", "th": "ขับรถไปทางทิศตะวันตกต่อไปจนกว่าจะสุดถนน"}
+{"bubble": "west", "en": "The /west/ wing of the hospital is new.", "th": "ปีกตึกฝั่งตะวันตกของโรงพยาบาลสร้างใหม่"}
+{"bubble": "west", "en": "We watched a beautiful sunset in the /west/.", "th": "เราดูพระอาทิตย์ตกที่สวยงามทางทิศตะวันตก"}
+{"bubble": "west", "en": "Which way is /west/?", "th": "ทิศตะวันตกไปทางไหน?"}
+{"bubble": "west", "en": "The plane is flying /west/ toward Hawaii.", "th": "เครื่องบินกำลังบินไปทางทิศตะวันตกมุ่งหน้าสู่ฮาวาย"}
+{"bubble": "west", "en": "He owns a ranch out /west/.", "th": "เขาเป็นเจ้าของฟาร์มปศุสัตว์ทางแถบตะวันตก"}
+{"bubble": "west", "en": "Our seats are in the /west/ stand.", "th": "ที่นั่งของเราอยู่บนอัฒจันทร์ฝั่งตะวันตก"}
+{"bubble": "west", "en": "The river flows from east to /west/.", "th": "แม่น้ำไหลจากทิศตะวันออกไปทิศตะวันตก"}
+{"bubble": "west", "en": "She looks out her /west/ window every morning.", "th": "เธอมองออกไปนอกหน้าต่างฝั่งตะวันตกทุกเช้า"}
+{"bubble": "west", "en": "I have never been to the /West/ Coast.", "th": "ฉันไม่เคยไปชายฝั่งตะวันตกเลย"}
+{"bubble": "west", "en": "Take the /west/ exit off the highway.", "th": "ใช้ทางออกทิศตะวันตกจากทางหลวง"}
+{"bubble": "west", "en": "They traveled /west/ to find gold.", "th": "พวกเขาเดินทางไปทางตะวันตกเพื่อหาทองคำ"}
+{"bubble": "west", "en": "The hurricane hit the /west/ side of the island.", "th": "พายุเฮอริเคนพัดถล่มฝั่งตะวันตกของเกาะ"}
+{"bubble": "west", "en": "My compass points north, not /west/.", "th": "เข็มทิศของฉันชี้ไปทางทิศเหนือ ไม่ใช่ทิศตะวันตก"}
+{"bubble": "west", "en": "Let's walk /west/ along the beach.", "th": "มาเดินไปทางทิศตะวันตกตามชายหาดกันเถอะ"}
+{"bubble": "west", "en": "He works in the /west/ building.", "th": "เขาทำงานในตึกฝั่งตะวันตก"}
+{"bubble": "west", "en": "It is much drier out /west/.", "th": "ทางแถบตะวันตกอากาศแห้งกว่ามาก"}
+{"bubble": "west", "en": "The /west/ gate opens at 8 AM.", "th": "ประตูทิศตะวันตกเปิดตอน 8 โมงเช้า"}
+{"bubble": "west", "en": "They are exploring the /west/ coast of Mexico.", "th": "พวกเขากำลังสำรวจชายฝั่งตะวันตกของเม็กซิโก"}
+{"bubble": "west", "en": "The town is ten miles /west/ of here.", "th": "เมืองนี้อยู่ห่างจากนี่ไปทางตะวันตกสิบไมล์"}
+{"bubble": "west", "en": "Follow the trail /west/ into the forest.", "th": "เดินตามเส้นทางไปทางทิศตะวันตกเข้าสู่ป่า"}
+{"bubble": "west", "en": "The /west/ bound traffic is terrible.", "th": "การจราจรฝั่งมุ่งหน้าตะวันตกติดขัดมาก"}
+{"bubble": "west", "en": "We got lost heading /west/.", "th": "เราหลงทางตอนมุ่งหน้าไปทางทิศตะวันตก"}
+{"bubble": "west", "en": "Her apartment faces /west/, so it gets hot in the afternoon.", "th": "อพาร์ตเมนต์ของเธอหันหน้าไปทางทิศตะวันตก ช่วงบ่ายเลยร้อน"}
+{"bubble": "west", "en": "I love the landscapes out /west/.", "th": "ฉันชอบทิวทัศน์ทางแถบตะวันตก"}
+{"bubble": "west", "en": "Drive /west/ on Route 66.", "th": "ขับรถไปทางตะวันตกบนเส้นทาง 66"}
+{"bubble": "west", "en": "The best surfing is on the /west/ coast.", "th": "การเล่นเซิร์ฟที่ดีที่สุดอยู่ทางชายฝั่งตะวันตก"}
+{"bubble": "west", "en": "They plan to expand their business out /west/.", "th": "พวกเขาวางแผนที่จะขยายธุรกิจไปทางตะวันตก"}
+{"bubble": "west", "en": "The /west/ tower is the tallest in the city.", "th": "หอคอยฝั่งตะวันตกสูงที่สุดในเมือง"}
+{"bubble": "west", "en": "Are you heading north or /west/?", "th": "คุณกำลังมุ่งหน้าไปทางเหนือหรือตะวันตก?"}
+{"bubble": "west", "en": "We live in a small town out /west/.", "th": "เราอาศัยอยู่ในเมืองเล็กๆ ทางฝั่งตะวันตก"}
+{"bubble": "west", "en": "The /west/ wind brings rain in the winter.", "th": "ลมตะวันตกนำฝนมาในฤดูหนาว"}
+{"bubble": "west", "en": "Look at the dark clouds to the /west/.", "th": "ดูเมฆดำทางทิศตะวันตกสิ"}
+{"bubble": "west", "en": "The trail leads /west/ to a beautiful waterfall.", "th": "เส้นทางนี้นำไปสู่ทิศตะวันตกยังน้ำตกที่สวยงาม"}
+{"bubble": "west", "en": "He took a road trip out /west/ last year.", "th": "เขาขับรถเที่ยวทางฝั่งตะวันตกเมื่อปีที่แล้ว"}
+{"bubble": "west", "en": "The /west/ side of the street is blocked off.", "th": "ฝั่งตะวันตกของถนนถูกปิดกั้น"}
+{"bubble": "west", "en": "Let's meet at the /west/ entrance of the mall.", "th": "มาเจอกันที่ทางเข้าฝั่งตะวันตกของห้างเถอะ"}
+{"bubble": "west", "en": "The mountain range stretches east to /west/.", "th": "เทือกเขาทอดยาวจากตะวันออกไปตะวันตก"}
+{"bubble": "west", "en": "I prefer the /west/ coast lifestyle.", "th": "ฉันชอบวิถีชีวิตแบบชายฝั่งตะวันตก"}
+{"bubble": "west", "en": "They found a new species in the /west/.", "th": "พวกเขาพบสายพันธุ์ใหม่ในภาคตะวันตก"}
+{"bubble": "west", "en": "We sailed /west/ across the ocean.", "th": "เราล่องเรือไปทางทิศตะวันตกข้ามมหาสมุทร"}
+{"bubble": "west", "en": "There is a severe storm warning out /west/.", "th": "มีการเตือนภัยพายุรุนแรงทางฝั่งตะวันตก"}
+{"bubble": "west", "en": "The /west/ wall of the house needs painting.", "th": "ผนังบ้านฝั่งตะวันตกต้องทาสีใหม่"}
+{"bubble": "west", "en": "She went /west/ to start a new life.", "th": "เธอไปทางตะวันตกเพื่อเริ่มต้นชีวิตใหม่"}
+{"bubble": "west", "en": "The /west/ parking lot is completely full.", "th": "ลานจอดรถฝั่งตะวันตกเต็มหมดแล้ว"}
+{"bubble": "west", "en": "We are looking for a house facing /west/.", "th": "เรากำลังหาบ้านที่หันหน้าไปทางทิศตะวันตก"}
+{"bubble": "west", "en": "He pointed /west/ toward the mountains.", "th": "เขาชี้ไปทางทิศตะวันตกมุ่งสู่ภูเขา"}
+{"bubble": "west", "en": "The /West/ is known for its wide open spaces.", "th": "ภาคตะวันตกขึ้นชื่อเรื่องพื้นที่เปิดโล่งกว้างใหญ่"}
+{"bubble": "west", "en": "Our road trip will cover the entire /west/.", "th": "การเดินทางด้วยรถยนต์ของเราจะครอบคลุมทั่วทั้งภาคตะวันตก"}
+{"bubble": "west", "en": "Take a left and go /west/ for three blocks.", "th": "เลี้ยวซ้ายแล้วไปทางทิศตะวันตกสามบล็อก"}
+{"bubble": "west", "en": "The package was shipped /west/ to Nevada.", "th": "พัสดุถูกส่งไปทางทิศตะวันตกยังรัฐเนวาดา"}
+{"bubble": "west", "en": "Many people moved /west/ during the Gold Rush.", "th": "ผู้คนจำนวนมากย้ายไปทางตะวันตกในช่วงยุคตื่นทอง"}
+{"bubble": "west", "en": "The /west/ boundary of the park is marked by a river.", "th": "เขตแดนทางทิศตะวันตกของสวนสาธารณะถูกกั้นด้วยแม่น้ำ"}
+{"bubble": "west", "en": "They are building a new highway out /west/.", "th": "พวกเขากำลังสร้างทางหลวงสายใหม่ทางฝั่งตะวันตก"}
+{"bubble": "west", "en": "We saw a shooting star in the /west/.", "th": "เราเห็นดาวตกทางทิศตะวันตก"}
+{"bubble": "west", "en": "The front door is on the /west/ side of the building.", "th": "ประตูหน้าอยู่ทางฝั่งตะวันตกของอาคาร"}
+{"bubble": "west", "en": "Life moves a little slower out /west/.", "th": "ชีวิตดำเนินไปช้าลงเล็กน้อยทางแถบตะวันตก"}
+{"bubble": "west", "en": "The /west/ coast is famous for its tech industry.", "th": "ชายฝั่งตะวันตกมีชื่อเสียงเรื่องอุตสาหกรรมเทคโนโลยี"}
+{"bubble": "west", "en": "She wants to travel /west/ next summer.", "th": "เธออยากไปเที่ยวทางตะวันตกในฤดูร้อนหน้า"}
+{"bubble": "west", "en": "Look to your left, which is /west/.", "th": "มองไปทางซ้ายของคุณ ซึ่งก็คือทิศตะวันตก"}
+{"bubble": "west", "en": "They operate a farm in the mid /west/.", "th": "พวกเขาทำฟาร์มในแถบมิดเวสต์"}
+{"bubble": "west", "en": "The /west/ terminal handles all international flights.", "th": "อาคารผู้โดยสารฝั่งตะวันตกจัดการเที่ยวบินระหว่างประเทศทั้งหมด"}
+{"bubble": "west", "en": "I have family living out /west/.", "th": "ฉันมีครอบครัวอาศัยอยู่ทางฝั่งตะวันตก"}
+{"bubble": "west", "en": "Turn /west/ at the next intersection.", "th": "เลี้ยวไปทางตะวันตกที่สี่แยกหน้า"}
+{"bubble": "west", "en": "The /west/ facing rooms are more expensive.", "th": "ห้องที่หันหน้าไปทางทิศตะวันตกจะแพงกว่า"}
+{"bubble": "west", "en": "We rode our bikes /west/ until sunset.", "th": "เราปั่นจักรยานไปทางทิศตะวันตกจนกระทั่งพระอาทิตย์ตกดิน"}
+{"bubble": "west", "en": "The storm caused major damage to the /west/ coast.", "th": "พายุสร้างความเสียหายอย่างหนักให้กับชายฝั่งตะวันตก"}
+{"bubble": "west", "en": "He went to a university out /west/.", "th": "เขาไปเรียนมหาวิทยาลัยทางแถบตะวันตก"}
+{"bubble": "west", "en": "The /west/ side of town is very quiet.", "th": "ฝั่งตะวันตกของเมืองเงียบสงบมาก"}
+{"bubble": "west", "en": "We are heading /west/ on the interstate.", "th": "เรากำลังมุ่งหน้าไปทางตะวันตกบนทางหลวงระหว่างรัฐ"}
+{"bubble": "west", "en": "They are relocating their headquarters /west/.", "th": "พวกเขากำลังย้ายสำนักงานใหญ่ไปทางตะวันตก"}
+{"bubble": "west", "en": "The nearest gas station is two miles /west/.", "th": "ปั๊มน้ำมันที่ใกล้ที่สุดอยู่ห่างออกไปทางตะวันตกสองไมล์"}
+{"bubble": "west", "en": "I love how the light hits the /west/ wall at sunset.", "th": "ฉันชอบวิธีที่แสงตกกระทบผนังฝั่งตะวันตกตอนพระอาทิตย์ตก"}
+{"bubble": "west", "en": "The expedition headed /west/ into unknown territory.", "th": "คณะสำรวจมุ่งหน้าไปทางตะวันตกเข้าสู่ดินแดนที่ไม่รู้จัก"}
+{"bubble": "west", "en": "Take the /west/ exit to get to the stadium.", "th": "ใช้ทางออกทิศตะวันตกเพื่อไปยังสนามกีฬา"}
+{"bubble": "west", "en": "She works for a tech company out /west/.", "th": "เธอทำงานให้บริษัทเทคโนโลยีทางฝั่งตะวันตก"}
+{"bubble": "west", "en": "The eagle flew /west/ toward the mountains.", "th": "นกอินทรีบินไปทางทิศตะวันตกมุ่งสู่ภูเขา"}
+{"bubble": "west", "en": "Our final destination is far /west/.", "th": "จุดหมายปลายทางสุดท้ายของเราอยู่ไกลออกไปทางตะวันตก"}
