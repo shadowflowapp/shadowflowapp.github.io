@@ -1,223 +1,158 @@
-let sentences = [];
-let reverseIndex = {}; // Maps { "clean phrase" -> [sentence objects] }
+let bubbles = {};
+let currentBubble = '';
+let bubbleKeys = [];
+let currentIndex = 0;
 
-// State
-let currentBubble = null; // Dynamically set on load
-let currentSentence = null;
-let correctOrder = [];
-let scrambledChunks = [];
-let userDropZone = []; 
-let isSolved = false;
-let recentlyPlayed = []; // Prevents immediate repeats within a bubble
+// Load user progress from localStorage
+let stats = {
+    sentencesLearned: parseInt(localStorage.getItem('sentencesLearned')) || 0,
+    bubblesLearned: parseInt(localStorage.getItem('bubblesLearned')) || 0
+};
 
-const synth = window.speechSynthesis;
+// UI Elements
+const enText = document.getElementById('en-text');
+const thText = document.getElementById('th-text');
+const bubbleName = document.getElementById('bubble-name');
+const progressIndicator = document.getElementById('progress-indicator');
+const btnNext = document.getElementById('btn-next');
+const btnPrev = document.getElementById('btn-prev');
+const btnPlay = document.getElementById('btn-play');
+const statSentences = document.getElementById('stat-sentences');
+const statBubbles = document.getElementById('stat-bubbles');
+const completionMsg = document.getElementById('completion-msg');
+const cardContainer = document.getElementById('card-container');
 
-// 1. Initialize & Build Reverse Index
-fetch('db.jsonl')
-    .then(response => response.text())
-    .then(text => {
+function updateStatsDisplay() {
+    statSentences.textContent = stats.sentencesLearned;
+    statBubbles.textContent = stats.bubblesLearned;
+}
+
+// Fetch and parse db.jsonl
+async function loadDatabase() {
+    try {
+        const response = await fetch('db.jsonl');
+        if (!response.ok) throw new Error("HTTP error " + response.status);
+        const text = await response.text();
+        
+        // Parse JSON Lines
         const lines = text.split('\n').filter(line => line.trim() !== '');
-        sentences = lines.map(line => JSON.parse(line));
         
-        buildReverseIndex();
-        
-        // Randomly select the starting phrase from the index that has multiple connections
-        const allKeys = Object.keys(reverseIndex);
-        const validKeys = allKeys.filter(k => reverseIndex[k].length > 1);
-        
-        currentBubble = validKeys.length > 0 
-            ? validKeys[Math.floor(Math.random() * validKeys.length)] 
-            : allKeys[0];
-        
-        loadSentenceInBubble();
-    })
-    .catch(err => console.error("Error loading DB", err));
-
-function cleanString(str) {
-    return str.replace(/[.,!?"]/g, '').trim().toLowerCase();
-}
-
-function buildReverseIndex() {
-    reverseIndex = {};
-    sentences.forEach(sentence => {
-        sentence.chunks.forEach(chunk => {
-            let key = cleanString(chunk);
-            if (!reverseIndex[key]) reverseIndex[key] = [];
-            reverseIndex[key].push(sentence);
-        });
-    });
-}
-
-function shuffle(array) {
-    let curId = array.length;
-    while (0 !== curId) {
-        let randId = Math.floor(Math.random() * curId);
-        curId -= 1;
-        let tmp = array[curId];
-        array[curId] = array[randId];
-        array[randId] = tmp;
-    }
-    return array;
-}
-
-// 2. Load a Sentence within the Current Bubble
-function loadSentenceInBubble(forcedTargetChunk = null) {
-    isSolved = false;
-    userDropZone = [];
-    document.getElementById('web-hint').style.display = 'none';
-    document.getElementById('next-btn').style.display = 'none';
-
-    // Pivot bubble if a specific chunk was tapped
-    if (forcedTargetChunk) {
-        currentBubble = cleanString(forcedTargetChunk);
-        recentlyPlayed = []; 
-    }
-
-    let availableSentences = reverseIndex[currentBubble] || [];
-    
-    // Filter out recently played sentences
-    let eligible = availableSentences.filter(s => !recentlyPlayed.includes(s.th));
-    if (eligible.length === 0) {
-        recentlyPlayed = []; 
-        eligible = availableSentences;
-    }
-
-    currentSentence = eligible[Math.floor(Math.random() * eligible.length)];
-    recentlyPlayed.push(currentSentence.th);
-
-    // Update HUD
-    document.getElementById('current-bubble').innerText = `"${currentBubble}"`;
-    document.getElementById('bubble-count').innerText = availableSentences.length;
-    document.getElementById('thai-text').innerText = currentSentence.th;
-
-    // Prepare Chunks
-    correctOrder = [...currentSentence.chunks];
-    scrambledChunks = correctOrder.map((text, i) => ({ id: i, text: text }));
-    scrambledChunks = shuffle(scrambledChunks);
-
-    renderBoard();
-}
-
-// 3. Render the Tap-to-Build Board
-function renderBoard() {
-    const bankEl = document.getElementById('word-bank');
-    const zoneEl = document.getElementById('drop-zone');
-    
-    bankEl.innerHTML = '';
-    zoneEl.innerHTML = '';
-
-    // Render Scrambled Bank
-    scrambledChunks.forEach((chunkObj, idx) => {
-        const btn = document.createElement('button');
-        btn.className = `chunk ${userDropZone.includes(idx) ? 'hidden' : ''}`;
-        btn.innerText = chunkObj.text;
-        btn.onclick = () => tapBankChunk(idx);
-        bankEl.appendChild(btn);
-    });
-
-    // Render Drop Zone (User's built sentence)
-    userDropZone.forEach((scrambledIdx, orderIndex) => {
-        const chunkObj = scrambledChunks[scrambledIdx];
-        const btn = document.createElement('button');
-        
-        if (isSolved) {
-            btn.className = 'chunk solved';
-            
-            // MAGIC: Check if this chunk is a portal to multiple sentences
-            const cleanKey = cleanString(chunkObj.text);
-            if (reverseIndex[cleanKey] && reverseIndex[cleanKey].length > 1) {
-                btn.classList.add('has-bubble');
+        lines.forEach(line => {
+            const entry = JSON.parse(line);
+            if (!bubbles[entry.bubble]) {
+                bubbles[entry.bubble] = [];
             }
+            bubbles[entry.bubble].push(entry);
+        });
 
-            btn.innerText = chunkObj.text;
-            btn.onclick = () => loadSentenceInBubble(chunkObj.text);
+        bubbleKeys = Object.keys(bubbles);
+        if (bubbleKeys.length > 0) {
+            cardContainer.style.display = 'block';
+            loadRandomBubble();
         } else {
-            btn.className = 'chunk in-zone';
-            btn.innerText = chunkObj.text;
-            btn.onclick = () => tapZoneChunk(orderIndex);
+            enText.textContent = "Database is empty.";
+            thText.textContent = "";
         }
-        
-        zoneEl.appendChild(btn);
-    });
-
-    if (isSolved) {
-        bankEl.style.display = 'none';
-    } else {
-        bankEl.style.display = 'flex';
-    }
-
-    if (!isSolved && userDropZone.length === correctOrder.length) {
-        checkAnswer();
+    } catch (error) {
+        console.error("Failed to load db.jsonl:", error);
+        enText.textContent = "Error loading database.";
+        thText.textContent = "Please run this app using a local web server (e.g., Live Server).";
     }
 }
 
-// 4. Tap Interactions
-function tapBankChunk(scrambledIdx) {
-    if (isSolved) return;
-    userDropZone.push(scrambledIdx);
-    renderBoard();
+function loadRandomBubble() {
+    const randomIndex = Math.floor(Math.random() * bubbleKeys.length);
+    currentBubble = bubbleKeys[randomIndex];
+    currentIndex = 0;
+    updateUI();
 }
 
-function tapZoneChunk(orderIndex) {
-    if (isSolved) return;
-    userDropZone.splice(orderIndex, 1);
-    renderBoard();
-}
-
-// 5. Check Answer
-function checkAnswer() {
-    let isCorrect = true;
+function updateUI() {
+    const currentData = bubbles[currentBubble][currentIndex];
+    const totalInBubble = bubbles[currentBubble].length;
     
-    userDropZone.forEach((scrambledIdx, index) => {
-        if (scrambledChunks[scrambledIdx].text !== correctOrder[index]) {
-            isCorrect = false;
-        }
-    });
+    bubbleName.textContent = `"${currentBubble}"`;
+    progressIndicator.textContent = `${currentIndex + 1} / ${totalInBubble}`;
+    
+    // Parse the /target/ syntax into a styled HTML span
+    const formattedEn = currentData.en.replace(/\/(.*?)\//g, '<span class="highlight">$1</span>');
+    enText.innerHTML = formattedEn;
+    
+    thText.textContent = currentData.th;
 
-    if (isCorrect) {
-        isSolved = true;
-        
-        document.getElementById('web-hint').style.display = 'block';
-        document.getElementById('next-btn').style.display = 'block';
-        
-        if (navigator.vibrate) navigator.vibrate(50); 
-        
-        renderBoard(); 
-        playAudio();   
+    btnPrev.disabled = currentIndex === 0;
+    completionMsg.style.display = 'none';
+    btnNext.textContent = currentIndex === totalInBubble - 1 ? 'Finish' : 'Next';
+}
 
+function playAudio(text) {
+    if (!window.speechSynthesis) {
+        alert("Your browser does not support text-to-speech.");
+        return;
+    }
+    
+    window.speechSynthesis.cancel(); 
+    
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = 'en-US';
+    utterance.rate = 0.9; 
+    
+    const voices = window.speechSynthesis.getVoices();
+    const maleVoice = voices.find(v => 
+        (v.lang === 'en-US' || v.lang === 'en_US') && 
+        (v.name.toLowerCase().includes('david') || 
+         v.name.toLowerCase().includes('male') || 
+         v.name.toLowerCase().includes('guy'))
+    );
+    
+    if (maleVoice) {
+        utterance.voice = maleVoice;
     } else {
-        const zoneEl = document.getElementById('drop-zone');
-        zoneEl.style.borderColor = '#ef4444'; // Red flash for error
-        if (navigator.vibrate) navigator.vibrate([100, 50, 100]); 
+        const fallback = voices.find(v => v.lang === 'en-US');
+        if (fallback) utterance.voice = fallback;
+    }
+
+    window.speechSynthesis.speak(utterance);
+}
+
+if (speechSynthesis.onvoiceschanged !== undefined) {
+  speechSynthesis.onvoiceschanged = () => {};
+}
+
+btnPlay.addEventListener('click', () => {
+    // Strip the '/' characters so the TTS engine reads it normally
+    const plainTextEn = bubbles[currentBubble][currentIndex].en.replace(/\//g, '');
+    playAudio(plainTextEn);
+});
+
+btnNext.addEventListener('click', () => {
+    stats.sentencesLearned++;
+    localStorage.setItem('sentencesLearned', stats.sentencesLearned);
+    updateStatsDisplay();
+
+    const totalInBubble = bubbles[currentBubble].length;
+
+    if (currentIndex < totalInBubble - 1) {
+        currentIndex++;
+        updateUI();
+    } else {
+        stats.bubblesLearned++;
+        localStorage.setItem('bubblesLearned', stats.bubblesLearned);
+        updateStatsDisplay();
         
+        completionMsg.style.display = 'block';
         setTimeout(() => {
-            zoneEl.style.borderColor = 'var(--border)';
-            userDropZone = [];
-            renderBoard();
-        }, 500);
+            loadRandomBubble();
+        }, 1500);
     }
-}
+});
 
-// 6. Audio Engine
-function playAudio() {
-    if (synth.speaking) synth.cancel(); 
-    
-    setTimeout(() => {
-        const textToSpeak = correctOrder.join(' '); 
-        const utterThis = new SpeechSynthesisUtterance(textToSpeak);
-        const voices = synth.getVoices();
-        
-        const maleUSIdentifiers = ['David', 'Alex', 'Aaron', 'Google US English'];
-        let selectedVoice = voices.find(v => 
-            v.lang.includes('en-US') && maleUSIdentifiers.some(id => v.name.includes(id))
-        );
-        if (!selectedVoice) selectedVoice = voices.find(v => v.lang.includes('en-US'));
+btnPrev.addEventListener('click', () => {
+    if (currentIndex > 0) {
+        currentIndex--;
+        updateUI();
+    }
+});
 
-        if (selectedVoice) utterThis.voice = selectedVoice;
-        utterThis.rate = 0.95; 
-        
-        synth.speak(utterThis);
-    }, 50);
-}
-
-speechSynthesis.onvoiceschanged = () => { synth.getVoices(); };
+updateStatsDisplay();
+loadDatabase();
