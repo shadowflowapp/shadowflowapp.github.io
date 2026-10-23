@@ -2,7 +2,6 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <!-- Prevents double-tap zooming on mobile for smooth swiping -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Phrase Fluency Bubbles</title>
     <style>
@@ -30,7 +29,7 @@
             margin: 0;
             padding: 20px;
             box-sizing: border-box;
-            overflow-x: hidden; /* Prevent horizontal scroll on swipe */
+            overflow-x: hidden;
         }
         .header {
             width: 100%;
@@ -65,7 +64,6 @@
             color: var(--gta-blue);
         }
         
-        /* Autoplay Toggle */
         .autoplay-container {
             display: flex;
             align-items: center;
@@ -110,25 +108,49 @@
             box-shadow: 0 0 10px var(--gta-blue);
         }
 
+        /* --- FIXED LAYOUT PANELS --- */
         .card {
             background-color: var(--surface-color);
             border: 3px solid #333;
             border-top: 3px solid var(--gta-blue);
             border-bottom: 3px solid var(--gta-pink);
-            padding: 50px 30px;
+            padding: 30px 20px 20px 20px;
             width: 100%;
             max-width: 500px;
             text-align: center;
             box-shadow: 0 15px 40px rgba(0,0,0,0.8);
             position: relative;
-            /* Swipe logic improvements */
             user-select: none; 
-            touch-action: pan-y; /* allow vertical scroll, capture horizontal swipe */
+            touch-action: pan-y; 
             cursor: grab;
+            
+            /* Flexbox anchoring */
+            display: flex;
+            flex-direction: column;
+            min-height: 480px; 
         }
         .card:active {
             cursor: grabbing;
         }
+
+        .panel-top {
+            flex-shrink: 0;
+        }
+        .panel-middle {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px 0;
+        }
+        .panel-bottom {
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+        }
+
         .bubble-badge {
             position: absolute;
             top: -16px;
@@ -142,21 +164,23 @@
             letter-spacing: 2px;
             text-transform: uppercase;
             box-shadow: 0 0 10px rgba(0, 229, 255, 0.5);
+            white-space: nowrap;
         }
         .progress-indicator {
             font-size: 1rem;
             font-weight: bold;
             color: var(--text-secondary);
-            margin-bottom: 25px;
+            margin-bottom: 10px;
             font-family: 'Bebas Neue', cursive;
             letter-spacing: 1px;
+            margin-top: 15px;
         }
         .english { 
             font-size: 1.8em; 
             margin-bottom: 25px; 
             line-height: 1.3; 
             font-weight: 900;
-            text-transform: uppercase; /* GTA subtitle vibe */
+            text-transform: uppercase; 
         }
         .highlight {
             color: #000;
@@ -169,7 +193,6 @@
         .thai { 
             font-size: 1.2em; 
             color: var(--text-secondary); 
-            margin-bottom: 40px; 
             font-weight: 400;
         }
         .controls {
@@ -216,12 +239,20 @@
             color: #000;
             box-shadow: 0 0 15px rgba(0, 229, 255, 0.6);
         }
+
+        /* Fixed height container for completion message to prevent button shifts */
+        .msg-container {
+            height: 35px;
+            margin-top: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
         #completion-msg {
             display: none;
             color: var(--gta-green);
-            margin-top: 25px;
             font-family: 'Bebas Neue', cursive;
-            font-size: 1.8rem;
+            font-size: 1.6rem;
             letter-spacing: 1px;
             text-transform: uppercase;
             text-shadow: 0 0 10px rgba(85, 255, 0, 0.4);
@@ -235,7 +266,7 @@
         .swipe-hint {
             font-size: 0.8rem;
             color: #666;
-            margin-top: 15px;
+            margin-top: 10px;
             text-transform: uppercase;
             letter-spacing: 1px;
         }
@@ -259,19 +290,32 @@
     </div>
 
     <div class="card" id="card-container" style="display: none;">
-        <div class="bubble-badge" id="bubble-name">Phrase</div>
-        <div class="progress-indicator" id="progress-indicator">1 / 10</div>
         
-        <div class="english" id="en-text">Loading...</div>
-        <div class="thai" id="th-text">กำลังโหลด...</div>
-        
-        <div class="controls">
-            <button id="btn-prev">PREV</button>
-            <button id="btn-play" class="btn-play">🔊 LISTEN</button>
-            <button id="btn-next">NEXT</button>
+        <!-- Top Panel: Badge & Progress -->
+        <div class="panel-top">
+            <div class="bubble-badge" id="bubble-name">Phrase</div>
+            <div class="progress-indicator" id="progress-indicator">1 / 10</div>
         </div>
-        <div id="completion-msg">MISSION PASSED! NEXT BUBBLE...</div>
-        <div class="swipe-hint">← Swipe for Prev / Next →</div>
+        
+        <!-- Middle Panel: Sentences (Flex grows to fill space) -->
+        <div class="panel-middle">
+            <div class="english" id="en-text">Loading...</div>
+            <div class="thai" id="th-text">กำลังโหลด...</div>
+        </div>
+        
+        <!-- Bottom Panel: Controls anchored to bottom -->
+        <div class="panel-bottom">
+            <div class="controls">
+                <button id="btn-prev">PREV</button>
+                <button id="btn-play" class="btn-play">🔊 LISTEN</button>
+                <button id="btn-next">NEXT</button>
+            </div>
+            <div class="msg-container">
+                <div id="completion-msg">MISSION PASSED! NEXT BUBBLE...</div>
+            </div>
+            <div class="swipe-hint">← Swipe for Prev / Next →</div>
+        </div>
+
     </div>
 
     <script src="app.js"></script>
