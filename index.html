@@ -25,11 +25,13 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            min-height: 100vh;
+            /* Lock the screen size to prevent scrolling */
+            height: 100dvh; 
+            max-height: 100dvh;
+            overflow: hidden; 
             margin: 0;
-            padding: 20px;
+            padding: 10px 15px 20px 15px;
             box-sizing: border-box;
-            overflow-x: hidden;
         }
         .header {
             width: 100%;
@@ -37,21 +39,22 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-top: 10px;
-            margin-bottom: 30px;
-            padding-bottom: 15px;
+            margin-top: 5px;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
             border-bottom: 2px solid var(--gta-pink);
+            flex-shrink: 0;
         }
         .title {
             font-family: 'Bebas Neue', cursive;
-            font-size: 2.5rem;
+            font-size: 2.2rem;
             color: var(--gta-pink);
             letter-spacing: 2px;
             margin: 0;
             text-shadow: 2px 2px 0px rgba(255, 0, 127, 0.3);
         }
         .stats { 
-            font-size: 0.9rem; 
+            font-size: 0.85rem; 
             color: var(--text-secondary); 
             display: flex;
             flex-direction: column;
@@ -60,7 +63,7 @@
             text-transform: uppercase;
         }
         .stats-number {
-            font-size: 1.4rem;
+            font-size: 1.3rem;
             color: var(--gta-blue);
         }
         
@@ -68,17 +71,18 @@
             display: flex;
             align-items: center;
             gap: 10px;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
             font-family: 'Bebas Neue', cursive;
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             letter-spacing: 1px;
             color: var(--gta-blue);
+            flex-shrink: 0;
         }
         .switch {
             position: relative;
             display: inline-block;
-            width: 50px;
-            height: 24px;
+            width: 44px;
+            height: 22px;
         }
         .switch input { opacity: 0; width: 0; height: 0; }
         .slider {
@@ -93,7 +97,7 @@
         .slider:before {
             position: absolute;
             content: "";
-            height: 16px; width: 16px;
+            height: 14px; width: 14px;
             left: 2px; bottom: 2px;
             background-color: var(--gta-blue);
             transition: .4s;
@@ -103,7 +107,7 @@
             background-color: rgba(0, 229, 255, 0.2);
         }
         input:checked + .slider:before {
-            transform: translateX(26px);
+            transform: translateX(22px);
             background-color: var(--gta-blue);
             box-shadow: 0 0 10px var(--gta-blue);
         }
@@ -114,20 +118,22 @@
             border: 3px solid #333;
             border-top: 3px solid var(--gta-blue);
             border-bottom: 3px solid var(--gta-pink);
-            padding: 30px 20px 20px 20px;
+            padding: 25px 15px 15px 15px;
             width: 100%;
             max-width: 500px;
             text-align: center;
-            box-shadow: 0 15px 40px rgba(0,0,0,0.8);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.9);
             position: relative;
             user-select: none; 
-            touch-action: pan-y; 
+            touch-action: none; /* Disables browser pull-to-refresh and scroll */
             cursor: grab;
             
-            /* Flexbox anchoring */
+            /* Flexbox anchoring to fill remaining space */
             display: flex;
             flex-direction: column;
-            min-height: 480px; 
+            flex-grow: 1; /* Takes up all remaining vertical space */
+            min-height: 0; /* Prevents overflow */
+            box-sizing: border-box;
         }
         .card:active {
             cursor: grabbing;
@@ -142,7 +148,8 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            padding: 20px 0;
+            padding: 10px 0;
+            overflow: hidden; /* Keeps text inside */
         }
         .panel-bottom {
             flex-shrink: 0;
@@ -153,62 +160,64 @@
 
         .bubble-badge {
             position: absolute;
-            top: -16px;
+            top: -14px;
             left: 50%;
             transform: translateX(-50%);
             background-color: var(--gta-blue);
             color: #000;
-            padding: 5px 20px;
+            padding: 4px 15px;
             font-family: 'Bebas Neue', cursive;
-            font-size: 1.5rem;
+            font-size: 1.3rem;
             letter-spacing: 2px;
             text-transform: uppercase;
             box-shadow: 0 0 10px rgba(0, 229, 255, 0.5);
             white-space: nowrap;
+            z-index: 10;
         }
         .progress-indicator {
-            font-size: 1rem;
+            font-size: 0.9rem;
             font-weight: bold;
             color: var(--text-secondary);
-            margin-bottom: 10px;
+            margin-bottom: 5px;
             font-family: 'Bebas Neue', cursive;
             letter-spacing: 1px;
-            margin-top: 15px;
+            margin-top: 5px;
         }
         .english { 
-            font-size: 1.8em; 
-            margin-bottom: 25px; 
-            line-height: 1.3; 
+            font-size: 1.5em; /* Slightly smaller to fit any screen */
+            margin-bottom: 20px; 
+            line-height: 1.25; 
             font-weight: 900;
             text-transform: uppercase; 
         }
         .highlight {
             color: #000;
             background-color: var(--gta-yellow);
-            padding: 2px 8px;
+            padding: 2px 6px;
             transform: skewX(-10deg);
             display: inline-block;
             box-shadow: 3px 3px 0px rgba(255, 234, 0, 0.4);
         }
         .thai { 
-            font-size: 1.2em; 
+            font-size: 1.1em; 
             color: var(--text-secondary); 
             font-weight: 400;
+            line-height: 1.3;
         }
         .controls {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
         }
         button {
             background-color: transparent;
             color: var(--gta-pink);
             border: 2px solid var(--gta-pink);
-            padding: 12px 15px;
+            padding: 10px 10px;
             cursor: pointer;
             font-family: 'Bebas Neue', cursive;
-            font-size: 1.3rem;
+            font-size: 1.2rem;
             letter-spacing: 1px;
             transition: all 0.2s ease;
             flex: 1;
@@ -232,7 +241,7 @@
             background-color: rgba(0, 229, 255, 0.1);
             color: var(--gta-blue);
             border-color: var(--gta-blue);
-            flex: 1.5;
+            flex: 1.2;
         }
         .btn-play:hover:not(:disabled) {
             background-color: var(--gta-blue);
@@ -240,10 +249,9 @@
             box-shadow: 0 0 15px rgba(0, 229, 255, 0.6);
         }
 
-        /* Fixed height container for completion message to prevent button shifts */
         .msg-container {
-            height: 35px;
-            margin-top: 15px;
+            height: 30px;
+            margin-top: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -252,7 +260,7 @@
             display: none;
             color: var(--gta-green);
             font-family: 'Bebas Neue', cursive;
-            font-size: 1.6rem;
+            font-size: 1.4rem;
             letter-spacing: 1px;
             text-transform: uppercase;
             text-shadow: 0 0 10px rgba(85, 255, 0, 0.4);
@@ -264,9 +272,9 @@
             100% { transform: scale(1); }
         }
         .swipe-hint {
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             color: #666;
-            margin-top: 10px;
+            margin-top: 5px;
             text-transform: uppercase;
             letter-spacing: 1px;
         }
@@ -297,7 +305,7 @@
             <div class="progress-indicator" id="progress-indicator">1 / 10</div>
         </div>
         
-        <!-- Middle Panel: Sentences (Flex grows to fill space) -->
+        <!-- Middle Panel: Sentences (Flex grows to fill space perfectly) -->
         <div class="panel-middle">
             <div class="english" id="en-text">Loading...</div>
             <div class="thai" id="th-text">กำลังโหลด...</div>
@@ -311,7 +319,7 @@
                 <button id="btn-next">NEXT</button>
             </div>
             <div class="msg-container">
-                <div id="completion-msg">MISSION PASSED! NEXT BUBBLE...</div>
+                <div id="completion-msg">MISSION PASSED! NEXT...</div>
             </div>
             <div class="swipe-hint">← Swipe for Prev / Next →</div>
         </div>
