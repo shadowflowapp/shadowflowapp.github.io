@@ -1,0 +1,44 @@
+{
+  "Kinematics in One Dimension": [
+    {
+      "question": "A car accelerates uniformly from rest to a speed of 20 m/s in 5.0 s. What is the acceleration of the car?",
+      "options": ["2.0 m/s²", "4.0 m/s²", "5.0 m/s²", "10.0 m/s²"],
+      "correct": 1,
+      "explanation": "a = (v - v₀) / t = (20 - 0) / 5 = 4.0 m/s²"
+    },
+    {
+      "question": "An object is dropped from a height of 45 m. Neglecting air resistance, how long does it take to hit the ground? (Use g = 10 m/s²)",
+      "options": ["2.0 s", "3.0 s", "4.5 s", "9.0 s"],
+      "correct": 1,
+      "explanation": "y = ½gt² ➔ 45 = ½(10)t² ➔ 45 = 5t² ➔ t² = 9 ➔ t = 3.0 s"
+    },
+    {
+      "question": "Which of the following represents the area under a velocity-time graph?",
+      "options": ["Acceleration", "Average Velocity", "Displacement", "Jerk"],
+      "correct": 2,
+      "explanation": "The integral (area under the curve) of velocity with respect to time yields displacement (Δx)."
+    }
+  ],
+  "Newton's Laws of Motion": [
+    {
+      "question": "A 10 kg box is pushed across a frictionless horizontal surface with a constant force of 50 N. What is its acceleration?",
+      "options": ["0.2 m/s²", "5.0 m/s²", "10.0 m/s²", "500 m/s²"],
+      "correct": 1,
+      "explanation": "F = ma ➔ 50 = 10a ➔ a = 5.0 m/s²"
+    },
+    {
+      "question": "An elevator is accelerating upward at 2.0 m/s². What is the apparent weight of a 50 kg person inside? (Use g = 9.8 m/s²)",
+      "options": ["390 N", "490 N", "590 N", "100 N"],
+      "correct": 2,
+      "explanation": "N - mg = ma ➔ N = m(g + a) = 50(9.8 + 2.0) = 50(11.8) = 590 N"
+    }
+  ],
+  "Work and Kinetic Energy": [
+    {
+      "question": "A force of 20 N pushes a block 5 meters across a floor in the direction of the force. How much work is done?",
+      "options": ["4 J", "15 J", "25 J", "100 J"],
+      "correct": 3,
+      "explanation": "W = F * d * cos(θ) = 20 * 5 * cos(0) = 100 J"
+    }
+  ]
+}
