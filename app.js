@@ -1,132 +1,177 @@
-let db = {};
-let currentTopic = "";
-let currentQuestionIndex = 0;
+// State Variables
+let db = []; // Will be populated from db.jsonl
+let currentWordIndex = 0;
+let learnedCountInBatch = 0;
+let quizQueue = [];
+let currentQuizIndex = 0;
 let score = 0;
 
-// DOM Elements
-const viewTopic = document.getElementById('topic-view');
-const viewQuiz = document.getElementById('quiz-view');
-const viewResult = document.getElementById('result-view');
-const topicListDiv = document.getElementById('topic-list');
-const questionText = document.getElementById('question-text');
-const optionsContainer = document.getElementById('options-container');
-const progressIndicator = document.getElementById('progress-indicator');
-const explanationBox = document.getElementById('explanation-box');
-const nextBtn = document.getElementById('next-btn');
-const scoreDisplay = document.getElementById('score-display');
+// DOM Elements mapping
+const views = {
+    learn: document.getElementById('learning-view'),
+    quiz: document.getElementById('quiz-view'),
+    result: document.getElementById('result-view')
+};
 
-// Initialize App
-async function initApp() {
+// Fetch and parse the JSONL database
+async function loadDatabase() {
     try {
-        const response = await fetch('db.json');
-        if (!response.ok) throw new Error("Network response was not ok");
-        db = await response.json();
-        renderTopicMenu();
+        const response = await fetch('db.jsonl');
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+
+        const text = await response.text();
+        
+        // Parse JSONL: split by newline, ignore empty lines, parse each string to JSON
+        db = text
+            .split('\n')
+            .filter(line => line.trim() !== '')
+            .map(line => JSON.parse(line));
+            
+        initApp();
     } catch (error) {
-        topicListDiv.innerHTML = "<p style='color:red;'>Error loading database (CORS issue). Ensure you run this via a local web server.</p>";
-        console.error("Fetch error: ", error);
+        console.error("Error loading db.jsonl:", error);
+        views.learn.classList.remove('hidden');
+        document.getElementById('th-meaning').textContent = "⚠️ Error loading db.jsonl. Make sure you are running a local web server.";
+        document.getElementById('th-meaning').classList.add('text-red-500');
     }
 }
 
-// 1. Render Topics
-function renderTopicMenu() {
-    topicListDiv.innerHTML = "";
-    Object.keys(db).forEach(topic => {
-        const btn = document.createElement('button');
-        btn.className = 'topic-btn';
-        btn.innerHTML = `<strong>${topic}</strong> <br><span style="font-size:0.85rem; color:var(--text-sub);">${db[topic].length} Questions</span>`;
-        btn.onclick = () => startTopic(topic);
-        topicListDiv.appendChild(btn);
-    });
+// Initialize App after DB load
+function initApp() {
+    views.learn.classList.remove('hidden');
+    renderLearnView();
 }
 
-// Switches UI views safely
-function switchView(viewElement) {
-    viewTopic.classList.remove('active-view');
-    viewQuiz.classList.remove('active-view');
-    viewResult.classList.remove('active-view');
-    viewElement.classList.add('active-view');
+// --- LEARNING LOGIC ---
+function renderLearnView() {
+    if (currentWordIndex >= db.length) {
+        alert("You have finished all words in the database!");
+        return;
+    }
+
+    const currentWord = db[currentWordIndex];
+    document.getElementById('en-word').textContent = currentWord.word;
+    document.getElementById('th-meaning').textContent = currentWord.thai;
+    document.getElementById('learn-progress').textContent = `${learnedCountInBatch + 1}/10`;
 }
 
-// 2. Start a Topic
-function startTopic(topic) {
-    currentTopic = topic;
-    currentQuestionIndex = 0;
+// Global function attached to audio button
+window.playAudio = function() {
+    const word = db[currentWordIndex].word;
+    const utterance = new SpeechSynthesisUtterance(word);
+    utterance.lang = 'en-US';
+    utterance.rate = 0.9; // Slightly slower for clear pronunciation
+    window.speechSynthesis.speak(utterance);
+};
+
+// Global function attached to Next button
+window.nextWord = function() {
+    // Add current word to the upcoming quiz queue
+    quizQueue.push(db[currentWordIndex]);
+    
+    currentWordIndex++;
+    learnedCountInBatch++;
+
+    // Trigger quiz every 10 words
+    if (learnedCountInBatch === 10) {
+        startQuiz();
+    } else {
+        renderLearnView();
+    }
+};
+
+// --- QUIZ LOGIC ---
+function startQuiz() {
+    views.learn.classList.add('hidden');
+    views.quiz.classList.remove('hidden');
+    
+    currentQuizIndex = 0;
     score = 0;
-    switchView(viewQuiz);
-    loadQuestion();
+    
+    // Shuffle the quiz questions so they aren't in the exact order they were just learned
+    quizQueue = quizQueue.sort(() => Math.random() - 0.5);
+    
+    renderQuizQuestion();
 }
 
-// 3. Load Current Question (Fixed Order)
-function loadQuestion() {
-    const questionData = db[currentTopic][currentQuestionIndex];
-    const totalQ = db[currentTopic].length;
+function renderQuizQuestion() {
+    const q = quizQueue[currentQuizIndex];
     
-    // Reset UI
-    explanationBox.style.display = 'none';
-    nextBtn.disabled = true;
+    document.getElementById('quiz-progress').textContent = `Question ${currentQuizIndex + 1}/10`;
     
-    // Update text
-    progressIndicator.textContent = `${currentTopic} • Question ${currentQuestionIndex + 1} of ${totalQ}`;
-    questionText.textContent = questionData.question;
+    // Replace the blank with a styled question mark
+    const styledBlank = `<span class="text-indigo-500 border-b-2 border-indigo-500 px-4 py-1 mx-1 tracking-widest">?</span>`;
+    document.getElementById('quiz-en-sentence').innerHTML = q.en_sentence.replace('_______', styledBlank);
     
-    // Generate Options
-    optionsContainer.innerHTML = "";
-    questionData.options.forEach((optText, index) => {
+    document.getElementById('quiz-th-hint').textContent = `Hint: ${q.th_sentence}`;
+
+    // Prepare options (1 correct, 3 distractors) and shuffle them
+    const options = [q.word, ...q.distractors].sort(() => Math.random() - 0.5);
+    
+    const optionsContainer = document.getElementById('quiz-options');
+    optionsContainer.innerHTML = ''; // Clear previous buttons
+
+    options.forEach(option => {
         const btn = document.createElement('button');
-        btn.className = 'option-btn';
-        btn.textContent = optText;
-        btn.onclick = () => handleAnswer(btn, index, questionData.correct, questionData.explanation);
+        btn.className = "w-full text-left px-6 py-4 rounded-xl border-2 border-gray-100 bg-white text-lg font-medium text-gray-700 shadow-sm hover:border-indigo-300 hover:bg-indigo-50 transition-all focus:outline-none";
+        btn.textContent = option;
+        
+        btn.onclick = () => handleAnswer(btn, option, q.word);
+        
         optionsContainer.appendChild(btn);
     });
 }
 
-// 4. Handle Answer Checking
-function handleAnswer(selectedBtn, selectedIndex, correctIndex, explanationText) {
-    // Disable all buttons to prevent multiple clicks
-    const allOptions = document.querySelectorAll('.option-btn');
-    allOptions.forEach(btn => btn.disabled = true);
+function handleAnswer(btnElement, selectedWord, correctWord) {
+    // Disable all buttons to prevent double-clicking
+    const allBtns = document.getElementById('quiz-options').querySelectorAll('button');
+    allBtns.forEach(b => b.disabled = true);
 
-    // Check correctness
-    if (selectedIndex === correctIndex) {
-        selectedBtn.classList.add('correct');
+    if (selectedWord === correctWord) {
+        btnElement.classList.add('correct-bg', 'border-green-500');
         score++;
     } else {
-        selectedBtn.classList.add('wrong');
-        // Highlight the correct one
-        allOptions[correctIndex].classList.add('correct');
+        btnElement.classList.add('wrong-bg', 'border-red-500');
+        // Highlight the correct answer for the user
+        allBtns.forEach(b => {
+            if (b.textContent === correctWord) {
+                b.classList.add('correct-bg', 'border-green-500');
+            }
+        });
     }
 
-    // Show Explanation
-    explanationBox.innerHTML = `<strong>Explanation:</strong> ${explanationText}`;
-    explanationBox.style.display = 'block';
-
-    // Enable Next Button
-    nextBtn.disabled = false;
+    // Wait a brief moment to display the result before showing the next question
+    setTimeout(() => {
+        currentQuizIndex++;
+        if (currentQuizIndex >= 10) {
+            endQuiz();
+        } else {
+            renderQuizQuestion();
+        }
+    }, 1200);
 }
 
-// 5. Next Button Logic
-nextBtn.addEventListener('click', () => {
-    const totalQ = db[currentTopic].length;
-    if (currentQuestionIndex < totalQ - 1) {
-        currentQuestionIndex++;
-        loadQuestion();
-    } else {
-        showResults();
-    }
-});
-
-// 6. Show Results
-function showResults() {
-    switchView(viewResult);
-    const totalQ = db[currentTopic].length;
-    scoreDisplay.textContent = `${score} / ${totalQ}`;
+function endQuiz() {
+    views.quiz.classList.add('hidden');
+    views.result.classList.remove('hidden');
+    document.getElementById('final-score').textContent = `${score}/10`;
 }
 
-// 7. Return to Menu
-function showTopicMenu() {
-    switchView(viewTopic);
-}
+// Global function attached to Continue Learning button
+window.continueLearning = function() {
+    // Reset batch state
+    learnedCountInBatch = 0;
+    quizQueue = [];
+    
+    // Switch views back to learning
+    views.result.classList.add('hidden');
+    views.learn.classList.remove('hidden');
+    
+    renderLearnView();
+};
 
-// Boot up
-initApp();
+// Start fetching data immediately
+loadDatabase();
