@@ -1,166 +1,87 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="th">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Physics MCQ App</title>
+    <title>X.app - Minimal English Learner</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap');
-
-        :root {
-            --bg-dark: #0f172a;
-            --surface: #1e293b;
-            --primary: #38bdf8;
-            --text-main: #f8fafc;
-            --text-sub: #94a3b8;
-            --success: #22c55e;
-            --danger: #ef4444;
-            --border-color: #334155;
+        /* Minimalist animations */
+        .fade-in { animation: fadeIn 0.3s ease-in-out; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
-
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: var(--bg-dark);
-            color: var(--text-main);
-            margin: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            height: 100dvh;
-            padding: 20px;
-            box-sizing: border-box;
-        }
-
-        .header {
-            width: 100%;
-            max-width: 600px;
-            text-align: center;
-            margin-bottom: 20px;
-            padding-bottom: 15px;
-            border-bottom: 2px solid var(--border-color);
-        }
-
-        h1 { margin: 0; color: var(--primary); font-size: 1.8rem; }
-        .subtitle { color: var(--text-sub); font-size: 0.9rem; margin-top: 5px; }
-
-        .container {
-            width: 100%;
-            max-width: 600px;
-            background-color: var(--surface);
-            border-radius: 12px;
-            padding: 20px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
-            display: flex;
-            flex-direction: column;
-            flex-grow: 1;
-            max-height: 80vh;
-            overflow-y: auto;
-            box-sizing: border-box;
-        }
-
-        /* Views */
-        #topic-view, #quiz-view, #result-view { display: none; width: 100%; }
-        .active-view { display: flex !important; flex-direction: column; height: 100%; }
-
-        /* Topic Menu */
-        .topic-btn {
-            background-color: transparent;
-            border: 1px solid var(--border-color);
-            color: var(--text-main);
-            padding: 15px;
-            margin-bottom: 10px;
-            border-radius: 8px;
-            font-size: 1.1rem;
-            cursor: pointer;
-            text-align: left;
-            transition: all 0.2s;
-        }
-        .topic-btn:hover { border-color: var(--primary); background-color: rgba(56, 189, 248, 0.1); }
-
-        /* Quiz UI */
-        .progress-bar { font-size: 0.9rem; color: var(--primary); font-weight: 600; margin-bottom: 15px; }
-        .question-text { font-size: 1.25rem; line-height: 1.5; font-weight: 600; margin-bottom: 20px; }
-        
-        .options-grid { display: flex; flex-direction: column; gap: 10px; flex-grow: 1; }
-        .option-btn {
-            background-color: #2a3b52;
-            border: 2px solid transparent;
-            color: var(--text-main);
-            padding: 15px;
-            border-radius: 8px;
-            font-size: 1rem;
-            cursor: pointer;
-            text-align: left;
-            transition: 0.2s;
-        }
-        .option-btn:hover:not(:disabled) { background-color: #3b5070; }
-        
-        .correct { background-color: rgba(34, 197, 94, 0.15) !important; border-color: var(--success) !important; }
-        .wrong { background-color: rgba(239, 68, 68, 0.15) !important; border-color: var(--danger) !important; }
-        
-        .explanation {
-            margin-top: 15px;
-            padding: 12px;
-            background-color: rgba(255,255,255,0.05);
-            border-left: 4px solid var(--primary);
-            border-radius: 4px;
-            font-size: 0.95rem;
-            color: var(--text-sub);
-            display: none;
-        }
-
-        .controls { margin-top: 20px; display: flex; justify-content: flex-end; }
-        .primary-btn {
-            background-color: var(--primary);
-            color: var(--bg-dark);
-            border: none;
-            padding: 12px 24px;
-            border-radius: 6px;
-            font-size: 1rem;
-            font-weight: bold;
-            cursor: pointer;
-        }
-        .primary-btn:disabled { opacity: 0.5; cursor: not-allowed; }
-
-        /* Results UI */
-        .result-title { font-size: 2rem; text-align: center; color: var(--primary); margin-bottom: 10px; }
-        .score-display { font-size: 3rem; font-weight: 800; text-align: center; margin: 20px 0; }
+        .correct-bg { background-color: #22c55e !important; color: white !important; }
+        .wrong-bg { background-color: #ef4444 !important; color: white !important; }
     </style>
 </head>
-<body>
+<body class="bg-gray-50 text-gray-900 h-screen flex flex-col justify-center items-center p-4 select-none">
 
-    <div class="header">
-        <h1>PHYSICS MCQ</h1>
-        <div class="subtitle">For Scientists and Engineers</div>
-    </div>
+    <!-- App Container -->
+    <div id="app-container" class="w-full max-w-md bg-white rounded-3xl shadow-xl overflow-hidden min-h-[500px] flex flex-col relative fade-in">
+        
+        <!-- LEARNING VIEW -->
+        <div id="learning-view" class="flex flex-col h-full p-8 text-center flex-grow justify-center relative hidden">
+            <div class="absolute top-6 left-6 text-sm text-gray-400 font-medium tracking-widest uppercase">Learn</div>
+            <div class="absolute top-6 right-6 text-sm font-bold text-blue-500" id="learn-progress">0/10</div>
+            
+            <div class="flex-grow flex flex-col justify-center items-center space-y-6">
+                <!-- English Word -->
+                <h1 id="en-word" class="text-5xl font-extrabold tracking-tight text-gray-800 lowercase"></h1>
+                
+                <!-- Audio Button -->
+                <button onclick="playAudio()" class="p-3 bg-blue-50 text-blue-600 rounded-full hover:bg-blue-100 transition active:scale-95">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M9.383 3.076A1 1 0 0110 4v12a1 1 0 01-1.707.707L4.586 13H2a1 1 0 01-1-1V8a1 1 0 011-1h2.586l3.707-3.707a1 1 0 011.09-.217zM14.657 2.929a1 1 0 011.414 0A9.972 9.972 0 0119 10a9.972 9.972 0 01-2.929 7.071 1 1 0 01-1.414-1.414A7.971 7.971 0 0017 10c0-2.21-.894-4.208-2.343-5.657a1 1 0 010-1.414zm-2.829 2.828a1 1 0 011.415 0A5.983 5.983 0 0115 10a5.984 5.984 0 01-1.757 4.243 1 1 0 01-1.415-1.415A3.984 3.984 0 0013 10a3.983 3.983 0 00-1.172-2.828 1 1 0 010-1.415z" clip-rule="evenodd" />
+                    </svg>
+                </button>
 
-    <div class="container">
-        <!-- 1. Topic Selection View -->
-        <div id="topic-view" class="active-view">
-            <h2 style="font-size: 1.2rem; margin-top: 0; color: var(--text-sub);">Select a Chapter</h2>
-            <div id="topic-list">Loading topics...</div>
+                <!-- Thai Meaning -->
+                <p id="th-meaning" class="text-xl text-gray-500 font-medium">Loading database...</p>
+            </div>
+
+            <!-- Next Button -->
+            <button onclick="nextWord()" class="mt-auto w-full py-4 bg-gray-900 text-white rounded-2xl text-lg font-bold shadow-md hover:bg-gray-800 active:scale-[0.98] transition-transform">
+                Next <span class="ml-2">→</span>
+            </button>
         </div>
 
-        <!-- 2. Active Quiz View -->
-        <div id="quiz-view">
-            <div class="progress-bar" id="progress-indicator">Question 1 / 10</div>
-            <div class="question-text" id="question-text">Loading question...</div>
-            <div class="options-grid" id="options-container"></div>
-            <div class="explanation" id="explanation-box"></div>
-            <div class="controls">
-                <button class="primary-btn" id="next-btn" disabled>Next Question</button>
+        <!-- QUIZ VIEW -->
+        <div id="quiz-view" class="hidden flex-col h-full p-6 flex-grow fade-in">
+            <div class="flex justify-between items-center mb-8">
+                <div class="text-sm text-gray-400 font-medium tracking-widest uppercase">Memory Check</div>
+                <div class="text-sm font-bold text-indigo-500" id="quiz-progress">Question 1/10</div>
+            </div>
+
+            <div class="flex-grow flex flex-col justify-center space-y-6">
+                <!-- Sentences -->
+                <div class="space-y-4">
+                    <p id="quiz-en-sentence" class="text-2xl font-bold leading-snug text-gray-800"></p>
+                    <p id="quiz-th-hint" class="text-base text-gray-500 border-l-4 border-indigo-200 pl-3"></p>
+                </div>
+
+                <!-- MCQ Options -->
+                <div id="quiz-options" class="grid grid-cols-1 gap-3 mt-8">
+                    <!-- Buttons generated by JS -->
+                </div>
             </div>
         </div>
 
-        <!-- 3. Results View -->
-        <div id="result-view">
-            <div class="result-title">Topic Completed!</div>
-            <div class="score-display" id="score-display">0 / 0</div>
-            <div style="text-align: center; color: var(--text-sub); margin-bottom: 30px;">Correct Answers</div>
-            <button class="primary-btn" style="width: 100%;" onclick="showTopicMenu()">Return to Chapters</button>
+        <!-- RESULT VIEW -->
+        <div id="result-view" class="hidden flex-col h-full p-8 text-center flex-grow justify-center fade-in">
+            <h2 class="text-4xl font-black text-gray-900 mb-2">Quiz Complete!</h2>
+            <p class="text-gray-500 mb-8">Your score</p>
+            <div class="text-6xl font-extrabold text-blue-500 mb-12" id="final-score">10/10</div>
+            
+            <button onclick="continueLearning()" class="w-full py-4 bg-blue-600 text-white rounded-2xl text-lg font-bold shadow-md active:scale-[0.98] transition-transform">
+                Continue Learning
+            </button>
         </div>
+
     </div>
 
+    <!-- Link the logic script -->
     <script src="app.js"></script>
 </body>
 </html>
