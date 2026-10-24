@@ -3,331 +3,162 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Phrase Fluency Bubbles</title>
+    <title>Physics MCQ App</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Roboto:wght@400;700;900&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap');
 
         :root {
-            --bg-color: #000000;
-            --surface-color: #121212;
-            --gta-pink: #ff007f;
-            --gta-blue: #00e5ff;
-            --gta-yellow: #ffea00;
-            --gta-green: #55ff00;
-            --text-primary: #ffffff;
-            --text-secondary: #b0b0b0;
+            --bg-dark: #0f172a;
+            --surface: #1e293b;
+            --primary: #38bdf8;
+            --text-main: #f8fafc;
+            --text-sub: #94a3b8;
+            --success: #22c55e;
+            --danger: #ef4444;
+            --border-color: #334155;
         }
+
         body {
-            background-color: var(--bg-color);
-            background-image: radial-gradient(circle at center, #1a1a1a 0%, #000 100%);
-            color: var(--text-primary);
-            font-family: 'Roboto', sans-serif;
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            margin: 0;
             display: flex;
             flex-direction: column;
             align-items: center;
-            height: 100dvh; 
-            max-height: 100dvh;
-            overflow: hidden; 
-            margin: 0;
-            padding: 10px 15px 20px 15px;
+            height: 100dvh;
+            padding: 20px;
             box-sizing: border-box;
         }
+
         .header {
             width: 100%;
-            max-width: 500px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: 5px;
-            margin-bottom: 15px;
-            padding-bottom: 10px;
-            border-bottom: 2px solid var(--gta-pink);
-            flex-shrink: 0;
-        }
-        .title {
-            font-family: 'Bebas Neue', cursive;
-            font-size: 2.2rem;
-            color: var(--gta-pink);
-            letter-spacing: 2px;
-            margin: 0;
-            text-shadow: 2px 2px 0px rgba(255, 0, 127, 0.3);
-        }
-        .stats { 
-            font-size: 0.85rem; 
-            color: var(--text-secondary); 
-            display: flex;
-            flex-direction: column;
-            align-items: flex-end;
-            font-weight: bold;
-            text-transform: uppercase;
-        }
-        .stats-number {
-            font-size: 1.3rem;
-            color: var(--gta-blue);
-        }
-        
-        .autoplay-container {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 15px;
-            font-family: 'Bebas Neue', cursive;
-            font-size: 1.1rem;
-            letter-spacing: 1px;
-            color: var(--gta-blue);
-            flex-shrink: 0;
-        }
-        .switch {
-            position: relative;
-            display: inline-block;
-            width: 44px;
-            height: 22px;
-        }
-        .switch input { opacity: 0; width: 0; height: 0; }
-        .slider {
-            position: absolute;
-            cursor: pointer;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background-color: #333;
-            transition: .4s;
-            border-radius: 24px;
-            border: 2px solid var(--gta-blue);
-        }
-        .slider:before {
-            position: absolute;
-            content: "";
-            height: 14px; width: 14px;
-            left: 2px; bottom: 2px;
-            background-color: var(--gta-blue);
-            transition: .4s;
-            border-radius: 50%;
-        }
-        input:checked + .slider {
-            background-color: rgba(0, 229, 255, 0.2);
-        }
-        input:checked + .slider:before {
-            transform: translateX(22px);
-            background-color: var(--gta-blue);
-            box-shadow: 0 0 10px var(--gta-blue);
+            max-width: 600px;
+            text-align: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--border-color);
         }
 
-        .card {
-            background-color: var(--surface-color);
-            border: 3px solid #333;
-            border-top: 3px solid var(--gta-blue);
-            border-bottom: 3px solid var(--gta-pink);
-            padding: 25px 15px 120px 15px;
+        h1 { margin: 0; color: var(--primary); font-size: 1.8rem; }
+        .subtitle { color: var(--text-sub); font-size: 0.9rem; margin-top: 5px; }
+
+        .container {
             width: 100%;
-            max-width: 500px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.9);
-            position: relative; 
-            user-select: none; 
-            touch-action: none;
-            cursor: grab;
+            max-width: 600px;
+            background-color: var(--surface);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
             display: flex;
             flex-direction: column;
-            flex-grow: 1; 
-            min-height: 0; 
+            flex-grow: 1;
+            max-height: 80vh;
+            overflow-y: auto;
             box-sizing: border-box;
         }
-        .card:active {
-            cursor: grabbing;
-        }
 
-        .panel-top {
-            flex-shrink: 0;
-        }
-        .panel-middle {
-            flex-grow: 1;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            width: 100%;
-            padding: 10px 0;
-            gap: 20px;
-            overflow: hidden; 
-        }
-        
-        .panel-bottom {
-            position: absolute;
-            bottom: 15px;
-            left: 15px;
-            right: 15px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
+        /* Views */
+        #topic-view, #quiz-view, #result-view { display: none; width: 100%; }
+        .active-view { display: flex !important; flex-direction: column; height: 100%; }
 
-        .bubble-badge {
-            position: absolute;
-            top: -14px;
-            left: 50%;
-            transform: translateX(-50%);
-            background-color: var(--gta-blue);
-            color: #000;
-            padding: 4px 15px;
-            font-family: 'Bebas Neue', cursive;
-            font-size: 1.3rem;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            box-shadow: 0 0 10px rgba(0, 229, 255, 0.5);
-            white-space: nowrap;
-            z-index: 10;
-        }
-        .progress-indicator {
-            font-size: 0.9rem;
-            font-weight: bold;
-            color: var(--text-secondary);
-            margin-bottom: 5px;
-            font-family: 'Bebas Neue', cursive;
-            letter-spacing: 1px;
-            margin-top: 5px;
-            text-align: center;
-        }
-        .english { 
-            font-size: 1.6em; 
-            margin: 0;
-            line-height: 1.35; 
-            font-weight: 900;
-            text-transform: uppercase; 
-            text-align: center;
-        }
-        .highlight {
-            color: #000;
-            background-color: var(--gta-yellow);
-            padding: 2px 6px;
-            transform: skewX(-10deg);
-            display: inline-block;
-            box-shadow: 3px 3px 0px rgba(255, 234, 0, 0.4);
-        }
-        .thai { 
-            font-size: 1.2em; 
-            color: var(--text-secondary); 
-            font-weight: 400;
-            line-height: 1.4;
-            margin: 0;
-            text-align: center;
-        }
-        
-        .controls {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 8px;
-            width: 100%;
-        }
-        button {
+        /* Topic Menu */
+        .topic-btn {
             background-color: transparent;
-            color: var(--gta-pink);
-            border: 2px solid var(--gta-pink);
-            padding: 10px 10px;
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            font-size: 1.1rem;
             cursor: pointer;
-            font-family: 'Bebas Neue', cursive;
-            font-size: 1.2rem;
-            letter-spacing: 1px;
-            transition: all 0.2s ease;
-            flex: 1;
-            text-transform: uppercase;
+            text-align: left;
+            transition: all 0.2s;
         }
-        button:hover:not(:disabled) {
-            background-color: var(--gta-pink);
-            color: #000;
-            box-shadow: 0 0 15px rgba(255, 0, 127, 0.6);
+        .topic-btn:hover { border-color: var(--primary); background-color: rgba(56, 189, 248, 0.1); }
+
+        /* Quiz UI */
+        .progress-bar { font-size: 0.9rem; color: var(--primary); font-weight: 600; margin-bottom: 15px; }
+        .question-text { font-size: 1.25rem; line-height: 1.5; font-weight: 600; margin-bottom: 20px; }
+        
+        .options-grid { display: flex; flex-direction: column; gap: 10px; flex-grow: 1; }
+        .option-btn {
+            background-color: #2a3b52;
+            border: 2px solid transparent;
+            color: var(--text-main);
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            text-align: left;
+            transition: 0.2s;
         }
-        button:active:not(:disabled) {
-            transform: scale(0.95);
-        }
-        button:disabled {
-            color: #444;
-            border-color: #444;
-            cursor: not-allowed;
-            opacity: 0.5;
-        }
-        .btn-play {
-            background-color: rgba(0, 229, 255, 0.1);
-            color: var(--gta-blue);
-            border-color: var(--gta-blue);
-            flex: 1.2;
-        }
-        .btn-play:hover:not(:disabled) {
-            background-color: var(--gta-blue);
-            color: #000;
-            box-shadow: 0 0 15px rgba(0, 229, 255, 0.6);
+        .option-btn:hover:not(:disabled) { background-color: #3b5070; }
+        
+        .correct { background-color: rgba(34, 197, 94, 0.15) !important; border-color: var(--success) !important; }
+        .wrong { background-color: rgba(239, 68, 68, 0.15) !important; border-color: var(--danger) !important; }
+        
+        .explanation {
+            margin-top: 15px;
+            padding: 12px;
+            background-color: rgba(255,255,255,0.05);
+            border-left: 4px solid var(--primary);
+            border-radius: 4px;
+            font-size: 0.95rem;
+            color: var(--text-sub);
+            display: none;
         }
 
-        .msg-container {
-            height: 30px;
-            margin-top: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+        .controls { margin-top: 20px; display: flex; justify-content: flex-end; }
+        .primary-btn {
+            background-color: var(--primary);
+            color: var(--bg-dark);
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
         }
-        #completion-msg {
-            display: none;
-            color: var(--gta-green);
-            font-family: 'Bebas Neue', cursive;
-            font-size: 1.4rem;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            text-shadow: 0 0 10px rgba(85, 255, 0, 0.4);
-            animation: pulse 1s infinite;
-        }
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
-        }
-        .swipe-hint {
-            font-size: 0.75rem;
-            color: #666;
-            margin-top: 5px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
+        .primary-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        /* Results UI */
+        .result-title { font-size: 2rem; text-align: center; color: var(--primary); margin-bottom: 10px; }
+        .score-display { font-size: 3rem; font-weight: 800; text-align: center; margin: 20px 0; }
     </style>
 </head>
 <body>
+
     <div class="header">
-        <h1 class="title">FLUENCY</h1>
-        <div class="stats">
-            <div><span class="stats-number" id="stat-sentences">0</span> Sentences</div>
-            <div><span class="stats-number" id="stat-bubbles">0</span> Bubbles</div>
-        </div>
+        <h1>PHYSICS MCQ</h1>
+        <div class="subtitle">For Scientists and Engineers</div>
     </div>
 
-    <div class="autoplay-container">
-        <label class="switch">
-            <input type="checkbox" id="autoplay-toggle" checked>
-            <span class="slider"></span>
-        </label>
-        <span>Autoplay Audio</span>
-    </div>
+    <div class="container">
+        <!-- 1. Topic Selection View -->
+        <div id="topic-view" class="active-view">
+            <h2 style="font-size: 1.2rem; margin-top: 0; color: var(--text-sub);">Select a Chapter</h2>
+            <div id="topic-list">Loading topics...</div>
+        </div>
 
-    <div class="card" id="card-container" style="display: none;">
-        
-        <div class="panel-top">
-            <div class="bubble-badge" id="bubble-name">Phrase</div>
-            <div class="progress-indicator" id="progress-indicator">1 / 10</div>
-        </div>
-        
-        <div class="panel-middle">
-            <div class="english" id="en-text">Loading...</div>
-            <div class="thai" id="th-text">กำลังโหลด...</div>
-        </div>
-        
-        <div class="panel-bottom">
+        <!-- 2. Active Quiz View -->
+        <div id="quiz-view">
+            <div class="progress-bar" id="progress-indicator">Question 1 / 10</div>
+            <div class="question-text" id="question-text">Loading question...</div>
+            <div class="options-grid" id="options-container"></div>
+            <div class="explanation" id="explanation-box"></div>
             <div class="controls">
-                <button id="btn-prev">PREV</button>
-                <button id="btn-play" class="btn-play">🔊 LISTEN</button>
-                <button id="btn-next">NEXT</button>
+                <button class="primary-btn" id="next-btn" disabled>Next Question</button>
             </div>
-            <div class="msg-container">
-                <div id="completion-msg">MISSION PASSED! NEXT...</div>
-            </div>
-            <div class="swipe-hint">← Swipe for Prev / Next →</div>
         </div>
 
+        <!-- 3. Results View -->
+        <div id="result-view">
+            <div class="result-title">Topic Completed!</div>
+            <div class="score-display" id="score-display">0 / 0</div>
+            <div style="text-align: center; color: var(--text-sub); margin-bottom: 30px;">Correct Answers</div>
+            <button class="primary-btn" style="width: 100%;" onclick="showTopicMenu()">Return to Chapters</button>
+        </div>
     </div>
 
     <script src="app.js"></script>
