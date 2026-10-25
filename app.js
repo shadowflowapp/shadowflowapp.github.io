@@ -7,7 +7,6 @@ let quizQueue = [];
 let currentQuizIndex = 0;
 let score = 0;
 
-let usMaleVoice = null;
 let totalWordsLearned = localStorage.getItem('totalLearnedBeast') ? parseInt(localStorage.getItem('totalLearnedBeast')) : 0;
 
 // DOM Elements
@@ -19,17 +18,7 @@ const views = {
     topbar: document.getElementById('top-bar')
 };
 
-const autoplayToggle = document.getElementById('autoplay-toggle');
 document.getElementById('global-progress').textContent = totalWordsLearned;
-
-// Initialize TTS Voice (Seek American Male)
-function initVoice() {
-    const voices = window.speechSynthesis.getVoices();
-    usMaleVoice = voices.find(v => v.lang === 'en-US' && /(male|guy|david|mark|alex)/i.test(v.name)) 
-               || voices.find(v => v.lang === 'en-US') 
-               || voices[0];
-}
-window.speechSynthesis.onvoiceschanged = initVoice;
 
 async function loadDatabase() {
     try {
@@ -45,15 +34,10 @@ async function loadDatabase() {
 }
 
 window.startChallenge = function() {
-    initVoice(); 
     views.start.classList.add('hidden');
     views.topbar.classList.remove('hidden');
     views.learn.classList.remove('hidden');
-    views.learn.classList.add('flex'); // Ensure flex is applied when unhidden
-    
-    const unlock = new SpeechSynthesisUtterance('');
-    window.speechSynthesis.speak(unlock);
-
+    views.learn.classList.add('flex'); 
     renderLearnView();
 };
 
@@ -63,38 +47,19 @@ function renderLearnView() {
         return;
     }
 
+    // Reset animations
     const wordEl = document.getElementById('en-word');
-    wordEl.style.animation = 'none';
-    wordEl.offsetHeight; 
-    wordEl.style.animation = null; 
+    const posEl = document.getElementById('en-pos');
+    wordEl.parentElement.style.animation = 'none';
+    wordEl.parentElement.offsetHeight; /* trigger reflow */
+    wordEl.parentElement.style.animation = null; 
 
     const currentWord = db[currentWordIndex];
-    wordEl.textContent = currentWord.word;
-    document.getElementById('th-meaning').textContent = currentWord.thai;
     
-    // Check toggle before autoplaying
-    if (autoplayToggle.checked) {
-        playCurrentWordAudio();
-    }
-}
-
-// Tied to the Audio button and Autoplay
-window.playCurrentWordAudio = function() {
-    const currentWord = db[currentWordIndex];
-    // Use audio_context sentence to force correct pronunciation if available, else fallback to just the word
-    const textToSpeak = currentWord.audio_context || currentWord.word;
-    playAudio(textToSpeak);
-};
-
-function playAudio(text) {
-    if (!window.speechSynthesis) return;
-    window.speechSynthesis.cancel(); 
-    const utterance = new SpeechSynthesisUtterance(text);
-    if (usMaleVoice) utterance.voice = usMaleVoice;
-    utterance.lang = 'en-US';
-    utterance.rate = 0.9;
-    utterance.pitch = 0.9; 
-    window.speechSynthesis.speak(utterance);
+    // Inject Word and POS
+    wordEl.textContent = currentWord.word;
+    posEl.textContent = `[${currentWord.pos}]`;
+    document.getElementById('th-meaning').textContent = currentWord.thai;
 }
 
 window.nextWord = function() {
@@ -105,7 +70,7 @@ window.nextWord = function() {
     if (learnedCountInBatch === 10) {
         startQuiz();
     } else {
-        window.scrollTo(0, 0); // Scroll to top for mobile
+        window.scrollTo(0, 0); 
         renderLearnView();
     }
 };
@@ -126,7 +91,10 @@ function startQuiz() {
 
 function renderQuizQuestion() {
     const q = quizQueue[currentQuizIndex];
+    
+    // Show Thai target and its POS to help distinguish homographs in the quiz
     document.getElementById('quiz-th-target').textContent = q.thai;
+    document.getElementById('quiz-pos').textContent = `[${q.pos}]`;
 
     const options = [q.word, ...q.distractors].sort(() => Math.random() - 0.5);
     const optionsContainer = document.getElementById('quiz-options');
@@ -134,26 +102,22 @@ function renderQuizQuestion() {
 
     options.forEach(option => {
         const btn = document.createElement('button');
-        btn.className = "w-full py-5 px-6 rounded-xl bg-gray-900 text-2xl sm:text-3xl font-black text-white uppercase text-center active:scale-95 transition-all break-words";
+        // Fluid typography applied to buttons as well to ensure long distractors fit
+        btn.className = "w-full py-5 px-6 rounded-xl bg-gray-900 text-[clamp(1.5rem,6vw,2rem)] font-black text-white uppercase text-center active:scale-95 transition-all truncate";
         btn.textContent = option;
         
-        btn.onclick = () => handleAnswer(btn, option, q.word, q.audio_context);
+        btn.onclick = () => handleAnswer(btn, option, q.word);
         optionsContainer.appendChild(btn);
     });
 }
 
-function handleAnswer(btnElement, selectedWord, correctWord, correctContext) {
+function handleAnswer(btnElement, selectedWord, correctWord) {
     const allBtns = document.getElementById('quiz-options').querySelectorAll('button');
     allBtns.forEach(b => b.disabled = true);
 
     if (selectedWord === correctWord) {
         btnElement.classList.add('correct-bg');
         score++;
-        
-        // Play correct audio if autoplay is enabled
-        if (autoplayToggle.checked) {
-            playAudio(correctContext || correctWord); 
-        }
     } else {
         btnElement.classList.add('wrong-bg', 'shake');
         allBtns.forEach(b => {
@@ -171,7 +135,7 @@ function handleAnswer(btnElement, selectedWord, correctWord, correctContext) {
             window.scrollTo(0, 0);
             renderQuizQuestion();
         }
-    }, 1200);
+    }, 1000); 
 }
 
 function endQuiz() {
