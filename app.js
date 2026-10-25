@@ -28,8 +28,33 @@ async function loadDatabase() {
         db = text.split('\n').filter(line => line.trim() !== '').map(line => JSON.parse(line));
     } catch (error) {
         console.error("Error loading db.jsonl:", error);
-        document.getElementById('th-meaning').textContent = "DATA ERROR";
-        document.getElementById('th-meaning').classList.add('text-red-500');
+    }
+}
+
+// --- DYNAMIC TEXT FIT ALGORITHM ---
+// This function forcefully shrinks text until it fits perfectly inside its container
+function autoFitText(textElementId, boundsElementId, maxRemSize, minRemSize = 1.5) {
+    const textEl = document.getElementById(textElementId);
+    const boundsEl = document.getElementById(boundsElementId);
+    
+    // Reset to maximum desired size first
+    let currentSize = maxRemSize;
+    textEl.style.fontSize = `${currentSize}rem`;
+    
+    // POS tag scales relative to the main word if it exists inside the container
+    const posTag = document.getElementById('pos-tag');
+    if (posTag && textElementId === 'en-container') {
+        posTag.style.fontSize = `${currentSize * 0.4}rem`; // POS is 40% size of the word
+    }
+
+    // While the text is overflowing its bounds, shrink it
+    while (textEl.scrollWidth > boundsEl.clientWidth && currentSize > minRemSize) {
+        currentSize -= 0.2; // Shrink in small increments
+        textEl.style.fontSize = `${currentSize}rem`;
+        
+        if (posTag && textElementId === 'en-container') {
+            posTag.style.fontSize = `${currentSize * 0.4}rem`;
+        }
     }
 }
 
@@ -47,19 +72,25 @@ function renderLearnView() {
         return;
     }
 
-    // Reset animations
-    const wordEl = document.getElementById('en-word');
-    const posEl = document.getElementById('en-pos');
-    wordEl.parentElement.style.animation = 'none';
-    wordEl.parentElement.offsetHeight; /* trigger reflow */
-    wordEl.parentElement.style.animation = null; 
-
     const currentWord = db[currentWordIndex];
     
-    // Inject Word and POS
-    wordEl.textContent = currentWord.word;
-    posEl.textContent = `[${currentWord.pos}]`;
+    // Populate text
+    document.getElementById('en-word').textContent = currentWord.word;
+    document.getElementById('pos-tag').textContent = currentWord.pos;
     document.getElementById('th-meaning').textContent = currentWord.thai;
+    
+    // Reset animations
+    document.getElementById('en-container').style.animation = 'none';
+    document.getElementById('th-meaning').style.animation = 'none';
+    document.getElementById('en-container').offsetHeight; 
+    document.getElementById('en-container').style.animation = null; 
+    document.getElementById('th-meaning').style.animation = null; 
+
+    // Auto-fit English word (Start at 6rem max)
+    autoFitText('en-container', 'word-bounds', 6);
+    
+    // Auto-fit Thai meaning (Start at 3.5rem max)
+    autoFitText('th-meaning', 'thai-bounds', 3.5);
 }
 
 window.nextWord = function() {
@@ -92,9 +123,10 @@ function startQuiz() {
 function renderQuizQuestion() {
     const q = quizQueue[currentQuizIndex];
     
-    // Show Thai target and its POS to help distinguish homographs in the quiz
     document.getElementById('quiz-th-target').textContent = q.thai;
-    document.getElementById('quiz-pos').textContent = `[${q.pos}]`;
+    
+    // Auto-fit Quiz Target Text (Start at 3.5rem max)
+    autoFitText('quiz-th-target', 'quiz-bounds', 3.5);
 
     const options = [q.word, ...q.distractors].sort(() => Math.random() - 0.5);
     const optionsContainer = document.getElementById('quiz-options');
@@ -102,9 +134,14 @@ function renderQuizQuestion() {
 
     options.forEach(option => {
         const btn = document.createElement('button');
-        // Fluid typography applied to buttons as well to ensure long distractors fit
-        btn.className = "w-full py-5 px-6 rounded-xl bg-gray-900 text-[clamp(1.5rem,6vw,2rem)] font-black text-white uppercase text-center active:scale-95 transition-all truncate";
-        btn.textContent = option;
+        // Let Tailwind handle button text overflow with 'truncate'
+        btn.className = "w-full py-5 px-4 rounded-xl bg-gray-900 text-2xl sm:text-3xl font-black text-white uppercase text-center active:scale-95 transition-all truncate";
+        
+        if (option === q.word) {
+            btn.innerHTML = `${option} <span class="text-gray-500 text-xl ml-2 lowercase">${q.pos}</span>`;
+        } else {
+            btn.textContent = option;
+        }
         
         btn.onclick = () => handleAnswer(btn, option, q.word);
         optionsContainer.appendChild(btn);
@@ -121,7 +158,7 @@ function handleAnswer(btnElement, selectedWord, correctWord) {
     } else {
         btnElement.classList.add('wrong-bg', 'shake');
         allBtns.forEach(b => {
-            if (b.textContent === correctWord) {
+            if (b.textContent.includes(correctWord)) {
                 b.classList.add('correct-bg');
             }
         });
@@ -135,7 +172,7 @@ function handleAnswer(btnElement, selectedWord, correctWord) {
             window.scrollTo(0, 0);
             renderQuizQuestion();
         }
-    }, 1000); 
+    }, 1200);
 }
 
 function endQuiz() {
@@ -165,7 +202,6 @@ function endQuiz() {
             totalWordsLearned += 10;
             localStorage.setItem('totalLearnedBeast', totalWordsLearned);
             document.getElementById('global-progress').textContent = totalWordsLearned;
-            
             batchStartIndex = currentWordIndex;
             resetForNextRound();
         };
@@ -197,5 +233,15 @@ function resetForNextRound() {
     
     renderLearnView();
 }
+
+// Window resize listener to recalculate text fit if user rotates their phone
+window.addEventListener('resize', () => {
+    if (!views.learn.classList.contains('hidden')) {
+        autoFitText('en-container', 'word-bounds', 6);
+        autoFitText('th-meaning', 'thai-bounds', 3.5);
+    } else if (!views.quiz.classList.contains('hidden')) {
+        autoFitText('quiz-th-target', 'quiz-bounds', 3.5);
+    }
+});
 
 loadDatabase();
