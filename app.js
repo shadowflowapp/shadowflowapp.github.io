@@ -31,22 +31,20 @@ async function loadDatabase() {
 }
 
 // --- BULLETPROOF TEXT FIT MATH ALGORITHM ---
-// Measures exact pixels and guarantees text fits on 1 line.
 function fitTextSync(textContainerId, boundContainerId, maxFontSizePx) {
     const textEl = document.getElementById(textContainerId);
     const boundsEl = document.getElementById(boundContainerId);
     
-    // Step 1: Force max size and single line
+    // Step 1: Force max size
     textEl.style.fontSize = `${maxFontSizePx}px`;
-    textEl.style.whiteSpace = 'nowrap';
     
-    // Manage POS tag sizing if it exists
+    // Manage POS tag sizing if it exists (set it to roughly 30% of main word size)
     const posTag = document.getElementById('pos-tag');
     if (posTag && textContainerId === 'en-container') {
-        posTag.style.fontSize = `${maxFontSizePx * 0.4}px`;
+        posTag.style.fontSize = `${Math.floor(maxFontSizePx * 0.3)}px`;
     }
 
-    // Step 2: Mathematically scale down if text is wider than screen container
+    // Step 2: Mathematically scale down if text container is wider than screen container
     const textWidth = textEl.scrollWidth;
     const containerWidth = boundsEl.clientWidth;
     
@@ -56,7 +54,7 @@ function fitTextSync(textContainerId, boundContainerId, maxFontSizePx) {
         
         textEl.style.fontSize = `${exactSafeFit}px`;
         if (posTag && textContainerId === 'en-container') {
-            posTag.style.fontSize = `${Math.floor(exactSafeFit * 0.4)}px`;
+            posTag.style.fontSize = `${Math.floor(exactSafeFit * 0.3)}px`;
         }
     }
 }
@@ -71,7 +69,7 @@ window.startChallenge = function() {
 
 function renderLearnView() {
     if (currentWordIndex >= db.length) {
-        alert("CHALLENGE COMPLETE. YOU MASTERED ALL 100 WORDS.");
+        alert("CHALLENGE COMPLETE. YOU MASTERED ALL WORDS.");
         return;
     }
 
@@ -131,14 +129,11 @@ function renderQuizQuestion() {
 
     options.forEach(option => {
         const btn = document.createElement('button');
-        // Let Tailwind handle button text overflow gracefully with truncate
+        // Truncate handles long distractors nicely inside the buttons
         btn.className = "w-full py-6 px-4 rounded-xl border-2 border-gray-800 bg-gray-900 text-2xl sm:text-3xl font-black text-white uppercase text-center active:scale-95 transition-all truncate";
         
-        if (option === q.word) {
-            btn.innerHTML = `${option} <span class="text-gray-500 text-xl ml-2 lowercase">${q.pos}</span>`;
-        } else {
-            btn.textContent = option;
-        }
+        // FIX: Display only the raw word (No POS hint)
+        btn.textContent = option;
         
         btn.onclick = () => handleAnswer(btn, option, q.word);
         optionsContainer.appendChild(btn);
@@ -157,7 +152,7 @@ function handleAnswer(btnElement, selectedWord, correctWord) {
         btnElement.classList.add('wrong-bg', 'shake');
         btnElement.classList.remove('border-gray-800');
         allBtns.forEach(b => {
-            if (b.textContent.includes(correctWord)) {
+            if (b.textContent === correctWord) {
                 b.classList.add('correct-bg');
                 b.classList.remove('border-gray-800');
             }
@@ -234,7 +229,6 @@ function resetForNextRound() {
     renderLearnView();
 }
 
-// Ensure math recalculates if user rotates phone from vertical to horizontal
 window.addEventListener('resize', () => {
     if (!views.learn.classList.contains('hidden')) {
         fitTextSync('en-container', 'word-bounds', 120);
