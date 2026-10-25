@@ -8,3 +8,93 @@
 {"word":"abuse","thai":"ล่วงละเมิด, ใช้ในทางที่ผิด","distractors":["advise","agree","allow"]}
 {"word":"academy","thai":"สถาบันการศึกษา","distractors":["account","address","animal"]}
 {"word":"access","thai":"การเข้าถึง","distractors":["action","answer","author"]}
+{"word":"accident","thai":"อุบัติเหตุ","distractors":["affair","agency","album"]}
+{"word":"accompany","thai":"ไปเป็นเพื่อน, ติดตาม","distractors":["achieve","admire","admit"]}
+{"word":"accomplish","thai":"ทำสำเร็จ","distractors":["acquire","adapt","adjust"]}
+{"word":"accurate","thai":"ถูกต้อง, แม่นยำ","distractors":["aggressive","alive","angry"]}
+{"word":"accuse","thai":"กล่าวหา","distractors":["absorb","abuse","adapt"]}
+{"word":"achieve","thai":"บรรลุผล, สำเร็จ","distractors":["add","affect","agree"]}
+{"word":"acquire","thai":"ได้รับ, สถาปนา","distractors":["advise","afford","aim"]}
+{"word":"action","thai":"การกระทำ","distractors":["adult","advantage","angle"]}
+{"word":"active","thai":"คล่องแคล่ว, กระตือรือร้น","distractors":["afraid","alone","amazing"]}
+{"word":"actual","thai":"ตามความเป็นจริง","distractors":["alien","alike","alive"]}
+{"word":"adapt","thai":"ปรับตัว","distractors":["add","admit","adopt"]}
+{"word":"add","thai":"เพิ่ม","distractors":["aim","allow","alter"]}
+{"word":"addition","thai":"การเพิ่มเติม","distractors":["action","adult","agent"]}
+{"word":"address","thai":"ที่อยู่, การปราศรัย","distractors":["advice","affair","alarm"]}
+{"word":"adjust","thai":"ปรับเปลี่ยน","distractors":["abuse","accuse","achieve"]}
+{"word":"admire","thai":"ชื่นชม","distractors":["abandon","absorb","accuse"]}
+{"word":"admit","thai":"ยอมรับ","distractors":["adapt","add","adjust"]}
+{"word":"adopt","thai":"นำมาใช้, รับบุตรบุญธรรม","distractors":["admire","admit","advise"]}
+{"word":"adult","thai":"ผู้ใหญ่","distractors":["action","agent","animal"]}
+{"word":"advance","thai":"ความก้าวหน้า, ล่วงหน้า","distractors":["advantage","adventure","advice"]}
+{"word":"advantage","thai":"ข้อได้เปรียบ","distractors":["addition","address","advance"]}
+{"word":"adventure","thai":"การผจญภัย","distractors":["advantage","affair","agency"]}
+{"word":"advise","thai":"แนะนำ","distractors":["abuse","accuse","admire"]}
+{"word":"affair","thai":"กิจธุระ, เรื่องราว","distractors":["action","addition","adult"]}
+{"word":"affect","thai":"ส่งผลกระทบ","distractors":["afford","agree","allow"]}
+{"word":"afford","thai":"สามารถจ่ายได้","distractors":["affect","agree","aim"]}
+{"word":"afraid","thai":"หวาดกลัว","distractors":["active","actual","aggressive"]}
+{"word":"after","thai":"หลังจาก","distractors":["again","against","ago"]}
+{"word":"afternoon","thai":"ตอนบ่าย","distractors":["album","alcohol","alien"]}
+{"word":"again","thai":"อีกครั้ง","distractors":["after","against","ago"]}
+{"word":"against","thai":"ต่อต้าน, ขัดแย้ง","distractors":["after","again","ahead"]}
+{"word":"age","thai":"อายุ","distractors":["aid","aim","air"]}
+{"word":"agency","thai":"หน่วยงาน, ตัวแทน","distractors":["action","address","affair"]}
+{"word":"agent","thai":"ตัวแทน","distractors":["adult","advantage","alarm"]}
+{"word":"aggressive","thai":"ก้าวร้าว","distractors":["accurate","active","actual"]}
+{"word":"ago","thai":"ที่ผ่านมาแล้ว","distractors":["after","again","ahead"]}
+{"word":"agree","thai":"เห็นด้วย","distractors":["affect","afford","allow"]}
+{"word":"agriculture","thai":"เกษตรกรรม","distractors":["adventure","agency","alcohol"]}
+{"word":"ahead","thai":"ไปข้างหน้า","distractors":["after","again","ago"]}
+{"word":"aid","thai":"ความช่วยเหลือ","distractors":["age","aim","air"]}
+{"word":"aim","thai":"เป้าหมาย, ตั้งเป้า","distractors":["add","aid","air"]}
+{"word":"air","thai":"อากาศ","distractors":["age","aid","aim"]}
+{"word":"aircraft","thai":"อากาศยาน","distractors":["airport","alarm","album"]}
+{"word":"airline","thai":"สายการบิน","distractors":["aircraft","airport","alarm"]}
+{"word":"airport","thai":"สนามบิน","distractors":["aircraft","airline","album"]}
+{"word":"alarm","thai":"สัญญาณเตือน","distractors":["album","alcohol","alien"]}
+{"word":"album","thai":"อัลบั้ม","distractors":["alarm","alcohol","alien"]}
+{"word":"alcohol","thai":"แอลกอฮอล์","distractors":["alarm","album","alien"]}
+{"word":"alert","thai":"ตื่นตัว, แจ้งเตือน","distractors":["alike","alive","alone"]}
+{"word":"alien","thai":"มนุษย์ต่างดาว, คนต่างด้าว","distractors":["alert","alike","alive"]}
+{"word":"alike","thai":"เหมือนกัน","distractors":["alert","alive","alone"]}
+{"word":"alive","thai":"มีชีวิตอยู่","distractors":["alert","alike","alone"]}
+{"word":"all","thai":"ทั้งหมด","distractors":["almost","alone","along"]}
+{"word":"allow","thai":"อนุญาต","distractors":["affect","afford","agree"]}
+{"word":"ally","thai":"พันธมิตร","distractors":["almost","alone","along"]}
+{"word":"almost","thai":"เกือบจะ","distractors":["all","ally","alone"]}
+{"word":"alone","thai":"คนเดียว, โดดเดี่ยว","distractors":["all","ally","almost"]}
+{"word":"along","thai":"ตามทาง, ร่วมด้วย","distractors":["all","ally","almost"]}
+{"word":"already","thai":"เรียบร้อยแล้ว","distractors":["also","alter","always"]}
+{"word":"also","thai":"ด้วย, เช่นกัน","distractors":["already","alter","always"]}
+{"word":"alter","thai":"ปรับเปลี่ยน","distractors":["allow","ally","amaze"]}
+{"word":"alternative","thai":"ทางเลือก","distractors":["ambassador","ambition","ancestor"]}
+{"word":"although","thai":"ถึงแม้ว่า","distractors":["already","always","among"]}
+{"word":"always","thai":"เสมอ","distractors":["already","also","although"]}
+{"word":"amaze","thai":"ทำให้ประหลาดใจ","distractors":["alter","analyze","annoy"]}
+{"word":"amazing","thai":"น่าประหลาดใจ","distractors":["aggressive","ancient","angry"]}
+{"word":"ambassador","thai":"เอกอัครราชทูต","distractors":["alternative","ancestor","animal"]}
+{"word":"ambition","thai":"ความทะเยอทะยาน","distractors":["addition","advantage","analysis"]}
+{"word":"ambitious","thai":"ทะเยอทะยาน","distractors":["accurate","active","aggressive"]}
+{"word":"among","thai":"ท่ามกลาง","distractors":["already","also","always"]}
+{"word":"amount","thai":"จำนวน","distractors":["action","adult","angle"]}
+{"word":"analyze","thai":"วิเคราะห์","distractors":["amaze","announce","annoy"]}
+{"word":"analysis","thai":"การวิเคราะห์","distractors":["ambition","ancestor","angel"]}
+{"word":"ancestor","thai":"บรรพบุรุษ","distractors":["ambassador","analysis","animal"]}
+{"word":"ancient","thai":"โบราณ","distractors":["active","actual","amazing"]}
+{"word":"anecdote","thai":"เรื่องราวเล็กๆน้อยๆ","distractors":["ambition","analysis","angel"]}
+{"word":"angel","thai":"นางฟ้า, เทวดา","distractors":["anger","angle","animal"]}
+{"word":"anger","thai":"ความโกรธ","distractors":["angel","angle","animal"]}
+{"word":"angle","thai":"มุม","distractors":["angel","anger","animal"]}
+{"word":"angry","thai":"โกรธ","distractors":["amazing","ancient","annual"]}
+{"word":"animal","thai":"สัตว์","distractors":["angel","anger","ankle"]}
+{"word":"ankle","thai":"ข้อเท้า","distractors":["angel","anger","animal"]}
+{"word":"anniversary","thai":"วันครบรอบ","distractors":["agriculture","alternative","ambassador"]}
+{"word":"announce","thai":"ประกาศ","distractors":["amaze","analyze","annoy"]}
+{"word":"annoy","thai":"รบกวน, ทำให้รำคาญ","distractors":["amaze","analyze","announce"]}
+{"word":"annual","thai":"ประจำปี","distractors":["actual","amazing","angry"]}
+{"word":"another","thai":"อีกหนึ่ง","distractors":["after","against","among"]}
+{"word":"answer","thai":"คำตอบ","distractors":["action","adult","amount"]}
+{"word":"anticipate","thai":"คาดการณ์","distractors":["abandon","accomplish","acquire"]}
+{"word":"anxiety","thai":"ความวิตกกังวล","distractors":["ability","academy","agency"]}
