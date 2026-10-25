@@ -31,20 +31,16 @@ async function loadDatabase() {
 }
 
 // --- BULLETPROOF TEXT FIT MATH ALGORITHM ---
-function fitTextSync(textContainerId, boundContainerId, maxFontSizePx) {
-    const textEl = document.getElementById(textContainerId);
+// Measures exact pixels and guarantees text fits on 1 line.
+function fitTextSync(textElementId, boundContainerId, maxFontSizePx) {
+    const textEl = document.getElementById(textElementId);
     const boundsEl = document.getElementById(boundContainerId);
     
-    // Step 1: Force max size
+    // Step 1: Force max size and single line
     textEl.style.fontSize = `${maxFontSizePx}px`;
-    
-    // Manage POS tag sizing if it exists (set it to roughly 30% of main word size)
-    const posTag = document.getElementById('pos-tag');
-    if (posTag && textContainerId === 'en-container') {
-        posTag.style.fontSize = `${Math.floor(maxFontSizePx * 0.3)}px`;
-    }
+    textEl.style.whiteSpace = 'nowrap';
 
-    // Step 2: Mathematically scale down if text container is wider than screen container
+    // Step 2: Mathematically scale down if text is wider than screen container
     const textWidth = textEl.scrollWidth;
     const containerWidth = boundsEl.clientWidth;
     
@@ -53,9 +49,6 @@ function fitTextSync(textContainerId, boundContainerId, maxFontSizePx) {
         const exactSafeFit = Math.floor(maxFontSizePx * ratio * 0.95); // 0.95 is 5% safety padding
         
         textEl.style.fontSize = `${exactSafeFit}px`;
-        if (posTag && textContainerId === 'en-container') {
-            posTag.style.fontSize = `${Math.floor(exactSafeFit * 0.3)}px`;
-        }
     }
 }
 
@@ -80,14 +73,18 @@ function renderLearnView() {
     document.getElementById('th-meaning').textContent = currentWord.thai;
     
     // Restart CSS Animations
-    document.getElementById('en-container').style.animation = 'none';
+    document.getElementById('en-word').style.animation = 'none';
+    document.getElementById('pos-tag').style.animation = 'none';
     document.getElementById('th-meaning').style.animation = 'none';
-    document.getElementById('en-container').offsetHeight; 
-    document.getElementById('en-container').style.animation = null; 
+    
+    document.getElementById('en-word').offsetHeight; // Trigger reflow
+    
+    document.getElementById('en-word').style.animation = null; 
+    document.getElementById('pos-tag').style.animation = null; 
     document.getElementById('th-meaning').style.animation = null; 
 
     // Apply scaling logic - Base max is 120px for word, 50px for Thai
-    fitTextSync('en-container', 'word-bounds', 120);
+    fitTextSync('en-word', 'word-bounds', 120);
     fitTextSync('th-meaning', 'thai-bounds', 50);
 }
 
@@ -129,10 +126,8 @@ function renderQuizQuestion() {
 
     options.forEach(option => {
         const btn = document.createElement('button');
-        // Truncate handles long distractors nicely inside the buttons
+        // Clean buttons, no POS hints
         btn.className = "w-full py-6 px-4 rounded-xl border-2 border-gray-800 bg-gray-900 text-2xl sm:text-3xl font-black text-white uppercase text-center active:scale-95 transition-all truncate";
-        
-        // FIX: Display only the raw word (No POS hint)
         btn.textContent = option;
         
         btn.onclick = () => handleAnswer(btn, option, q.word);
@@ -152,7 +147,8 @@ function handleAnswer(btnElement, selectedWord, correctWord) {
         btnElement.classList.add('wrong-bg', 'shake');
         btnElement.classList.remove('border-gray-800');
         allBtns.forEach(b => {
-            if (b.textContent === correctWord) {
+            // Find and highlight the correct button if user guessed wrong
+            if (b.textContent.toLowerCase() === correctWord.toLowerCase()) {
                 b.classList.add('correct-bg');
                 b.classList.remove('border-gray-800');
             }
@@ -229,9 +225,10 @@ function resetForNextRound() {
     renderLearnView();
 }
 
+// Ensure math recalculates if user rotates phone from vertical to horizontal
 window.addEventListener('resize', () => {
     if (!views.learn.classList.contains('hidden')) {
-        fitTextSync('en-container', 'word-bounds', 120);
+        fitTextSync('en-word', 'word-bounds', 120);
         fitTextSync('th-meaning', 'thai-bounds', 50);
     } else if (!views.quiz.classList.contains('hidden')) {
         fitTextSync('quiz-th-target', 'quiz-bounds', 50);
