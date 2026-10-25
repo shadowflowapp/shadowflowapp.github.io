@@ -3,66 +3,75 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>X.app - Minimal English Learner</title>
+    <title>X.app - Dark Minimal Learner</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        /* Minimalist animations */
+        body { background-color: #030712; } /* ultra dark slate */
         .fade-in { animation: fadeIn 0.3s ease-in-out; }
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
         }
-        .correct-bg { background-color: #22c55e !important; color: white !important; }
-        .wrong-bg { background-color: #ef4444 !important; color: white !important; }
+        .correct-bg { background-color: #16a34a !important; color: white !important; border-color: #16a34a !important; }
+        .wrong-bg { background-color: #dc2626 !important; color: white !important; border-color: #dc2626 !important; }
     </style>
 </head>
-<body class="bg-gray-50 text-gray-900 h-screen flex flex-col justify-center items-center p-4 select-none">
+<body class="text-gray-100 h-screen flex flex-col justify-center items-center p-4 select-none font-sans">
+
+    <!-- Global Progress Header -->
+    <div class="w-full max-w-md flex justify-between items-center mb-4 px-2">
+        <span class="text-gray-500 font-bold tracking-widest text-sm">X.APP</span>
+        <div class="bg-gray-900 border border-gray-800 px-4 py-1 rounded-full shadow-sm">
+            <span class="text-gray-400 text-sm">Learned:</span> 
+            <span id="global-progress" class="font-bold text-emerald-400 ml-1">0</span>
+        </div>
+    </div>
 
     <!-- App Container -->
-    <div id="app-container" class="w-full max-w-md bg-white rounded-3xl shadow-xl overflow-hidden min-h-[500px] flex flex-col relative fade-in">
+    <div id="app-container" class="w-full max-w-md bg-gray-900 border border-gray-800 rounded-3xl shadow-2xl overflow-hidden min-h-[500px] flex flex-col relative fade-in">
         
         <!-- LEARNING VIEW -->
         <div id="learning-view" class="flex flex-col h-full p-8 text-center flex-grow justify-center relative hidden">
-            <div class="absolute top-6 left-6 text-sm text-gray-400 font-medium tracking-widest uppercase">Learn</div>
+            <div class="absolute top-6 left-6 text-sm text-gray-500 font-medium tracking-widest uppercase">Learn</div>
             <div class="absolute top-6 right-6 text-sm font-bold text-blue-500" id="learn-progress">0/10</div>
             
-            <div class="flex-grow flex flex-col justify-center items-center space-y-6">
+            <div class="flex-grow flex flex-col justify-center items-center space-y-8">
                 <!-- English Word -->
-                <h1 id="en-word" class="text-5xl font-extrabold tracking-tight text-gray-800 lowercase"></h1>
+                <h1 id="en-word" class="text-5xl font-extrabold tracking-tight text-white lowercase"></h1>
                 
                 <!-- Audio Button -->
-                <button onclick="playAudio()" class="p-3 bg-blue-50 text-blue-600 rounded-full hover:bg-blue-100 transition active:scale-95">
+                <button onclick="playAudio()" class="p-4 bg-gray-800 text-blue-400 rounded-full hover:bg-gray-700 transition active:scale-95 shadow-inner">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" viewBox="0 0 20 20" fill="currentColor">
                         <path fill-rule="evenodd" d="M9.383 3.076A1 1 0 0110 4v12a1 1 0 01-1.707.707L4.586 13H2a1 1 0 01-1-1V8a1 1 0 011-1h2.586l3.707-3.707a1 1 0 011.09-.217zM14.657 2.929a1 1 0 011.414 0A9.972 9.972 0 0119 10a9.972 9.972 0 01-2.929 7.071 1 1 0 01-1.414-1.414A7.971 7.971 0 0017 10c0-2.21-.894-4.208-2.343-5.657a1 1 0 010-1.414zm-2.829 2.828a1 1 0 011.415 0A5.983 5.983 0 0115 10a5.984 5.984 0 01-1.757 4.243 1 1 0 01-1.415-1.415A3.984 3.984 0 0013 10a3.983 3.983 0 00-1.172-2.828 1 1 0 010-1.415z" clip-rule="evenodd" />
                     </svg>
                 </button>
 
                 <!-- Thai Meaning -->
-                <p id="th-meaning" class="text-xl text-gray-500 font-medium">Loading database...</p>
+                <p id="th-meaning" class="text-2xl text-gray-400 font-medium">Loading database...</p>
             </div>
 
             <!-- Next Button -->
-            <button onclick="nextWord()" class="mt-auto w-full py-4 bg-gray-900 text-white rounded-2xl text-lg font-bold shadow-md hover:bg-gray-800 active:scale-[0.98] transition-transform">
+            <button onclick="nextWord()" class="mt-auto w-full py-4 bg-blue-600 text-white rounded-2xl text-lg font-bold shadow-lg hover:bg-blue-500 active:scale-[0.98] transition-transform">
                 Next <span class="ml-2">→</span>
             </button>
         </div>
 
-        <!-- QUIZ VIEW -->
+        <!-- QUIZ VIEW (Meaning Match) -->
         <div id="quiz-view" class="hidden flex-col h-full p-6 flex-grow fade-in">
             <div class="flex justify-between items-center mb-8">
-                <div class="text-sm text-gray-400 font-medium tracking-widest uppercase">Memory Check</div>
-                <div class="text-sm font-bold text-indigo-500" id="quiz-progress">Question 1/10</div>
+                <div class="text-sm text-gray-500 font-medium tracking-widest uppercase">Meaning Match</div>
+                <div class="text-sm font-bold text-indigo-400" id="quiz-progress">1/10</div>
             </div>
 
             <div class="flex-grow flex flex-col justify-center space-y-6">
-                <!-- Sentences -->
-                <div class="space-y-4">
-                    <p id="quiz-en-sentence" class="text-2xl font-bold leading-snug text-gray-800"></p>
-                    <p id="quiz-th-hint" class="text-base text-gray-500 border-l-4 border-indigo-200 pl-3"></p>
+                <!-- Target Thai Meaning -->
+                <div class="text-center mb-4">
+                    <p class="text-sm text-gray-500 mb-2">What is the English word for:</p>
+                    <p id="quiz-th-target" class="text-3xl font-bold text-white leading-snug"></p>
                 </div>
 
-                <!-- MCQ Options -->
-                <div id="quiz-options" class="grid grid-cols-1 gap-3 mt-8">
+                <!-- Match Options -->
+                <div id="quiz-options" class="grid grid-cols-2 gap-4 mt-4">
                     <!-- Buttons generated by JS -->
                 </div>
             </div>
@@ -70,18 +79,17 @@
 
         <!-- RESULT VIEW -->
         <div id="result-view" class="hidden flex-col h-full p-8 text-center flex-grow justify-center fade-in">
-            <h2 class="text-4xl font-black text-gray-900 mb-2">Quiz Complete!</h2>
-            <p class="text-gray-500 mb-8">Your score</p>
-            <div class="text-6xl font-extrabold text-blue-500 mb-12" id="final-score">10/10</div>
+            <h2 class="text-4xl font-black text-white mb-2">Quiz Cleared!</h2>
+            <p class="text-gray-400 mb-8">Words mastered in this session</p>
+            <div class="text-6xl font-extrabold text-emerald-400 mb-12" id="final-score">10/10</div>
             
-            <button onclick="continueLearning()" class="w-full py-4 bg-blue-600 text-white rounded-2xl text-lg font-bold shadow-md active:scale-[0.98] transition-transform">
+            <button onclick="continueLearning()" class="w-full py-4 bg-gray-800 border border-gray-700 text-white rounded-2xl text-lg font-bold shadow-md hover:bg-gray-700 active:scale-[0.98] transition-transform">
                 Continue Learning
             </button>
         </div>
 
     </div>
 
-    <!-- Link the logic script -->
     <script src="app.js"></script>
 </body>
 </html>
