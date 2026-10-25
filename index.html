@@ -5,15 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>10/10 CHALLENGE</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700;900&display=swap" rel="stylesheet">
     <style>
         body { 
-            background-color: #050505; /* Pitch black */
+            background-color: #050505; 
             font-family: 'Montserrat', sans-serif;
             -webkit-tap-highlight-color: transparent;
         }
         
-        /* Animations */
         .zoom-in { animation: zoomIn 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
         @keyframes zoomIn {
             from { opacity: 0; transform: scale(0.8); }
@@ -28,17 +27,12 @@
             40%, 60% { transform: translate3d(8px, 0, 0); }
         }
 
-        /* NEW: Shatter Animation for Failure */
         .shatter { animation: shatterAnim 0.6s ease-in forwards; }
         @keyframes shatterAnim {
             0% { transform: translateY(0) rotate(0deg); opacity: 1; }
             100% { transform: translateY(200px) rotate(15deg) scale(0.8); opacity: 0; }
         }
-
-        /* Gameplay States */
-        .hidden-tile { opacity: 0; pointer-events: none; transform: scale(0.5); transition: all 0.2s; }
         
-        /* NEW: Real Neon Glows */
         .text-neon-yellow { 
             color: #ccff00; 
             text-shadow: 0 0 10px rgba(204,255,0,0.6), 0 0 20px rgba(204,255,0,0.4); 
@@ -53,7 +47,7 @@
         }
         
         .correct-bg { 
-            background-color: #ccff00 !important; color: #000 !important; transform: scale(1.05); 
+            background-color: #ccff00 !important; color: #000 !important; transform: scale(1.02); 
             border-color: #ccff00 !important; 
             box-shadow: 0 0 15px rgba(204,255,0,0.8);
         }
@@ -63,7 +57,6 @@
             box-shadow: 0 0 15px rgba(255,0,60,0.8);
         }
 
-        /* Segmented Progress Bar */
         .segment { transition: all 0.3s ease; }
         .segment-active-learn { background-color: #fff; box-shadow: 0 0 8px rgba(255,255,255,0.5); }
         .segment-active-quiz { background-color: #ccff00; box-shadow: 0 0 10px rgba(204,255,0,0.8); }
@@ -81,17 +74,15 @@
                 <span id="global-progress" class="text-neon-yellow">0</span>
             </div>
         </div>
-        <!-- Segmented Progress Bar -->
         <div id="progress-bar" class="flex w-full gap-1 h-1.5 sm:h-2">
-            <!-- 10 segments injected via JS -->
+            <!-- Injected via JS -->
         </div>
     </div>
 
     <!-- START SCREEN -->
     <div id="start-view" class="flex flex-col h-full w-full justify-center items-center p-6 bg-black z-40 fixed inset-0">
-        <h1 class="text-5xl sm:text-7xl font-black text-center mb-4 leading-none uppercase">Master<br><span class="text-neon-yellow">The Words</span></h1>
+        <h1 class="text-5xl sm:text-7xl font-black text-center mb-4 leading-none uppercase">Master<br><span class="text-neon-yellow">The Usage</span></h1>
         <p class="text-gray-400 text-lg sm:text-xl font-bold text-center mb-12 uppercase tracking-widest">10/10 To Advance.<br>No Mercy.</p>
-        <!-- Thumb Zone Aligned Start -->
         <button onclick="startChallenge()" class="w-full max-w-sm mt-auto mb-10 py-6 bg-neon-blue rounded-xl text-3xl font-black active:scale-95 transition-transform uppercase">
             Start Challenge
         </button>
@@ -106,33 +97,30 @@
                 <span id="pos-tag" class="text-gray-500 font-bold text-2xl sm:text-3xl mt-4 lowercase zoom-in" style="animation-delay: 0.05s;"></span>
             </div>
             
-            <div id="thai-bounds" class="w-full relative flex justify-center items-center mt-10">
-                <p id="th-meaning" class="text-white font-bold whitespace-nowrap zoom-in text-center" style="animation-delay: 0.1s;"></p>
+            <!-- COBUILD Definition Box -->
+            <div class="w-full relative flex justify-center items-center mt-12 px-2">
+                <p id="en-definition" class="text-gray-300 font-medium text-2xl sm:text-4xl text-center leading-relaxed zoom-in" style="animation-delay: 0.1s;"></p>
             </div>
             
         </div>
 
-        <!-- Thumb Zone Ergonomics: Anchored Bottom -->
         <button onclick="nextWord()" class="w-full py-6 mt-auto mb-4 sm:mb-8 bg-white text-black rounded-xl text-3xl font-black shadow-[0_0_20px_rgba(255,255,255,0.3)] active:scale-95 transition-transform uppercase">
             Next Word
         </button>
     </div>
 
-    <!-- QUIZ VIEW (The Scramble) -->
-    <div id="quiz-view" class="hidden flex-col h-full w-full p-4 pt-24 max-w-2xl mx-auto relative">
+    <!-- QUIZ VIEW -->
+    <div id="quiz-view" class="hidden flex-col h-full w-full p-6 pt-24 max-w-3xl mx-auto relative">
         
         <div class="flex-grow flex flex-col justify-center w-full">
-            <div id="quiz-bounds" class="w-full relative flex justify-center items-center mb-8">
-                <p id="quiz-th-target" class="font-black text-gray-400 whitespace-nowrap zoom-in text-center uppercase tracking-widest"></p>
-            </div>
-
-            <div id="answer-bounds" class="w-full relative flex justify-center items-center h-24 border-b-4 border-gray-800 pb-2">
-                <h1 id="answer-display" class="font-black text-white tracking-[0.2em] leading-none whitespace-nowrap drop-shadow-lg"></h1>
+            <!-- Fill in the blank sentence -->
+            <div class="w-full relative flex justify-center items-center mb-10">
+                <p id="quiz-sentence" class="font-bold text-gray-200 text-2xl sm:text-4xl text-center leading-relaxed zoom-in drop-shadow-md"></p>
             </div>
         </div>
 
-        <!-- Thumb Zone Ergonomics: Pool anchored securely to bottom -->
-        <div id="letter-pool" class="mt-auto mb-6 sm:mb-10 flex flex-wrap justify-center gap-3 sm:gap-4 w-full zoom-in" style="animation-delay: 0.1s;">
+        <!-- Thumb Zone Ergonomics: Vertical Options anchored to bottom -->
+        <div id="quiz-options" class="mt-auto mb-6 sm:mb-10 flex flex-col w-full space-y-4 zoom-in" style="animation-delay: 0.1s;">
             <!-- Buttons generated dynamically -->
         </div>
     </div>
@@ -144,7 +132,6 @@
         
         <div class="text-[6rem] sm:text-[8rem] font-black leading-none mb-auto mt-10" id="final-score"></div>
         
-        <!-- Thumb Zone Aligned -->
         <button id="result-btn" class="w-full max-w-md mt-auto mb-10 py-6 rounded-xl text-2xl sm:text-3xl font-black active:scale-95 transition-transform uppercase">
         </button>
     </div>
