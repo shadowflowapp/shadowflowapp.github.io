@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
     <title>10/10 CHALLENGE</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;900&display=swap" rel="stylesheet">
@@ -13,7 +13,6 @@
             -webkit-tap-highlight-color: transparent;
         }
         
-        /* High-energy Animations */
         .zoom-in { animation: zoomIn 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
         @keyframes zoomIn {
             from { opacity: 0; transform: scale(0.8); }
@@ -28,40 +27,63 @@
             40%, 60% { transform: translate3d(8px, 0, 0); }
         }
 
-        /* Bold Status Colors */
         .correct-bg { background-color: #39ff14 !important; color: #000 !important; transform: scale(1.02); transition: all 0.2s; }
         .wrong-bg { background-color: #ff003c !important; color: #fff !important; }
         
-        /* Neon Accents */
         .text-neon-yellow { color: #ccff00; }
         .bg-neon-blue { background-color: #00e5ff; color: #000; }
+
+        /* Custom Toggle Switch */
+        .toggle-checkbox:checked { right: 0; border-color: #ccff00; }
+        .toggle-checkbox:checked + .toggle-label { background-color: #ccff00; }
+        .toggle-checkbox:checked + .toggle-label:after { transform: translateX(100%); border-color: white; }
     </style>
 </head>
-<body class="text-white h-screen w-screen overflow-hidden flex flex-col select-none">
+<body class="text-white min-h-screen bg-black flex flex-col select-none overflow-x-hidden">
 
-    <!-- Top Progress Bar -->
-    <div id="top-bar" class="w-full flex justify-between items-center p-6 hidden absolute top-0 left-0 z-50">
-        <div class="text-3xl font-black text-gray-700 tracking-tighter">X.APP</div>
-        <div class="text-2xl font-black">
-            <span class="text-gray-500">SCORE:</span> 
-            <span id="global-progress" class="text-neon-yellow ml-2">0</span>
+    <!-- Top Progress Bar & Settings -->
+    <div id="top-bar" class="w-full flex justify-between items-center p-6 hidden">
+        <div class="text-2xl sm:text-3xl font-black text-gray-700 tracking-tighter">X.APP</div>
+        
+        <div class="flex items-center space-x-6">
+            <!-- Autoplay Toggle -->
+            <div class="flex items-center space-x-2">
+                <span class="text-xs text-gray-500 font-bold uppercase tracking-widest">Autoplay</span>
+                <div class="relative inline-block w-12 mr-2 align-middle select-none transition duration-200 ease-in">
+                    <input type="checkbox" name="toggle" id="autoplay-toggle" class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer z-10 top-0 left-0 transition-all duration-300" checked/>
+                    <label for="autoplay-toggle" class="toggle-label block overflow-hidden h-6 rounded-full bg-gray-700 cursor-pointer transition-colors duration-300"></label>
+                </div>
+            </div>
+
+            <div class="text-xl sm:text-2xl font-black">
+                <span class="text-gray-500 hidden sm:inline">SCORE:</span> 
+                <span id="global-progress" class="text-neon-yellow">0</span>
+            </div>
         </div>
     </div>
 
-    <!-- START SCREEN (Bypasses Autoplay Policy) -->
-    <div id="start-view" class="flex flex-col h-full w-full justify-center items-center p-6 bg-black z-40 absolute inset-0">
-        <h1 class="text-6xl font-black text-center mb-4 leading-none uppercase">Master<br><span class="text-neon-yellow">The Words</span></h1>
-        <p class="text-gray-400 text-xl font-bold text-center mb-12 uppercase">10/10 TO ADVANCE. NO MERCY.</p>
+    <!-- START SCREEN -->
+    <div id="start-view" class="flex flex-col flex-grow w-full justify-center items-center p-6 bg-black z-40 fixed inset-0">
+        <h1 class="text-5xl sm:text-7xl font-black text-center mb-4 leading-none uppercase">Master<br><span class="text-neon-yellow">The Words</span></h1>
+        <p class="text-gray-400 text-lg sm:text-xl font-bold text-center mb-12 uppercase">10/10 TO ADVANCE. NO MERCY.</p>
         <button onclick="startChallenge()" class="w-full max-w-sm py-6 bg-neon-blue rounded-xl text-3xl font-black shadow-lg active:scale-95 transition-transform uppercase">
             Start Challenge
         </button>
     </div>
     
     <!-- LEARNING VIEW -->
-    <div id="learning-view" class="hidden flex-col h-full w-full justify-center items-center p-6 relative">
-        <div class="flex-grow flex flex-col justify-center items-center w-full">
-            <h1 id="en-word" class="text-[5rem] sm:text-[6rem] leading-none font-black text-neon-yellow uppercase tracking-tight text-center w-full truncate zoom-in"></h1>
-            <p id="th-meaning" class="text-3xl sm:text-4xl text-white font-bold mt-6 text-center w-full px-4 zoom-in" style="animation-delay: 0.1s;"></p>
+    <div id="learning-view" class="hidden flex-col flex-grow w-full justify-center items-center p-6 max-w-3xl mx-auto">
+        <div class="flex-grow flex flex-col justify-center items-center w-full my-8">
+            <h1 id="en-word" class="text-[4rem] sm:text-[6rem] md:text-[8rem] leading-none font-black text-neon-yellow uppercase tracking-tight text-center w-full break-words zoom-in"></h1>
+            
+            <!-- Manual Audio Button -->
+            <button onclick="playCurrentWordAudio()" class="mt-8 p-4 bg-gray-900 rounded-full text-neon-yellow hover:bg-gray-800 active:scale-90 transition-transform">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 sm:h-14 sm:w-14" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M9.383 3.076A1 1 0 0110 4v12a1 1 0 01-1.707.707L4.586 13H2a1 1 0 01-1-1V8a1 1 0 011-1h2.586l3.707-3.707a1 1 0 011.09-.217zM14.657 2.929a1 1 0 011.414 0A9.972 9.972 0 0119 10a9.972 9.972 0 01-2.929 7.071 1 1 0 01-1.414-1.414A7.971 7.971 0 0017 10c0-2.21-.894-4.208-2.343-5.657a1 1 0 010-1.414zm-2.829 2.828a1 1 0 011.415 0A5.983 5.983 0 0115 10a5.984 5.984 0 01-1.757 4.243 1 1 0 01-1.415-1.415A3.984 3.984 0 0013 10a3.983 3.983 0 00-1.172-2.828 1 1 0 010-1.415z" clip-rule="evenodd" />
+                </svg>
+            </button>
+
+            <p id="th-meaning" class="text-3xl sm:text-5xl text-white font-bold mt-8 text-center w-full px-4 zoom-in" style="animation-delay: 0.1s;"></p>
         </div>
 
         <button onclick="nextWord()" class="w-full max-w-md py-6 bg-white text-black rounded-xl text-3xl font-black shadow-lg active:scale-95 transition-transform uppercase mb-8">
@@ -69,28 +91,26 @@
         </button>
     </div>
 
-    <!-- QUIZ VIEW (Vertical Choices) -->
-    <div id="quiz-view" class="hidden flex-col h-full w-full justify-center p-6 relative max-w-md mx-auto">
-        <div class="flex-grow flex flex-col justify-center space-y-8">
-            <div class="text-center">
-                <p id="quiz-th-target" class="text-4xl sm:text-5xl font-black text-white leading-tight zoom-in"></p>
-            </div>
+    <!-- QUIZ VIEW -->
+    <div id="quiz-view" class="hidden flex-col flex-grow w-full justify-center items-center p-6 w-full max-w-2xl mx-auto my-8">
+        <div class="w-full text-center">
+            <p id="quiz-th-target" class="text-3xl sm:text-5xl font-black text-white leading-tight zoom-in"></p>
+        </div>
 
-            <!-- Vertical Match Options -->
-            <div id="quiz-options" class="flex flex-col w-full space-y-4 mt-8 zoom-in" style="animation-delay: 0.1s;">
-                <!-- Buttons generated by JS -->
-            </div>
+        <!-- Vertical Match Options -->
+        <div id="quiz-options" class="flex flex-col w-full space-y-4 mt-12 zoom-in" style="animation-delay: 0.1s;">
+            <!-- Buttons generated by JS -->
         </div>
     </div>
 
     <!-- RESULT VIEW -->
-    <div id="result-view" class="hidden flex-col h-full w-full justify-center items-center p-6 text-center">
-        <h2 id="result-title" class="text-6xl font-black uppercase mb-4 leading-none"></h2>
-        <p id="result-subtitle" class="text-2xl font-bold text-gray-400 mb-12 uppercase"></p>
+    <div id="result-view" class="hidden flex-col flex-grow w-full justify-center items-center p-6 text-center">
+        <h2 id="result-title" class="text-5xl sm:text-7xl font-black uppercase mb-4 leading-none"></h2>
+        <p id="result-subtitle" class="text-xl sm:text-3xl font-bold text-gray-400 mb-12 uppercase"></p>
         
-        <div class="text-[7rem] font-black leading-none mb-12" id="final-score"></div>
+        <div class="text-[6rem] sm:text-[9rem] font-black leading-none mb-12" id="final-score"></div>
         
-        <button id="result-btn" class="w-full max-w-md py-6 rounded-xl text-3xl font-black shadow-lg active:scale-95 transition-transform uppercase mb-8">
+        <button id="result-btn" class="w-full max-w-md py-6 rounded-xl text-2xl sm:text-3xl font-black shadow-lg active:scale-95 transition-transform uppercase mb-8">
             <!-- Text injected by JS -->
         </button>
     </div>
