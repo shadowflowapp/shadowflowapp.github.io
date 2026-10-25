@@ -27,10 +27,12 @@
             40%, 60% { transform: translate3d(8px, 0, 0); }
         }
 
-        .correct-bg { background-color: #39ff14 !important; color: #000 !important; transform: scale(1.02); transition: all 0.2s; border: 2px solid #39ff14; }
-        .wrong-bg { background-color: #ff003c !important; color: #fff !important; border: 2px solid #ff003c; }
+        .correct-bg { background-color: #39ff14 !important; color: #000 !important; transform: scale(1.05); transition: all 0.2s; border-color: #39ff14 !important; }
+        .wrong-bg { background-color: #ff003c !important; color: #fff !important; border-color: #ff003c !important; }
+        .hidden-tile { opacity: 0; pointer-events: none; transform: scale(0.5); transition: all 0.2s; }
         
         .text-neon-yellow { color: #ccff00; }
+        .text-neon-red { color: #ff003c; }
         .bg-neon-blue { background-color: #00e5ff; color: #000; }
     </style>
 </head>
@@ -78,15 +80,21 @@
         </button>
     </div>
 
-    <!-- QUIZ VIEW -->
-    <div id="quiz-view" class="hidden flex-col flex-grow w-full justify-center items-center p-6 max-w-md mx-auto my-8">
+    <!-- QUIZ VIEW (The Scramble) -->
+    <div id="quiz-view" class="hidden flex-col flex-grow w-full justify-center items-center p-4 max-w-2xl mx-auto my-4">
         
-        <div id="quiz-bounds" class="w-full relative flex justify-center items-center">
-            <p id="quiz-th-target" class="font-black text-white whitespace-nowrap zoom-in text-center"></p>
+        <!-- Target Thai Meaning -->
+        <div id="quiz-bounds" class="w-full relative flex justify-center items-center mb-8">
+            <p id="quiz-th-target" class="font-black text-gray-400 whitespace-nowrap zoom-in text-center uppercase tracking-widest"></p>
         </div>
 
-        <!-- Options Container -->
-        <div id="quiz-options" class="flex flex-col w-full space-y-4 mt-12 zoom-in" style="animation-delay: 0.1s;">
+        <!-- Answer Slot (Where tapped letters appear) -->
+        <div id="answer-bounds" class="w-full relative flex justify-center items-center mb-12 h-24 border-b-4 border-gray-800 pb-2">
+            <h1 id="answer-display" class="font-black text-white tracking-[0.2em] leading-none whitespace-nowrap"></h1>
+        </div>
+
+        <!-- Scrambled Letter Tiles -->
+        <div id="letter-pool" class="flex flex-wrap justify-center gap-3 sm:gap-4 w-full zoom-in" style="animation-delay: 0.1s;">
             <!-- Buttons generated dynamically -->
         </div>
     </div>
