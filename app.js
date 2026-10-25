@@ -6,14 +6,11 @@ let learnedCountInBatch = 0;
 let quizQueue = [];
 let currentQuizIndex = 0;
 let score = 0;
-
-let currentAnswerArray = [];
-let currentSpellingIndex = 0;
 let isAnimating = false; 
 
 let totalWordsLearned = localStorage.getItem('totalLearnedBeast') ? parseInt(localStorage.getItem('totalLearnedBeast')) : 0;
 
-// --- WEB AUDIO SYNTHESIZER (For zero-dependency sound effects) ---
+// --- WEB AUDIO SYNTHESIZER ---
 let audioCtx = null;
 
 function initAudio() {
@@ -42,8 +39,7 @@ function playTone(freq, type, duration, vol = 0.1) {
 }
 
 // Sound Effect Triggers
-function sfxTick() { playTone(800, 'sine', 0.1, 0.1); vibrate(10); } // Tap letter
-function sfxSwoosh() { playTone(200, 'triangle', 0.15, 0.05); vibrate(15); } // Next word
+function sfxSwoosh() { playTone(200, 'triangle', 0.15, 0.05); vibrate(15); }
 function sfxSuccess() { 
     playTone(500, 'sine', 0.1, 0.1); 
     setTimeout(() => playTone(800, 'sine', 0.2, 0.15), 100); 
@@ -54,7 +50,6 @@ function sfxFail() {
     vibrate([200, 100, 200, 100, 300]); 
 }
 
-// Haptic Feedback helper
 function vibrate(pattern) {
     if (navigator.vibrate) {
         navigator.vibrate(pattern);
@@ -72,7 +67,6 @@ const views = {
 
 document.getElementById('global-progress').textContent = totalWordsLearned;
 
-// Segmented Progress Bar Setup
 const progressBar = document.getElementById('progress-bar');
 for(let i=0; i<10; i++) {
     const seg = document.createElement('div');
@@ -83,7 +77,7 @@ for(let i=0; i<10; i++) {
 function updateProgressBar(count, mode) {
     const segments = progressBar.children;
     for(let i=0; i<10; i++) {
-        segments[i].className = 'flex-1 rounded-full segment segment-empty'; // reset
+        segments[i].className = 'flex-1 rounded-full segment segment-empty'; 
         if (i < count) {
             if (mode === 'learn') segments[i].classList.add('segment-active-learn');
             if (mode === 'quiz') segments[i].classList.add('segment-active-quiz');
@@ -102,7 +96,7 @@ async function loadDatabase() {
     }
 }
 
-// Math Scaling Text
+// Scales text to exactly fit the container width
 function fitTextSync(textElementId, boundContainerId, maxFontSizePx) {
     const textEl = document.getElementById(textElementId);
     const boundsEl = document.getElementById(boundContainerId);
@@ -121,7 +115,7 @@ function fitTextSync(textElementId, boundContainerId, maxFontSizePx) {
 }
 
 window.startChallenge = function() {
-    initAudio(); // Initialize audio context on first user interaction
+    initAudio(); 
     sfxSwoosh();
     
     views.start.classList.add('hidden');
@@ -144,19 +138,19 @@ function renderLearnView() {
     
     document.getElementById('en-word').textContent = currentWord.word;
     document.getElementById('pos-tag').textContent = currentWord.pos;
-    document.getElementById('th-meaning').textContent = currentWord.thai;
+    document.getElementById('en-definition').textContent = currentWord.definition;
     
     // Restart CSS Animations
     document.getElementById('en-word').style.animation = 'none';
     document.getElementById('pos-tag').style.animation = 'none';
-    document.getElementById('th-meaning').style.animation = 'none';
+    document.getElementById('en-definition').style.animation = 'none';
     document.getElementById('en-word').offsetHeight; 
     document.getElementById('en-word').style.animation = null; 
     document.getElementById('pos-tag').style.animation = null; 
-    document.getElementById('th-meaning').style.animation = null; 
+    document.getElementById('en-definition').style.animation = null; 
 
+    // Auto-fit only the main target word so it never breaks layout
     fitTextSync('en-word', 'word-bounds', 100);
-    fitTextSync('th-meaning', 'thai-bounds', 40);
 }
 
 window.nextWord = function() {
@@ -166,7 +160,7 @@ window.nextWord = function() {
     learnedCountInBatch++;
 
     if (learnedCountInBatch === 10) {
-        updateProgressBar(10, 'learn'); // fill briefly
+        updateProgressBar(10, 'learn'); 
         setTimeout(startQuiz, 300);
     } else {
         renderLearnView();
@@ -190,89 +184,77 @@ function renderQuizQuestion() {
     updateProgressBar(currentQuizIndex, 'quiz');
     
     const q = quizQueue[currentQuizIndex];
-    const correctWord = q.word.toUpperCase();
     
-    currentSpellingIndex = 0;
-    currentAnswerArray = Array(correctWord.length).fill('_');
+    // Highlight the blank in neon
+    const styledSentence = q.sentence.replace('___', '<span class="text-neon-yellow border-b-4 border-neon-yellow px-6 mx-1 inline-block h-6 sm:h-8"></span>');
     
-    document.getElementById('quiz-th-target').textContent = q.thai;
-    fitTextSync('quiz-th-target', 'quiz-bounds', 35);
+    const sentenceEl = document.getElementById('quiz-sentence');
+    sentenceEl.innerHTML = styledSentence;
+    sentenceEl.classList.remove('shatter', 'text-neon-red');
 
-    document.getElementById('answer-display').className = "font-black text-white tracking-[0.2em] leading-none whitespace-nowrap drop-shadow-lg";
-    updateAnswerDisplay();
+    // Shuffle Target + Distractors
+    const options = [q.word, ...q.distractors].sort(() => Math.random() - 0.5);
+    const optionsContainer = document.getElementById('quiz-options');
+    optionsContainer.innerHTML = ''; 
 
-    let letters = correctWord.split('');
-    for (let i = letters.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [letters[i], letters[j]] = [letters[j], letters[i]];
-    }
-    
-    const poolContainer = document.getElementById('letter-pool');
-    poolContainer.innerHTML = ''; 
-
-    letters.forEach((letter) => {
+    options.forEach(option => {
         const btn = document.createElement('button');
-        btn.className = "w-14 h-16 sm:w-16 sm:h-20 rounded-lg border-b-4 border-gray-700 bg-gray-800 text-3xl sm:text-4xl font-black text-white uppercase text-center active:scale-95 active:border-b-0 active:translate-y-1 transition-all flex justify-center items-center shadow-lg";
-        btn.textContent = letter;
-        btn.onclick = () => handleLetterTap(btn, letter, correctWord);
-        poolContainer.appendChild(btn);
+        // Clean buttons, no POS hints, vertical stack for thumb reach
+        btn.className = "w-full py-6 px-4 rounded-xl border-2 border-gray-800 bg-gray-900 text-2xl sm:text-3xl font-black text-white uppercase text-center active:scale-95 transition-all truncate";
+        btn.textContent = option;
+        
+        btn.onclick = () => handleAnswer(btn, option, q.word, q.sentence);
+        optionsContainer.appendChild(btn);
     });
 }
 
-function updateAnswerDisplay(isError = false) {
-    const displayEl = document.getElementById('answer-display');
-    displayEl.textContent = currentAnswerArray.join('');
-    
-    if (isError) {
-        displayEl.classList.add('text-neon-red');
-        displayEl.classList.remove('text-white');
-    }
-    fitTextSync('answer-display', 'answer-bounds', 70);
-}
-
-function handleLetterTap(btnElement, letter, correctWord) {
+function handleAnswer(btnElement, selectedWord, correctWord, fullSentence) {
     if (isAnimating) return;
+    isAnimating = true;
 
-    const expectedLetter = correctWord[currentSpellingIndex];
+    const allBtns = document.getElementById('quiz-options').querySelectorAll('button');
+    allBtns.forEach(b => b.disabled = true);
 
-    if (letter === expectedLetter) {
-        sfxTick(); // Haptic & Audio
-        currentAnswerArray[currentSpellingIndex] = letter;
-        currentSpellingIndex++;
+    const sentenceEl = document.getElementById('quiz-sentence');
+
+    if (selectedWord === correctWord) {
+        // Success
+        sfxSuccess();
+        score++;
+        btnElement.classList.add('correct-bg');
+        btnElement.classList.remove('border-gray-800');
         
-        btnElement.classList.add('hidden-tile');
-        updateAnswerDisplay();
+        // Fill the blank with the correct word
+        sentenceEl.innerHTML = fullSentence.replace('___', `<span class="text-black bg-neon-yellow px-2 rounded">${correctWord}</span>`);
+        updateProgressBar(currentQuizIndex + 1, 'quiz');
 
-        if (currentSpellingIndex === correctWord.length) {
-            isAnimating = true;
-            score++;
-            sfxSuccess();
-            
-            document.getElementById('answer-display').classList.add('text-neon-yellow');
-            document.getElementById('answer-display').classList.remove('text-white');
-            updateProgressBar(currentQuizIndex + 1, 'quiz'); // Fill the bar
+        setTimeout(() => {
+            currentQuizIndex++;
+            if (currentQuizIndex >= 10) {
+                endQuiz();
+            } else {
+                renderQuizQuestion();
+            }
+        }, 1000);
 
-            setTimeout(() => {
-                currentQuizIndex++;
-                if (currentQuizIndex >= 10) {
-                    endQuiz();
-                } else {
-                    renderQuizQuestion();
-                }
-            }, 700);
-        }
     } else {
-        isAnimating = true;
-        sfxFail(); // Buzz and dissonant tone
+        // Fail
+        sfxFail();
+        btnElement.classList.add('wrong-bg', 'shake');
+        btnElement.classList.remove('border-gray-800');
         
-        currentAnswerArray[currentSpellingIndex] = letter;
-        updateAnswerDisplay(true); 
+        // Highlight correct answer
+        allBtns.forEach(b => {
+            if (b.textContent.toLowerCase() === correctWord.toLowerCase()) {
+                b.classList.add('correct-bg');
+                b.classList.remove('border-gray-800');
+            }
+        });
         
-        btnElement.classList.add('wrong-bg');
+        // Shatter animation on the sentence
         document.body.classList.add('shake');
-        
-        // Shatter animation on the answer text
-        document.getElementById('answer-display').classList.add('shatter');
+        sentenceEl.innerHTML = fullSentence.replace('___', `<span class="text-neon-red">${selectedWord}</span>`);
+        sentenceEl.classList.add('shatter', 'text-neon-red');
         
         setTimeout(() => {
             document.body.classList.remove('shake');
@@ -349,10 +331,6 @@ function resetForNextRound() {
 window.addEventListener('resize', () => {
     if (!views.learn.classList.contains('hidden')) {
         fitTextSync('en-word', 'word-bounds', 100);
-        fitTextSync('th-meaning', 'thai-bounds', 40);
-    } else if (!views.quiz.classList.contains('hidden')) {
-        fitTextSync('quiz-th-target', 'quiz-bounds', 35);
-        fitTextSync('answer-display', 'answer-bounds', 70);
     }
 });
 
