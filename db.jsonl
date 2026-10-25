@@ -1,106 +1,20 @@
-{"word":"aback","pos":"adv.","thai":"ผงะ, ตกใจ, ถอยหลัง"}
-{"word":"abacus","pos":"n.","thai":"ลูกคิด"}
-{"word":"abandon","pos":"v.","thai":"ละทิ้ง, ปล่อย"}
-{"word":"abase","pos":"v.","thai":"ลดเกียรติ, ถ่อมตัว"}
-{"word":"abash","pos":"v.","thai":"ทำให้ละอาย, ทำให้เขิน"}
-{"word":"abate","pos":"v.","thai":"บรรเทา, ลดลง"}
-{"word":"abbey","pos":"n.","thai":"วัด, โบสถ์"}
-{"word":"abbot","pos":"n.","thai":"เจ้าอาวาส"}
-{"word":"abbreviate","pos":"v.","thai":"ย่อ, ทำให้สั้นลง"}
-{"word":"abdicate","pos":"v.","thai":"สละราชสมบัติ"}
-{"word":"abdomen","pos":"n.","thai":"ช่องท้อง"}
-{"word":"abduct","pos":"v.","thai":"ลักพาตัว"}
-{"word":"aberrant","pos":"adj.","thai":"ผิดปกติ, นอกลู่นอกทาง"}
-{"word":"abet","pos":"v.","thai":"สมรู้ร่วมคิด (ในทางเลว)"}
-{"word":"abhor","pos":"v.","thai":"เกลียดชัง"}
-{"word":"abide","pos":"v.","thai":"ปฏิบัติตาม, ทนทาน"}
-{"word":"ability","pos":"n.","thai":"ความสามารถ"}
-{"word":"abject","pos":"adj.","thai":"น่าสมเพช, ต่ำต้อย"}
-{"word":"abjure","pos":"v.","thai":"สละสิทธิ์, ถอนคำสาบาน"}
-{"word":"ablaze","pos":"adj.","thai":"ลุกไหม้, สว่างไสว"}
-{"word":"able","pos":"adj.","thai":"สามารถ"}
-{"word":"abnormal","pos":"adj.","thai":"ผิดปกติ"}
-{"word":"aboard","pos":"adv.","thai":"บนเรือ, บนรถ"}
-{"word":"abode","pos":"n.","thai":"ที่อยู่อาศัย"}
-{"word":"abolish","pos":"v.","thai":"ยกเลิก, ล้มล้าง"}
-{"word":"abominable","pos":"adj.","thai":"น่ารังเกียจ, เลวทราม"}
-{"word":"abort","pos":"v.","thai":"ยกเลิก, ทำแท้ง"}
-{"word":"abound","pos":"v.","thai":"มีอยู่มากมาย"}
-{"word":"about","pos":"prep.","thai":"เกี่ยวกับ, ประมาณ"}
-{"word":"above","pos":"prep.","thai":"เหนือ, สูงกว่า"}
-{"word":"abrade","pos":"v.","thai":"ถลอก, ขัดถู"}
-{"word":"abrasion","pos":"n.","thai":"รอยถลอก"}
-{"word":"abrasive","pos":"adj.","thai":"ที่ใช้ขัด, หยาบคาย"}
-{"word":"abreast","pos":"adv.","thai":"เคียงข้าง, ทันเหตุการณ์"}
-{"word":"abridge","pos":"v.","thai":"ย่อบทความ, ตัดทอน"}
-{"word":"abroad","pos":"adv.","thai":"ต่างประเทศ"}
-{"word":"abrogate","pos":"v.","thai":"เพิกถอน, ยกเลิก"}
-{"word":"abrupt","pos":"adj.","thai":"ฉับพลัน, ทันทีทันใด"}
-{"word":"abscess","pos":"n.","thai":"ฝี"}
-{"word":"abscond","pos":"v.","thai":"หลบหนี, ลักลอบ"}
-{"word":"absence","pos":"n.","thai":"การไม่อยู่, การขาดแคลน"}
-{"word":"absent","pos":"adj.","thai":"ขาด, ไม่อยู่"}
-{"word":"absolute","pos":"adj.","thai":"เด็ดขาด, สมบูรณ์"}
-{"word":"absolve","pos":"v.","thai":"อภัยโทษ, พ้นผิด"}
-{"word":"absorb","pos":"v.","thai":"ดูดซับ"}
-{"word":"abstain","pos":"v.","thai":"ละเว้น, งดออกเสียง"}
-{"word":"abstract","pos":"adj.","thai":"นามธรรม"}
-{"word":"abstruse","pos":"adj.","thai":"เข้าใจยาก, ลึกซึ้ง"}
-{"word":"absurd","pos":"adj.","thai":"ไร้สาระ"}
-{"word":"abundance","pos":"n.","thai":"ความอุดมสมบูรณ์"}
-{"word":"abundant","pos":"adj.","thai":"อุดมสมบูรณ์"}
-{"word":"abuse","pos":"v.","thai":"ล่วงละเมิด, ใช้ในทางที่ผิด"}
-{"word":"abut","pos":"v.","thai":"ติดกับ, ประชิด"}
-{"word":"abysmal","pos":"adj.","thai":"เลวร้ายมาก, ลึกสุดหยั่ง"}
-{"word":"abyss","pos":"n.","thai":"เหวลึก, ห้วงลึก"}
-{"word":"acacia","pos":"n.","thai":"ต้นกระถิน"}
-{"word":"academic","pos":"adj.","thai":"เชิงวิชาการ"}
-{"word":"academy","pos":"n.","thai":"สถาบันการศึกษา"}
-{"word":"accede","pos":"v.","thai":"ยอมรับ, เห็นด้วย"}
-{"word":"accelerate","pos":"v.","thai":"เร่งความเร็ว"}
-{"word":"accent","pos":"n.","thai":"สำเนียง, การเน้น"}
-{"word":"accept","pos":"v.","thai":"ยอมรับ"}
-{"word":"access","pos":"n.","thai":"การเข้าถึง"}
-{"word":"accessory","pos":"n.","thai":"อุปกรณ์เสริม"}
-{"word":"accident","pos":"n.","thai":"อุบัติเหตุ"}
-{"word":"acclaim","pos":"v.","thai":"สรรเสริญ, โห่ร้องต้อนรับ"}
-{"word":"acclimate","pos":"v.","thai":"ปรับตัวให้ชินกับสภาพอากาศ"}
-{"word":"accolade","pos":"n.","thai":"รางวัล, การยกย่อง"}
-{"word":"accommodate","pos":"v.","thai":"อำนวยความสะดวก, จัดที่พัก"}
-{"word":"accompany","pos":"v.","thai":"ไปเป็นเพื่อน, ติดตาม"}
-{"word":"accomplice","pos":"n.","thai":"ผู้สมรู้ร่วมคิด"}
-{"word":"accomplish","pos":"v.","thai":"ทำสำเร็จ"}
-{"word":"accord","pos":"n.","thai":"ข้อตกลง, ความสอดคล้อง"}
-{"word":"accordion","pos":"n.","thai":"หีบเพลง"}
-{"word":"accost","pos":"v.","thai":"ทักทายอย่างก้าวร้าว"}
-{"word":"account","pos":"n.","thai":"บัญชี, การบรรยาย"}
-{"word":"accredit","pos":"v.","thai":"รับรองวิทยฐานะ"}
-{"word":"accrue","pos":"v.","thai":"งอกเงย, สะสมเพิ่มขึ้น"}
-{"word":"accumulate","pos":"v.","thai":"สะสม"}
-{"word":"accuracy","pos":"n.","thai":"ความแม่นยำ"}
-{"word":"accurate","pos":"adj.","thai":"แม่นยำ, ถูกต้อง"}
-{"word":"accursed","pos":"adj.","thai":"ถูกสาปแช่ง"}
-{"word":"accusation","pos":"n.","thai":"ข้อกล่าวหา"}
-{"word":"accuse","pos":"v.","thai":"กล่าวหา"}
-{"word":"accustom","pos":"v.","thai":"ทำให้คุ้นเคย"}
-{"word":"ace","pos":"n.","thai":"ผู้เชี่ยวชาญ, ไพ่เอซ"}
-{"word":"acerbic","pos":"adj.","thai":"ที่มีรสเปรี้ยว, รุนแรง (คำพูด)"}
-{"word":"ache","pos":"n.","thai":"ความเจ็บปวด"}
-{"word":"achieve","pos":"v.","thai":"บรรลุผล"}
-{"word":"acid","pos":"n.","thai":"กรด"}
-{"word":"acknowledge","pos":"v.","thai":"รับทราบ, ยอมรับ"}
-{"word":"acme","pos":"n.","thai":"จุดสูงสุด"}
-{"word":"acne","pos":"n.","thai":"สิว"}
-{"word":"acorn","pos":"n.","thai":"ผลโอ๊ก"}
-{"word":"acoustic","pos":"adj.","thai":"เกี่ยวกับเสียง"}
-{"word":"acquaint","pos":"v.","thai":"ทำให้คุ้นเคย"}
-{"word":"acquire","pos":"v.","thai":"ได้รับ, เข้าถือสิทธิ์"}
-{"word":"acquit","pos":"v.","thai":"ตัดสินให้พ้นผิด"}
-{"word":"acre","pos":"n.","thai":"เอเคอร์ (หน่วยพื้นที่)"}
-{"word":"acrid","pos":"adj.","thai":"ฉุน, เผ็ดร้อน"}
-{"word":"acrobat","pos":"n.","thai":"นักกายกรรม"}
-{"word":"acronym","pos":"n.","thai":"คำย่อ"}
-{"word":"across","pos":"prep.","thai":"ข้าม, ทะลุ"}
-{"word":"acrylic","pos":"n.","thai":"สีอะคริลิค"}
-{"word":"act","pos":"v.","thai":"แสดง, กระทำ"}
-{"word":"action","pos":"n.","thai":"การกระทำ"}
+{"word":"abandon","pos":"v.","definition":"To leave a place, thing, or person forever.","sentence":"The crew had no choice but to ___ the burning ship.","distractors":["absorb","abuse","adjust"]}
+{"word":"ability","pos":"n.","definition":"The physical or mental power or skill needed to do something.","sentence":"She has the ___ to solve complex mathematical problems in seconds.","distractors":["action","anxiety","amount"]}
+{"word":"abnormal","pos":"adj.","definition":"Different from what is usual or average, especially in a way that is bad.","sentence":"The blood tests revealed an ___ level of sugar that required medication.","distractors":["informal","animal","actual"]}
+{"word":"abolish","pos":"v.","definition":"To end an activity or custom officially.","sentence":"The new government plans to ___ the outdated tax laws.","distractors":["polish","banish","accomplish"]}
+{"word":"abrupt","pos":"adj.","definition":"Sudden and unexpected, and often unpleasant.","sentence":"Our pleasant conversation came to an ___ end when the fire alarm rang.","distractors":["corrupt","erupt","absurd"]}
+{"word":"absorb","pos":"v.","definition":"To take something in, especially gradually.","sentence":"Use this thick sponge to ___ the spilled coffee from the carpet.","distractors":["abhor","abuse","adopt"]}
+{"word":"absurd","pos":"adj.","definition":"Stupid and unreasonable, or silly in a humorous way.","sentence":"It is completely ___ to wear a heavy winter coat to the beach.","distractors":["abrupt","alert","alone"]}
+{"word":"abundant","pos":"adj.","definition":"More than enough; existing in large quantities.","sentence":"The tropical rainforest is home to an ___ variety of plant species.","distractors":["abandoned","redundant","absent"]}
+{"word":"abuse","pos":"v.","definition":"To use something for the wrong purpose in a way that is harmful.","sentence":"If you ___ your administrative privileges, your account will be locked.","distractors":["amuse","abase","accuse"]}
+{"word":"accelerate","pos":"v.","definition":"To happen or make something happen sooner or faster.","sentence":"The driver pressed the pedal to ___ down the empty highway.","distractors":["celebrate","accommodate","accumulate"]}
+{"word":"accept","pos":"v.","definition":"To agree to take something, or to say yes to an offer.","sentence":"I would be honored to ___ your invitation to the conference.","distractors":["expect","except","accent"]}
+{"word":"access","pos":"n.","definition":"The right or opportunity to use or look at something.","sentence":"You need a premium account to gain ___ to these exclusive articles.","distractors":["assess","excess","abscess"]}
+{"word":"accommodate","pos":"v.","definition":"To provide with a place to live or to be stored in.","sentence":"The new hotel was built specifically to ___ over five hundred guests.","distractors":["accumulate","accelerate","accustom"]}
+{"word":"accompany","pos":"v.","definition":"To go with someone or to be provided or exist at the same time.","sentence":"Parents must ___ children under twelve at the amusement park.","distractors":["accomplish","accuse","account"]}
+{"word":"accomplish","pos":"v.","definition":"To finish something successfully or to achieve something.","sentence":"With hard work, you can ___ anything you set your mind to.","distractors":["abolish","accompany","acquire"]}
+{"word":"accurate","pos":"adj.","definition":"Correct, exact, and without any mistakes.","sentence":"The witness provided an ___ description of the suspect to the police.","distractors":["adequate","absolute","active"]}
+{"word":"accuse","pos":"v.","definition":"To say that someone has done something morally wrong or illegal.","sentence":"It is unfair to ___ him of theft without any hard evidence.","distractors":["amuse","abuse","excuse"]}
+{"word":"achieve","pos":"v.","definition":"To succeed in finishing something or reaching an aim.","sentence":"She worked tirelessly for years to ___ her dream of becoming a doctor.","distractors":["archive","relieve","acquire"]}
+{"word":"acquire","pos":"v.","definition":"To get or buy something.","sentence":"The company plans to ___ its smaller rival by the end of the year.","distractors":["require","inquire","achieve"]}
+{"word":"action","pos":"n.","definition":"The process of doing something, especially when dealing with a problem.","sentence":"The committee demands immediate ___ to resolve the safety hazard.","distractors":["auction","fraction","fiction"]}
