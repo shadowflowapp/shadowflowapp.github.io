@@ -7,6 +7,11 @@ let quizQueue = [];
 let currentQuizIndex = 0;
 let score = 0;
 
+// Scramble Game State
+let currentAnswerArray = [];
+let currentSpellingIndex = 0;
+let isAnimating = false; // Prevents frantic tapping during failure animation
+
 let totalWordsLearned = localStorage.getItem('totalLearnedBeast') ? parseInt(localStorage.getItem('totalLearnedBeast')) : 0;
 
 const views = {
@@ -31,23 +36,19 @@ async function loadDatabase() {
 }
 
 // --- BULLETPROOF TEXT FIT MATH ALGORITHM ---
-// Measures exact pixels and guarantees text fits on 1 line.
 function fitTextSync(textElementId, boundContainerId, maxFontSizePx) {
     const textEl = document.getElementById(textElementId);
     const boundsEl = document.getElementById(boundContainerId);
     
-    // Step 1: Force max size and single line
     textEl.style.fontSize = `${maxFontSizePx}px`;
     textEl.style.whiteSpace = 'nowrap';
 
-    // Step 2: Mathematically scale down if text is wider than screen container
     const textWidth = textEl.scrollWidth;
     const containerWidth = boundsEl.clientWidth;
     
     if (textWidth > containerWidth && containerWidth > 0) {
         const ratio = containerWidth / textWidth;
-        const exactSafeFit = Math.floor(maxFontSizePx * ratio * 0.95); // 0.95 is 5% safety padding
-        
+        const exactSafeFit = Math.floor(maxFontSizePx * ratio * 0.95);
         textEl.style.fontSize = `${exactSafeFit}px`;
     }
 }
@@ -77,13 +78,12 @@ function renderLearnView() {
     document.getElementById('pos-tag').style.animation = 'none';
     document.getElementById('th-meaning').style.animation = 'none';
     
-    document.getElementById('en-word').offsetHeight; // Trigger reflow
+    document.getElementById('en-word').offsetHeight; 
     
     document.getElementById('en-word').style.animation = null; 
     document.getElementById('pos-tag').style.animation = null; 
     document.getElementById('th-meaning').style.animation = null; 
 
-    // Apply scaling logic - Base max is 120px for word, 50px for Thai
     fitTextSync('en-word', 'word-bounds', 120);
     fitTextSync('th-meaning', 'thai-bounds', 50);
 }
@@ -101,6 +101,7 @@ window.nextWord = function() {
     }
 };
 
+// --- SCRAMBLE QUIZ LOGIC ---
 function startQuiz() {
     views.learn.classList.add('hidden');
     views.learn.classList.remove('flex');
@@ -115,55 +116,109 @@ function startQuiz() {
 }
 
 function renderQuizQuestion() {
+    isAnimating = false;
     const q = quizQueue[currentQuizIndex];
+    const correctWord = q.word.toUpperCase();
     
+    // Reset State for the new word
+    currentSpellingIndex = 0;
+    currentAnswerArray = Array(correctWord.length).fill('_');
+    
+    // Render Target Thai
     document.getElementById('quiz-th-target').textContent = q.thai;
-    fitTextSync('quiz-th-target', 'quiz-bounds', 50);
+    fitTextSync('quiz-th-target', 'quiz-bounds', 35);
 
-    const options = [q.word, ...q.distractors].sort(() => Math.random() - 0.5);
-    const optionsContainer = document.getElementById('quiz-options');
-    optionsContainer.innerHTML = ''; 
+    // Render Answer Slots
+    updateAnswerDisplay();
 
-    options.forEach(option => {
+    // Generate Scrambled Letters
+    let letters = correctWord.split('');
+    // Fisher-Yates Shuffle
+    for (let i = letters.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [letters[i], letters[j]] = [letters[j], letters[i]];
+    }
+    
+    const poolContainer = document.getElementById('letter-pool');
+    poolContainer.innerHTML = ''; 
+
+    letters.forEach((letter, index) => {
         const btn = document.createElement('button');
-        // Clean buttons, no POS hints
-        btn.className = "w-full py-6 px-4 rounded-xl border-2 border-gray-800 bg-gray-900 text-2xl sm:text-3xl font-black text-white uppercase text-center active:scale-95 transition-all truncate";
-        btn.textContent = option;
+        // Chunky square tile design
+        btn.className = "w-14 h-16 sm:w-16 sm:h-20 rounded-lg border-b-4 border-gray-700 bg-gray-800 text-3xl sm:text-4xl font-black text-white uppercase text-center active:scale-90 active:border-b-0 active:translate-y-1 transition-all flex justify-center items-center";
+        btn.textContent = letter;
         
-        btn.onclick = () => handleAnswer(btn, option, q.word);
-        optionsContainer.appendChild(btn);
+        btn.onclick = () => handleLetterTap(btn, letter, correctWord);
+        poolContainer.appendChild(btn);
     });
 }
 
-function handleAnswer(btnElement, selectedWord, correctWord) {
-    const allBtns = document.getElementById('quiz-options').querySelectorAll('button');
-    allBtns.forEach(b => b.disabled = true);
-
-    if (selectedWord === correctWord) {
-        btnElement.classList.add('correct-bg');
-        btnElement.classList.remove('border-gray-800');
-        score++;
+function updateAnswerDisplay(isError = false) {
+    const displayEl = document.getElementById('answer-display');
+    displayEl.textContent = currentAnswerArray.join('');
+    
+    if (isError) {
+        displayEl.classList.add('text-neon-red');
+        displayEl.classList.remove('text-white');
     } else {
-        btnElement.classList.add('wrong-bg', 'shake');
-        btnElement.classList.remove('border-gray-800');
-        allBtns.forEach(b => {
-            // Find and highlight the correct button if user guessed wrong
-            if (b.textContent.toLowerCase() === correctWord.toLowerCase()) {
-                b.classList.add('correct-bg');
-                b.classList.remove('border-gray-800');
-            }
-        });
+        displayEl.classList.add('text-white');
+        displayEl.classList.remove('text-neon-red');
     }
+    
+    fitTextSync('answer-display', 'answer-bounds', 80);
+}
 
-    setTimeout(() => {
-        currentQuizIndex++;
-        if (currentQuizIndex >= 10) {
-            endQuiz();
-        } else {
-            window.scrollTo(0, 0);
-            renderQuizQuestion();
+function handleLetterTap(btnElement, letter, correctWord) {
+    if (isAnimating) return; // Block input during failure sequence
+
+    const expectedLetter = correctWord[currentSpellingIndex];
+
+    if (letter === expectedLetter) {
+        // Correct Tap
+        currentAnswerArray[currentSpellingIndex] = letter;
+        currentSpellingIndex++;
+        
+        // Hide the tile they just tapped
+        btnElement.classList.add('hidden-tile');
+        
+        updateAnswerDisplay();
+
+        // Check if word is complete
+        if (currentSpellingIndex === correctWord.length) {
+            isAnimating = true;
+            score++;
+            
+            // Flash green
+            document.getElementById('answer-display').classList.add('text-neon-yellow');
+            setTimeout(() => {
+                document.getElementById('answer-display').classList.remove('text-neon-yellow');
+                currentQuizIndex++;
+                if (currentQuizIndex >= 10) {
+                    endQuiz();
+                } else {
+                    renderQuizQuestion();
+                }
+            }, 800);
         }
-    }, 1200);
+    } else {
+        // WRONG TAP - NO MERCY FAIL
+        isAnimating = true;
+        
+        // Show the wrong letter they tapped in the slot
+        currentAnswerArray[currentSpellingIndex] = letter;
+        updateAnswerDisplay(true); // Red text
+        
+        // Visual punishment
+        btnElement.classList.add('wrong-bg', 'shake');
+        document.body.classList.add('shake');
+        
+        setTimeout(() => {
+            document.body.classList.remove('shake');
+            // Instantly fail the batch
+            score = 0; // Ensures they hit the fail screen
+            endQuiz();
+        }, 1000);
+    }
 }
 
 function endQuiz() {
@@ -199,7 +254,7 @@ function endQuiz() {
     } else {
         title.textContent = "FAILED";
         title.className = "text-5xl sm:text-7xl font-black uppercase mb-4 leading-none text-red-500 shake";
-        subtitle.textContent = "10/10 REQUIRED TO ADVANCE.";
+        subtitle.textContent = "1 MISTAKE = RESTART BATCH";
         scoreText.className = "text-[6rem] sm:text-[9rem] font-black leading-none mb-12 text-red-500";
         
         btn.textContent = "RESTART BATCH";
@@ -225,13 +280,14 @@ function resetForNextRound() {
     renderLearnView();
 }
 
-// Ensure math recalculates if user rotates phone from vertical to horizontal
+// Recalculate if device rotated
 window.addEventListener('resize', () => {
     if (!views.learn.classList.contains('hidden')) {
         fitTextSync('en-word', 'word-bounds', 120);
         fitTextSync('th-meaning', 'thai-bounds', 50);
     } else if (!views.quiz.classList.contains('hidden')) {
-        fitTextSync('quiz-th-target', 'quiz-bounds', 50);
+        fitTextSync('quiz-th-target', 'quiz-bounds', 35);
+        fitTextSync('answer-display', 'answer-bounds', 80);
     }
 });
 
