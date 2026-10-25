@@ -8,11 +8,12 @@
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;900&display=swap" rel="stylesheet">
     <style>
         body { 
-            background-color: #000000; 
+            background-color: #050505; /* Pitch black */
             font-family: 'Montserrat', sans-serif;
             -webkit-tap-highlight-color: transparent;
         }
         
+        /* Animations */
         .zoom-in { animation: zoomIn 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
         @keyframes zoomIn {
             from { opacity: 0; transform: scale(0.8); }
@@ -27,86 +28,124 @@
             40%, 60% { transform: translate3d(8px, 0, 0); }
         }
 
-        .correct-bg { background-color: #39ff14 !important; color: #000 !important; transform: scale(1.05); transition: all 0.2s; border-color: #39ff14 !important; }
-        .wrong-bg { background-color: #ff003c !important; color: #fff !important; border-color: #ff003c !important; }
+        /* NEW: Shatter Animation for Failure */
+        .shatter { animation: shatterAnim 0.6s ease-in forwards; }
+        @keyframes shatterAnim {
+            0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(200px) rotate(15deg) scale(0.8); opacity: 0; }
+        }
+
+        /* Gameplay States */
         .hidden-tile { opacity: 0; pointer-events: none; transform: scale(0.5); transition: all 0.2s; }
         
-        .text-neon-yellow { color: #ccff00; }
-        .text-neon-red { color: #ff003c; }
-        .bg-neon-blue { background-color: #00e5ff; color: #000; }
+        /* NEW: Real Neon Glows */
+        .text-neon-yellow { 
+            color: #ccff00; 
+            text-shadow: 0 0 10px rgba(204,255,0,0.6), 0 0 20px rgba(204,255,0,0.4); 
+        }
+        .text-neon-red { 
+            color: #ff003c; 
+            text-shadow: 0 0 10px rgba(255,0,60,0.8), 0 0 20px rgba(255,0,60,0.5); 
+        }
+        .bg-neon-blue { 
+            background-color: #00e5ff; color: #000; 
+            box-shadow: 0 0 15px rgba(0, 229, 255, 0.6);
+        }
+        
+        .correct-bg { 
+            background-color: #ccff00 !important; color: #000 !important; transform: scale(1.05); 
+            border-color: #ccff00 !important; 
+            box-shadow: 0 0 15px rgba(204,255,0,0.8);
+        }
+        .wrong-bg { 
+            background-color: #ff003c !important; color: #fff !important; 
+            border-color: #ff003c !important;
+            box-shadow: 0 0 15px rgba(255,0,60,0.8);
+        }
+
+        /* Segmented Progress Bar */
+        .segment { transition: all 0.3s ease; }
+        .segment-active-learn { background-color: #fff; box-shadow: 0 0 8px rgba(255,255,255,0.5); }
+        .segment-active-quiz { background-color: #ccff00; box-shadow: 0 0 10px rgba(204,255,0,0.8); }
+        .segment-empty { background-color: #222; }
     </style>
 </head>
-<body class="text-white min-h-screen bg-black flex flex-col select-none overflow-x-hidden">
+<body class="text-white h-screen w-screen bg-black flex flex-col select-none overflow-hidden">
 
-    <!-- Top Progress Bar -->
-    <div id="top-bar" class="w-full flex justify-between items-center p-6 hidden">
-        <div class="text-2xl sm:text-3xl font-black text-gray-700 tracking-tighter">X.APP</div>
-        <div class="text-xl sm:text-2xl font-black">
-            <span class="text-gray-500 hidden sm:inline">SCORE:</span> 
-            <span id="global-progress" class="text-neon-yellow">0</span>
+    <!-- Top Navigation & Progress -->
+    <div id="top-bar" class="w-full p-4 hidden flex-col z-50 absolute top-0 left-0 bg-gradient-to-b from-black to-transparent">
+        <div class="flex justify-between items-center mb-3">
+            <div class="text-xl sm:text-2xl font-black text-gray-600 tracking-tighter">X.APP</div>
+            <div class="text-lg sm:text-xl font-black">
+                <span class="text-gray-500">SCORE:</span> 
+                <span id="global-progress" class="text-neon-yellow">0</span>
+            </div>
+        </div>
+        <!-- Segmented Progress Bar -->
+        <div id="progress-bar" class="flex w-full gap-1 h-1.5 sm:h-2">
+            <!-- 10 segments injected via JS -->
         </div>
     </div>
 
     <!-- START SCREEN -->
-    <div id="start-view" class="flex flex-col flex-grow w-full justify-center items-center p-6 bg-black z-40 fixed inset-0">
+    <div id="start-view" class="flex flex-col h-full w-full justify-center items-center p-6 bg-black z-40 fixed inset-0">
         <h1 class="text-5xl sm:text-7xl font-black text-center mb-4 leading-none uppercase">Master<br><span class="text-neon-yellow">The Words</span></h1>
-        <p class="text-gray-400 text-lg sm:text-xl font-bold text-center mb-12 uppercase">10/10 TO ADVANCE. NO MERCY.</p>
-        <button onclick="startChallenge()" class="w-full max-w-sm py-6 bg-neon-blue rounded-xl text-3xl font-black shadow-lg active:scale-95 transition-transform uppercase">
+        <p class="text-gray-400 text-lg sm:text-xl font-bold text-center mb-12 uppercase tracking-widest">10/10 To Advance.<br>No Mercy.</p>
+        <!-- Thumb Zone Aligned Start -->
+        <button onclick="startChallenge()" class="w-full max-w-sm mt-auto mb-10 py-6 bg-neon-blue rounded-xl text-3xl font-black active:scale-95 transition-transform uppercase">
             Start Challenge
         </button>
     </div>
     
     <!-- LEARNING VIEW -->
-    <div id="learning-view" class="hidden flex-col flex-grow w-full justify-center items-center p-6 max-w-3xl mx-auto">
-        <div class="flex-grow flex flex-col justify-center items-center w-full my-8">
+    <div id="learning-view" class="hidden flex-col h-full w-full p-6 pt-24 max-w-3xl mx-auto relative">
+        <div class="flex-grow flex flex-col justify-center items-center w-full">
             
-            <!-- Strict container for measuring English Word -->
             <div id="word-bounds" class="w-full relative flex flex-col justify-center items-center">
-                <!-- English Word -->
                 <h1 id="en-word" class="font-black text-neon-yellow uppercase tracking-tight leading-none whitespace-nowrap zoom-in"></h1>
-                <!-- Part of Speech (Beneath) -->
                 <span id="pos-tag" class="text-gray-500 font-bold text-2xl sm:text-3xl mt-4 lowercase zoom-in" style="animation-delay: 0.05s;"></span>
             </div>
             
-            <!-- Strict container for measuring Thai Meaning -->
-            <div id="thai-bounds" class="w-full relative flex justify-center items-center mt-8">
+            <div id="thai-bounds" class="w-full relative flex justify-center items-center mt-10">
                 <p id="th-meaning" class="text-white font-bold whitespace-nowrap zoom-in text-center" style="animation-delay: 0.1s;"></p>
             </div>
             
         </div>
 
-        <button onclick="nextWord()" class="w-full max-w-md py-6 bg-white text-black rounded-xl text-3xl font-black shadow-lg active:scale-95 transition-transform uppercase mb-8">
-            Next
+        <!-- Thumb Zone Ergonomics: Anchored Bottom -->
+        <button onclick="nextWord()" class="w-full py-6 mt-auto mb-4 sm:mb-8 bg-white text-black rounded-xl text-3xl font-black shadow-[0_0_20px_rgba(255,255,255,0.3)] active:scale-95 transition-transform uppercase">
+            Next Word
         </button>
     </div>
 
     <!-- QUIZ VIEW (The Scramble) -->
-    <div id="quiz-view" class="hidden flex-col flex-grow w-full justify-center items-center p-4 max-w-2xl mx-auto my-4">
+    <div id="quiz-view" class="hidden flex-col h-full w-full p-4 pt-24 max-w-2xl mx-auto relative">
         
-        <!-- Target Thai Meaning -->
-        <div id="quiz-bounds" class="w-full relative flex justify-center items-center mb-8">
-            <p id="quiz-th-target" class="font-black text-gray-400 whitespace-nowrap zoom-in text-center uppercase tracking-widest"></p>
+        <div class="flex-grow flex flex-col justify-center w-full">
+            <div id="quiz-bounds" class="w-full relative flex justify-center items-center mb-8">
+                <p id="quiz-th-target" class="font-black text-gray-400 whitespace-nowrap zoom-in text-center uppercase tracking-widest"></p>
+            </div>
+
+            <div id="answer-bounds" class="w-full relative flex justify-center items-center h-24 border-b-4 border-gray-800 pb-2">
+                <h1 id="answer-display" class="font-black text-white tracking-[0.2em] leading-none whitespace-nowrap drop-shadow-lg"></h1>
+            </div>
         </div>
 
-        <!-- Answer Slot (Where tapped letters appear) -->
-        <div id="answer-bounds" class="w-full relative flex justify-center items-center mb-12 h-24 border-b-4 border-gray-800 pb-2">
-            <h1 id="answer-display" class="font-black text-white tracking-[0.2em] leading-none whitespace-nowrap"></h1>
-        </div>
-
-        <!-- Scrambled Letter Tiles -->
-        <div id="letter-pool" class="flex flex-wrap justify-center gap-3 sm:gap-4 w-full zoom-in" style="animation-delay: 0.1s;">
+        <!-- Thumb Zone Ergonomics: Pool anchored securely to bottom -->
+        <div id="letter-pool" class="mt-auto mb-6 sm:mb-10 flex flex-wrap justify-center gap-3 sm:gap-4 w-full zoom-in" style="animation-delay: 0.1s;">
             <!-- Buttons generated dynamically -->
         </div>
     </div>
 
     <!-- RESULT VIEW -->
-    <div id="result-view" class="hidden flex-col flex-grow w-full justify-center items-center p-6 text-center">
-        <h2 id="result-title" class="text-5xl sm:text-7xl font-black uppercase mb-4 leading-none"></h2>
-        <p id="result-subtitle" class="text-xl sm:text-3xl font-bold text-gray-400 mb-12 uppercase"></p>
+    <div id="result-view" class="hidden flex-col h-full w-full justify-center items-center p-6 text-center">
+        <h2 id="result-title" class="text-5xl sm:text-7xl font-black uppercase mb-2 leading-none"></h2>
+        <p id="result-subtitle" class="text-xl sm:text-2xl font-bold text-gray-400 mb-10 uppercase tracking-widest"></p>
         
-        <div class="text-[6rem] sm:text-[9rem] font-black leading-none mb-12" id="final-score"></div>
+        <div class="text-[6rem] sm:text-[8rem] font-black leading-none mb-auto mt-10" id="final-score"></div>
         
-        <button id="result-btn" class="w-full max-w-md py-6 rounded-xl text-2xl sm:text-3xl font-black shadow-lg active:scale-95 transition-transform uppercase mb-8">
+        <!-- Thumb Zone Aligned -->
+        <button id="result-btn" class="w-full max-w-md mt-auto mb-10 py-6 rounded-xl text-2xl sm:text-3xl font-black active:scale-95 transition-transform uppercase">
         </button>
     </div>
 
