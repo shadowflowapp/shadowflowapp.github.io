@@ -32,9 +32,6 @@
         
         .text-neon-yellow { color: #ccff00; }
         .bg-neon-blue { background-color: #00e5ff; color: #000; }
-        
-        /* Fluid typography to prevent long words from breaking to a second line on mobile */
-        .fluid-word { font-size: clamp(2rem, 12vw, 6rem); white-space: nowrap; }
     </style>
 </head>
 <body class="text-white min-h-screen bg-black flex flex-col select-none overflow-x-hidden">
@@ -52,22 +49,28 @@
     <div id="start-view" class="flex flex-col flex-grow w-full justify-center items-center p-6 bg-black z-40 fixed inset-0">
         <h1 class="text-5xl sm:text-7xl font-black text-center mb-4 leading-none uppercase">Master<br><span class="text-neon-yellow">The Words</span></h1>
         <p class="text-gray-400 text-lg sm:text-xl font-bold text-center mb-12 uppercase">10/10 TO ADVANCE. NO MERCY.</p>
-        <button onclick="startChallenge()" class="w-full max-w-sm py-6 bg-neon-blue text-black rounded-xl text-3xl font-black shadow-lg active:scale-95 transition-transform uppercase">
+        <button onclick="startChallenge()" class="w-full max-w-sm py-6 bg-neon-blue rounded-xl text-3xl font-black shadow-lg active:scale-95 transition-transform uppercase">
             Start Challenge
         </button>
     </div>
     
     <!-- LEARNING VIEW -->
-    <div id="learning-view" class="hidden flex-col flex-grow w-full justify-center items-center p-6 max-w-3xl mx-auto">
-        <div class="flex-grow flex flex-col justify-center items-center w-full my-8 text-center">
+    <div id="learning-view" class="hidden flex-col flex-grow w-full justify-center items-center p-6 max-w-3xl mx-auto overflow-hidden">
+        <div class="flex-grow flex flex-col justify-center items-center w-full my-8">
             
-            <!-- Word & POS Wrapper -->
-            <div class="flex items-baseline justify-center space-x-3 w-full zoom-in">
-                <h1 id="en-word" class="fluid-word leading-none font-black text-neon-yellow uppercase tracking-tight text-center"></h1>
-                <span id="en-pos" class="text-2xl sm:text-4xl text-gray-500 font-bold lowercase tracking-widest"></span>
+            <!-- Measuring Bounding Box for English Word -->
+            <div id="word-bounds" class="w-full overflow-hidden flex justify-center items-baseline px-2">
+                <div id="en-container" class="whitespace-nowrap zoom-in flex items-baseline">
+                    <h1 id="en-word" class="font-black text-neon-yellow uppercase tracking-tight leading-none"></h1>
+                    <span id="pos-tag" class="text-gray-400 font-bold ml-3 lowercase"></span>
+                </div>
             </div>
             
-            <p id="th-meaning" class="text-3xl sm:text-5xl text-white font-bold mt-8 text-center w-full px-4 zoom-in" style="animation-delay: 0.1s;"></p>
+            <!-- Measuring Bounding Box for Thai Meaning -->
+            <div id="thai-bounds" class="w-full overflow-hidden flex justify-center mt-8 px-2">
+                <p id="th-meaning" class="text-white font-bold text-center whitespace-nowrap zoom-in" style="animation-delay: 0.1s;"></p>
+            </div>
+            
         </div>
 
         <button onclick="nextWord()" class="w-full max-w-md py-6 bg-white text-black rounded-xl text-3xl font-black shadow-lg active:scale-95 transition-transform uppercase mb-8">
@@ -76,10 +79,9 @@
     </div>
 
     <!-- QUIZ VIEW -->
-    <div id="quiz-view" class="hidden flex-col flex-grow w-full justify-center items-center p-6 w-full max-w-2xl mx-auto my-8">
-        <div class="w-full text-center flex flex-col items-center zoom-in">
-            <span id="quiz-pos" class="text-xl text-gray-500 font-bold lowercase mb-2"></span>
-            <p id="quiz-th-target" class="text-3xl sm:text-5xl font-black text-white leading-tight"></p>
+    <div id="quiz-view" class="hidden flex-col flex-grow w-full justify-center items-center p-6 max-w-2xl mx-auto my-8">
+        <div id="quiz-bounds" class="w-full overflow-hidden flex justify-center px-2">
+            <p id="quiz-th-target" class="font-black text-white whitespace-nowrap zoom-in"></p>
         </div>
 
         <!-- Vertical Match Options -->
