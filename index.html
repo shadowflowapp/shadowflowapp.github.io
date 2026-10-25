@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>10/10 CHALLENGE</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;900&display=swap" rel="stylesheet">
@@ -32,33 +32,19 @@
         
         .text-neon-yellow { color: #ccff00; }
         .bg-neon-blue { background-color: #00e5ff; color: #000; }
-
-        /* Custom Toggle Switch */
-        .toggle-checkbox:checked { right: 0; border-color: #ccff00; }
-        .toggle-checkbox:checked + .toggle-label { background-color: #ccff00; }
-        .toggle-checkbox:checked + .toggle-label:after { transform: translateX(100%); border-color: white; }
+        
+        /* Fluid typography to prevent long words from breaking to a second line on mobile */
+        .fluid-word { font-size: clamp(2rem, 12vw, 6rem); white-space: nowrap; }
     </style>
 </head>
 <body class="text-white min-h-screen bg-black flex flex-col select-none overflow-x-hidden">
 
-    <!-- Top Progress Bar & Settings -->
+    <!-- Top Progress Bar -->
     <div id="top-bar" class="w-full flex justify-between items-center p-6 hidden">
         <div class="text-2xl sm:text-3xl font-black text-gray-700 tracking-tighter">X.APP</div>
-        
-        <div class="flex items-center space-x-6">
-            <!-- Autoplay Toggle -->
-            <div class="flex items-center space-x-2">
-                <span class="text-xs text-gray-500 font-bold uppercase tracking-widest">Autoplay</span>
-                <div class="relative inline-block w-12 mr-2 align-middle select-none transition duration-200 ease-in">
-                    <input type="checkbox" name="toggle" id="autoplay-toggle" class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer z-10 top-0 left-0 transition-all duration-300" checked/>
-                    <label for="autoplay-toggle" class="toggle-label block overflow-hidden h-6 rounded-full bg-gray-700 cursor-pointer transition-colors duration-300"></label>
-                </div>
-            </div>
-
-            <div class="text-xl sm:text-2xl font-black">
-                <span class="text-gray-500 hidden sm:inline">SCORE:</span> 
-                <span id="global-progress" class="text-neon-yellow">0</span>
-            </div>
+        <div class="text-xl sm:text-2xl font-black">
+            <span class="text-gray-500 hidden sm:inline">SCORE:</span> 
+            <span id="global-progress" class="text-neon-yellow">0</span>
         </div>
     </div>
 
@@ -66,23 +52,21 @@
     <div id="start-view" class="flex flex-col flex-grow w-full justify-center items-center p-6 bg-black z-40 fixed inset-0">
         <h1 class="text-5xl sm:text-7xl font-black text-center mb-4 leading-none uppercase">Master<br><span class="text-neon-yellow">The Words</span></h1>
         <p class="text-gray-400 text-lg sm:text-xl font-bold text-center mb-12 uppercase">10/10 TO ADVANCE. NO MERCY.</p>
-        <button onclick="startChallenge()" class="w-full max-w-sm py-6 bg-neon-blue rounded-xl text-3xl font-black shadow-lg active:scale-95 transition-transform uppercase">
+        <button onclick="startChallenge()" class="w-full max-w-sm py-6 bg-neon-blue text-black rounded-xl text-3xl font-black shadow-lg active:scale-95 transition-transform uppercase">
             Start Challenge
         </button>
     </div>
     
     <!-- LEARNING VIEW -->
     <div id="learning-view" class="hidden flex-col flex-grow w-full justify-center items-center p-6 max-w-3xl mx-auto">
-        <div class="flex-grow flex flex-col justify-center items-center w-full my-8">
-            <h1 id="en-word" class="text-[4rem] sm:text-[6rem] md:text-[8rem] leading-none font-black text-neon-yellow uppercase tracking-tight text-center w-full break-words zoom-in"></h1>
+        <div class="flex-grow flex flex-col justify-center items-center w-full my-8 text-center">
             
-            <!-- Manual Audio Button -->
-            <button onclick="playCurrentWordAudio()" class="mt-8 p-4 bg-gray-900 rounded-full text-neon-yellow hover:bg-gray-800 active:scale-90 transition-transform">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 sm:h-14 sm:w-14" viewBox="0 0 20 20" fill="currentColor">
-                    <path fill-rule="evenodd" d="M9.383 3.076A1 1 0 0110 4v12a1 1 0 01-1.707.707L4.586 13H2a1 1 0 01-1-1V8a1 1 0 011-1h2.586l3.707-3.707a1 1 0 011.09-.217zM14.657 2.929a1 1 0 011.414 0A9.972 9.972 0 0119 10a9.972 9.972 0 01-2.929 7.071 1 1 0 01-1.414-1.414A7.971 7.971 0 0017 10c0-2.21-.894-4.208-2.343-5.657a1 1 0 010-1.414zm-2.829 2.828a1 1 0 011.415 0A5.983 5.983 0 0115 10a5.984 5.984 0 01-1.757 4.243 1 1 0 01-1.415-1.415A3.984 3.984 0 0013 10a3.983 3.983 0 00-1.172-2.828 1 1 0 010-1.415z" clip-rule="evenodd" />
-                </svg>
-            </button>
-
+            <!-- Word & POS Wrapper -->
+            <div class="flex items-baseline justify-center space-x-3 w-full zoom-in">
+                <h1 id="en-word" class="fluid-word leading-none font-black text-neon-yellow uppercase tracking-tight text-center"></h1>
+                <span id="en-pos" class="text-2xl sm:text-4xl text-gray-500 font-bold lowercase tracking-widest"></span>
+            </div>
+            
             <p id="th-meaning" class="text-3xl sm:text-5xl text-white font-bold mt-8 text-center w-full px-4 zoom-in" style="animation-delay: 0.1s;"></p>
         </div>
 
@@ -93,8 +77,9 @@
 
     <!-- QUIZ VIEW -->
     <div id="quiz-view" class="hidden flex-col flex-grow w-full justify-center items-center p-6 w-full max-w-2xl mx-auto my-8">
-        <div class="w-full text-center">
-            <p id="quiz-th-target" class="text-3xl sm:text-5xl font-black text-white leading-tight zoom-in"></p>
+        <div class="w-full text-center flex flex-col items-center zoom-in">
+            <span id="quiz-pos" class="text-xl text-gray-500 font-bold lowercase mb-2"></span>
+            <p id="quiz-th-target" class="text-3xl sm:text-5xl font-black text-white leading-tight"></p>
         </div>
 
         <!-- Vertical Match Options -->
