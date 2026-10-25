@@ -1,10 +1,10 @@
-{"word":"abandon","thai":"ละทิ้ง, ปล่อย","en_sentence":"The captain gave the order to _______ the sinking ship.","th_sentence":"กัปตันออกคำสั่งให้ละทิ้งเรือที่กำลังจม","distractors":["accept","adjust","allow"]}
-{"word":"ability","thai":"ความสามารถ","en_sentence":"She has the _______ to solve complex math problems quickly.","th_sentence":"เธอมีความสามารถในการแก้ปัญหาคณิตศาสตร์ที่ซับซ้อนได้อย่างรวดเร็ว","distractors":["anger","action","amount"]}
-{"word":"absolute","thai":"สมบูรณ์, แน่นอน","en_sentence":"I have _______ confidence in his leadership.","th_sentence":"ฉันมีความมั่นใจอย่างสมบูรณ์ในความเป็นผู้นำของเขา","distractors":["active","afraid","ancient"]}
-{"word":"absorb","thai":"ดูดซับ","en_sentence":"Use this sponge to _______ the spilled milk.","th_sentence":"ใช้ฟองน้ำนี้เพื่อดูดซับนมที่หก","distractors":["apply","attack","avoid"]}
-{"word":"abstract","thai":"นามธรรม","en_sentence":"Truth and beauty are _______ concepts.","th_sentence":"ความจริงและความงามเป็นแนวคิดที่เป็นนามธรรม","distractors":["accurate","active","actual"]}
-{"word":"absurd","thai":"ไร้สาระ","en_sentence":"It is _______ to wear a winter coat in the middle of summer.","th_sentence":"มันไร้สาระมากที่จะสวมเสื้อโค้ทกันหนาวกลางฤดูร้อน","distractors":["alert","alive","alone"]}
-{"word":"abundant","thai":"อุดมสมบูรณ์","en_sentence":"The forest is home to an _______ supply of wildlife.","th_sentence":"ป่าแห่งนี้เป็นแหล่งรวมสัตว์ป่าที่อุดมสมบูรณ์","distractors":["absent","aware","awake"]}
-{"word":"abuse","thai":"ล่วงละเมิด, ใช้ในทางที่ผิด","en_sentence":"He was arrested for the _______ of public funds.","th_sentence":"เขาถูกจับกุมในข้อหาใช้เงินสาธารณะในทางที่ผิด","distractors":["advise","agree","allow"]}
-{"word":"academy","thai":"สถาบันการศึกษา","en_sentence":"She was accepted into the prestigious military _______.","th_sentence":"เธอได้รับการตอบรับเข้าเรียนในสถาบันการทหารที่มีชื่อเสียง","distractors":["account","address","animal"]}
-{"word":"access","thai":"การเข้าถึง","en_sentence":"You need a password to get _______ to the database.","th_sentence":"คุณต้องมีรหัสผ่านเพื่อเข้าถึงฐานข้อมูล","distractors":["action","answer","author"]}
+{"word":"abandon","thai":"ละทิ้ง, ปล่อย","distractors":["accept","adjust","allow"]}
+{"word":"ability","thai":"ความสามารถ","distractors":["anger","action","amount"]}
+{"word":"absolute","thai":"สมบูรณ์, แน่นอน","distractors":["active","afraid","ancient"]}
+{"word":"absorb","thai":"ดูดซับ","distractors":["apply","attack","avoid"]}
+{"word":"abstract","thai":"นามธรรม","distractors":["accurate","active","actual"]}
+{"word":"absurd","thai":"ไร้สาระ","distractors":["alert","alive","alone"]}
+{"word":"abundant","thai":"อุดมสมบูรณ์","distractors":["absent","aware","awake"]}
+{"word":"abuse","thai":"ล่วงละเมิด, ใช้ในทางที่ผิด","distractors":["advise","agree","allow"]}
+{"word":"academy","thai":"สถาบันการศึกษา","distractors":["account","address","animal"]}
+{"word":"access","thai":"การเข้าถึง","distractors":["action","answer","author"]}
