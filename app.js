@@ -9,7 +9,6 @@ let score = 0;
 
 let totalWordsLearned = localStorage.getItem('totalLearnedBeast') ? parseInt(localStorage.getItem('totalLearnedBeast')) : 0;
 
-// DOM Elements
 const views = {
     start: document.getElementById('start-view'),
     learn: document.getElementById('learning-view'),
@@ -31,29 +30,33 @@ async function loadDatabase() {
     }
 }
 
-// --- DYNAMIC TEXT FIT ALGORITHM ---
-// This function forcefully shrinks text until it fits perfectly inside its container
-function autoFitText(textElementId, boundsElementId, maxRemSize, minRemSize = 1.5) {
-    const textEl = document.getElementById(textElementId);
-    const boundsEl = document.getElementById(boundsElementId);
+// --- BULLETPROOF TEXT FIT MATH ALGORITHM ---
+// Measures exact pixels and guarantees text fits on 1 line.
+function fitTextSync(textContainerId, boundContainerId, maxFontSizePx) {
+    const textEl = document.getElementById(textContainerId);
+    const boundsEl = document.getElementById(boundContainerId);
     
-    // Reset to maximum desired size first
-    let currentSize = maxRemSize;
-    textEl.style.fontSize = `${currentSize}rem`;
+    // Step 1: Force max size and single line
+    textEl.style.fontSize = `${maxFontSizePx}px`;
+    textEl.style.whiteSpace = 'nowrap';
     
-    // POS tag scales relative to the main word if it exists inside the container
+    // Manage POS tag sizing if it exists
     const posTag = document.getElementById('pos-tag');
-    if (posTag && textElementId === 'en-container') {
-        posTag.style.fontSize = `${currentSize * 0.4}rem`; // POS is 40% size of the word
+    if (posTag && textContainerId === 'en-container') {
+        posTag.style.fontSize = `${maxFontSizePx * 0.4}px`;
     }
 
-    // While the text is overflowing its bounds, shrink it
-    while (textEl.scrollWidth > boundsEl.clientWidth && currentSize > minRemSize) {
-        currentSize -= 0.2; // Shrink in small increments
-        textEl.style.fontSize = `${currentSize}rem`;
+    // Step 2: Mathematically scale down if text is wider than screen container
+    const textWidth = textEl.scrollWidth;
+    const containerWidth = boundsEl.clientWidth;
+    
+    if (textWidth > containerWidth && containerWidth > 0) {
+        const ratio = containerWidth / textWidth;
+        const exactSafeFit = Math.floor(maxFontSizePx * ratio * 0.95); // 0.95 is 5% safety padding
         
-        if (posTag && textElementId === 'en-container') {
-            posTag.style.fontSize = `${currentSize * 0.4}rem`;
+        textEl.style.fontSize = `${exactSafeFit}px`;
+        if (posTag && textContainerId === 'en-container') {
+            posTag.style.fontSize = `${Math.floor(exactSafeFit * 0.4)}px`;
         }
     }
 }
@@ -68,29 +71,26 @@ window.startChallenge = function() {
 
 function renderLearnView() {
     if (currentWordIndex >= db.length) {
-        alert("CHALLENGE COMPLETE. YOU BEAT THE APP.");
+        alert("CHALLENGE COMPLETE. YOU MASTERED ALL 100 WORDS.");
         return;
     }
 
     const currentWord = db[currentWordIndex];
     
-    // Populate text
     document.getElementById('en-word').textContent = currentWord.word;
     document.getElementById('pos-tag').textContent = currentWord.pos;
     document.getElementById('th-meaning').textContent = currentWord.thai;
     
-    // Reset animations
+    // Restart CSS Animations
     document.getElementById('en-container').style.animation = 'none';
     document.getElementById('th-meaning').style.animation = 'none';
     document.getElementById('en-container').offsetHeight; 
     document.getElementById('en-container').style.animation = null; 
     document.getElementById('th-meaning').style.animation = null; 
 
-    // Auto-fit English word (Start at 6rem max)
-    autoFitText('en-container', 'word-bounds', 6);
-    
-    // Auto-fit Thai meaning (Start at 3.5rem max)
-    autoFitText('th-meaning', 'thai-bounds', 3.5);
+    // Apply scaling logic - Base max is 120px for word, 50px for Thai
+    fitTextSync('en-container', 'word-bounds', 120);
+    fitTextSync('th-meaning', 'thai-bounds', 50);
 }
 
 window.nextWord = function() {
@@ -106,7 +106,6 @@ window.nextWord = function() {
     }
 };
 
-// --- QUIZ LOGIC ---
 function startQuiz() {
     views.learn.classList.add('hidden');
     views.learn.classList.remove('flex');
@@ -124,9 +123,7 @@ function renderQuizQuestion() {
     const q = quizQueue[currentQuizIndex];
     
     document.getElementById('quiz-th-target').textContent = q.thai;
-    
-    // Auto-fit Quiz Target Text (Start at 3.5rem max)
-    autoFitText('quiz-th-target', 'quiz-bounds', 3.5);
+    fitTextSync('quiz-th-target', 'quiz-bounds', 50);
 
     const options = [q.word, ...q.distractors].sort(() => Math.random() - 0.5);
     const optionsContainer = document.getElementById('quiz-options');
@@ -134,8 +131,8 @@ function renderQuizQuestion() {
 
     options.forEach(option => {
         const btn = document.createElement('button');
-        // Let Tailwind handle button text overflow with 'truncate'
-        btn.className = "w-full py-5 px-4 rounded-xl bg-gray-900 text-2xl sm:text-3xl font-black text-white uppercase text-center active:scale-95 transition-all truncate";
+        // Let Tailwind handle button text overflow gracefully with truncate
+        btn.className = "w-full py-6 px-4 rounded-xl border-2 border-gray-800 bg-gray-900 text-2xl sm:text-3xl font-black text-white uppercase text-center active:scale-95 transition-all truncate";
         
         if (option === q.word) {
             btn.innerHTML = `${option} <span class="text-gray-500 text-xl ml-2 lowercase">${q.pos}</span>`;
@@ -154,12 +151,15 @@ function handleAnswer(btnElement, selectedWord, correctWord) {
 
     if (selectedWord === correctWord) {
         btnElement.classList.add('correct-bg');
+        btnElement.classList.remove('border-gray-800');
         score++;
     } else {
         btnElement.classList.add('wrong-bg', 'shake');
+        btnElement.classList.remove('border-gray-800');
         allBtns.forEach(b => {
             if (b.textContent.includes(correctWord)) {
                 b.classList.add('correct-bg');
+                b.classList.remove('border-gray-800');
             }
         });
     }
@@ -234,13 +234,13 @@ function resetForNextRound() {
     renderLearnView();
 }
 
-// Window resize listener to recalculate text fit if user rotates their phone
+// Ensure math recalculates if user rotates phone from vertical to horizontal
 window.addEventListener('resize', () => {
     if (!views.learn.classList.contains('hidden')) {
-        autoFitText('en-container', 'word-bounds', 6);
-        autoFitText('th-meaning', 'thai-bounds', 3.5);
+        fitTextSync('en-container', 'word-bounds', 120);
+        fitTextSync('th-meaning', 'thai-bounds', 50);
     } else if (!views.quiz.classList.contains('hidden')) {
-        autoFitText('quiz-th-target', 'quiz-bounds', 3.5);
+        fitTextSync('quiz-th-target', 'quiz-bounds', 50);
     }
 });
 
