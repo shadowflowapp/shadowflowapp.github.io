@@ -1,100 +1,20 @@
-{"word":"record","pos":"noun","thai":"บันทึก (คำนาม)","distractors":["minute","desert","object"],"audio_context":"The world record."}
-{"word":"record","pos":"verb","thai":"ทำการบันทึก (คำกริยา)","distractors":["minute","desert","object"],"audio_context":"Please record this."}
-{"word":"desert","pos":"noun","thai":"ทะเลทราย","distractors":["present","tear","bow"],"audio_context":"The hot desert."}
-{"word":"desert","pos":"verb","thai":"ละทิ้ง","distractors":["present","tear","bow"],"audio_context":"Do not desert me."}
-{"word":"minute","pos":"noun","thai":"นาที","distractors":["close","wind","lead"],"audio_context":"Wait one minute."}
-{"word":"minute","pos":"adj","thai":"เล็กน้อยมาก","distractors":["close","wind","lead"],"audio_context":"A minute detail."}
-{"word":"tear","pos":"noun","thai":"น้ำตา","distractors":["bass","project","produce"],"audio_context":"A sad tear."}
-{"word":"tear","pos":"verb","thai":"ฉีกขาด","distractors":["bass","project","produce"],"audio_context":"Tear the paper."}
-{"word":"bow","pos":"noun","thai":"ธนู / โบว์","distractors":["subject","conduct","contract"],"audio_context":"Tie a bow."}
-{"word":"bow","pos":"verb","thai":"โค้งคำนับ","distractors":["subject","conduct","contract"],"audio_context":"Take a bow."}
-{"word":"close","pos":"adj","thai":"ใกล้ชิด","distractors":["conflict","decrease","increase"],"audio_context":"We are close."}
-{"word":"close","pos":"verb","thai":"ปิด","distractors":["conflict","decrease","increase"],"audio_context":"Close the door."}
-{"word":"lead","pos":"noun","thai":"ตะกั่ว (โลหะ)","distractors":["extract","impact","insult"],"audio_context":"Heavy as lead."}
-{"word":"lead","pos":"verb","thai":"นำทาง","distractors":["extract","impact","insult"],"audio_context":"Lead the way."}
-{"word":"wind","pos":"noun","thai":"ลม","distractors":["permit","rebel","import"],"audio_context":"The cold wind."}
-{"word":"wind","pos":"verb","thai":"หมุน / พัน","distractors":["permit","rebel","import"],"audio_context":"Wind the clock."}
-{"word":"bass","pos":"noun","thai":"ปลาแบส","distractors":["export","discount","refund"],"audio_context":"Caught a bass."}
-{"word":"bass","pos":"noun","thai":"เสียงเบส / เสียงทุ้ม","distractors":["export","discount","refund"],"audio_context":"Play the bass."}
-{"word":"object","pos":"noun","thai":"วัตถุ","distractors":["digest","escort","attribute"],"audio_context":"A strange object."}
-{"word":"object","pos":"verb","thai":"คัดค้าน","distractors":["digest","escort","attribute"],"audio_context":"I object to this."}
-{"word":"produce","pos":"noun","thai":"ผลผลิตทางการเกษตร","distractors":["delegate","estimate","graduate"],"audio_context":"Fresh produce."}
-{"word":"produce","pos":"verb","thai":"ผลิต","distractors":["delegate","estimate","graduate"],"audio_context":"Produce a song."}
-{"word":"project","pos":"noun","thai":"โครงการ","distractors":["moderate","separate","appropriate"],"audio_context":"A science project."}
-{"word":"project","pos":"verb","thai":"นำเสนอ / ฉายภาพ","distractors":["moderate","separate","appropriate"],"audio_context":"Project your voice."}
-{"word":"subject","pos":"noun","thai":"วิชา / หัวข้อ","distractors":["deliberate","articulate","suspect"],"audio_context":"My favorite subject."}
-{"word":"subject","pos":"verb","thai":"ทำให้ตกอยู่ภายใต้","distractors":["deliberate","articulate","suspect"],"audio_context":"Subject them to this."}
-{"word":"present","pos":"noun","thai":"ของขวัญ / ปัจจุบัน","distractors":["reject","defect","coordinate"],"audio_context":"A birthday present."}
-{"word":"present","pos":"verb","thai":"นำเสนอ","distractors":["reject","defect","coordinate"],"audio_context":"Present the award."}
-{"word":"contract","pos":"noun","thai":"สัญญา","distractors":["perfect","entrance","content"],"audio_context":"Sign the contract."}
-{"word":"contract","pos":"verb","thai":"หดตัว / ติดโรค","distractors":["perfect","entrance","content"],"audio_context":"Muscles contract."}
-{"word":"conduct","pos":"noun","thai":"ความประพฤติ","distractors":["console","invalid","record"],"audio_context":"Good conduct."}
-{"word":"conduct","pos":"verb","thai":"จัดการ / นำ","distractors":["console","invalid","record"],"audio_context":"Conduct a test."}
-{"word":"conflict","pos":"noun","thai":"ความขัดแย้ง","distractors":["desert","minute","tear"],"audio_context":"Armed conflict."}
-{"word":"conflict","pos":"verb","thai":"ขัดแย้งกัน","distractors":["desert","minute","tear"],"audio_context":"Our schedules conflict."}
-{"word":"contest","pos":"noun","thai":"การแข่งขัน","distractors":["bow","close","lead"],"audio_context":"Win a contest."}
-{"word":"contest","pos":"verb","thai":"โต้แย้ง","distractors":["bow","close","lead"],"audio_context":"Contest the results."}
-{"word":"decrease","pos":"noun","thai":"การลดลง","distractors":["wind","bass","object"],"audio_context":"A sharp decrease."}
-{"word":"decrease","pos":"verb","thai":"ลดลง","distractors":["wind","bass","object"],"audio_context":"Temperatures decrease."}
-{"word":"increase","pos":"noun","thai":"การเพิ่มขึ้น","distractors":["produce","project","subject"],"audio_context":"A price increase."}
-{"word":"increase","pos":"verb","thai":"เพิ่มขึ้น","distractors":["produce","project","subject"],"audio_context":"Increase the volume."}
-{"word":"extract","pos":"noun","thai":"สารสกัด","distractors":["present","contract","conduct"],"audio_context":"Vanilla extract."}
-{"word":"extract","pos":"verb","thai":"สกัด / ดึงออกมา","distractors":["present","contract","conduct"],"audio_context":"Extract the tooth."}
-{"word":"impact","pos":"noun","thai":"ผลกระทบ","distractors":["conflict","contest","decrease"],"audio_context":"A huge impact."}
-{"word":"impact","pos":"verb","thai":"ส่งผลกระทบ","distractors":["conflict","contest","decrease"],"audio_context":"This will impact us."}
-{"word":"insult","pos":"noun","thai":"คำดูถูก","distractors":["increase","extract","impact"],"audio_context":"A terrible insult."}
-{"word":"insult","pos":"verb","thai":"ดูถูก","distractors":["increase","extract","impact"],"audio_context":"Do not insult me."}
-{"word":"permit","pos":"noun","thai":"ใบอนุญาต","distractors":["protest","rebel","import"],"audio_context":"A parking permit."}
-{"word":"permit","pos":"verb","thai":"อนุญาต","distractors":["protest","rebel","import"],"audio_context":"I will not permit it."}
-{"word":"protest","pos":"noun","thai":"การประท้วง","distractors":["export","discount","refund"],"audio_context":"A peaceful protest."}
-{"word":"protest","pos":"verb","thai":"ประท้วง","distractors":["export","discount","refund"],"audio_context":"They will protest."}
-{"word":"rebel","pos":"noun","thai":"กบฏ","distractors":["digest","escort","attribute"],"audio_context":"A young rebel."}
-{"word":"rebel","pos":"verb","thai":"ก่อกบฏ","distractors":["digest","escort","attribute"],"audio_context":"Rebel against them."}
-{"word":"import","pos":"noun","thai":"สินค้านำเข้า","distractors":["delegate","estimate","graduate"],"audio_context":"A cheap import."}
-{"word":"import","pos":"verb","thai":"นำเข้า","distractors":["delegate","estimate","graduate"],"audio_context":"Import the data."}
-{"word":"export","pos":"noun","thai":"สินค้าส่งออก","distractors":["moderate","separate","appropriate"],"audio_context":"Our best export."}
-{"word":"export","pos":"verb","thai":"ส่งออก","distractors":["moderate","separate","appropriate"],"audio_context":"Export the goods."}
-{"word":"discount","pos":"noun","thai":"ส่วนลด","distractors":["deliberate","articulate","suspect"],"audio_context":"A ten percent discount."}
-{"word":"discount","pos":"verb","thai":"ลดราคา / ไม่ให้ความสำคัญ","distractors":["deliberate","articulate","suspect"],"audio_context":"Do not discount it."}
-{"word":"refund","pos":"noun","thai":"เงินคืน","distractors":["reject","defect","coordinate"],"audio_context":"Get a refund."}
-{"word":"refund","pos":"verb","thai":"คืนเงิน","distractors":["reject","defect","coordinate"],"audio_context":"Refund my money."}
-{"word":"digest","pos":"noun","thai":"บทสรุป / วารสาร","distractors":["perfect","entrance","content"],"audio_context":"Reader's digest."}
-{"word":"digest","pos":"verb","thai":"ย่อยอาหาร","distractors":["perfect","entrance","content"],"audio_context":"Digest the food."}
-{"word":"escort","pos":"noun","thai":"ผู้คุ้มกัน","distractors":["console","invalid","record"],"audio_context":"A police escort."}
-{"word":"escort","pos":"verb","thai":"คุ้มกันไปส่ง","distractors":["console","invalid","record"],"audio_context":"Escort them out."}
-{"word":"attribute","pos":"noun","thai":"คุณลักษณะ","distractors":["desert","minute","tear"],"audio_context":"A positive attribute."}
-{"word":"attribute","pos":"verb","thai":"ถือว่าเป็นผลมาจาก","distractors":["desert","minute","tear"],"audio_context":"Attribute the success."}
-{"word":"delegate","pos":"noun","thai":"ตัวแทน","distractors":["bow","close","lead"],"audio_context":"A state delegate."}
-{"word":"delegate","pos":"verb","thai":"มอบหมาย","distractors":["bow","close","lead"],"audio_context":"Delegate the task."}
-{"word":"estimate","pos":"noun","thai":"การประมาณการ","distractors":["wind","bass","object"],"audio_context":"A rough estimate."}
-{"word":"estimate","pos":"verb","thai":"ประมาณ","distractors":["wind","bass","object"],"audio_context":"Estimate the cost."}
-{"word":"graduate","pos":"noun","thai":"ผู้สำเร็จการศึกษา","distractors":["produce","project","subject"],"audio_context":"A college graduate."}
-{"word":"graduate","pos":"verb","thai":"จบการศึกษา","distractors":["produce","project","subject"],"audio_context":"Graduate this year."}
-{"word":"moderate","pos":"adj","thai":"ปานกลาง","distractors":["present","contract","conduct"],"audio_context":"A moderate amount."}
-{"word":"moderate","pos":"verb","thai":"ทำให้บรรเทา / ควบคุม","distractors":["present","contract","conduct"],"audio_context":"Moderate the debate."}
-{"word":"separate","pos":"adj","thai":"ที่แยกกัน","distractors":["conflict","contest","decrease"],"audio_context":"Separate rooms."}
-{"word":"separate","pos":"verb","thai":"แยกออก","distractors":["conflict","contest","decrease"],"audio_context":"Separate the items."}
-{"word":"appropriate","pos":"adj","thai":"เหมาะสม","distractors":["increase","extract","impact"],"audio_context":"Appropriate behavior."}
-{"word":"appropriate","pos":"verb","thai":"จัดสรร / ยึดเอา","distractors":["increase","extract","impact"],"audio_context":"Appropriate the funds."}
-{"word":"deliberate","pos":"adj","thai":"จงใจ / รอบคอบ","distractors":["insult","permit","protest"],"audio_context":"A deliberate choice."}
-{"word":"deliberate","pos":"verb","thai":"ไตร่ตรอง","distractors":["insult","permit","protest"],"audio_context":"Deliberate the issue."}
-{"word":"articulate","pos":"adj","thai":"ที่พูดจาชัดเจน","distractors":["rebel","import","export"],"audio_context":"An articulate speaker."}
-{"word":"articulate","pos":"verb","thai":"อธิบายชัดเจน","distractors":["rebel","import","export"],"audio_context":"Articulate your thoughts."}
-{"word":"suspect","pos":"noun","thai":"ผู้ต้องสงสัย","distractors":["discount","refund","digest"],"audio_context":"The prime suspect."}
-{"word":"suspect","pos":"verb","thai":"สงสัย","distractors":["discount","refund","digest"],"audio_context":"I suspect him."}
-{"word":"reject","pos":"noun","thai":"ของที่ถูกคัดทิ้ง","distractors":["escort","attribute","delegate"],"audio_context":"A factory reject."}
-{"word":"reject","pos":"verb","thai":"ปฏิเสธ","distractors":["escort","attribute","delegate"],"audio_context":"Reject the offer."}
-{"word":"defect","pos":"noun","thai":"ตำหนิ / ข้อบกพร่อง","distractors":["estimate","graduate","moderate"],"audio_context":"A product defect."}
-{"word":"defect","pos":"verb","thai":"แปรพักตร์","distractors":["estimate","graduate","moderate"],"audio_context":"Defect to the enemy."}
-{"word":"coordinate","pos":"noun","thai":"พิกัด","distractors":["separate","appropriate","deliberate"],"audio_context":"Find the coordinate."}
-{"word":"coordinate","pos":"verb","thai":"ประสานงาน","distractors":["separate","appropriate","deliberate"],"audio_context":"Coordinate the team."}
-{"word":"perfect","pos":"adj","thai":"สมบูรณ์แบบ","distractors":["articulate","suspect","reject"],"audio_context":"A perfect score."}
-{"word":"perfect","pos":"verb","thai":"ทำให้สมบูรณ์","distractors":["articulate","suspect","reject"],"audio_context":"Perfect your skills."}
-{"word":"entrance","pos":"noun","thai":"ทางเข้า","distractors":["defect","coordinate","content"],"audio_context":"The main entrance."}
-{"word":"entrance","pos":"verb","thai":"ทำให้หลงใหล","distractors":["defect","coordinate","content"],"audio_context":"Entrance the crowd."}
-{"word":"content","pos":"noun","thai":"เนื้อหา","distractors":["console","invalid","record"],"audio_context":"Great video content."}
-{"word":"content","pos":"adj","thai":"พึงพอใจ","distractors":["console","invalid","record"],"audio_context":"I am content."}
-{"word":"console","pos":"noun","thai":"คอนโซล / เครื่องเล่น","distractors":["desert","minute","tear"],"audio_context":"A gaming console."}
-{"word":"console","pos":"verb","thai":"ปลอบโยน","distractors":["desert","minute","tear"],"audio_context":"Console the crying child."}
-{"word":"invalid","pos":"noun","thai":"คนป่วย / คนทุพพลภาพ","distractors":["bow","close","lead"],"audio_context":"An elderly invalid."}
-{"word":"invalid","pos":"adj","thai":"โมฆะ / ไม่ถูกต้อง","distractors":["bow","close","lead"],"audio_context":"An invalid password."}
+{"word":"record","pos":"n.","thai":"บันทึก","distractors":["minute","desert","object"]}
+{"word":"record","pos":"v.","thai":"ทำการบันทึก","distractors":["minute","desert","object"]}
+{"word":"desert","pos":"n.","thai":"ทะเลทราย","distractors":["present","tear","bow"]}
+{"word":"desert","pos":"v.","thai":"ละทิ้ง","distractors":["present","tear","bow"]}
+{"word":"minute","pos":"n.","thai":"นาที","distractors":["close","wind","lead"]}
+{"word":"minute","pos":"adj.","thai":"เล็กน้อยมาก","distractors":["close","wind","lead"]}
+{"word":"tear","pos":"n.","thai":"น้ำตา","distractors":["bass","project","produce"]}
+{"word":"tear","pos":"v.","thai":"ฉีกขาด","distractors":["bass","project","produce"]}
+{"word":"bow","pos":"n.","thai":"ธนู / โบว์","distractors":["subject","conduct","contract"]}
+{"word":"bow","pos":"v.","thai":"โค้งคำนับ","distractors":["subject","conduct","contract"]}
+{"word":"close","pos":"adj.","thai":"ใกล้ชิด","distractors":["conflict","decrease","increase"]}
+{"word":"close","pos":"v.","thai":"ปิด","distractors":["conflict","decrease","increase"]}
+{"word":"lead","pos":"n.","thai":"ตะกั่ว (โลหะ)","distractors":["extract","impact","insult"]}
+{"word":"lead","pos":"v.","thai":"นำทาง","distractors":["extract","impact","insult"]}
+{"word":"wind","pos":"n.","thai":"ลม","distractors":["permit","rebel","import"]}
+{"word":"wind","pos":"v.","thai":"หมุน / พัน","distractors":["permit","rebel","import"]}
+{"word":"bass","pos":"n.","thai":"ปลาแบส","distractors":["export","discount","refund"]}
+{"word":"bass","pos":"n.","thai":"เสียงเบส / เสียงทุ้ม","distractors":["export","discount","refund"]}
+{"word":"object","pos":"n.","thai":"วัตถุ","distractors":["digest","escort","attribute"]}
+{"word":"object","pos":"v.","thai":"คัดค้าน","distractors":["digest","escort","attribute"]}
