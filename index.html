@@ -3,155 +3,199 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>A-Z Dictionary Challenge</title>
+    <title>A-Z Westcoast Challenge</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,500;0,800;0,900;1,900&display=swap" rel="stylesheet">
     <style>
         body { 
-            background-color: #050505; 
+            background-color: #0b0b0e; /* Deep midnight */
             font-family: 'Montserrat', sans-serif;
             -webkit-tap-highlight-color: transparent;
         }
         
-        .zoom-in { animation: zoomIn 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+        /* AAA Game Animations */
+        .zoom-in { animation: zoomIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
         @keyframes zoomIn {
-            from { opacity: 0; transform: scale(0.8); }
-            to { opacity: 1; transform: scale(1); }
+            from { opacity: 0; transform: scale(0.9) translateY(10px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
         }
 
         .shake { animation: shake 0.4s cubic-bezier(.36,.07,.19,.97) both; }
         @keyframes shake {
-            10%, 90% { transform: translate3d(-2px, 0, 0); }
-            20%, 80% { transform: translate3d(4px, 0, 0); }
-            30%, 50%, 70% { transform: translate3d(-8px, 0, 0); }
-            40%, 60% { transform: translate3d(8px, 0, 0); }
+            10%, 90% { transform: translate3d(-3px, 0, 0); }
+            20%, 80% { transform: translate3d(5px, 0, 0); }
+            30%, 50%, 70% { transform: translate3d(-10px, 0, 0); }
+            40%, 60% { transform: translate3d(10px, 0, 0); }
         }
 
         .shatter { animation: shatterAnim 0.6s ease-in forwards; }
         @keyframes shatterAnim {
-            0% { transform: translateY(0) rotate(0deg); opacity: 1; }
-            100% { transform: translateY(200px) rotate(15deg) scale(0.8); opacity: 0; }
+            0% { transform: translateY(0) rotate(0deg); opacity: 1; filter: blur(0px); }
+            100% { transform: translateY(150px) rotate(10deg) scale(0.9); opacity: 0; filter: blur(4px); }
+        }
+
+        /* Westcoast Sunset Theme Gradients & Glows */
+        .text-gradient-sunset {
+            background: linear-gradient(135deg, #ff512f 0%, #dd2476 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
         
-        .text-neon-yellow { 
-            color: #ccff00; 
-            text-shadow: 0 0 10px rgba(204,255,0,0.6), 0 0 20px rgba(204,255,0,0.4); 
+        .bg-gradient-sunset {
+            background: linear-gradient(135deg, #ff512f 0%, #dd2476 100%);
         }
-        .text-neon-red { 
-            color: #ff003c; 
-            text-shadow: 0 0 10px rgba(255,0,60,0.8), 0 0 20px rgba(255,0,60,0.5); 
+
+        .glow-sunset {
+            box-shadow: 0 0 20px rgba(221, 36, 118, 0.5), inset 0 0 10px rgba(255, 81, 47, 0.5);
         }
-        .bg-neon-blue { 
-            background-color: #00e5ff; color: #000; 
-            box-shadow: 0 0 15px rgba(0, 229, 255, 0.6);
-        }
-        
+
         .correct-bg { 
-            background-color: #ccff00 !important; color: #000 !important; transform: scale(1.02); 
-            border-color: #ccff00 !important; 
-            box-shadow: 0 0 15px rgba(204,255,0,0.8);
+            background: linear-gradient(135deg, #ff512f 0%, #dd2476 100%) !important; 
+            color: #fff !important; 
+            transform: scale(1.02); 
+            border-color: transparent !important;
+            box-shadow: 0 0 20px rgba(221, 36, 118, 0.6);
         }
+        
         .wrong-bg { 
-            background-color: #ff003c !important; color: #fff !important; 
+            background-color: #1a1a24 !important; 
+            color: #444 !important; 
             border-color: #ff003c !important;
-            box-shadow: 0 0 15px rgba(255,0,60,0.8);
+            box-shadow: inset 0 0 20px rgba(255,0,60,0.4);
         }
 
-        /* UPDATED PROGRESS BAR STYLES */
-        .segment { transition: all 0.3s ease; }
-        .segment-empty { background-color: #222; }
-        
-        /* Learned (Solid White) */
-        .segment-completed-learn { background-color: #ffffff; }
-        
-        /* Currently Learning (Pulsing Neon Blue) */
-        .segment-current-learn { 
-            background-color: #00e5ff; 
-            box-shadow: inset 0 0 6px rgba(255,255,255,0.9);
-            animation: pulseBar 0.8s infinite alternate; 
+        /* Learning Phase Segmented Bar */
+        .learn-segment { transition: all 0.3s ease; }
+        .learn-empty { background-color: #1a1a24; }
+        .learn-completed { background: linear-gradient(135deg, #ff512f, #dd2476); }
+        .learn-current { 
+            background: #fff; 
+            box-shadow: 0 0 10px #fff; 
+            animation: pulseWhite 1s infinite alternate; 
         }
         
-        /* Quiz Correct (Inner Glow Yellow) */
-        .segment-active-quiz { 
-            background-color: #ccff00; 
-            box-shadow: inset 0 0 6px rgba(255,255,255,0.8); 
-        }
-        
-        /* Currently Quiz Question (Pulsing Gray) */
-        .segment-current-quiz {
-            background-color: #666;
-            animation: pulseBar 0.8s infinite alternate;
+        @keyframes pulseWhite {
+            from { opacity: 0.6; transform: scale(1); }
+            to { opacity: 1; transform: scale(1.05); }
         }
 
-        @keyframes pulseBar {
-            from { opacity: 0.4; }
-            to { opacity: 1; }
+        /* Quiz Phase AAA XP Bar */
+        .xp-bar-container {
+            background-color: #1a1a24;
+            border-radius: 999px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.8);
         }
-        
-        /* Hide scrollbar for A-Z track */
+        .xp-bar-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #ff512f, #dd2476, #ff512f);
+            background-size: 200% 100%;
+            border-radius: 999px;
+            transition: width 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 0 15px rgba(221, 36, 118, 0.8);
+            animation: moveGradient 2s linear infinite;
+        }
+
+        @keyframes moveGradient {
+            0% { background-position: 100% 0; }
+            100% { background-position: -100% 0; }
+        }
+
+        /* XP Pop-up Animation */
+        .xp-popup {
+            position: absolute;
+            right: 0;
+            top: -25px;
+            font-weight: 900;
+            color: #fff;
+            text-shadow: 0 0 5px #dd2476;
+            opacity: 0;
+            pointer-events: none;
+        }
+        .xp-popup.animate {
+            animation: floatUp 1s ease-out forwards;
+        }
+        @keyframes floatUp {
+            0% { opacity: 1; transform: translateY(0) scale(1); }
+            100% { opacity: 0; transform: translateY(-30px) scale(1.5); }
+        }
+
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     </style>
 </head>
-<body class="text-white h-screen w-screen bg-black flex flex-col select-none overflow-hidden">
+<body class="text-white h-screen w-screen flex flex-col select-none overflow-hidden">
 
-    <!-- Top Navigation & A-Z Progress -->
-    <div id="top-bar" class="w-full p-4 hidden flex-col z-50 absolute top-0 left-0 bg-gradient-to-b from-black to-transparent">
+    <!-- Top Navigation & Progress -->
+    <div id="top-bar" class="w-full p-4 hidden flex-col z-50 absolute top-0 left-0 bg-gradient-to-b from-[#0b0b0e] via-[#0b0b0e] to-transparent pb-8">
         
         <!-- A-Z Track -->
-        <div id="alphabet-track" class="flex overflow-x-auto gap-4 text-gray-700 text-lg font-black no-scrollbar pb-2 items-end">
+        <div id="alphabet-track" class="flex overflow-x-auto gap-5 text-gray-700 text-lg font-black italic no-scrollbar pb-2 items-end">
             <!-- Injected via JS -->
         </div>
 
-        <div class="flex justify-between items-end mb-2 mt-1">
-            <div class="text-sm sm:text-base font-bold text-gray-400">
-                LETTER <span id="current-letter-display" class="text-white">A</span> 
-                <span class="mx-2">|</span> 
-                <span id="letter-progress-count" class="text-neon-yellow">0</span> / <span id="letter-total-count">0</span>
+        <div class="flex justify-between items-end mb-3 mt-2">
+            <div class="text-xs sm:text-sm font-black text-gray-500 tracking-widest uppercase">
+                Letter <span id="current-letter-display" class="text-white text-base">A</span> 
+                <span class="mx-2 text-gray-700">|</span> 
+                <span id="letter-progress-count" class="text-pink-500">0</span> / <span id="letter-total-count">0</span>
             </div>
-            
-            <div class="text-xs sm:text-sm font-bold text-gray-600">
-                GLOBAL: <span id="global-progress" class="text-gray-400">0</span>
+            <div class="text-xs sm:text-sm font-black text-gray-600 tracking-widest">
+                XP: <span id="global-progress" class="text-gray-300">0</span>
             </div>
         </div>
         
-        <!-- 10-Word Batch Progress Bar -->
-        <div id="progress-bar" class="flex w-full gap-1 h-1 sm:h-1.5 mt-1">
-            <!-- Injected via JS -->
+        <!-- Learning Phase Segmented Bar -->
+        <div id="learn-progress-bar" class="flex w-full gap-1.5 h-1.5 sm:h-2">
+            <!-- 10 segments injected via JS -->
+        </div>
+
+        <!-- Quiz Phase Continuous XP Bar (Hidden by default) -->
+        <div id="quiz-progress-bar" class="w-full h-2 sm:h-3 xp-bar-container hidden">
+            <div id="xp-fill" class="xp-bar-fill relative">
+                <div id="xp-popup" class="xp-popup">+100</div>
+            </div>
         </div>
     </div>
 
     <!-- START SCREEN -->
-    <div id="start-view" class="flex flex-col h-full w-full justify-center items-center p-6 bg-black z-40 fixed inset-0">
-        <h1 class="text-5xl sm:text-7xl font-black text-center mb-4 leading-none uppercase">Master<br><span class="text-neon-yellow">A to Z</span></h1>
-        <p class="text-gray-400 text-lg sm:text-xl font-bold text-center mb-12 uppercase tracking-widest">10/10 To Advance.<br>No Mercy.</p>
-        <button onclick="startChallenge()" class="w-full max-w-sm mt-auto mb-10 py-6 bg-neon-blue rounded-xl text-3xl font-black active:scale-95 transition-transform uppercase">
-            Start Challenge
+    <div id="start-view" class="flex flex-col h-full w-full justify-center items-center p-6 z-40 fixed inset-0">
+        <h1 class="text-6xl sm:text-8xl font-black italic text-center mb-2 leading-none uppercase tracking-tighter">
+            <span class="text-white">Westcoast</span><br>
+            <span class="text-gradient-sunset">Dictionary</span>
+        </h1>
+        <p class="text-gray-400 text-sm sm:text-base font-bold text-center mb-16 uppercase tracking-[0.3em]">10 Words. 0 Mistakes.</p>
+        
+        <button onclick="startChallenge()" class="w-full max-w-sm mt-auto mb-10 py-6 bg-gradient-sunset rounded-2xl text-2xl font-black active:scale-95 transition-transform uppercase glow-sunset">
+            Enter The Grid
         </button>
     </div>
     
     <!-- LEARNING VIEW -->
-    <div id="learning-view" class="hidden flex-col h-full w-full p-6 pt-32 max-w-3xl mx-auto relative">
+    <div id="learning-view" class="hidden flex-col h-full w-full p-6 pt-36 max-w-3xl mx-auto relative">
         <div class="flex-grow flex flex-col justify-center items-center w-full">
             
             <div id="word-bounds" class="w-full relative flex flex-col justify-center items-center">
-                <h1 id="en-word" class="font-black text-neon-yellow lowercase tracking-tight leading-none whitespace-nowrap zoom-in"></h1>
-                <span id="pos-tag" class="text-gray-500 font-bold text-2xl sm:text-3xl mt-4 lowercase zoom-in" style="animation-delay: 0.05s;"></span>
+                <h1 id="en-word" class="font-black text-white lowercase tracking-tighter leading-none whitespace-nowrap zoom-in drop-shadow-[0_5px_15px_rgba(0,0,0,0.5)]"></h1>
+                <span id="pos-tag" class="text-pink-500 font-bold text-xl sm:text-2xl mt-4 lowercase zoom-in tracking-widest" style="animation-delay: 0.05s;"></span>
             </div>
             
             <div class="w-full relative flex justify-center items-center mt-12 px-2">
-                <p id="en-definition" class="text-gray-300 font-medium text-2xl sm:text-4xl text-center leading-relaxed zoom-in" style="animation-delay: 0.1s;"></p>
+                <p id="en-definition" class="text-gray-400 font-medium text-xl sm:text-3xl text-center leading-relaxed zoom-in" style="animation-delay: 0.1s;"></p>
             </div>
             
         </div>
 
-        <button onclick="nextWord()" class="w-full py-6 mt-auto mb-4 sm:mb-8 bg-white text-black rounded-xl text-3xl font-black shadow-[0_0_20px_rgba(255,255,255,0.3)] active:scale-95 transition-transform uppercase">
+        <button onclick="nextWord()" class="w-full py-6 mt-auto mb-4 sm:mb-8 bg-[#1a1a24] text-white border border-[#2a2a35] rounded-2xl text-2xl font-black active:scale-95 transition-all uppercase hover:bg-[#22222f]">
             Next Word
         </button>
     </div>
 
     <!-- QUIZ VIEW (Contextual MCQ) -->
-    <div id="quiz-view" class="hidden flex-col h-full w-full p-6 pt-32 max-w-3xl mx-auto relative">
+    <div id="quiz-view" class="hidden flex-col h-full w-full p-6 pt-36 max-w-3xl mx-auto relative">
         
         <div class="flex-grow flex flex-col justify-center w-full">
             <div class="w-full relative flex justify-center items-center mb-10">
@@ -166,12 +210,12 @@
 
     <!-- RESULT VIEW -->
     <div id="result-view" class="hidden flex-col h-full w-full justify-center items-center p-6 text-center">
-        <h2 id="result-title" class="text-5xl sm:text-7xl font-black uppercase mb-2 leading-none"></h2>
-        <p id="result-subtitle" class="text-xl sm:text-2xl font-bold text-gray-400 mb-10 uppercase tracking-widest"></p>
+        <h2 id="result-title" class="text-6xl sm:text-8xl font-black italic uppercase mb-2 leading-none tracking-tighter"></h2>
+        <p id="result-subtitle" class="text-sm sm:text-lg font-bold text-gray-400 mb-10 uppercase tracking-[0.2em]"></p>
         
-        <div class="text-[6rem] sm:text-[8rem] font-black leading-none mb-auto mt-10" id="final-score"></div>
+        <div class="text-[7rem] sm:text-[10rem] font-black leading-none mb-auto mt-10 text-gradient-sunset drop-shadow-2xl" id="final-score"></div>
         
-        <button id="result-btn" class="w-full max-w-md mt-auto mb-10 py-6 rounded-xl text-2xl sm:text-3xl font-black active:scale-95 transition-transform uppercase">
+        <button id="result-btn" class="w-full max-w-md mt-auto mb-10 py-6 rounded-2xl text-2xl font-black active:scale-95 transition-transform uppercase">
         </button>
     </div>
 
