@@ -1,6 +1,5 @@
 // State Variables
 let db = []; 
-let wordsByLetter = {}; 
 let currentWordIndex = 0;
 let batchStartIndex = 0; 
 let learnedCountInBatch = 0;
@@ -8,6 +7,7 @@ let quizQueue = [];
 let currentQuizIndex = 0;
 let score = 0;
 let isAnimating = false; 
+let currentRound = 1;
 
 let totalWordsLearned = localStorage.getItem('totalLearnedBeast') ? parseInt(localStorage.getItem('totalLearnedBeast')) : 0;
 
@@ -31,21 +31,17 @@ function playTone(freq, type, duration, vol = 0.1) {
     osc.stop(audioCtx.currentTime + duration);
 }
 
-// AAA Game SFX
-function sfxSwoosh() { playTone(200, 'triangle', 0.1, 0.05); vibrate(10); }
+function sfxSwoosh() { playTone(250, 'triangle', 0.1, 0.05); vibrate(10); }
 function sfxSuccess() { 
     playTone(600, 'sine', 0.1, 0.1); 
-    setTimeout(() => playTone(900, 'sine', 0.15, 0.15), 80); 
+    setTimeout(() => playTone(900, 'sine', 0.2, 0.15), 100); 
     vibrate([40, 40, 40]); 
 }
 function sfxFail() { 
     playTone(150, 'sawtooth', 0.4, 0.2); 
-    vibrate([200, 100, 200, 100, 300]); 
+    vibrate([150, 100, 200, 100, 250]); 
 }
-
-function vibrate(pattern) {
-    if (navigator.vibrate) navigator.vibrate(pattern);
-}
+function vibrate(pattern) { if (navigator.vibrate) navigator.vibrate(pattern); }
 
 // DOM Elements
 const views = {
@@ -58,40 +54,59 @@ const views = {
 
 document.getElementById('global-progress').textContent = totalWordsLearned;
 
-// Setup Progress Bar
+// Setup Round Progress Bar
 const progressBar = document.getElementById('progress-bar');
 for(let i=0; i<10; i++) {
     const seg = document.createElement('div');
-    seg.className = 'flex-1 segment segment-empty';
+    seg.className = 'segment seg-empty';
     progressBar.appendChild(seg);
 }
 
-// AAA Synchronous Combo Bar Logic
-function updateProgressBar(count, mode) {
+function updateProgressBar(completedCount, mode) {
     const segments = progressBar.children;
     for(let i=0; i<10; i++) {
-        // Reset every bar
-        segments[i].className = 'flex-1 segment segment-empty'; 
+        segments[i].className = 'segment seg-empty'; // Reset
         
         if (mode === 'learn') {
-            if (i < count) {
-                segments[i].classList.add('segment-completed-learn'); 
-            } else if (i === count) {
-                segments[i].classList.add('segment-current-learn'); 
-            }
+            if (i < completedCount) segments[i].classList.add('seg-learn-filled');
+            else if (i === completedCount) segments[i].classList.add('seg-learn-active');
         } else if (mode === 'quiz') {
-            if (i < count) {
-                segments[i].classList.add('segment-completed-quiz'); 
-            } else if (i === count) {
-                segments[i].classList.add('segment-current-quiz'); 
-            }
-        } else if (mode === 'fail') {
-            segments[i].classList.add('segment-fail'); 
+            if (i < completedCount) segments[i].classList.add('seg-quiz-filled');
+            else if (i === completedCount) segments[i].classList.add('seg-quiz-active');
         }
     }
 }
 
-// Load Database
+// A-Z Alphabet UI Setup
+const alphabetTrack = document.getElementById('az-track');
+const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
+alphabet.forEach(letter => {
+    const span = document.createElement('span');
+    span.id = `az-node-${letter}`;
+    span.textContent = letter;
+    span.className = 'az-node az-future font-black cursor-default select-none relative z-20 bg-[#050505] px-1';
+    alphabetTrack.appendChild(span);
+});
+
+function updateAZTracker(currentLetter) {
+    let passed = true;
+    alphabet.forEach(l => {
+        const node = document.getElementById(`az-node-${l}`);
+        if (l === currentLetter) {
+            node.className = 'az-node az-current font-black cursor-default select-none relative z-20 bg-[#050505] px-2';
+            passed = false;
+            // Center the track mathematically
+            const trackHalfWidth = alphabetTrack.clientWidth / 2;
+            alphabetTrack.scrollLeft = node.offsetLeft - trackHalfWidth + (node.clientWidth / 2);
+        } else if (passed) {
+            node.className = 'az-node az-passed font-black cursor-default select-none relative z-20 bg-[#050505] px-1';
+        } else {
+            node.className = 'az-node az-future font-black cursor-default select-none relative z-20 bg-[#050505] px-1';
+        }
+    });
+}
+
+// Database Initialization
 async function loadDatabase() {
     try {
         const response = await fetch('db.jsonl');
@@ -99,11 +114,12 @@ async function loadDatabase() {
         const text = await response.text();
         db = text.split('\n').filter(line => line.trim() !== '').map(line => JSON.parse(line));
         
-        db.forEach(item => {
-            const l = item.letter.toUpperCase();
-            if(!wordsByLetter[l]) wordsByLetter[l] = 0;
-            wordsByLetter[l]++;
-        });
+        // Calculate starting round based on global progress
+        currentWordIndex = Math.min(totalWordsLearned, db.length - 1);
+        batchStartIndex = Math.floor(currentWordIndex / 10) * 10;
+        currentWordIndex = batchStartIndex; // Lock to start of the nearest round
+        currentRound = Math.floor(batchStartIndex / 10) + 1;
+        
     } catch (error) {
         console.error("Error loading db.jsonl:", error);
     }
@@ -126,10 +142,6 @@ function fitTextSync(textElementId, boundContainerId, maxFontSizePx) {
     }
 }
 
-function getRoundNumber() {
-    return Math.floor(batchStartIndex / 10) + 1;
-}
-
 window.startChallenge = function() {
     initAudio(); 
     sfxSwoosh();
@@ -145,22 +157,18 @@ window.startChallenge = function() {
 
 function renderLearnView() {
     if (currentWordIndex >= db.length) {
-        alert("GAME COMPLETE. YOU BEAT THE DICTIONARY.");
+        alert("GAME OVER. YOU BEAT THE DICTIONARY.");
         return;
     }
 
-    // AAA Combo Bar - Sync with current learning step (0 to 9)
+    // Update HUD
+    document.getElementById('round-display').textContent = `ROUND ${currentRound}`;
     updateProgressBar(learnedCountInBatch, 'learn');
     
     const currentWord = db[currentWordIndex];
-    const currentLetter = currentWord.letter.toUpperCase();
-    const wordsInThisLetterSoFar = db.slice(0, currentWordIndex).filter(w => w.letter.toUpperCase() === currentLetter).length;
-    
-    document.getElementById('round-display').textContent = getRoundNumber();
-    document.getElementById('current-letter-display').textContent = currentLetter;
-    document.getElementById('letter-progress-count').textContent = wordsInThisLetterSoFar;
-    document.getElementById('letter-total-count').textContent = wordsByLetter[currentLetter];
+    updateAZTracker(currentWord.letter.toUpperCase());
 
+    // Render Text
     document.getElementById('en-word').textContent = currentWord.word.toLowerCase();
     document.getElementById('pos-tag').textContent = currentWord.pos;
     document.getElementById('en-definition').textContent = currentWord.definition;
@@ -174,7 +182,8 @@ function renderLearnView() {
     document.getElementById('pos-tag').style.animation = null; 
     document.getElementById('en-definition').style.animation = null; 
 
-    fitTextSync('en-word', 'word-bounds', 80); // Adjusted max size for mobile frame
+    // Max size reduced slightly to fit mobile frame better
+    fitTextSync('en-word', 'word-bounds', 80);
 }
 
 window.nextWord = function() {
@@ -184,7 +193,7 @@ window.nextWord = function() {
     learnedCountInBatch++;
 
     if (learnedCountInBatch === 10) {
-        // Visually lock in the 10th bar briefly before jumping
+        // Flash full bar before quiz
         updateProgressBar(10, 'learn'); 
         setTimeout(startQuiz, 400);
     } else {
@@ -198,6 +207,7 @@ function startQuiz() {
     views.quiz.classList.remove('hidden');
     views.quiz.classList.add('flex');
     
+    document.getElementById('round-display').textContent = `QUIZ: ROUND ${currentRound}`;
     currentQuizIndex = 0;
     score = 0;
     quizQueue = quizQueue.sort(() => Math.random() - 0.5);
@@ -206,14 +216,11 @@ function startQuiz() {
 
 function renderQuizQuestion() {
     isAnimating = false;
-    
-    // AAA Combo Bar - Sync with current quiz question (0 to 9)
-    updateProgressBar(currentQuizIndex, 'quiz');
+    updateProgressBar(currentQuizIndex, 'quiz'); // Highlights the current target bar
     
     const q = quizQueue[currentQuizIndex];
     
-    // Glowing underline for blank
-    const styledSentence = q.sentence.replace('___', '<span class="border-b-2 px-6 mx-1 inline-block h-5 align-baseline" style="border-color: #ccff00; box-shadow: 0 4px 6px -4px #ccff00;"></span>');
+    const styledSentence = q.sentence.replace('___', '<span class="border-b-4 px-8 mx-1 inline-block h-6 align-baseline transition-all" style="border-color: #666;"></span>');
     
     const sentenceEl = document.getElementById('quiz-sentence');
     sentenceEl.innerHTML = styledSentence;
@@ -223,15 +230,11 @@ function renderQuizQuestion() {
     const optionsContainer = document.getElementById('quiz-options');
     optionsContainer.innerHTML = ''; 
 
-    options.forEach((option, idx) => {
+    options.forEach(option => {
         const btn = document.createElement('button');
-        // Clean, angled mobile game aesthetic
-        btn.className = "w-full py-5 px-4 rounded-lg border border-zinc-800 bg-zinc-900/80 text-xl font-bold text-white lowercase text-center active:scale-95 transition-all truncate";
-        // Staggered animation delay
-        btn.style.animationDelay = `${0.1 + (idx * 0.05)}s`;
-        btn.classList.add('zoom-in');
-        
+        btn.className = "w-full py-5 px-4 rounded-xl border border-gray-800 bg-[#111] text-xl font-black text-white lowercase text-center active:scale-95 transition-all truncate shadow-lg";
         btn.textContent = option.toLowerCase();
+        
         btn.onclick = () => handleAnswer(btn, option.toLowerCase(), q.word.toLowerCase(), q.sentence);
         optionsContainer.appendChild(btn);
     });
@@ -254,12 +257,12 @@ function handleAnswer(btnElement, selectedWord, correctWord, fullSentence) {
     if (selectedWord === correctWord) {
         score++;
         btnElement.classList.add('correct-bg');
-        btnElement.classList.remove('border-zinc-800', 'bg-zinc-900/80');
+        btnElement.classList.remove('border-gray-800', 'bg-[#111]');
         
-        sentenceEl.innerHTML = fullSentence.replace('___', `<span class="text-neon-yellow border-b-2 border-current px-1 mx-1">${displayWord}</span>`);
+        sentenceEl.innerHTML = fullSentence.replace('___', `<span class="text-neon-yellow border-b-4 border-current px-2 mx-1">${displayWord}</span>`);
         
         sfxSuccess();
-        updateProgressBar(currentQuizIndex + 1, 'quiz');
+        updateProgressBar(currentQuizIndex + 1, 'quiz'); // Fills the bar with neon yellow
 
         setTimeout(() => {
             currentQuizIndex++;
@@ -273,12 +276,12 @@ function handleAnswer(btnElement, selectedWord, correctWord, fullSentence) {
     } else {
         sfxFail();
         btnElement.classList.add('wrong-bg', 'shake');
-        btnElement.classList.remove('border-zinc-800', 'bg-zinc-900/80');
+        btnElement.classList.remove('border-gray-800', 'bg-[#111]');
         
         allBtns.forEach(b => {
             if (b.textContent === correctWord) {
                 b.classList.add('correct-bg');
-                b.classList.remove('border-zinc-800', 'bg-zinc-900/80');
+                b.classList.remove('border-gray-800', 'bg-[#111]');
             }
         });
         
@@ -287,14 +290,12 @@ function handleAnswer(btnElement, selectedWord, correctWord, fullSentence) {
             wrongDisplayWord = wrongDisplayWord.charAt(0).toUpperCase() + wrongDisplayWord.slice(1);
         }
         
-        // Shatter Effect & Red Combo Bar
-        updateProgressBar(0, 'fail');
-        document.getElementById('app-frame').classList.add('shake');
-        sentenceEl.innerHTML = fullSentence.replace('___', `<span class="text-neon-red border-b-2 border-current px-1 mx-1">${wrongDisplayWord}</span>`);
+        document.getElementById('mobile-frame').classList.add('shake');
+        sentenceEl.innerHTML = fullSentence.replace('___', `<span class="text-neon-red border-b-4 border-current px-2 mx-1">${wrongDisplayWord}</span>`);
         sentenceEl.classList.add('shatter'); 
         
         setTimeout(() => {
-            document.getElementById('app-frame').classList.remove('shake');
+            document.getElementById('mobile-frame').classList.remove('shake');
             score = 0; 
             endQuiz();
         }, 1200);
@@ -309,15 +310,6 @@ function endQuiz() {
     views.result.classList.remove('hidden');
     views.result.classList.add('flex');
     
-    // Reset animations
-    const els = views.result.querySelectorAll('.zoom-in');
-    els.forEach(el => {
-        el.style.animation = 'none';
-        el.offsetHeight;
-        el.style.animation = null;
-    });
-    
-    const icon = document.getElementById('result-icon');
     const title = document.getElementById('result-title');
     const subtitle = document.getElementById('result-subtitle');
     const scoreText = document.getElementById('final-score');
@@ -326,14 +318,13 @@ function endQuiz() {
     scoreText.textContent = `${score}/10`;
 
     if (score === 10) {
-        icon.textContent = "🏆";
-        title.textContent = "ROUND CLEARED";
-        title.className = "text-4xl font-black uppercase mb-2 leading-none text-neon-yellow zoom-in";
-        subtitle.textContent = "PERFECT SCORE";
-        scoreText.className = "text-[5rem] font-black leading-none mb-auto mt-4 text-neon-yellow drop-shadow-xl zoom-in";
+        title.textContent = "CLEARED!";
+        title.className = "text-5xl font-black uppercase mb-2 leading-none text-neon-yellow zoom-in";
+        subtitle.textContent = `ROUND ${currentRound} COMPLETE`;
+        scoreText.className = "text-[7rem] font-black leading-none mb-auto mt-10 text-neon-yellow drop-shadow-xl";
         
-        btn.textContent = `START ROUND ${getRoundNumber() + 1}`;
-        btn.className = "w-full mt-auto mb-8 py-5 bg-[#ccff00] text-black rounded-xl text-2xl font-black active:scale-95 transition-transform uppercase shadow-[0_0_20px_rgba(204,255,0,0.4)] zoom-in";
+        btn.textContent = "NEXT ROUND";
+        btn.className = "w-full mt-auto mb-10 py-6 bg-neon-cyan text-black rounded-2xl text-2xl font-black active:scale-95 transition-transform uppercase shadow-[0_0_20px_rgba(0,229,255,0.4)]";
         
         btn.onclick = () => {
             sfxSwoosh();
@@ -341,21 +332,21 @@ function endQuiz() {
             localStorage.setItem('totalLearnedBeast', totalWordsLearned);
             document.getElementById('global-progress').textContent = totalWordsLearned;
             batchStartIndex = currentWordIndex;
+            currentRound++;
             resetForNextRound();
         };
     } else {
-        icon.textContent = "💀";
-        title.textContent = "GAME OVER";
-        title.className = "text-4xl font-black uppercase mb-2 leading-none text-neon-red zoom-in";
-        subtitle.textContent = "1 MISTAKE = RESTART ROUND";
-        scoreText.className = "text-[5rem] font-black leading-none mb-auto mt-4 text-neon-red drop-shadow-xl zoom-in";
+        title.textContent = "FAILED";
+        title.className = "text-5xl font-black uppercase mb-2 leading-none text-neon-red shake";
+        subtitle.textContent = "1 MISTAKE = RESTART";
+        scoreText.className = "text-[7rem] font-black leading-none mb-auto mt-10 text-neon-red drop-shadow-xl";
         
-        btn.textContent = `RETRY ROUND ${getRoundNumber()}`;
-        btn.className = "w-full mt-auto mb-8 py-5 bg-[#ff003c] text-white rounded-xl text-2xl font-black active:scale-95 transition-transform uppercase shadow-[0_0_20px_rgba(255,0,60,0.5)] zoom-in";
+        btn.textContent = "RETRY ROUND";
+        btn.className = "w-full mt-auto mb-10 py-6 bg-red-600 text-white rounded-2xl text-2xl font-black active:scale-95 transition-transform uppercase shadow-[0_0_15px_rgba(255,0,60,0.8)]";
         
         btn.onclick = () => {
             sfxSwoosh();
-            currentWordIndex = batchStartIndex; // Resets back to start of round
+            currentWordIndex = batchStartIndex;
             resetForNextRound();
         };
     }
@@ -376,9 +367,9 @@ function resetForNextRound() {
 }
 
 window.addEventListener('resize', () => {
-    if (!views.learn.classList.contains('hidden')) {
-        fitTextSync('en-word', 'word-bounds', 80);
-    }
+    if (!views.learn.classList.contains('hidden')) fitTextSync('en-word', 'word-bounds', 80);
+    // Force AZ track recenter on rotate
+    if (db[currentWordIndex]) updateAZTracker(db[currentWordIndex].letter.toUpperCase());
 });
 
 loadDatabase();
