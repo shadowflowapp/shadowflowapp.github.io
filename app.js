@@ -183,8 +183,8 @@ function renderQuizQuestion() {
     
     const q = quizQueue[currentQuizIndex];
     
-    // Render the blank with a styling block
-    const styledSentence = q.sentence.replace('___', '<span class="text-neon-yellow border-b-4 border-neon-yellow px-6 mx-1 inline-block h-6 sm:h-8"></span>');
+    // Fixed: Highlight the blank with proper inline styles so it's clearly visible
+    const styledSentence = q.sentence.replace('___', '<span class="border-b-4 px-6 mx-1 inline-block h-6 sm:h-8 align-baseline" style="border-color: #ccff00;"></span>');
     
     const sentenceEl = document.getElementById('quiz-sentence');
     sentenceEl.innerHTML = styledSentence;
@@ -196,7 +196,6 @@ function renderQuizQuestion() {
 
     options.forEach(option => {
         const btn = document.createElement('button');
-        // Changed from uppercase to lowercase for the choices
         btn.className = "w-full py-6 px-4 rounded-xl border-2 border-gray-800 bg-gray-900 text-2xl sm:text-3xl font-black text-white lowercase text-center active:scale-95 transition-all truncate";
         btn.textContent = option.toLowerCase();
         
@@ -216,7 +215,6 @@ function handleAnswer(btnElement, selectedWord, correctWord, fullSentence) {
     
     // Smart Capitalization Logic
     let displayWord = correctWord;
-    // Check if the blank is at the very beginning of the sentence (ignoring spaces/quotes)
     if (/^['"]?___/.test(fullSentence.trim())) {
         displayWord = displayWord.charAt(0).toUpperCase() + displayWord.slice(1);
     }
@@ -228,8 +226,8 @@ function handleAnswer(btnElement, selectedWord, correctWord, fullSentence) {
         btnElement.classList.add('correct-bg');
         btnElement.classList.remove('border-gray-800');
         
-        // Fill the blank physically in the sentence
-        sentenceEl.innerHTML = fullSentence.replace('___', `<span class="text-black bg-neon-yellow px-2 rounded">${displayWord}</span>`);
+        // Fixed: Use glowing yellow text and border-current to make the word stand out in the sentence
+        sentenceEl.innerHTML = fullSentence.replace('___', `<span class="text-neon-yellow border-b-4 border-current px-2 mx-1">${displayWord}</span>`);
         updateProgressBar(currentQuizIndex + 1, 'quiz');
 
         // Wait slightly longer so the user can read the completed sentence
@@ -255,15 +253,17 @@ function handleAnswer(btnElement, selectedWord, correctWord, fullSentence) {
             }
         });
         
-        // Show wrong word in red and shatter
+        // Smart capitalization for the wrong word too
         let wrongDisplayWord = selectedWord;
         if (/^['"]?___/.test(fullSentence.trim())) {
             wrongDisplayWord = wrongDisplayWord.charAt(0).toUpperCase() + wrongDisplayWord.slice(1);
         }
         
         document.body.classList.add('shake');
-        sentenceEl.innerHTML = fullSentence.replace('___', `<span class="text-neon-red">${wrongDisplayWord}</span>`);
-        sentenceEl.classList.add('shatter', 'text-neon-red');
+        
+        // Fixed: Insert wrong word in neon red
+        sentenceEl.innerHTML = fullSentence.replace('___', `<span class="text-neon-red border-b-4 border-current px-2 mx-1">${wrongDisplayWord}</span>`);
+        sentenceEl.classList.add('shatter'); // shatter class alone handles movement, text-neon-red colors it
         
         setTimeout(() => {
             document.body.classList.remove('shake');
