@@ -4,7 +4,10 @@ let wordsByLetter = {};
 let currentWordIndex = 0;
 let batchStartIndex = 0; 
 let learnedCountInBatch = 0;
-let quizQueue = [];
+
+// Quiz Variables
+let quizTargets = []; // Shuffled targets
+let quizOptions = []; // Shuffled buttons
 let currentQuizIndex = 0;
 let score = 0;
 let isAnimating = false; 
@@ -44,7 +47,6 @@ function sfxFail() {
 }
 function vibrate(pattern) { if (navigator.vibrate) navigator.vibrate(pattern); }
 
-// DOM Elements
 const views = {
     start: document.getElementById('start-view'),
     learn: document.getElementById('learning-view'),
@@ -55,7 +57,6 @@ const views = {
 
 document.getElementById('global-progress').textContent = totalWordsLearned;
 
-// Setup Round Progress Bar
 const progressBar = document.getElementById('progress-bar');
 for(let i=0; i<10; i++) {
     const seg = document.createElement('div');
@@ -78,7 +79,6 @@ function updateProgressBar(completedCount, mode) {
     }
 }
 
-// A-Z Alphabet UI Setup
 const alphabetTrack = document.getElementById('az-track');
 const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
 alphabet.forEach(letter => {
@@ -96,7 +96,6 @@ function updateAZTracker(currentLetter) {
         if (l === currentLetter) {
             node.className = 'az-node az-current font-black cursor-default select-none relative z-20 bg-[#050505] px-2';
             passed = false;
-            // Center the track mathematically based on its container
             const trackHalfWidth = alphabetTrack.clientWidth / 2;
             alphabetTrack.scrollLeft = node.offsetLeft - trackHalfWidth + (node.clientWidth / 2);
         } else if (passed) {
@@ -107,7 +106,6 @@ function updateAZTracker(currentLetter) {
     });
 }
 
-// Database Initialization (WITH ROBUST ERROR CATCHING)
 async function loadDatabase() {
     try {
         const response = await fetch('db.jsonl');
@@ -121,7 +119,6 @@ async function loadDatabase() {
         currentWordIndex = batchStartIndex; 
         currentRound = Math.floor(batchStartIndex / 10) + 1;
         
-        // Show Start Button only when DB is loaded
         document.getElementById('start-btn').classList.remove('hidden');
         document.getElementById('start-btn').classList.add('block');
         
@@ -177,22 +174,23 @@ function renderLearnView() {
 
     document.getElementById('en-word').textContent = currentWord.word.toLowerCase();
     document.getElementById('pos-tag').textContent = currentWord.pos;
-    document.getElementById('en-definition').textContent = currentWord.definition;
+    document.getElementById('th-meaning').textContent = currentWord.thai;
     
+    // Reset Animations
     document.getElementById('en-word').style.animation = 'none';
     document.getElementById('pos-tag').style.animation = 'none';
-    document.getElementById('en-definition').style.animation = 'none';
+    document.getElementById('th-meaning').style.animation = 'none';
     document.getElementById('en-word').offsetHeight; 
     document.getElementById('en-word').style.animation = null; 
     document.getElementById('pos-tag').style.animation = null; 
-    document.getElementById('en-definition').style.animation = null; 
+    document.getElementById('th-meaning').style.animation = null; 
 
     fitTextSync('en-word', 'word-bounds', 80);
+    fitTextSync('th-meaning', 'thai-bounds', 45);
 }
 
 window.nextWord = function() {
     sfxSwoosh();
-    quizQueue.push(db[currentWordIndex]);
     currentWordIndex++;
     learnedCountInBatch++;
 
@@ -204,67 +202,85 @@ window.nextWord = function() {
     }
 };
 
+// --- ELIMINATION BOARD QUIZ LOGIC ---
 function startQuiz() {
     views.learn.classList.add('hidden');
     views.learn.classList.remove('flex');
     views.quiz.classList.remove('hidden');
     views.quiz.classList.add('flex');
     
-    document.getElementById('round-display').textContent = `QUIZ: ROUND ${currentRound}`;
+    document.getElementById('round-display').textContent = `MATCHING: ROUND ${currentRound}`;
     currentQuizIndex = 0;
     score = 0;
-    quizQueue = quizQueue.sort(() => Math.random() - 0.5);
-    renderQuizQuestion();
+    
+    // Get the 10 words from this batch
+    const currentBatch = db.slice(batchStartIndex, batchStartIndex + 10);
+    
+    // Shuffle the targets (The Thai meanings that appear at the top)
+    quizTargets = [...currentBatch].sort(() => Math.random() - 0.5);
+    
+    // Shuffle the options (The 10 buttons that stay on the board)
+    quizOptions = [...currentBatch].sort(() => Math.random() - 0.5);
+    
+    setupQuizBoard();
 }
 
-function renderQuizQuestion() {
-    isAnimating = false;
-    updateProgressBar(currentQuizIndex, 'quiz');
-    
-    const q = quizQueue[currentQuizIndex];
-    
-    const styledSentence = q.sentence.replace('___', '<span class="border-b-4 px-8 mx-1 inline-block h-6 align-baseline transition-all" style="border-color: #666;"></span>');
-    
-    const sentenceEl = document.getElementById('quiz-sentence');
-    sentenceEl.innerHTML = styledSentence;
-    sentenceEl.classList.remove('shatter', 'text-neon-red');
-
-    const options = [q.word, ...q.distractors].sort(() => Math.random() - 0.5);
+function setupQuizBoard() {
     const optionsContainer = document.getElementById('quiz-options');
     optionsContainer.innerHTML = ''; 
 
-    options.forEach(option => {
+    // Render all 10 buttons once
+    quizOptions.forEach(opt => {
         const btn = document.createElement('button');
-        btn.className = "w-full py-5 px-4 rounded-xl border border-gray-800 bg-[#111] text-xl font-black text-white lowercase text-center active:scale-95 transition-all truncate shadow-lg";
-        btn.textContent = option.toLowerCase();
+        btn.className = "quiz-btn w-full py-4 px-2 rounded-xl border border-gray-800 bg-[#111] text-sm sm:text-base font-black text-white lowercase text-center active:scale-95 transition-all truncate shadow-lg";
+        btn.textContent = opt.word.toLowerCase();
         
-        btn.onclick = () => handleAnswer(btn, option.toLowerCase(), q.word.toLowerCase(), q.sentence);
+        btn.onclick = () => handleAnswer(btn, opt.word.toLowerCase());
         optionsContainer.appendChild(btn);
     });
+
+    renderQuizTarget();
 }
 
-function handleAnswer(btnElement, selectedWord, correctWord, fullSentence) {
+function renderQuizTarget() {
+    isAnimating = false;
+    updateProgressBar(currentQuizIndex, 'quiz');
+    
+    const targetWordObj = quizTargets[currentQuizIndex];
+    const targetEl = document.getElementById('quiz-th-target');
+    
+    targetEl.textContent = targetWordObj.thai;
+    targetEl.classList.remove('shatter', 'text-neon-red', 'text-neon-yellow');
+    targetEl.classList.add('text-white');
+    
+    // Restart animation for the new target
+    targetEl.style.animation = 'none';
+    targetEl.offsetHeight; 
+    targetEl.style.animation = null; 
+
+    fitTextSync('quiz-th-target', 'quiz-bounds', 45);
+}
+
+function handleAnswer(btnElement, selectedWord) {
     if (isAnimating) return;
     isAnimating = true;
 
-    const allBtns = document.getElementById('quiz-options').querySelectorAll('button');
-    allBtns.forEach(b => b.disabled = true);
-
-    const sentenceEl = document.getElementById('quiz-sentence');
-    
-    let displayWord = correctWord;
-    if (/^['"]?___/.test(fullSentence.trim())) {
-        displayWord = displayWord.charAt(0).toUpperCase() + displayWord.slice(1);
-    }
+    const correctWord = quizTargets[currentQuizIndex].word.toLowerCase();
+    const targetEl = document.getElementById('quiz-th-target');
 
     if (selectedWord === correctWord) {
+        // Success
         score++;
-        btnElement.classList.add('correct-bg');
+        sfxSuccess();
+        
+        // Eliminate the button from the board
+        btnElement.classList.add('eliminated');
         btnElement.classList.remove('border-gray-800', 'bg-[#111]');
         
-        sentenceEl.innerHTML = fullSentence.replace('___', `<span class="text-neon-yellow border-b-4 border-current px-2 mx-1">${displayWord}</span>`);
+        // Target flashes yellow
+        targetEl.classList.remove('text-white');
+        targetEl.classList.add('text-neon-yellow');
         
-        sfxSuccess();
         updateProgressBar(currentQuizIndex + 1, 'quiz');
 
         setTimeout(() => {
@@ -272,30 +288,27 @@ function handleAnswer(btnElement, selectedWord, correctWord, fullSentence) {
             if (currentQuizIndex >= 10) {
                 endQuiz();
             } else {
-                renderQuizQuestion();
+                renderQuizTarget(); // Load next target without re-rendering buttons
             }
-        }, 1200);
+        }, 600);
 
     } else {
+        // Fail - NO MERCY
         sfxFail();
         btnElement.classList.add('wrong-bg', 'shake');
-        btnElement.classList.remove('border-gray-800', 'bg-[#111]');
         
+        // Highlight the correct button they missed
+        const allBtns = document.getElementById('quiz-options').querySelectorAll('.quiz-btn');
         allBtns.forEach(b => {
             if (b.textContent === correctWord) {
                 b.classList.add('correct-bg');
-                b.classList.remove('border-gray-800', 'bg-[#111]');
             }
+            b.disabled = true; // Lock the board
         });
         
-        let wrongDisplayWord = selectedWord;
-        if (/^['"]?___/.test(fullSentence.trim())) {
-            wrongDisplayWord = wrongDisplayWord.charAt(0).toUpperCase() + wrongDisplayWord.slice(1);
-        }
-        
         document.getElementById('mobile-frame').classList.add('shake');
-        sentenceEl.innerHTML = fullSentence.replace('___', `<span class="text-neon-red border-b-4 border-current px-2 mx-1">${wrongDisplayWord}</span>`);
-        sentenceEl.classList.add('shatter'); 
+        targetEl.classList.remove('text-white');
+        targetEl.classList.add('shatter', 'text-neon-red'); 
         
         setTimeout(() => {
             document.getElementById('mobile-frame').classList.remove('shake');
@@ -334,7 +347,7 @@ function endQuiz() {
             totalWordsLearned += 10;
             localStorage.setItem('totalLearnedBeast', totalWordsLearned);
             document.getElementById('global-progress').textContent = totalWordsLearned;
-            batchStartIndex = currentWordIndex;
+            batchStartIndex = currentWordIndex; // Already incremented during learning phase
             currentRound++;
             resetForNextRound();
         };
@@ -349,7 +362,7 @@ function endQuiz() {
         
         btn.onclick = () => {
             sfxSwoosh();
-            currentWordIndex = batchStartIndex;
+            currentWordIndex = batchStartIndex; // Reset to start of the round
             resetForNextRound();
         };
     }
@@ -357,7 +370,6 @@ function endQuiz() {
 
 function resetForNextRound() {
     learnedCountInBatch = 0;
-    quizQueue = [];
     
     views.result.classList.add('hidden');
     views.result.classList.remove('flex');
@@ -366,11 +378,17 @@ function resetForNextRound() {
     views.learn.classList.remove('hidden');
     views.learn.classList.add('flex');
     
+    updateProgressBar(0, 'learn');
     renderLearnView();
 }
 
 window.addEventListener('resize', () => {
-    if (!views.learn.classList.contains('hidden')) fitTextSync('en-word', 'word-bounds', 80);
+    if (!views.learn.classList.contains('hidden')) {
+        fitTextSync('en-word', 'word-bounds', 80);
+        fitTextSync('th-meaning', 'thai-bounds', 45);
+    } else if (!views.quiz.classList.contains('hidden')) {
+        fitTextSync('quiz-th-target', 'quiz-bounds', 45);
+    }
     if (db[currentWordIndex]) updateAZTracker(db[currentWordIndex].letter.toUpperCase());
 });
 
