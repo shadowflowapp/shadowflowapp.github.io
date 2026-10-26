@@ -1,5 +1,6 @@
 // State Variables
 let db = []; 
+let wordsByLetter = {}; 
 let currentWordIndex = 0;
 let batchStartIndex = 0; 
 let learnedCountInBatch = 0;
@@ -65,7 +66,7 @@ for(let i=0; i<10; i++) {
 function updateProgressBar(completedCount, mode) {
     const segments = progressBar.children;
     for(let i=0; i<10; i++) {
-        segments[i].className = 'segment seg-empty'; // Reset
+        segments[i].className = 'segment seg-empty'; 
         
         if (mode === 'learn') {
             if (i < completedCount) segments[i].classList.add('seg-learn-filled');
@@ -95,7 +96,7 @@ function updateAZTracker(currentLetter) {
         if (l === currentLetter) {
             node.className = 'az-node az-current font-black cursor-default select-none relative z-20 bg-[#050505] px-2';
             passed = false;
-            // Center the track mathematically
+            // Center the track mathematically based on its container
             const trackHalfWidth = alphabetTrack.clientWidth / 2;
             alphabetTrack.scrollLeft = node.offsetLeft - trackHalfWidth + (node.clientWidth / 2);
         } else if (passed) {
@@ -106,22 +107,29 @@ function updateAZTracker(currentLetter) {
     });
 }
 
-// Database Initialization
+// Database Initialization (WITH ROBUST ERROR CATCHING)
 async function loadDatabase() {
     try {
         const response = await fetch('db.jsonl');
         if (!response.ok) throw new Error(`HTTP error!`);
+        
         const text = await response.text();
         db = text.split('\n').filter(line => line.trim() !== '').map(line => JSON.parse(line));
         
-        // Calculate starting round based on global progress
         currentWordIndex = Math.min(totalWordsLearned, db.length - 1);
         batchStartIndex = Math.floor(currentWordIndex / 10) * 10;
-        currentWordIndex = batchStartIndex; // Lock to start of the nearest round
+        currentWordIndex = batchStartIndex; 
         currentRound = Math.floor(batchStartIndex / 10) + 1;
+        
+        // Show Start Button only when DB is loaded
+        document.getElementById('start-btn').classList.remove('hidden');
+        document.getElementById('start-btn').classList.add('block');
         
     } catch (error) {
         console.error("Error loading db.jsonl:", error);
+        const errorBox = document.getElementById('start-error');
+        errorBox.classList.remove('hidden');
+        errorBox.innerHTML = `<strong>Failed to load db.jsonl</strong><br>You are likely opening the file directly (file://). To fix this, run a local server using a tool like VS Code Live Server.`;
     }
 }
 
@@ -161,19 +169,16 @@ function renderLearnView() {
         return;
     }
 
-    // Update HUD
     document.getElementById('round-display').textContent = `ROUND ${currentRound}`;
     updateProgressBar(learnedCountInBatch, 'learn');
     
     const currentWord = db[currentWordIndex];
     updateAZTracker(currentWord.letter.toUpperCase());
 
-    // Render Text
     document.getElementById('en-word').textContent = currentWord.word.toLowerCase();
     document.getElementById('pos-tag').textContent = currentWord.pos;
     document.getElementById('en-definition').textContent = currentWord.definition;
     
-    // Reset Animations
     document.getElementById('en-word').style.animation = 'none';
     document.getElementById('pos-tag').style.animation = 'none';
     document.getElementById('en-definition').style.animation = 'none';
@@ -182,7 +187,6 @@ function renderLearnView() {
     document.getElementById('pos-tag').style.animation = null; 
     document.getElementById('en-definition').style.animation = null; 
 
-    // Max size reduced slightly to fit mobile frame better
     fitTextSync('en-word', 'word-bounds', 80);
 }
 
@@ -193,7 +197,6 @@ window.nextWord = function() {
     learnedCountInBatch++;
 
     if (learnedCountInBatch === 10) {
-        // Flash full bar before quiz
         updateProgressBar(10, 'learn'); 
         setTimeout(startQuiz, 400);
     } else {
@@ -216,7 +219,7 @@ function startQuiz() {
 
 function renderQuizQuestion() {
     isAnimating = false;
-    updateProgressBar(currentQuizIndex, 'quiz'); // Highlights the current target bar
+    updateProgressBar(currentQuizIndex, 'quiz');
     
     const q = quizQueue[currentQuizIndex];
     
@@ -262,7 +265,7 @@ function handleAnswer(btnElement, selectedWord, correctWord, fullSentence) {
         sentenceEl.innerHTML = fullSentence.replace('___', `<span class="text-neon-yellow border-b-4 border-current px-2 mx-1">${displayWord}</span>`);
         
         sfxSuccess();
-        updateProgressBar(currentQuizIndex + 1, 'quiz'); // Fills the bar with neon yellow
+        updateProgressBar(currentQuizIndex + 1, 'quiz');
 
         setTimeout(() => {
             currentQuizIndex++;
@@ -368,7 +371,6 @@ function resetForNextRound() {
 
 window.addEventListener('resize', () => {
     if (!views.learn.classList.contains('hidden')) fitTextSync('en-word', 'word-bounds', 80);
-    // Force AZ track recenter on rotate
     if (db[currentWordIndex]) updateAZTracker(db[currentWordIndex].letter.toUpperCase());
 });
 
