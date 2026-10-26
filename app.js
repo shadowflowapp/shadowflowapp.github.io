@@ -96,7 +96,6 @@ async function loadDatabase() {
     }
 }
 
-// Scales text to exactly fit the container width
 function fitTextSync(textElementId, boundContainerId, maxFontSizePx) {
     const textEl = document.getElementById(textElementId);
     const boundsEl = document.getElementById(boundContainerId);
@@ -136,11 +135,11 @@ function renderLearnView() {
     updateProgressBar(learnedCountInBatch, 'learn');
     const currentWord = db[currentWordIndex];
     
-    document.getElementById('en-word').textContent = currentWord.word;
+    // Ensure text is lowercased for dictionary feel
+    document.getElementById('en-word').textContent = currentWord.word.toLowerCase();
     document.getElementById('pos-tag').textContent = currentWord.pos;
     document.getElementById('en-definition').textContent = currentWord.definition;
     
-    // Restart CSS Animations
     document.getElementById('en-word').style.animation = 'none';
     document.getElementById('pos-tag').style.animation = 'none';
     document.getElementById('en-definition').style.animation = 'none';
@@ -149,7 +148,6 @@ function renderLearnView() {
     document.getElementById('pos-tag').style.animation = null; 
     document.getElementById('en-definition').style.animation = null; 
 
-    // Auto-fit only the main target word so it never breaks layout
     fitTextSync('en-word', 'word-bounds', 100);
 }
 
@@ -185,25 +183,24 @@ function renderQuizQuestion() {
     
     const q = quizQueue[currentQuizIndex];
     
-    // Highlight the blank in neon
+    // Render the blank with a styling block
     const styledSentence = q.sentence.replace('___', '<span class="text-neon-yellow border-b-4 border-neon-yellow px-6 mx-1 inline-block h-6 sm:h-8"></span>');
     
     const sentenceEl = document.getElementById('quiz-sentence');
     sentenceEl.innerHTML = styledSentence;
     sentenceEl.classList.remove('shatter', 'text-neon-red');
 
-    // Shuffle Target + Distractors
     const options = [q.word, ...q.distractors].sort(() => Math.random() - 0.5);
     const optionsContainer = document.getElementById('quiz-options');
     optionsContainer.innerHTML = ''; 
 
     options.forEach(option => {
         const btn = document.createElement('button');
-        // Clean buttons, no POS hints, vertical stack for thumb reach
-        btn.className = "w-full py-6 px-4 rounded-xl border-2 border-gray-800 bg-gray-900 text-2xl sm:text-3xl font-black text-white uppercase text-center active:scale-95 transition-all truncate";
-        btn.textContent = option;
+        // Changed from uppercase to lowercase for the choices
+        btn.className = "w-full py-6 px-4 rounded-xl border-2 border-gray-800 bg-gray-900 text-2xl sm:text-3xl font-black text-white lowercase text-center active:scale-95 transition-all truncate";
+        btn.textContent = option.toLowerCase();
         
-        btn.onclick = () => handleAnswer(btn, option, q.word, q.sentence);
+        btn.onclick = () => handleAnswer(btn, option.toLowerCase(), q.word.toLowerCase(), q.sentence);
         optionsContainer.appendChild(btn);
     });
 }
@@ -216,6 +213,13 @@ function handleAnswer(btnElement, selectedWord, correctWord, fullSentence) {
     allBtns.forEach(b => b.disabled = true);
 
     const sentenceEl = document.getElementById('quiz-sentence');
+    
+    // Smart Capitalization Logic
+    let displayWord = correctWord;
+    // Check if the blank is at the very beginning of the sentence (ignoring spaces/quotes)
+    if (/^['"]?___/.test(fullSentence.trim())) {
+        displayWord = displayWord.charAt(0).toUpperCase() + displayWord.slice(1);
+    }
 
     if (selectedWord === correctWord) {
         // Success
@@ -224,10 +228,11 @@ function handleAnswer(btnElement, selectedWord, correctWord, fullSentence) {
         btnElement.classList.add('correct-bg');
         btnElement.classList.remove('border-gray-800');
         
-        // Fill the blank with the correct word
-        sentenceEl.innerHTML = fullSentence.replace('___', `<span class="text-black bg-neon-yellow px-2 rounded">${correctWord}</span>`);
+        // Fill the blank physically in the sentence
+        sentenceEl.innerHTML = fullSentence.replace('___', `<span class="text-black bg-neon-yellow px-2 rounded">${displayWord}</span>`);
         updateProgressBar(currentQuizIndex + 1, 'quiz');
 
+        // Wait slightly longer so the user can read the completed sentence
         setTimeout(() => {
             currentQuizIndex++;
             if (currentQuizIndex >= 10) {
@@ -235,7 +240,7 @@ function handleAnswer(btnElement, selectedWord, correctWord, fullSentence) {
             } else {
                 renderQuizQuestion();
             }
-        }, 1000);
+        }, 1500);
 
     } else {
         // Fail
@@ -243,17 +248,21 @@ function handleAnswer(btnElement, selectedWord, correctWord, fullSentence) {
         btnElement.classList.add('wrong-bg', 'shake');
         btnElement.classList.remove('border-gray-800');
         
-        // Highlight correct answer
         allBtns.forEach(b => {
-            if (b.textContent.toLowerCase() === correctWord.toLowerCase()) {
+            if (b.textContent === correctWord) {
                 b.classList.add('correct-bg');
                 b.classList.remove('border-gray-800');
             }
         });
         
-        // Shatter animation on the sentence
+        // Show wrong word in red and shatter
+        let wrongDisplayWord = selectedWord;
+        if (/^['"]?___/.test(fullSentence.trim())) {
+            wrongDisplayWord = wrongDisplayWord.charAt(0).toUpperCase() + wrongDisplayWord.slice(1);
+        }
+        
         document.body.classList.add('shake');
-        sentenceEl.innerHTML = fullSentence.replace('___', `<span class="text-neon-red">${selectedWord}</span>`);
+        sentenceEl.innerHTML = fullSentence.replace('___', `<span class="text-neon-red">${wrongDisplayWord}</span>`);
         sentenceEl.classList.add('shatter', 'text-neon-red');
         
         setTimeout(() => {
