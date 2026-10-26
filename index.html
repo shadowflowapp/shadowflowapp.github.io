@@ -13,6 +13,29 @@
             -webkit-tap-highlight-color: transparent;
         }
 
+        /* AAA Mobile Frame Constraints for Desktop */
+        #mobile-frame {
+            width: 100vw;
+            height: 100dvh;
+            background-color: #050505;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            margin: 0 auto;
+        }
+        @media (min-width: 640px) {
+            #mobile-frame {
+                width: 430px;
+                height: 850px;
+                max-height: 90vh;
+                border-radius: 40px;
+                border: 8px solid #1a1a1c;
+                margin-top: 5vh;
+                box-shadow: 0 0 50px rgba(0, 229, 255, 0.05);
+            }
+        }
+
         /* Animations */
         .zoom-in { animation: zoomIn 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
         @keyframes zoomIn { from { opacity: 0; transform: scale(0.8); } to { opacity: 1; transform: scale(1); } }
@@ -21,7 +44,7 @@
         @keyframes shake { 10%, 90% { transform: translate3d(-2px, 0, 0); } 20%, 80% { transform: translate3d(4px, 0, 0); } 30%, 50%, 70% { transform: translate3d(-8px, 0, 0); } 40%, 60% { transform: translate3d(8px, 0, 0); } }
 
         .shatter { animation: shatterAnim 0.6s ease-in forwards; }
-        @keyframes shatterAnim { 0% { transform: translateY(0) rotate(0deg); opacity: 1; } 100% { transform: translateY(200px) rotate(15deg) scale(0.8); opacity: 0; } }
+        @keyframes shatterAnim { 0% { transform: translateY(0) rotate(0deg); opacity: 1; } 100% { transform: translateY(150px) rotate(10deg) scale(0.8); opacity: 0; } }
         
         /* Neon Colors */
         .text-neon-cyan { color: #00e5ff; text-shadow: 0 0 10px rgba(0,229,255,0.6), 0 0 20px rgba(0,229,255,0.4); }
@@ -32,6 +55,9 @@
         /* Interactive Buttons */
         .correct-bg { background-color: #ccff00 !important; color: #000 !important; transform: scale(1.02); border-color: #ccff00 !important; box-shadow: 0 0 15px rgba(204,255,0,0.8); }
         .wrong-bg { background-color: #ff003c !important; color: #fff !important; border-color: #ff003c !important; box-shadow: 0 0 15px rgba(255,0,60,0.8); }
+        
+        /* Elimination Board Specific */
+        .eliminated { opacity: 0.3; pointer-events: none; border-color: #00e5ff !important; color: #00e5ff !important; transform: scale(0.95); }
 
         /* AAA Segmented Round Progress Bar */
         .segment { transition: all 0.3s ease; height: 6px; border-radius: 9999px; flex: 1; }
@@ -51,32 +77,24 @@
         .az-future { color: #333333; font-size: 0.875rem; }
     </style>
 </head>
-<!-- Body acts as the desktop background centering the mobile frame -->
 <body class="flex items-center justify-center min-h-screen m-0 p-0 overflow-hidden">
 
-    <!-- AAA MOBILE FRAME (Strict Tailwind boundaries) -->
-    <div id="mobile-frame" class="w-full max-w-[430px] h-[100dvh] sm:h-[850px] sm:max-h-[90vh] sm:border-[8px] sm:border-[#1a1a1c] sm:rounded-[40px] bg-[#050505] relative overflow-hidden flex flex-col shadow-2xl shadow-cyan-900/20">
+    <div id="mobile-frame">
         
-        <!-- HUD (Heads Up Display) -->
+        <!-- HUD -->
         <div id="top-bar" class="w-full flex-col z-50 absolute top-0 left-0 bg-gradient-to-b from-[#050505] via-[#050505] to-transparent pb-6 hidden">
-            
-            <!-- A-Z Node Track -->
             <div class="relative w-full h-16 flex items-center justify-center overflow-hidden border-b border-gray-900/50">
                 <div class="absolute w-full h-[2px] bg-gray-900 top-1/2 -translate-y-1/2 z-0"></div>
                 <div id="az-track" class="flex items-center gap-6 overflow-x-hidden w-full px-[50%] absolute z-10 pointer-events-none">
-                    <!-- Letters injected by JS -->
                 </div>
             </div>
 
-            <!-- Round & Progress Status -->
             <div class="px-6 mt-4 flex flex-col gap-2">
                 <div class="flex justify-between items-end">
                     <span id="round-display" class="text-xs font-black tracking-[0.2em] text-gray-500 uppercase">ROUND 1</span>
                     <span class="text-xs font-black tracking-widest text-gray-600">GLOBAL: <span id="global-progress" class="text-white">0</span></span>
                 </div>
-                <!-- 10-Segment Progress Bar -->
                 <div id="progress-bar" class="flex w-full gap-1.5">
-                    <!-- Injected via JS -->
                 </div>
             </div>
         </div>
@@ -86,9 +104,7 @@
             <h1 class="text-5xl font-black text-center mb-4 leading-none uppercase">Master<br><span class="text-neon-cyan">A to Z</span></h1>
             <p class="text-gray-500 text-sm font-bold text-center mb-12 uppercase tracking-[0.2em] leading-relaxed">10 Words Per Round.<br>10/10 To Advance.<br>No Mercy.</p>
             
-            <div id="start-error" class="hidden text-center bg-red-900/50 border border-red-500 rounded-lg p-4 mb-6 text-red-200 text-sm">
-                <!-- Errors shown here -->
-            </div>
+            <div id="start-error" class="hidden text-center bg-red-900/50 border border-red-500 rounded-lg p-4 mb-6 text-red-200 text-sm"></div>
 
             <button id="start-btn" onclick="startChallenge()" class="w-full mt-auto mb-10 py-6 bg-neon-cyan rounded-2xl text-2xl font-black active:scale-95 transition-transform uppercase hidden">
                 Start Game
@@ -104,8 +120,8 @@
                     <span id="pos-tag" class="text-gray-600 font-bold text-xl mt-3 lowercase zoom-in" style="animation-delay: 0.05s;"></span>
                 </div>
                 
-                <div class="w-full relative flex justify-center items-center mt-12 px-2">
-                    <p id="en-definition" class="text-gray-300 font-medium text-xl text-center leading-relaxed zoom-in" style="animation-delay: 0.1s;"></p>
+                <div id="thai-bounds" class="w-full relative flex justify-center items-center mt-12 px-2">
+                    <p id="th-meaning" class="text-white font-bold text-center whitespace-nowrap zoom-in" style="animation-delay: 0.1s;"></p>
                 </div>
             </div>
 
@@ -114,22 +130,24 @@
             </button>
         </div>
 
-        <!-- QUIZ VIEW (Contextual MCQ) -->
-        <div id="quiz-view" class="hidden flex-col h-full w-full p-6 pt-40 relative">
+        <!-- QUIZ VIEW (The Elimination Board) -->
+        <div id="quiz-view" class="hidden flex-col h-full w-full p-6 pt-36 relative">
             
-            <div class="flex-grow flex flex-col justify-center w-full">
-                <div class="w-full relative flex justify-center items-center mb-8">
-                    <p id="quiz-sentence" class="font-bold text-gray-200 text-xl text-center leading-relaxed zoom-in drop-shadow-md"></p>
+            <div class="flex flex-col justify-center w-full h-32 relative">
+                <!-- Target Thai Meaning -->
+                <div id="quiz-bounds" class="w-full relative flex justify-center items-center absolute inset-0">
+                    <p id="quiz-th-target" class="font-black text-white text-center zoom-in drop-shadow-md whitespace-nowrap"></p>
                 </div>
             </div>
 
-            <div id="quiz-options" class="mt-auto mb-6 flex flex-col w-full space-y-3 zoom-in" style="animation-delay: 0.1s;">
+            <!-- 10-Word Grid Options -->
+            <div id="quiz-options" class="grid grid-cols-2 gap-3 mt-auto mb-6 w-full zoom-in" style="animation-delay: 0.1s;">
                 <!-- Buttons generated dynamically -->
             </div>
         </div>
 
         <!-- RESULT VIEW -->
-        <div id="result-view" class="hidden flex-col h-full w-full justify-center items-center p-6 text-center z-40 bg-[#050505]">
+        <div id="result-view" class="hidden flex-col h-full w-full justify-center items-center p-6 text-center z-40 bg-[#050505] absolute inset-0">
             <h2 id="result-title" class="text-5xl font-black uppercase mb-2 leading-none mt-20"></h2>
             <p id="result-subtitle" class="text-sm font-bold text-gray-500 mb-10 uppercase tracking-[0.2em]"></p>
             
