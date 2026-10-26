@@ -3,7 +3,6 @@ let currentIndex = 0;
 let currentXP = 0;
 let levelXP = 500; // XP needed for next level
 let currentPotentialXP = 0;
-let isDecrypted = false;
 let isAnswered = false;
 
 // Initialize App
@@ -33,23 +32,11 @@ function loadQuestion() {
 
     const q = questions[currentIndex];
     currentPotentialXP = q.base_xp;
-    isDecrypted = false;
     isAnswered = false;
 
     // Reset UI
     document.getElementById('topic-tag').innerText = q.topic.toUpperCase();
     document.getElementById('question-text').innerText = q.en;
-    
-    const thaiTextEl = document.getElementById('thai-text');
-    thaiTextEl.innerText = q.th;
-    thaiTextEl.style.display = 'none';
-
-    const decryptBtn = document.getElementById('decrypt-btn');
-    decryptBtn.style.display = 'flex';
-    decryptBtn.disabled = false;
-    decryptBtn.style.opacity = '1';
-    document.getElementById('penalty-text').innerText = `Cost: -50% XP (Potential: ${currentPotentialXP})`;
-
     document.getElementById('next-btn').style.display = 'none';
 
     // Generate Choices
@@ -59,35 +46,10 @@ function loadQuestion() {
     q.choices_en.forEach((choice, index) => {
         const btn = document.createElement('button');
         btn.className = 'choice-btn';
-        btn.innerHTML = `
-            <div class="choice-en">${index + 1}. ${choice}</div>
-            <div class="choice-th" id="th-choice-${index}">${q.choices_th[index]}</div>
-        `;
+        btn.innerHTML = `<div class="choice-en">${index + 1}. ${choice}</div>`;
         btn.onclick = () => submitAnswer(index, btn);
         grid.appendChild(btn);
     });
-}
-
-function decryptProtocol() {
-    if (isDecrypted || isAnswered) return;
-    
-    isDecrypted = true;
-    
-    // Penalize XP (cut in half)
-    currentPotentialXP = Math.floor(currentPotentialXP * 0.5);
-    
-    // UI Updates
-    document.getElementById('thai-text').style.display = 'block';
-    
-    // Show Thai choices
-    const thChoices = document.querySelectorAll('.choice-th');
-    thChoices.forEach(el => el.style.display = 'block');
-
-    // Update Button
-    const decryptBtn = document.getElementById('decrypt-btn');
-    decryptBtn.disabled = true;
-    decryptBtn.style.opacity = '0.5';
-    document.getElementById('penalty-text').innerText = `Decrypted. Potential XP: ${currentPotentialXP}`;
 }
 
 function submitAnswer(selectedIndex, btnElement) {
@@ -110,7 +72,6 @@ function submitAnswer(selectedIndex, btnElement) {
         allBtns[q.correct_index].classList.add('correct');
     }
 
-    document.getElementById('decrypt-btn').style.display = 'none';
     document.getElementById('next-btn').style.display = 'block';
 }
 
