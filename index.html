@@ -3,78 +3,146 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Physics.app MVP</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Eng-Thai Dictionary Learner</title>
     <style>
-        /* Prevent pull-to-refresh on mobile apps to feel more native */
-        body { overscroll-behavior-y: none; }
-        .tap-highlight-transparent { -webkit-tap-highlight-color: transparent; }
+        /* Mobile-First CSS Reset & Base */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f0f2f5;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            color: #333;
+        }
+        header {
+            background-color: #1a73e8;
+            color: white;
+            padding: 16px;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        header h2 {
+            margin: 0;
+            font-size: 1.2rem;
+        }
+        .progress {
+            font-size: 0.9rem;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 4px 10px;
+            border-radius: 20px;
+        }
+        .container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .flashcard {
+            background: white;
+            border-radius: 16px;
+            padding: 40px 20px;
+            width: 100%;
+            max-width: 340px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.08);
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+        }
+        .word {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: #202124;
+            margin: 0;
+            word-wrap: break-word;
+        }
+        .pos {
+            font-size: 1.1rem;
+            color: #5f6368;
+            font-style: italic;
+        }
+        .audio-btn {
+            background-color: #e8eaed;
+            border: none;
+            border-radius: 50%;
+            width: 70px;
+            height: 70px;
+            font-size: 1.8rem;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            transition: transform 0.1s ease, background-color 0.2s;
+            margin: 10px 0;
+        }
+        .audio-btn:active {
+            transform: scale(0.92);
+            background-color: #dadce0;
+        }
+        .meaning {
+            font-size: 1.4rem;
+            color: #188038;
+            font-weight: 500;
+            margin-top: 10px;
+        }
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            padding: 20px;
+            box-sizing: border-box;
+            background: white;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
+        }
+        .btn {
+            padding: 16px;
+            font-size: 1.1rem;
+            border: none;
+            border-radius: 12px;
+            background-color: #1a73e8;
+            color: white;
+            cursor: pointer;
+            flex: 1;
+            margin: 0 10px;
+            font-weight: bold;
+            transition: opacity 0.2s;
+        }
+        .btn:disabled {
+            background-color: #bdc3c7;
+            cursor: not-allowed;
+        }
+        .btn:active:not(:disabled) {
+            opacity: 0.8;
+        }
     </style>
 </head>
-<body class="bg-slate-900 text-slate-100 font-sans antialiased select-none">
-    
-    <!-- Main App Container -->
-    <div id="app" class="max-w-md mx-auto min-h-screen sm:border-x sm:border-slate-800 shadow-2xl flex flex-col relative">
-        
-        <!-- Dashboard View (Initially Hidden) -->
-        <div id="dashboard-view" class="flex-1 p-5 hidden">
-            <div class="flex justify-between items-center mb-8 mt-4">
-                <div>
-                    <h1 class="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-emerald-400">Physics.app</h1>
-                    <p class="text-slate-400 text-sm mt-1">Ready to train your brain?</p>
-                </div>
-            </div>
+<body>
+    <header>
+        <h2>EN-TH Dict</h2>
+        <div class="progress">Learned: <span id="learned-count">0</span></div>
+    </header>
 
-            <div class="grid grid-cols-2 gap-3 mb-8">
-                <button onclick="app.startQuiz('mix')" class="tap-highlight-transparent bg-gradient-to-br from-indigo-600 to-purple-600 p-4 rounded-2xl font-bold shadow-lg shadow-indigo-900/50 active:scale-95 transition-transform text-center">
-                    Mix All Topics
-                </button>
-            </div>
-
-            <h2 class="text-lg font-semibold mb-4 text-slate-300">Study by Topic</h2>
-            <div id="topics-list" class="space-y-3 pb-10">
-                <!-- Topics will be injected here by app.js -->
-            </div>
+    <div class="container">
+        <div class="flashcard">
+            <div class="word" id="word-display">Loading...</div>
+            <div class="pos" id="pos-display"></div>
+            <button class="audio-btn" id="audio-btn">🔊</button>
+            <div class="meaning" id="meaning-display"></div>
         </div>
+    </div>
 
-        <!-- Quiz View (Initially Hidden) -->
-        <div id="quiz-view" class="flex-1 flex flex-col hidden">
-            <!-- Progress Header -->
-            <header class="p-4 flex items-center space-x-4 border-b border-slate-800 sticky top-0 bg-slate-900 z-10">
-                <button onclick="app.showDashboard()" class="tap-highlight-transparent text-slate-400 hover:text-white font-bold text-2xl px-2">&times;</button>
-                <div class="w-full bg-slate-800 rounded-full h-3 overflow-hidden">
-                    <div id="progress-bar" class="bg-emerald-500 h-3 rounded-full transition-all duration-500 ease-out" style="width: 0%"></div>
-                </div>
-            </header>
-
-            <!-- Question Area -->
-            <main class="flex-1 p-5 flex flex-col">
-                <div id="question-topic" class="mb-2 text-sm text-indigo-400 font-semibold tracking-wider uppercase"></div>
-                <h2 id="question-text" class="text-xl md:text-2xl font-medium leading-relaxed mb-6"></h2>
-                
-                <div id="question-figure" class="mb-6 rounded-xl overflow-hidden border border-slate-700 bg-slate-800 flex items-center justify-center p-2 hidden">
-                    <img id="figure-img" src="" alt="Figure" class="max-h-48 object-contain" />
-                </div>
-
-                <!-- 3x3 Grid for 9 choices -->
-                <div id="choices-grid" class="grid grid-cols-3 gap-2 sm:gap-3 mt-auto mb-4">
-                    <!-- Buttons injected here by app.js -->
-                </div>
-            </main>
-
-            <!-- Footer Action -->
-            <footer id="quiz-footer" class="p-4 border-t border-slate-800 bg-slate-900 pb-8 min-h-[120px] flex flex-col justify-center">
-                <button id="action-btn" class="tap-highlight-transparent w-full py-4 rounded-2xl font-bold text-lg transition-all bg-slate-800 text-slate-500 cursor-not-allowed" disabled>
-                    Select an answer
-                </button>
-            </footer>
-        </div>
-
-        <!-- Loading State -->
-        <div id="loading-view" class="flex-1 flex items-center justify-center">
-            <div class="animate-pulse text-indigo-400 font-bold text-xl">Loading Physics DB...</div>
-        </div>
-
+    <div class="controls">
+        <button class="btn" id="prev-btn" disabled>Back</button>
+        <button class="btn" id="next-btn">Next</button>
     </div>
 
     <script src="app.js"></script>
