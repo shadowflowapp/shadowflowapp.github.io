@@ -11,21 +11,18 @@ let isAnimating = false;
 
 let totalWordsLearned = localStorage.getItem('totalLearnedBeast') ? parseInt(localStorage.getItem('totalLearnedBeast')) : 0;
 
-// --- AAA AUDIO SYNTHESIZER ---
+// --- WEB AUDIO SYNTHESIZER ---
 let audioCtx = null;
 function initAudio() {
     if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     if (audioCtx.state === 'suspended') audioCtx.resume();
 }
-function playTone(freq, type, duration, vol = 0.1, slide = false) {
+function playTone(freq, type, duration, vol = 0.1) {
     if (!audioCtx) return;
     const osc = audioCtx.createOscillator();
     const gain = audioCtx.createGain();
     osc.type = type;
     osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-    if(slide) {
-        osc.frequency.exponentialRampToValueAtTime(freq * 1.5, audioCtx.currentTime + duration);
-    }
     gain.gain.setValueAtTime(vol, audioCtx.currentTime);
     gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
     osc.connect(gain);
@@ -34,14 +31,15 @@ function playTone(freq, type, duration, vol = 0.1, slide = false) {
     osc.stop(audioCtx.currentTime + duration);
 }
 
-function sfxSwoosh() { playTone(150, 'sine', 0.2, 0.05); vibrate(15); }
+// AAA Game SFX
+function sfxSwoosh() { playTone(200, 'triangle', 0.1, 0.05); vibrate(10); }
 function sfxSuccess() { 
-    playTone(400, 'sine', 0.1, 0.1, true); 
-    setTimeout(() => playTone(800, 'sine', 0.3, 0.15), 100); 
-    vibrate([30, 30, 40]); 
+    playTone(600, 'sine', 0.1, 0.1); 
+    setTimeout(() => playTone(900, 'sine', 0.15, 0.15), 80); 
+    vibrate([40, 40, 40]); 
 }
 function sfxFail() { 
-    playTone(100, 'sawtooth', 0.4, 0.2); 
+    playTone(150, 'sawtooth', 0.4, 0.2); 
     vibrate([200, 100, 200, 100, 300]); 
 }
 
@@ -60,60 +58,40 @@ const views = {
 
 document.getElementById('global-progress').textContent = totalWordsLearned;
 
-// Setup Learning Nodes
-const learnProgressContainer = document.getElementById('learn-progress');
+// Setup Progress Bar
+const progressBar = document.getElementById('progress-bar');
 for(let i=0; i<10; i++) {
-    const node = document.createElement('div');
-    node.className = 'flex-1 rounded-full node node-empty';
-    learnProgressContainer.appendChild(node);
+    const seg = document.createElement('div');
+    seg.className = 'flex-1 segment segment-empty';
+    progressBar.appendChild(seg);
 }
 
-// AAA Progress Logic
-function syncLearnProgress(currentIndex) {
-    const nodes = learnProgressContainer.children;
+// AAA Synchronous Combo Bar Logic
+function updateProgressBar(count, mode) {
+    const segments = progressBar.children;
     for(let i=0; i<10; i++) {
-        nodes[i].className = 'flex-1 rounded-full node'; 
-        if (i < currentIndex) {
-            nodes[i].classList.add('node-completed'); // Locked in
-        } else if (i === currentIndex) {
-            nodes[i].classList.add('node-current'); // Pulsing, currently learning
-        } else {
-            nodes[i].classList.add('node-empty'); // Not reached yet
+        // Reset every bar
+        segments[i].className = 'flex-1 segment segment-empty'; 
+        
+        if (mode === 'learn') {
+            if (i < count) {
+                segments[i].classList.add('segment-completed-learn'); 
+            } else if (i === count) {
+                segments[i].classList.add('segment-current-learn'); 
+            }
+        } else if (mode === 'quiz') {
+            if (i < count) {
+                segments[i].classList.add('segment-completed-quiz'); 
+            } else if (i === count) {
+                segments[i].classList.add('segment-current-quiz'); 
+            }
+        } else if (mode === 'fail') {
+            segments[i].classList.add('segment-fail'); 
         }
     }
 }
 
-function syncQuizXP(currentScore) {
-    const fillEl = document.getElementById('xp-fill');
-    // Calculate percentage (0 to 10)
-    const percentage = (currentScore / 10) * 100;
-    fillEl.style.width = `${percentage}%`;
-}
-
-// A-Z Alphabet UI Setup
-const alphabetTrack = document.getElementById('alphabet-track');
-const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
-alphabet.forEach(letter => {
-    const span = document.createElement('span');
-    span.id = `letter-track-${letter}`;
-    span.textContent = letter;
-    span.className = 'transition-colors duration-300';
-    alphabetTrack.appendChild(span);
-});
-
-function updateAZTracker(currentLetter, letterProgress, letterTotal) {
-    const targetSpan = document.getElementById(`letter-track-${currentLetter}`);
-    if(targetSpan) {
-        alphabet.forEach(l => document.getElementById(`letter-track-${l}`).className = 'transition-colors duration-300 text-zinc-700');
-        targetSpan.className = 'transition-colors duration-300 text-white text-2xl scale-110 drop-shadow-md';
-        targetSpan.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
-    }
-    document.getElementById('current-letter-display').textContent = currentLetter;
-    document.getElementById('letter-progress-count').textContent = letterProgress;
-    document.getElementById('letter-total-count').textContent = letterTotal;
-}
-
-// Database Initialization
+// Load Database
 async function loadDatabase() {
     try {
         const response = await fetch('db.jsonl');
@@ -131,7 +109,6 @@ async function loadDatabase() {
     }
 }
 
-// Adaptive text sizer calculating against the Mobile Wrapper
 function fitTextSync(textElementId, boundContainerId, maxFontSizePx) {
     const textEl = document.getElementById(textElementId);
     const boundsEl = document.getElementById(boundContainerId);
@@ -149,6 +126,10 @@ function fitTextSync(textElementId, boundContainerId, maxFontSizePx) {
     }
 }
 
+function getRoundNumber() {
+    return Math.floor(batchStartIndex / 10) + 1;
+}
+
 window.startChallenge = function() {
     initAudio(); 
     sfxSwoosh();
@@ -159,39 +140,41 @@ window.startChallenge = function() {
     views.learn.classList.remove('hidden');
     views.learn.classList.add('flex'); 
     
-    // Setup Topbar visibility
-    document.getElementById('learn-progress').style.opacity = '1';
-    document.getElementById('quiz-progress').style.opacity = '0';
-
     renderLearnView();
 };
 
 function renderLearnView() {
     if (currentWordIndex >= db.length) {
-        alert("CHALLENGE COMPLETE. YOU MASTERED ALL WORDS.");
+        alert("GAME COMPLETE. YOU BEAT THE DICTIONARY.");
         return;
     }
 
-    // Sync nodes precisely to the word index in the 10-batch
-    syncLearnProgress(learnedCountInBatch);
+    // AAA Combo Bar - Sync with current learning step (0 to 9)
+    updateProgressBar(learnedCountInBatch, 'learn');
     
     const currentWord = db[currentWordIndex];
     const currentLetter = currentWord.letter.toUpperCase();
     const wordsInThisLetterSoFar = db.slice(0, currentWordIndex).filter(w => w.letter.toUpperCase() === currentLetter).length;
-    updateAZTracker(currentLetter, wordsInThisLetterSoFar, wordsByLetter[currentLetter]);
+    
+    document.getElementById('round-display').textContent = getRoundNumber();
+    document.getElementById('current-letter-display').textContent = currentLetter;
+    document.getElementById('letter-progress-count').textContent = wordsInThisLetterSoFar;
+    document.getElementById('letter-total-count').textContent = wordsByLetter[currentLetter];
 
     document.getElementById('en-word').textContent = currentWord.word.toLowerCase();
     document.getElementById('pos-tag').textContent = currentWord.pos;
     document.getElementById('en-definition').textContent = currentWord.definition;
     
-    // Reset CSS Animations
+    // Reset Animations
     document.getElementById('en-word').style.animation = 'none';
+    document.getElementById('pos-tag').style.animation = 'none';
     document.getElementById('en-definition').style.animation = 'none';
     document.getElementById('en-word').offsetHeight; 
     document.getElementById('en-word').style.animation = null; 
+    document.getElementById('pos-tag').style.animation = null; 
     document.getElementById('en-definition').style.animation = null; 
 
-    fitTextSync('en-word', 'word-bounds', 80); // Adjusted max size for mobile bounds
+    fitTextSync('en-word', 'word-bounds', 80); // Adjusted max size for mobile frame
 }
 
 window.nextWord = function() {
@@ -201,8 +184,9 @@ window.nextWord = function() {
     learnedCountInBatch++;
 
     if (learnedCountInBatch === 10) {
-        syncLearnProgress(10); // Lock all 10 white briefly
-        setTimeout(startQuiz, 300);
+        // Visually lock in the 10th bar briefly before jumping
+        updateProgressBar(10, 'learn'); 
+        setTimeout(startQuiz, 400);
     } else {
         renderLearnView();
     }
@@ -214,14 +198,8 @@ function startQuiz() {
     views.quiz.classList.remove('hidden');
     views.quiz.classList.add('flex');
     
-    // Swap Topbar UI
-    document.getElementById('learn-progress').style.opacity = '0';
-    document.getElementById('quiz-progress').style.opacity = '1';
-    
     currentQuizIndex = 0;
     score = 0;
-    syncQuizXP(score); // Reset bar to 0
-
     quizQueue = quizQueue.sort(() => Math.random() - 0.5);
     renderQuizQuestion();
 }
@@ -229,8 +207,13 @@ function startQuiz() {
 function renderQuizQuestion() {
     isAnimating = false;
     
+    // AAA Combo Bar - Sync with current quiz question (0 to 9)
+    updateProgressBar(currentQuizIndex, 'quiz');
+    
     const q = quizQueue[currentQuizIndex];
-    const styledSentence = q.sentence.replace('___', '<span class="border-b-2 px-6 mx-1 inline-block h-6 sm:h-8 align-baseline" style="border-color: #666;"></span>');
+    
+    // Glowing underline for blank
+    const styledSentence = q.sentence.replace('___', '<span class="border-b-2 px-6 mx-1 inline-block h-5 align-baseline" style="border-color: #ccff00; box-shadow: 0 4px 6px -4px #ccff00;"></span>');
     
     const sentenceEl = document.getElementById('quiz-sentence');
     sentenceEl.innerHTML = styledSentence;
@@ -240,24 +223,18 @@ function renderQuizQuestion() {
     const optionsContainer = document.getElementById('quiz-options');
     optionsContainer.innerHTML = ''; 
 
-    options.forEach(option => {
+    options.forEach((option, idx) => {
         const btn = document.createElement('button');
-        btn.className = "w-full py-5 px-4 rounded-xl text-xl sm:text-2xl font-black text-zinc-300 lowercase text-center game-btn transition-all truncate tracking-wide";
-        btn.textContent = option.toLowerCase();
+        // Clean, angled mobile game aesthetic
+        btn.className = "w-full py-5 px-4 rounded-lg border border-zinc-800 bg-zinc-900/80 text-xl font-bold text-white lowercase text-center active:scale-95 transition-all truncate";
+        // Staggered animation delay
+        btn.style.animationDelay = `${0.1 + (idx * 0.05)}s`;
+        btn.classList.add('zoom-in');
         
+        btn.textContent = option.toLowerCase();
         btn.onclick = () => handleAnswer(btn, option.toLowerCase(), q.word.toLowerCase(), q.sentence);
         optionsContainer.appendChild(btn);
     });
-}
-
-// AAA Floating Text Effect
-function spawnFloatText(text, isPositive) {
-    const fxContainer = document.getElementById('fx-container');
-    const span = document.createElement('span');
-    span.textContent = text;
-    span.className = `font-black text-3xl sm:text-5xl float-up drop-shadow-2xl ${isPositive ? 'text-neon-yellow' : 'text-neon-red'}`;
-    fxContainer.appendChild(span);
-    setTimeout(() => fxContainer.removeChild(span), 800);
 }
 
 function handleAnswer(btnElement, selectedWord, correctWord, fullSentence) {
@@ -275,15 +252,14 @@ function handleAnswer(btnElement, selectedWord, correctWord, fullSentence) {
     }
 
     if (selectedWord === correctWord) {
-        // Success
         score++;
-        btnElement.classList.add('game-btn-active');
+        btnElement.classList.add('correct-bg');
+        btnElement.classList.remove('border-zinc-800', 'bg-zinc-900/80');
         
-        sentenceEl.innerHTML = fullSentence.replace('___', `<span class="text-neon-yellow border-b-4 border-current px-2 mx-1 drop-shadow-[0_0_10px_#ccff00]">${displayWord}</span>`);
+        sentenceEl.innerHTML = fullSentence.replace('___', `<span class="text-neon-yellow border-b-2 border-current px-1 mx-1">${displayWord}</span>`);
         
         sfxSuccess();
-        spawnFloatText('+100 XP', true);
-        syncQuizXP(score);
+        updateProgressBar(currentQuizIndex + 1, 'quiz');
 
         setTimeout(() => {
             currentQuizIndex++;
@@ -295,13 +271,14 @@ function handleAnswer(btnElement, selectedWord, correctWord, fullSentence) {
         }, 1200);
 
     } else {
-        // Fail
         sfxFail();
-        btnElement.classList.add('game-btn-wrong', 'shake');
+        btnElement.classList.add('wrong-bg', 'shake');
+        btnElement.classList.remove('border-zinc-800', 'bg-zinc-900/80');
         
         allBtns.forEach(b => {
             if (b.textContent === correctWord) {
-                b.classList.add('game-btn-active');
+                b.classList.add('correct-bg');
+                b.classList.remove('border-zinc-800', 'bg-zinc-900/80');
             }
         });
         
@@ -310,15 +287,14 @@ function handleAnswer(btnElement, selectedWord, correctWord, fullSentence) {
             wrongDisplayWord = wrongDisplayWord.charAt(0).toUpperCase() + wrongDisplayWord.slice(1);
         }
         
-        document.body.classList.add('shake');
-        sentenceEl.innerHTML = fullSentence.replace('___', `<span class="text-neon-red border-b-4 border-current px-2 mx-1">${wrongDisplayWord}</span>`);
+        // Shatter Effect & Red Combo Bar
+        updateProgressBar(0, 'fail');
+        document.getElementById('app-frame').classList.add('shake');
+        sentenceEl.innerHTML = fullSentence.replace('___', `<span class="text-neon-red border-b-2 border-current px-1 mx-1">${wrongDisplayWord}</span>`);
         sentenceEl.classList.add('shatter'); 
         
-        syncQuizXP(0); // Drain XP
-        spawnFloatText('FAIL', false);
-        
         setTimeout(() => {
-            document.body.classList.remove('shake');
+            document.getElementById('app-frame').classList.remove('shake');
             score = 0; 
             endQuiz();
         }, 1200);
@@ -333,6 +309,15 @@ function endQuiz() {
     views.result.classList.remove('hidden');
     views.result.classList.add('flex');
     
+    // Reset animations
+    const els = views.result.querySelectorAll('.zoom-in');
+    els.forEach(el => {
+        el.style.animation = 'none';
+        el.offsetHeight;
+        el.style.animation = null;
+    });
+    
+    const icon = document.getElementById('result-icon');
     const title = document.getElementById('result-title');
     const subtitle = document.getElementById('result-subtitle');
     const scoreText = document.getElementById('final-score');
@@ -341,13 +326,14 @@ function endQuiz() {
     scoreText.textContent = `${score}/10`;
 
     if (score === 10) {
-        title.textContent = "YOU CRUSHED IT!";
-        title.className = "text-4xl sm:text-6xl font-black uppercase mb-2 leading-none text-neon-yellow zoom-in drop-shadow-xl";
-        subtitle.textContent = "BATCH CLEARED";
-        scoreText.className = "text-[6rem] sm:text-[8rem] font-black leading-none mb-auto mt-10 text-neon-yellow drop-shadow-[0_0_30px_rgba(204,255,0,0.5)]";
+        icon.textContent = "🏆";
+        title.textContent = "ROUND CLEARED";
+        title.className = "text-4xl font-black uppercase mb-2 leading-none text-neon-yellow zoom-in";
+        subtitle.textContent = "PERFECT SCORE";
+        scoreText.className = "text-[5rem] font-black leading-none mb-auto mt-4 text-neon-yellow drop-shadow-xl zoom-in";
         
-        btn.textContent = "NEXT BATCH";
-        btn.className = "w-full mt-auto mb-8 py-5 bg-neon-yellow text-black rounded-xl text-2xl font-black active:scale-95 transition-transform uppercase shadow-[0_0_20px_rgba(204,255,0,0.4)]";
+        btn.textContent = `START ROUND ${getRoundNumber() + 1}`;
+        btn.className = "w-full mt-auto mb-8 py-5 bg-[#ccff00] text-black rounded-xl text-2xl font-black active:scale-95 transition-transform uppercase shadow-[0_0_20px_rgba(204,255,0,0.4)] zoom-in";
         
         btn.onclick = () => {
             sfxSwoosh();
@@ -358,17 +344,18 @@ function endQuiz() {
             resetForNextRound();
         };
     } else {
-        title.textContent = "FAILED";
-        title.className = "text-5xl sm:text-7xl font-black uppercase mb-2 leading-none text-neon-red shake";
-        subtitle.textContent = "1 MISTAKE = RESTART";
-        scoreText.className = "text-[6rem] sm:text-[8rem] font-black leading-none mb-auto mt-10 text-neon-red drop-shadow-[0_0_30px_rgba(255,0,60,0.5)]";
+        icon.textContent = "💀";
+        title.textContent = "GAME OVER";
+        title.className = "text-4xl font-black uppercase mb-2 leading-none text-neon-red zoom-in";
+        subtitle.textContent = "1 MISTAKE = RESTART ROUND";
+        scoreText.className = "text-[5rem] font-black leading-none mb-auto mt-4 text-neon-red drop-shadow-xl zoom-in";
         
-        btn.textContent = "RESTART BATCH";
-        btn.className = "w-full mt-auto mb-8 py-5 bg-red-600 text-white rounded-xl text-2xl font-black active:scale-95 transition-transform uppercase shadow-[0_0_20px_rgba(255,0,60,0.6)]";
+        btn.textContent = `RETRY ROUND ${getRoundNumber()}`;
+        btn.className = "w-full mt-auto mb-8 py-5 bg-[#ff003c] text-white rounded-xl text-2xl font-black active:scale-95 transition-transform uppercase shadow-[0_0_20px_rgba(255,0,60,0.5)] zoom-in";
         
         btn.onclick = () => {
             sfxSwoosh();
-            currentWordIndex = batchStartIndex;
+            currentWordIndex = batchStartIndex; // Resets back to start of round
             resetForNextRound();
         };
     }
@@ -384,10 +371,6 @@ function resetForNextRound() {
     views.topbar.classList.add('flex');
     views.learn.classList.remove('hidden');
     views.learn.classList.add('flex');
-    
-    // Swap Topbar UI back
-    document.getElementById('learn-progress').style.opacity = '1';
-    document.getElementById('quiz-progress').style.opacity = '0';
     
     renderLearnView();
 }
