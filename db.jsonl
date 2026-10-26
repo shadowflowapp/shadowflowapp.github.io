@@ -1,3 +1,10 @@
-{"id":1, "topic":"Kinematics", "text":"A car accelerates from rest at 2 m/s² for 5 seconds. What is its final velocity?", "figure_url":"", "choices":["5 m/s", "10 m/s", "15 m/s", "20 m/s", "25 m/s", "30 m/s", "2 m/s", "7 m/s", "12 m/s"], "correctIndex":1}
-{"id":2, "topic":"Newton's Laws", "text":"What is the weight of a 10 kg object on Earth? (g ≈ 9.8 m/s²)", "figure_url":"", "choices":["980 N", "10 N", "9.8 N", "98 N", "0.98 N", "100 N", "19.6 N", "49 N", "98 kg"], "correctIndex":3}
-{"id":3, "topic":"Thermodynamics", "text":"Absolute zero (0 Kelvin) is equivalent to what temperature in Celsius?", "figure_url":"", "choices":["-100 °C", "-273.15 °C", "0 °C", "100 °C", "-373.15 °C", "273.15 °C", "-200 °C", "-50 °C", "-459.67 °C"], "correctIndex":1}
+{"word": "a", "meaning": "หนึ่ง, ตัวหนึ่ง (ใช้นำหน้านามเอกพจน์)"}
+{"word": "abandon", "meaning": "ละทิ้ง, ปล่อย, พลัดพราก"}
+{"word": "ability", "meaning": "ความสามารถ"}
+{"word": "able", "meaning": "สามารถ, เก่ง"}
+{"word": "about", "meaning": "เกี่ยวกับ, ประมาณ"}
+{"word": "above", "meaning": "เหนือ, เบื้องต้น"}
+{"word": "abroad", "meaning": "ต่างประเทศ"}
+{"word": "absence", "meaning": "การไม่อยู่, การขาด"}
+{"word": "absolute", "meaning": "สัมบูรณ์, แน่แท้"}
+{"word": "absorb", "meaning": "ดูดซับ, รับเอา"}
