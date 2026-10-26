@@ -1,5 +1,6 @@
 // State Variables
 let db = []; 
+let wordsByLetter = {}; // Grouped dictionary
 let currentWordIndex = 0;
 let batchStartIndex = 0; 
 let learnedCountInBatch = 0;
@@ -9,52 +10,6 @@ let score = 0;
 let isAnimating = false; 
 
 let totalWordsLearned = localStorage.getItem('totalLearnedBeast') ? parseInt(localStorage.getItem('totalLearnedBeast')) : 0;
-
-// --- WEB AUDIO SYNTHESIZER ---
-let audioCtx = null;
-
-function initAudio() {
-    if (!audioCtx) {
-        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    }
-    if (audioCtx.state === 'suspended') {
-        audioCtx.resume();
-    }
-}
-
-function playTone(freq, type, duration, vol = 0.1) {
-    if (!audioCtx) return;
-    const osc = audioCtx.createOscillator();
-    const gain = audioCtx.createGain();
-    osc.type = type;
-    osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-    
-    gain.gain.setValueAtTime(vol, audioCtx.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
-    
-    osc.connect(gain);
-    gain.connect(audioCtx.destination);
-    osc.start();
-    osc.stop(audioCtx.currentTime + duration);
-}
-
-// Sound Effect Triggers
-function sfxSwoosh() { playTone(200, 'triangle', 0.15, 0.05); vibrate(15); }
-function sfxSuccess() { 
-    playTone(500, 'sine', 0.1, 0.1); 
-    setTimeout(() => playTone(800, 'sine', 0.2, 0.15), 100); 
-    vibrate([50, 50, 50]); 
-}
-function sfxFail() { 
-    playTone(150, 'sawtooth', 0.4, 0.2); 
-    vibrate([200, 100, 200, 100, 300]); 
-}
-
-function vibrate(pattern) {
-    if (navigator.vibrate) {
-        navigator.vibrate(pattern);
-    }
-}
 
 // DOM Elements
 const views = {
@@ -67,6 +22,7 @@ const views = {
 
 document.getElementById('global-progress').textContent = totalWordsLearned;
 
+// Segmented Progress Bar Setup
 const progressBar = document.getElementById('progress-bar');
 for(let i=0; i<10; i++) {
     const seg = document.createElement('div');
@@ -85,12 +41,46 @@ function updateProgressBar(count, mode) {
     }
 }
 
+// A-Z Alphabet UI Setup
+const alphabetTrack = document.getElementById('alphabet-track');
+const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
+alphabet.forEach(letter => {
+    const span = document.createElement('span');
+    span.id = `letter-track-${letter}`;
+    span.textContent = letter;
+    span.className = 'transition-colors duration-300';
+    alphabetTrack.appendChild(span);
+});
+
+function updateAZTracker(currentLetter, letterProgress, letterTotal) {
+    // Scroll track so current letter is visible
+    const targetSpan = document.getElementById(`letter-track-${currentLetter}`);
+    if(targetSpan) {
+        alphabet.forEach(l => document.getElementById(`letter-track-${l}`).className = 'transition-colors duration-300 text-gray-700');
+        targetSpan.className = 'transition-colors duration-300 text-white text-2xl scale-110';
+        targetSpan.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+    }
+    
+    document.getElementById('current-letter-display').textContent = currentLetter;
+    document.getElementById('letter-progress-count').textContent = letterProgress;
+    document.getElementById('letter-total-count').textContent = letterTotal;
+}
+
+// Database Initialization
 async function loadDatabase() {
     try {
         const response = await fetch('db.jsonl');
         if (!response.ok) throw new Error(`HTTP error!`);
         const text = await response.text();
         db = text.split('\n').filter(line => line.trim() !== '').map(line => JSON.parse(line));
+        
+        // Structure for A-Z tracking
+        db.forEach(item => {
+            const l = item.letter.toUpperCase();
+            if(!wordsByLetter[l]) wordsByLetter[l] = 0;
+            wordsByLetter[l]++;
+        });
+        
     } catch (error) {
         console.error("Error loading db.jsonl:", error);
     }
@@ -114,9 +104,6 @@ function fitTextSync(textElementId, boundContainerId, maxFontSizePx) {
 }
 
 window.startChallenge = function() {
-    initAudio(); 
-    sfxSwoosh();
-    
     views.start.classList.add('hidden');
     views.topbar.classList.remove('hidden');
     views.topbar.classList.add('flex');
@@ -135,11 +122,18 @@ function renderLearnView() {
     updateProgressBar(learnedCountInBatch, 'learn');
     const currentWord = db[currentWordIndex];
     
-    // Ensure text is lowercased for dictionary feel
+    // Update A-Z Tracker
+    const currentLetter = currentWord.letter.toUpperCase();
+    // Calculate progress within this specific letter
+    const wordsInThisLetterSoFar = db.slice(0, currentWordIndex).filter(w => w.letter.toUpperCase() === currentLetter).length;
+    updateAZTracker(currentLetter, wordsInThisLetterSoFar, wordsByLetter[currentLetter]);
+
+    // Render Text
     document.getElementById('en-word').textContent = currentWord.word.toLowerCase();
     document.getElementById('pos-tag').textContent = currentWord.pos;
     document.getElementById('en-definition').textContent = currentWord.definition;
     
+    // Reset Animations
     document.getElementById('en-word').style.animation = 'none';
     document.getElementById('pos-tag').style.animation = 'none';
     document.getElementById('en-definition').style.animation = 'none';
@@ -149,10 +143,12 @@ function renderLearnView() {
     document.getElementById('en-definition').style.animation = null; 
 
     fitTextSync('en-word', 'word-bounds', 100);
+    
+    // FUTURE SUPABASE INTEGRATION: 
+    // Play audio mapping -> new Audio(currentWord.audio.word).play();
 }
 
 window.nextWord = function() {
-    sfxSwoosh();
     quizQueue.push(db[currentWordIndex]);
     currentWordIndex++;
     learnedCountInBatch++;
@@ -183,28 +179,29 @@ function renderQuizQuestion() {
     
     const q = quizQueue[currentQuizIndex];
     
-    // Fixed: Highlight the blank with proper inline styles so it's clearly visible
+    // Highlight the blank
     const styledSentence = q.sentence.replace('___', '<span class="border-b-4 px-6 mx-1 inline-block h-6 sm:h-8 align-baseline" style="border-color: #ccff00;"></span>');
     
     const sentenceEl = document.getElementById('quiz-sentence');
     sentenceEl.innerHTML = styledSentence;
     sentenceEl.classList.remove('shatter', 'text-neon-red');
 
+    // Shuffle Target + Distractors
     const options = [q.word, ...q.distractors].sort(() => Math.random() - 0.5);
     const optionsContainer = document.getElementById('quiz-options');
     optionsContainer.innerHTML = ''; 
 
     options.forEach(option => {
         const btn = document.createElement('button');
-        btn.className = "w-full py-6 px-4 rounded-xl border-2 border-gray-800 bg-gray-900 text-2xl sm:text-3xl font-black text-white lowercase text-center active:scale-95 transition-all truncate";
+        btn.className = "w-full py-6 px-4 rounded-xl border-2 border-gray-800 bg-gray-900 text-2xl sm:text-3xl font-black text-white lowercase text-center active:scale-95 transition-all truncate shadow-lg";
         btn.textContent = option.toLowerCase();
         
-        btn.onclick = () => handleAnswer(btn, option.toLowerCase(), q.word.toLowerCase(), q.sentence);
+        btn.onclick = () => handleAnswer(btn, option.toLowerCase(), q.word.toLowerCase(), q.sentence, q);
         optionsContainer.appendChild(btn);
     });
 }
 
-function handleAnswer(btnElement, selectedWord, correctWord, fullSentence) {
+function handleAnswer(btnElement, selectedWord, correctWord, fullSentence, wordObject) {
     if (isAnimating) return;
     isAnimating = true;
 
@@ -221,16 +218,16 @@ function handleAnswer(btnElement, selectedWord, correctWord, fullSentence) {
 
     if (selectedWord === correctWord) {
         // Success
-        sfxSuccess();
         score++;
         btnElement.classList.add('correct-bg');
         btnElement.classList.remove('border-gray-800');
         
-        // Fixed: Use glowing yellow text and border-current to make the word stand out in the sentence
         sentenceEl.innerHTML = fullSentence.replace('___', `<span class="text-neon-yellow border-b-4 border-current px-2 mx-1">${displayWord}</span>`);
         updateProgressBar(currentQuizIndex + 1, 'quiz');
+        
+        // FUTURE SUPABASE INTEGRATION: 
+        // Play audio mapping -> new Audio(wordObject.audio.sentence).play();
 
-        // Wait slightly longer so the user can read the completed sentence
         setTimeout(() => {
             currentQuizIndex++;
             if (currentQuizIndex >= 10) {
@@ -242,7 +239,6 @@ function handleAnswer(btnElement, selectedWord, correctWord, fullSentence) {
 
     } else {
         // Fail
-        sfxFail();
         btnElement.classList.add('wrong-bg', 'shake');
         btnElement.classList.remove('border-gray-800');
         
@@ -253,17 +249,14 @@ function handleAnswer(btnElement, selectedWord, correctWord, fullSentence) {
             }
         });
         
-        // Smart capitalization for the wrong word too
         let wrongDisplayWord = selectedWord;
         if (/^['"]?___/.test(fullSentence.trim())) {
             wrongDisplayWord = wrongDisplayWord.charAt(0).toUpperCase() + wrongDisplayWord.slice(1);
         }
         
         document.body.classList.add('shake');
-        
-        // Fixed: Insert wrong word in neon red
         sentenceEl.innerHTML = fullSentence.replace('___', `<span class="text-neon-red border-b-4 border-current px-2 mx-1">${wrongDisplayWord}</span>`);
-        sentenceEl.classList.add('shatter'); // shatter class alone handles movement, text-neon-red colors it
+        sentenceEl.classList.add('shatter'); 
         
         setTimeout(() => {
             document.body.classList.remove('shake');
@@ -298,7 +291,6 @@ function endQuiz() {
         btn.className = "w-full max-w-md mt-auto mb-10 py-6 bg-neon-blue text-black rounded-xl text-3xl font-black active:scale-95 transition-transform uppercase";
         
         btn.onclick = () => {
-            sfxSwoosh();
             totalWordsLearned += 10;
             localStorage.setItem('totalLearnedBeast', totalWordsLearned);
             document.getElementById('global-progress').textContent = totalWordsLearned;
@@ -315,7 +307,6 @@ function endQuiz() {
         btn.className = "w-full max-w-md mt-auto mb-10 py-6 bg-red-600 text-white rounded-xl text-3xl font-black active:scale-95 transition-transform uppercase shadow-[0_0_15px_rgba(255,0,60,0.8)]";
         
         btn.onclick = () => {
-            sfxSwoosh();
             currentWordIndex = batchStartIndex;
             resetForNextRound();
         };
