@@ -9,7 +9,7 @@ let currentQuizIndex = 0;
 let score = 0;
 let isAnimating = false; 
 
-let totalWordsLearned = localStorage.getItem('totalLearnedBeast') ? parseInt(localStorage.getItem('totalLearnedBeast')) : 0;
+let totalWordsLearned = localStorage.getItem('totalLearnedWestcoast') ? parseInt(localStorage.getItem('totalLearnedWestcoast')) : 0;
 
 // --- WEB AUDIO SYNTHESIZER ---
 let audioCtx = null;
@@ -31,14 +31,15 @@ function playTone(freq, type, duration, vol = 0.1) {
     osc.stop(audioCtx.currentTime + duration);
 }
 
-function sfxSwoosh() { playTone(200, 'triangle', 0.15, 0.05); vibrate(15); }
+// Westcoast Theme SFX (Slightly deeper/warmer tones)
+function sfxSwoosh() { playTone(150, 'sine', 0.2, 0.1); vibrate(15); }
 function sfxSuccess() { 
-    playTone(500, 'sine', 0.1, 0.1); 
-    setTimeout(() => playTone(800, 'sine', 0.2, 0.15), 100); 
+    playTone(440, 'sine', 0.1, 0.1); 
+    setTimeout(() => playTone(660, 'sine', 0.2, 0.15), 100); 
     vibrate([50, 50, 50]); 
 }
 function sfxFail() { 
-    playTone(150, 'sawtooth', 0.4, 0.2); 
+    playTone(100, 'square', 0.4, 0.1); 
     vibrate([200, 100, 200, 100, 300]); 
 }
 
@@ -55,36 +56,41 @@ const views = {
     topbar: document.getElementById('top-bar')
 };
 
-document.getElementById('global-progress').textContent = totalWordsLearned;
+document.getElementById('global-progress').textContent = (totalWordsLearned * 10); // Display as XP (1 word = 10 XP)
 
-// Setup Progress Bar
-const progressBar = document.getElementById('progress-bar');
+// Setup Learning Segments
+const learnProgressBar = document.getElementById('learn-progress-bar');
 for(let i=0; i<10; i++) {
     const seg = document.createElement('div');
-    seg.className = 'flex-1 rounded-full segment segment-empty';
-    progressBar.appendChild(seg);
+    seg.className = 'flex-1 rounded-full learn-segment learn-empty';
+    learnProgressBar.appendChild(seg);
 }
 
-// UPDATED PROGRESS BAR LOGIC (Inner Glow & Current Position Pulsing)
-function updateProgressBar(count, mode) {
-    const segments = progressBar.children;
+// UPDATED PROGRESS LOGIC
+function updateLearnProgress(currentIndex) {
+    const segments = learnProgressBar.children;
     for(let i=0; i<10; i++) {
-        // Reset every bar to empty baseline
-        segments[i].className = 'flex-1 rounded-full segment segment-empty'; 
-        
-        if (mode === 'learn') {
-            if (i < count) {
-                segments[i].classList.add('segment-completed-learn'); // Solid white
-            } else if (i === count) {
-                segments[i].classList.add('segment-current-learn'); // Pulsing Blue
-            }
-        } else if (mode === 'quiz') {
-            if (i < count) {
-                segments[i].classList.add('segment-active-quiz'); // Inner Glow Yellow
-            } else if (i === count) {
-                segments[i].classList.add('segment-current-quiz'); // Pulsing Gray
-            }
+        segments[i].className = 'flex-1 rounded-full learn-segment learn-empty'; 
+        if (i < currentIndex) {
+            segments[i].classList.add('learn-completed');
+        } else if (i === currentIndex) {
+            segments[i].classList.add('learn-current');
         }
+    }
+}
+
+function updateQuizXP(count) {
+    const fill = document.getElementById('xp-fill');
+    const popup = document.getElementById('xp-popup');
+    
+    // Fill width percentage
+    fill.style.width = `${(count / 10) * 100}%`;
+    
+    // Animate the +100 XP popup if gaining score
+    if (count > 0 && count > currentQuizIndex) {
+        popup.classList.remove('animate');
+        void popup.offsetWidth; // Trigger reflow
+        popup.classList.add('animate');
     }
 }
 
@@ -95,15 +101,15 @@ alphabet.forEach(letter => {
     const span = document.createElement('span');
     span.id = `letter-track-${letter}`;
     span.textContent = letter;
-    span.className = 'transition-colors duration-300';
+    span.className = 'transition-colors duration-300 px-1';
     alphabetTrack.appendChild(span);
 });
 
 function updateAZTracker(currentLetter, letterProgress, letterTotal) {
     const targetSpan = document.getElementById(`letter-track-${currentLetter}`);
     if(targetSpan) {
-        alphabet.forEach(l => document.getElementById(`letter-track-${l}`).className = 'transition-colors duration-300 text-gray-700');
-        targetSpan.className = 'transition-colors duration-300 text-white text-2xl scale-110';
+        alphabet.forEach(l => document.getElementById(`letter-track-${l}`).className = 'transition-colors duration-300 text-gray-800 px-1');
+        targetSpan.className = 'transition-colors duration-300 text-white text-3xl px-2';
         targetSpan.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
     }
     
@@ -112,7 +118,6 @@ function updateAZTracker(currentLetter, letterProgress, letterTotal) {
     document.getElementById('letter-total-count').textContent = letterTotal;
 }
 
-// Database Initialization
 async function loadDatabase() {
     try {
         const response = await fetch('db.jsonl');
@@ -148,6 +153,9 @@ function fitTextSync(textElementId, boundContainerId, maxFontSizePx) {
 }
 
 window.startChallenge = function() {
+    initAudio(); 
+    sfxSwoosh();
+    
     views.start.classList.add('hidden');
     views.topbar.classList.remove('hidden');
     views.topbar.classList.add('flex');
@@ -158,18 +166,18 @@ window.startChallenge = function() {
 };
 
 function renderLearnView() {
-    initAudio(); // Ensures audio unlocks safely on first render
-    
     if (currentWordIndex >= db.length) {
-        alert("CHALLENGE COMPLETE. YOU MASTERED ALL WORDS.");
+        alert("DICTIONARY CONQUERED.");
         return;
     }
 
-    // Call update progress bar
-    updateProgressBar(learnedCountInBatch, 'learn');
+    // Top Bar Logic Switch
+    document.getElementById('learn-progress-bar').classList.remove('hidden');
+    document.getElementById('quiz-progress-bar').classList.add('hidden');
+    
+    updateLearnProgress(learnedCountInBatch);
     
     const currentWord = db[currentWordIndex];
-    
     const currentLetter = currentWord.letter.toUpperCase();
     const wordsInThisLetterSoFar = db.slice(0, currentWordIndex).filter(w => w.letter.toUpperCase() === currentLetter).length;
     updateAZTracker(currentLetter, wordsInThisLetterSoFar, wordsByLetter[currentLetter]);
@@ -196,8 +204,7 @@ window.nextWord = function() {
     learnedCountInBatch++;
 
     if (learnedCountInBatch === 10) {
-        // Visually mark the final bar as completed before jumping to quiz
-        updateProgressBar(10, 'learn'); 
+        updateLearnProgress(10); // Show all solid
         setTimeout(startQuiz, 300);
     } else {
         renderLearnView();
@@ -210,19 +217,23 @@ function startQuiz() {
     views.quiz.classList.remove('hidden');
     views.quiz.classList.add('flex');
     
+    // Switch Top Bar Logic
+    document.getElementById('learn-progress-bar').classList.add('hidden');
+    document.getElementById('quiz-progress-bar').classList.remove('hidden');
+    
     currentQuizIndex = 0;
     score = 0;
+    updateQuizXP(0); // Reset XP Bar
+    
     quizQueue = quizQueue.sort(() => Math.random() - 0.5);
     renderQuizQuestion();
 }
 
 function renderQuizQuestion() {
     isAnimating = false;
-    updateProgressBar(currentQuizIndex, 'quiz');
-    
     const q = quizQueue[currentQuizIndex];
     
-    const styledSentence = q.sentence.replace('___', '<span class="border-b-4 px-6 mx-1 inline-block h-6 sm:h-8 align-baseline" style="border-color: #ccff00;"></span>');
+    const styledSentence = q.sentence.replace('___', '<span class="border-b-2 px-6 mx-1 inline-block h-6 sm:h-8 align-baseline" style="border-color: #666;"></span>');
     
     const sentenceEl = document.getElementById('quiz-sentence');
     sentenceEl.innerHTML = styledSentence;
@@ -234,7 +245,7 @@ function renderQuizQuestion() {
 
     options.forEach(option => {
         const btn = document.createElement('button');
-        btn.className = "w-full py-6 px-4 rounded-xl border-2 border-gray-800 bg-gray-900 text-2xl sm:text-3xl font-black text-white lowercase text-center active:scale-95 transition-all truncate shadow-lg";
+        btn.className = "w-full py-6 px-4 rounded-2xl border-2 border-[#2a2a35] bg-[#1a1a24] text-2xl sm:text-3xl font-black text-white lowercase text-center active:scale-95 transition-all truncate";
         btn.textContent = option.toLowerCase();
         
         btn.onclick = () => handleAnswer(btn, option.toLowerCase(), q.word.toLowerCase(), q.sentence);
@@ -257,14 +268,15 @@ function handleAnswer(btnElement, selectedWord, correctWord, fullSentence) {
     }
 
     if (selectedWord === correctWord) {
+        // Success
         score++;
         btnElement.classList.add('correct-bg');
-        btnElement.classList.remove('border-gray-800');
+        btnElement.classList.remove('border-[#2a2a35]', 'bg-[#1a1a24]');
         
-        sentenceEl.innerHTML = fullSentence.replace('___', `<span class="text-neon-yellow border-b-4 border-current px-2 mx-1">${displayWord}</span>`);
+        sentenceEl.innerHTML = fullSentence.replace('___', `<span class="text-gradient-sunset border-b-2 border-pink-500 px-2 mx-1 drop-shadow-md">${displayWord}</span>`);
         
         sfxSuccess();
-        updateProgressBar(currentQuizIndex + 1, 'quiz');
+        updateQuizXP(currentQuizIndex + 1);
 
         setTimeout(() => {
             currentQuizIndex++;
@@ -276,14 +288,15 @@ function handleAnswer(btnElement, selectedWord, correctWord, fullSentence) {
         }, 1500);
 
     } else {
+        // Fail
         sfxFail();
         btnElement.classList.add('wrong-bg', 'shake');
-        btnElement.classList.remove('border-gray-800');
+        updateQuizXP(0); // Drain XP Bar instantly
         
         allBtns.forEach(b => {
             if (b.textContent === correctWord) {
                 b.classList.add('correct-bg');
-                b.classList.remove('border-gray-800');
+                b.classList.remove('border-[#2a2a35]', 'bg-[#1a1a24]');
             }
         });
         
@@ -293,7 +306,7 @@ function handleAnswer(btnElement, selectedWord, correctWord, fullSentence) {
         }
         
         document.body.classList.add('shake');
-        sentenceEl.innerHTML = fullSentence.replace('___', `<span class="text-neon-red border-b-4 border-current px-2 mx-1">${wrongDisplayWord}</span>`);
+        sentenceEl.innerHTML = fullSentence.replace('___', `<span class="text-red-500 border-b-2 border-red-500 px-2 mx-1">${wrongDisplayWord}</span>`);
         sentenceEl.classList.add('shatter'); 
         
         setTimeout(() => {
@@ -314,36 +327,31 @@ function endQuiz() {
     
     const title = document.getElementById('result-title');
     const subtitle = document.getElementById('result-subtitle');
-    const scoreText = document.getElementById('final-score');
     const btn = document.getElementById('result-btn');
 
-    scoreText.textContent = `${score}/10`;
-
     if (score === 10) {
-        title.textContent = "YOU CRUSHED IT!";
-        title.className = "text-5xl sm:text-7xl font-black uppercase mb-2 leading-none text-neon-yellow zoom-in";
+        title.textContent = "SYNCHRONIZED";
+        title.className = "text-5xl sm:text-7xl font-black italic uppercase mb-2 leading-none text-white zoom-in";
         subtitle.textContent = "BATCH CLEARED";
-        scoreText.className = "text-[6rem] sm:text-[9rem] font-black leading-none mb-auto mt-10 text-neon-yellow drop-shadow-xl";
         
-        btn.textContent = "NEXT BATCH";
-        btn.className = "w-full max-w-md mt-auto mb-10 py-6 bg-neon-blue text-black rounded-xl text-3xl font-black active:scale-95 transition-transform uppercase";
+        btn.textContent = "Continue";
+        btn.className = "w-full max-w-md mt-auto mb-10 py-6 bg-gradient-sunset text-white rounded-2xl text-2xl font-black active:scale-95 transition-transform uppercase glow-sunset";
         
         btn.onclick = () => {
             sfxSwoosh();
             totalWordsLearned += 10;
-            localStorage.setItem('totalLearnedBeast', totalWordsLearned);
-            document.getElementById('global-progress').textContent = totalWordsLearned;
+            localStorage.setItem('totalLearnedWestcoast', totalWordsLearned);
+            document.getElementById('global-progress').textContent = (totalWordsLearned * 10);
             batchStartIndex = currentWordIndex;
             resetForNextRound();
         };
     } else {
-        title.textContent = "FAILED";
-        title.className = "text-5xl sm:text-7xl font-black uppercase mb-2 leading-none text-neon-red shake";
-        subtitle.textContent = "1 MISTAKE = RESTART";
-        scoreText.className = "text-[6rem] sm:text-[9rem] font-black leading-none mb-auto mt-10 text-neon-red drop-shadow-xl";
+        title.textContent = "WIPED OUT";
+        title.className = "text-5xl sm:text-7xl font-black italic uppercase mb-2 leading-none text-red-500 shake drop-shadow-[0_0_15px_rgba(255,0,0,0.5)]";
+        subtitle.textContent = "PERFECTION REQUIRED";
         
-        btn.textContent = "RESTART BATCH";
-        btn.className = "w-full max-w-md mt-auto mb-10 py-6 bg-red-600 text-white rounded-xl text-3xl font-black active:scale-95 transition-transform uppercase shadow-[0_0_15px_rgba(255,0,60,0.8)]";
+        btn.textContent = "Retry Batch";
+        btn.className = "w-full max-w-md mt-auto mb-10 py-6 bg-[#1a1a24] text-white border-2 border-red-500 rounded-2xl text-2xl font-black active:scale-95 transition-transform uppercase";
         
         btn.onclick = () => {
             sfxSwoosh();
@@ -364,7 +372,6 @@ function resetForNextRound() {
     views.learn.classList.remove('hidden');
     views.learn.classList.add('flex');
     
-    updateProgressBar(0, 'learn');
     renderLearnView();
 }
 
