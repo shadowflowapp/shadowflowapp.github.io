@@ -8,37 +8,9 @@
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700;900&display=swap" rel="stylesheet">
     <style>
         body { 
-            background-color: #000000; 
-            background-image: radial-gradient(circle at 50% 50%, #111 0%, #000 100%);
+            background-color: #020202; 
             font-family: 'Montserrat', sans-serif;
             -webkit-tap-highlight-color: transparent;
-        }
-        
-        /* AAA Mobile Frame Constraints for Desktop */
-        #mobile-frame {
-            max-width: 430px; /* Standard large phone width */
-            margin: 0 auto;
-            background-color: #050505;
-            position: relative;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            box-shadow: 0 0 50px rgba(0, 229, 255, 0.05);
-        }
-        @media (min-width: 640px) {
-            #mobile-frame {
-                height: 850px;
-                max-height: 90vh;
-                border-radius: 40px;
-                border: 8px solid #1a1a1c;
-                margin-top: 5vh;
-            }
-        }
-        @media (max-width: 639px) {
-            #mobile-frame {
-                height: 100dvh;
-                width: 100vw;
-            }
         }
 
         /* Animations */
@@ -64,15 +36,10 @@
         /* AAA Segmented Round Progress Bar */
         .segment { transition: all 0.3s ease; height: 6px; border-radius: 9999px; flex: 1; }
         .seg-empty { background-color: #1a1a1c; }
-        
-        /* Learning States */
         .seg-learn-filled { background-color: #ffffff; box-shadow: 0 0 5px rgba(255,255,255,0.8); }
         .seg-learn-active { background-color: #00e5ff; box-shadow: 0 0 10px rgba(0,229,255,0.8); animation: pulseBar 1s infinite alternate; }
-        
-        /* Quiz States */
         .seg-quiz-filled { background-color: #ccff00; box-shadow: 0 0 10px rgba(204,255,0,0.8); }
         .seg-quiz-active { background-color: #2a2a2c; border: 1px solid #ccff00; box-shadow: inset 0 0 5px rgba(204,255,0,0.5); animation: pulseBar 0.8s infinite alternate; }
-
         @keyframes pulseBar { from { opacity: 0.5; } to { opacity: 1; } }
         
         /* Unselectable A-Z Track */
@@ -84,10 +51,11 @@
         .az-future { color: #333333; font-size: 0.875rem; }
     </style>
 </head>
-<body class="flex items-center justify-center min-h-screen">
+<!-- Body acts as the desktop background centering the mobile frame -->
+<body class="flex items-center justify-center min-h-screen m-0 p-0 overflow-hidden">
 
-    <!-- THE AAA MOBILE FRAME -->
-    <div id="mobile-frame">
+    <!-- AAA MOBILE FRAME (Strict Tailwind boundaries) -->
+    <div id="mobile-frame" class="w-full max-w-[430px] h-[100dvh] sm:h-[850px] sm:max-h-[90vh] sm:border-[8px] sm:border-[#1a1a1c] sm:rounded-[40px] bg-[#050505] relative overflow-hidden flex flex-col shadow-2xl shadow-cyan-900/20">
         
         <!-- HUD (Heads Up Display) -->
         <div id="top-bar" class="w-full flex-col z-50 absolute top-0 left-0 bg-gradient-to-b from-[#050505] via-[#050505] to-transparent pb-6 hidden">
@@ -95,7 +63,6 @@
             <!-- A-Z Node Track -->
             <div class="relative w-full h-16 flex items-center justify-center overflow-hidden border-b border-gray-900/50">
                 <div class="absolute w-full h-[2px] bg-gray-900 top-1/2 -translate-y-1/2 z-0"></div>
-                <!-- Track container requires padding so first/last letters can center -->
                 <div id="az-track" class="flex items-center gap-6 overflow-x-hidden w-full px-[50%] absolute z-10 pointer-events-none">
                     <!-- Letters injected by JS -->
                 </div>
@@ -115,10 +82,15 @@
         </div>
 
         <!-- START SCREEN -->
-        <div id="start-view" class="flex flex-col h-full w-full justify-center items-center p-6 bg-[#050505] z-40 absolute inset-0">
+        <div id="start-view" class="flex flex-col h-full w-full justify-center items-center p-6 bg-[#050505] z-40">
             <h1 class="text-5xl font-black text-center mb-4 leading-none uppercase">Master<br><span class="text-neon-cyan">A to Z</span></h1>
             <p class="text-gray-500 text-sm font-bold text-center mb-12 uppercase tracking-[0.2em] leading-relaxed">10 Words Per Round.<br>10/10 To Advance.<br>No Mercy.</p>
-            <button onclick="startChallenge()" class="w-full mt-auto mb-10 py-6 bg-neon-cyan rounded-2xl text-2xl font-black active:scale-95 transition-transform uppercase">
+            
+            <div id="start-error" class="hidden text-center bg-red-900/50 border border-red-500 rounded-lg p-4 mb-6 text-red-200 text-sm">
+                <!-- Errors shown here -->
+            </div>
+
+            <button id="start-btn" onclick="startChallenge()" class="w-full mt-auto mb-10 py-6 bg-neon-cyan rounded-2xl text-2xl font-black active:scale-95 transition-transform uppercase hidden">
                 Start Game
             </button>
         </div>
@@ -157,7 +129,7 @@
         </div>
 
         <!-- RESULT VIEW -->
-        <div id="result-view" class="hidden flex-col h-full w-full justify-center items-center p-6 text-center z-40 absolute inset-0 bg-[#050505]">
+        <div id="result-view" class="hidden flex-col h-full w-full justify-center items-center p-6 text-center z-40 bg-[#050505]">
             <h2 id="result-title" class="text-5xl font-black uppercase mb-2 leading-none mt-20"></h2>
             <p id="result-subtitle" class="text-sm font-bold text-gray-500 mb-10 uppercase tracking-[0.2em]"></p>
             
