@@ -57,12 +57,36 @@
             box-shadow: 0 0 15px rgba(255,0,60,0.8);
         }
 
-        /* Progress Bar & A-Z Track */
+        /* UPDATED PROGRESS BAR STYLES */
         .segment { transition: all 0.3s ease; }
-        /* Removed outer glows from the progress segments to make them fill cleanly inside */
-        .segment-active-learn { background-color: #fff; }
-        .segment-active-quiz { background-color: #ccff00; }
         .segment-empty { background-color: #222; }
+        
+        /* Learned (Solid White) */
+        .segment-completed-learn { background-color: #ffffff; }
+        
+        /* Currently Learning (Pulsing Neon Blue) */
+        .segment-current-learn { 
+            background-color: #00e5ff; 
+            box-shadow: inset 0 0 6px rgba(255,255,255,0.9);
+            animation: pulseBar 0.8s infinite alternate; 
+        }
+        
+        /* Quiz Correct (Inner Glow Yellow) */
+        .segment-active-quiz { 
+            background-color: #ccff00; 
+            box-shadow: inset 0 0 6px rgba(255,255,255,0.8); 
+        }
+        
+        /* Currently Quiz Question (Pulsing Gray) */
+        .segment-current-quiz {
+            background-color: #666;
+            animation: pulseBar 0.8s infinite alternate;
+        }
+
+        @keyframes pulseBar {
+            from { opacity: 0.4; }
+            to { opacity: 1; }
+        }
         
         /* Hide scrollbar for A-Z track */
         .no-scrollbar::-webkit-scrollbar { display: none; }
@@ -80,7 +104,6 @@
         </div>
 
         <div class="flex justify-between items-end mb-2 mt-1">
-            <!-- Current Letter Progress -->
             <div class="text-sm sm:text-base font-bold text-gray-400">
                 LETTER <span id="current-letter-display" class="text-white">A</span> 
                 <span class="mx-2">|</span> 
@@ -93,7 +116,7 @@
         </div>
         
         <!-- 10-Word Batch Progress Bar -->
-        <div id="progress-bar" class="flex w-full gap-1 h-1 sm:h-1.5 opacity-50">
+        <div id="progress-bar" class="flex w-full gap-1 h-1 sm:h-1.5 mt-1">
             <!-- Injected via JS -->
         </div>
     </div>
@@ -108,7 +131,7 @@
     </div>
     
     <!-- LEARNING VIEW -->
-    <div id="learning-view" class="hidden flex-col h-full w-full p-6 pt-28 max-w-3xl mx-auto relative">
+    <div id="learning-view" class="hidden flex-col h-full w-full p-6 pt-32 max-w-3xl mx-auto relative">
         <div class="flex-grow flex flex-col justify-center items-center w-full">
             
             <div id="word-bounds" class="w-full relative flex flex-col justify-center items-center">
@@ -128,7 +151,7 @@
     </div>
 
     <!-- QUIZ VIEW (Contextual MCQ) -->
-    <div id="quiz-view" class="hidden flex-col h-full w-full p-6 pt-28 max-w-3xl mx-auto relative">
+    <div id="quiz-view" class="hidden flex-col h-full w-full p-6 pt-32 max-w-3xl mx-auto relative">
         
         <div class="flex-grow flex flex-col justify-center w-full">
             <div class="w-full relative flex justify-center items-center mb-10">
