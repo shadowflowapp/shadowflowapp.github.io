@@ -59,8 +59,9 @@
 
         /* Progress Bar & A-Z Track */
         .segment { transition: all 0.3s ease; }
-        .segment-active-learn { background-color: #fff; box-shadow: 0 0 8px rgba(255,255,255,0.5); }
-        .segment-active-quiz { background-color: #ccff00; box-shadow: 0 0 10px rgba(204,255,0,0.8); }
+        /* Removed outer glows from the progress segments to make them fill cleanly inside */
+        .segment-active-learn { background-color: #fff; }
+        .segment-active-quiz { background-color: #ccff00; }
         .segment-empty { background-color: #222; }
         
         /* Hide scrollbar for A-Z track */
