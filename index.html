@@ -3,178 +3,167 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>A-Z Challenge</title>
+    <title>A-Z Dictionary Challenge</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700;900&display=swap" rel="stylesheet">
     <style>
         body { 
-            background-color: #09090b; /* Zinc 950 */
+            background-color: #000000; 
+            background-image: radial-gradient(circle at 50% 50%, #111 0%, #000 100%);
             font-family: 'Montserrat', sans-serif;
             -webkit-tap-highlight-color: transparent;
         }
-
-        /* AAA Device Bezel for Desktop */
-        #app-frame {
-            background: radial-gradient(circle at top, #18181b 0%, #000000 100%);
+        
+        /* AAA Mobile Frame Constraints for Desktop */
+        #mobile-frame {
+            max-width: 430px; /* Standard large phone width */
+            margin: 0 auto;
+            background-color: #050505;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 0 50px rgba(0, 229, 255, 0.05);
+        }
+        @media (min-width: 640px) {
+            #mobile-frame {
+                height: 850px;
+                max-height: 90vh;
+                border-radius: 40px;
+                border: 8px solid #1a1a1c;
+                margin-top: 5vh;
+            }
+        }
+        @media (max-width: 639px) {
+            #mobile-frame {
+                height: 100dvh;
+                width: 100vw;
+            }
         }
 
         /* Animations */
-        .zoom-in { animation: zoomIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
-        @keyframes zoomIn {
-            from { opacity: 0; transform: translateY(15px) scale(0.95); }
-            to { opacity: 1; transform: translateY(0) scale(1); }
-        }
-
+        .zoom-in { animation: zoomIn 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+        @keyframes zoomIn { from { opacity: 0; transform: scale(0.8); } to { opacity: 1; transform: scale(1); } }
+        
         .shake { animation: shake 0.4s cubic-bezier(.36,.07,.19,.97) both; }
-        @keyframes shake {
-            10%, 90% { transform: translate3d(-2px, 0, 0); }
-            20%, 80% { transform: translate3d(4px, 0, 0); }
-            30%, 50%, 70% { transform: translate3d(-8px, 0, 0); }
-            40%, 60% { transform: translate3d(8px, 0, 0); }
-        }
+        @keyframes shake { 10%, 90% { transform: translate3d(-2px, 0, 0); } 20%, 80% { transform: translate3d(4px, 0, 0); } 30%, 50%, 70% { transform: translate3d(-8px, 0, 0); } 40%, 60% { transform: translate3d(8px, 0, 0); } }
 
         .shatter { animation: shatterAnim 0.6s ease-in forwards; }
-        @keyframes shatterAnim {
-            0% { transform: translateY(0) rotate(0deg); opacity: 1; }
-            100% { transform: translateY(100px) rotate(10deg) scale(0.9); opacity: 0; }
-        }
+        @keyframes shatterAnim { 0% { transform: translateY(0) rotate(0deg); opacity: 1; } 100% { transform: translateY(200px) rotate(15deg) scale(0.8); opacity: 0; } }
         
-        /* Neon Colors & Glows */
-        .text-neon-yellow { 
-            color: #ccff00; 
-            text-shadow: 0 0 10px rgba(204,255,0,0.5), 0 0 20px rgba(204,255,0,0.3); 
-        }
-        .text-neon-red { 
-            color: #ff003c; 
-            text-shadow: 0 0 10px rgba(255,0,60,0.6), 0 0 20px rgba(255,0,60,0.4); 
-        }
+        /* Neon Colors */
+        .text-neon-cyan { color: #00e5ff; text-shadow: 0 0 10px rgba(0,229,255,0.6), 0 0 20px rgba(0,229,255,0.4); }
+        .text-neon-yellow { color: #ccff00; text-shadow: 0 0 10px rgba(204,255,0,0.6), 0 0 20px rgba(204,255,0,0.4); }
+        .text-neon-red { color: #ff003c; text-shadow: 0 0 10px rgba(255,0,60,0.8), 0 0 20px rgba(255,0,60,0.5); }
+        .bg-neon-cyan { background-color: #00e5ff; color: #000; box-shadow: 0 0 15px rgba(0, 229, 255, 0.6); }
         
-        .correct-bg { 
-            background-color: #ccff00 !important; color: #000 !important; transform: scale(1.02); 
-            border-color: #ccff00 !important; 
-            box-shadow: 0 0 20px rgba(204,255,0,0.6);
-        }
-        .wrong-bg { 
-            background-color: #ff003c !important; color: #fff !important; 
-            border-color: #ff003c !important;
-            box-shadow: 0 0 20px rgba(255,0,60,0.6);
-        }
+        /* Interactive Buttons */
+        .correct-bg { background-color: #ccff00 !important; color: #000 !important; transform: scale(1.02); border-color: #ccff00 !important; box-shadow: 0 0 15px rgba(204,255,0,0.8); }
+        .wrong-bg { background-color: #ff003c !important; color: #fff !important; border-color: #ff003c !important; box-shadow: 0 0 15px rgba(255,0,60,0.8); }
 
-        /* AAA Progress/Combo Bar */
-        .segment { 
-            transition: all 0.2s ease; 
-            transform: skewX(-15deg); /* Sci-fi angled cuts */
-            border-radius: 2px;
-        }
-        .segment-empty { background-color: #27272a; } /* Zinc 800 */
+        /* AAA Segmented Round Progress Bar */
+        .segment { transition: all 0.3s ease; height: 6px; border-radius: 9999px; flex: 1; }
+        .seg-empty { background-color: #1a1a1c; }
         
-        .segment-completed-learn { background-color: #f4f4f5; box-shadow: 0 0 8px rgba(255,255,255,0.4); }
-        .segment-current-learn { background-color: #ffffff; animation: pulseLearn 0.8s infinite alternate; }
+        /* Learning States */
+        .seg-learn-filled { background-color: #ffffff; box-shadow: 0 0 5px rgba(255,255,255,0.8); }
+        .seg-learn-active { background-color: #00e5ff; box-shadow: 0 0 10px rgba(0,229,255,0.8); animation: pulseBar 1s infinite alternate; }
         
-        .segment-completed-quiz { background-color: #ccff00; box-shadow: 0 0 12px rgba(204,255,0,0.8); }
-        .segment-current-quiz { background-color: #71717a; animation: pulseQuiz 0.6s infinite alternate; }
-        
-        .segment-fail { background-color: #ff003c !important; box-shadow: 0 0 15px rgba(255,0,60,0.9) !important; }
+        /* Quiz States */
+        .seg-quiz-filled { background-color: #ccff00; box-shadow: 0 0 10px rgba(204,255,0,0.8); }
+        .seg-quiz-active { background-color: #2a2a2c; border: 1px solid #ccff00; box-shadow: inset 0 0 5px rgba(204,255,0,0.5); animation: pulseBar 0.8s infinite alternate; }
 
-        @keyframes pulseLearn {
-            from { box-shadow: 0 0 2px #fff; opacity: 0.5; }
-            to { box-shadow: 0 0 12px #fff; opacity: 1; }
-        }
-        @keyframes pulseQuiz {
-            from { opacity: 0.4; }
-            to { opacity: 1; }
-        }
-
-        /* Custom scrollbar hiding */
-        .no-scrollbar::-webkit-scrollbar { display: none; }
-        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        @keyframes pulseBar { from { opacity: 0.5; } to { opacity: 1; } }
+        
+        /* Unselectable A-Z Track */
+        #az-track { scroll-behavior: smooth; }
+        #az-track::-webkit-scrollbar { display: none; }
+        .az-node { transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .az-passed { color: #ffffff; font-size: 1rem; }
+        .az-current { color: #00e5ff; font-size: 1.75rem; text-shadow: 0 0 10px rgba(0,229,255,0.8); }
+        .az-future { color: #333333; font-size: 0.875rem; }
     </style>
 </head>
-<body class="flex justify-center items-center h-[100dvh] w-screen overflow-hidden text-white">
+<body class="flex items-center justify-center min-h-screen">
 
-    <!-- Mobile Viewport Wrapper (Forces phone shape on PC) -->
-    <div id="app-frame" class="w-full h-full sm:h-[90vh] sm:max-w-[400px] sm:rounded-[2.5rem] sm:border-[8px] sm:border-zinc-900 relative overflow-hidden flex flex-col sm:shadow-[0_0_50px_rgba(0,0,0,0.8)]">
-
-        <!-- Top Navigation & Progress -->
-        <div id="top-bar" class="w-full p-5 hidden flex-col z-50 absolute top-0 left-0 bg-gradient-to-b from-black to-transparent">
+    <!-- THE AAA MOBILE FRAME -->
+    <div id="mobile-frame">
+        
+        <!-- HUD (Heads Up Display) -->
+        <div id="top-bar" class="w-full flex-col z-50 absolute top-0 left-0 bg-gradient-to-b from-[#050505] via-[#050505] to-transparent pb-6 hidden">
             
-            <!-- Global Info -->
-            <div class="flex justify-between items-end mb-2 px-1">
-                <div class="text-sm font-black text-zinc-400 tracking-widest">
-                    ROUND <span id="round-display" class="text-white text-lg">1</span>
-                </div>
-                <div class="text-xs font-black text-zinc-500 tracking-widest">
-                    SCORE <span id="global-progress" class="text-neon-yellow text-sm ml-1">0</span>
+            <!-- A-Z Node Track -->
+            <div class="relative w-full h-16 flex items-center justify-center overflow-hidden border-b border-gray-900/50">
+                <div class="absolute w-full h-[2px] bg-gray-900 top-1/2 -translate-y-1/2 z-0"></div>
+                <!-- Track container requires padding so first/last letters can center -->
+                <div id="az-track" class="flex items-center gap-6 overflow-x-hidden w-full px-[50%] absolute z-10 pointer-events-none">
+                    <!-- Letters injected by JS -->
                 </div>
             </div>
-            
-            <!-- 10-Word Combo Bar -->
-            <div id="progress-bar" class="flex w-full gap-1.5 h-2 px-1">
-                <!-- Injected via JS -->
-            </div>
-            
-            <!-- Letter Tracker -->
-            <div class="flex justify-between items-center mt-3 px-1">
-                <div class="text-[10px] font-bold text-zinc-500 tracking-widest">DICT PROGRESS</div>
-                <div class="text-[10px] font-bold text-zinc-500 tracking-widest">
-                    [<span id="current-letter-display" class="text-white">A</span>] <span id="letter-progress-count" class="text-neon-yellow">0</span>/<span id="letter-total-count">0</span>
+
+            <!-- Round & Progress Status -->
+            <div class="px-6 mt-4 flex flex-col gap-2">
+                <div class="flex justify-between items-end">
+                    <span id="round-display" class="text-xs font-black tracking-[0.2em] text-gray-500 uppercase">ROUND 1</span>
+                    <span class="text-xs font-black tracking-widest text-gray-600">GLOBAL: <span id="global-progress" class="text-white">0</span></span>
+                </div>
+                <!-- 10-Segment Progress Bar -->
+                <div id="progress-bar" class="flex w-full gap-1.5">
+                    <!-- Injected via JS -->
                 </div>
             </div>
         </div>
 
         <!-- START SCREEN -->
-        <div id="start-view" class="flex flex-col h-full w-full justify-center items-center p-6 z-40 fixed sm:absolute inset-0 bg-[radial-gradient(circle_at_center,_#18181b_0%,_#000000_100%)]">
-            <div class="text-zinc-600 font-black tracking-[0.3em] mb-2 text-sm">COBUILD DICTIONARY</div>
-            <h1 class="text-5xl font-black text-center mb-4 leading-none uppercase">Master<br><span class="text-neon-yellow">The Usage</span></h1>
-            <p class="text-zinc-400 text-sm font-bold text-center mb-12 uppercase tracking-widest leading-relaxed">10 Words Per Round.<br>1 Mistake = Game Over.</p>
-            <button onclick="startChallenge()" class="w-full mt-auto mb-8 py-5 bg-[#ccff00] text-black rounded-xl text-2xl font-black active:scale-95 transition-transform uppercase shadow-[0_0_20px_rgba(204,255,0,0.3)]">
+        <div id="start-view" class="flex flex-col h-full w-full justify-center items-center p-6 bg-[#050505] z-40 absolute inset-0">
+            <h1 class="text-5xl font-black text-center mb-4 leading-none uppercase">Master<br><span class="text-neon-cyan">A to Z</span></h1>
+            <p class="text-gray-500 text-sm font-bold text-center mb-12 uppercase tracking-[0.2em] leading-relaxed">10 Words Per Round.<br>10/10 To Advance.<br>No Mercy.</p>
+            <button onclick="startChallenge()" class="w-full mt-auto mb-10 py-6 bg-neon-cyan rounded-2xl text-2xl font-black active:scale-95 transition-transform uppercase">
                 Start Game
             </button>
         </div>
         
         <!-- LEARNING VIEW -->
-        <div id="learning-view" class="hidden flex-col h-full w-full p-6 pt-32 relative">
+        <div id="learning-view" class="hidden flex-col h-full w-full p-6 pt-40 relative">
             <div class="flex-grow flex flex-col justify-center items-center w-full">
                 
                 <div id="word-bounds" class="w-full relative flex flex-col justify-center items-center">
-                    <h1 id="en-word" class="font-black text-neon-yellow lowercase tracking-tight leading-none whitespace-nowrap zoom-in"></h1>
-                    <span id="pos-tag" class="text-zinc-500 font-bold text-xl mt-3 lowercase zoom-in" style="animation-delay: 0.05s;"></span>
+                    <h1 id="en-word" class="font-black text-neon-cyan lowercase tracking-tight leading-none whitespace-nowrap zoom-in"></h1>
+                    <span id="pos-tag" class="text-gray-600 font-bold text-xl mt-3 lowercase zoom-in" style="animation-delay: 0.05s;"></span>
                 </div>
                 
-                <div class="w-full relative flex justify-center items-center mt-10">
-                    <p id="en-definition" class="text-zinc-300 font-medium text-xl text-center leading-relaxed zoom-in" style="animation-delay: 0.1s;"></p>
+                <div class="w-full relative flex justify-center items-center mt-12 px-2">
+                    <p id="en-definition" class="text-gray-300 font-medium text-xl text-center leading-relaxed zoom-in" style="animation-delay: 0.1s;"></p>
                 </div>
-                
             </div>
 
-            <button onclick="nextWord()" class="w-full py-5 mt-auto mb-4 bg-white text-black rounded-xl text-2xl font-black shadow-[0_0_15px_rgba(255,255,255,0.2)] active:scale-95 transition-transform uppercase">
-                Next
+            <button onclick="nextWord()" class="w-full py-5 mt-auto mb-6 bg-white text-black rounded-2xl text-xl font-black shadow-[0_0_20px_rgba(255,255,255,0.2)] active:scale-95 transition-transform uppercase">
+                Next Word
             </button>
         </div>
 
         <!-- QUIZ VIEW (Contextual MCQ) -->
-        <div id="quiz-view" class="hidden flex-col h-full w-full p-6 pt-32 relative">
+        <div id="quiz-view" class="hidden flex-col h-full w-full p-6 pt-40 relative">
             
             <div class="flex-grow flex flex-col justify-center w-full">
                 <div class="w-full relative flex justify-center items-center mb-8">
-                    <p id="quiz-sentence" class="font-bold text-zinc-100 text-xl text-center leading-relaxed zoom-in drop-shadow-md"></p>
+                    <p id="quiz-sentence" class="font-bold text-gray-200 text-xl text-center leading-relaxed zoom-in drop-shadow-md"></p>
                 </div>
             </div>
 
-            <div id="quiz-options" class="mt-auto mb-4 flex flex-col w-full space-y-3 zoom-in" style="animation-delay: 0.1s;">
+            <div id="quiz-options" class="mt-auto mb-6 flex flex-col w-full space-y-3 zoom-in" style="animation-delay: 0.1s;">
                 <!-- Buttons generated dynamically -->
             </div>
         </div>
 
         <!-- RESULT VIEW -->
-        <div id="result-view" class="hidden flex-col h-full w-full justify-center items-center p-6 text-center bg-[radial-gradient(circle_at_center,_#18181b_0%,_#000000_100%)]">
-            <div id="result-icon" class="text-6xl mb-4 zoom-in"></div>
-            <h2 id="result-title" class="text-4xl font-black uppercase mb-2 leading-none zoom-in" style="animation-delay: 0.1s;"></h2>
-            <p id="result-subtitle" class="text-sm font-bold text-zinc-400 mb-10 uppercase tracking-widest zoom-in" style="animation-delay: 0.2s;"></p>
+        <div id="result-view" class="hidden flex-col h-full w-full justify-center items-center p-6 text-center z-40 absolute inset-0 bg-[#050505]">
+            <h2 id="result-title" class="text-5xl font-black uppercase mb-2 leading-none mt-20"></h2>
+            <p id="result-subtitle" class="text-sm font-bold text-gray-500 mb-10 uppercase tracking-[0.2em]"></p>
             
-            <div class="text-[5rem] font-black leading-none mb-auto mt-4 zoom-in" style="animation-delay: 0.3s;" id="final-score"></div>
+            <div class="text-[7rem] font-black leading-none mb-auto mt-10" id="final-score"></div>
             
-            <button id="result-btn" class="w-full mt-auto mb-8 py-5 rounded-xl text-2xl font-black active:scale-95 transition-transform uppercase zoom-in" style="animation-delay: 0.4s;">
+            <button id="result-btn" class="w-full mt-auto mb-10 py-6 rounded-2xl text-2xl font-black active:scale-95 transition-transform uppercase">
             </button>
         </div>
 
