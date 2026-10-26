@@ -2,7 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <!-- Strict mobile viewport constraints to prevent scaling and scrolling -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Neon Nexus: Physics</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
     <style>
@@ -10,7 +11,6 @@
             --bg-color: #050a0e;
             --neon-cyan: #00f0ff;
             --neon-pink: #ff003c;
-            --neon-yellow: #fcee0a;
             --dark-panel: #111820;
         }
         
@@ -18,17 +18,25 @@
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            user-select: none;
+            user-select: none; /* Prevents text highlighting */
+            -webkit-user-select: none;
+            -webkit-tap-highlight-color: transparent; /* Removes blue tap highlight on mobile */
         }
 
-        body {
+        html, body {
             background-color: var(--bg-color);
             color: #fff;
             font-family: 'Rajdhani', sans-serif;
-            display: flex;
-            flex-direction: column;
+            
+            /* Strict lockdown for no scrolling/bouncing */
+            width: 100vw;
             height: 100vh;
             overflow: hidden;
+            position: fixed;
+            touch-action: none; 
+            
+            display: flex;
+            flex-direction: column;
         }
 
         /* HEADER & HUD */
@@ -40,6 +48,7 @@
             border-bottom: 2px solid var(--neon-cyan);
             box-shadow: 0 0 10px var(--neon-cyan);
             background: linear-gradient(180deg, rgba(0,240,255,0.1) 0%, transparent 100%);
+            flex-shrink: 0;
         }
 
         .hud-item {
@@ -72,7 +81,7 @@
             padding: 20px;
             display: flex;
             flex-direction: column;
-            justify-content: center;
+            justify-content: center; /* Centers content vertically */
         }
 
         .question-card {
@@ -80,7 +89,7 @@
             border: 1px solid #333;
             border-left: 4px solid var(--neon-pink);
             padding: 20px;
-            margin-bottom: 20px;
+            margin-bottom: 25px;
             position: relative;
         }
 
@@ -99,37 +108,6 @@
         .question-text {
             font-size: 1.4rem;
             line-height: 1.4;
-            margin-bottom: 10px;
-        }
-
-        .thai-text {
-            color: var(--neon-yellow);
-            font-size: 1.2rem;
-            display: none; /* Hidden by default */
-            margin-top: 10px;
-            border-top: 1px dashed #555;
-            padding-top: 10px;
-        }
-
-        /* DECRYPTION BUTTON */
-        .decrypt-btn {
-            background: transparent;
-            border: 1px solid var(--neon-yellow);
-            color: var(--neon-yellow);
-            padding: 8px 15px;
-            font-family: 'Orbitron', sans-serif;
-            font-size: 0.9rem;
-            cursor: pointer;
-            margin-bottom: 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            width: 100%;
-            text-transform: uppercase;
-        }
-        
-        .decrypt-btn:active {
-            background: rgba(252, 238, 10, 0.2);
         }
 
         /* CHOICES */
@@ -137,13 +115,14 @@
             display: grid;
             grid-template-columns: 1fr;
             gap: 15px;
+            margin-bottom: 20px;
         }
 
         .choice-btn {
             background: var(--dark-panel);
             border: 1px solid #444;
             color: #fff;
-            padding: 15px;
+            padding: 18px 15px;
             font-family: 'Rajdhani', sans-serif;
             font-size: 1.2rem;
             font-weight: 700;
@@ -170,16 +149,8 @@
             box-shadow: inset 0 0 10px var(--neon-pink);
         }
 
-        .choice-th {
-            display: none;
-            color: #aaa;
-            font-size: 1rem;
-            margin-top: 5px;
-        }
-
         #next-btn {
             display: none;
-            margin-top: 20px;
             width: 100%;
             padding: 15px;
             background: var(--neon-cyan);
@@ -190,6 +161,7 @@
             border: none;
             cursor: pointer;
             box-shadow: 0 0 15px var(--neon-cyan);
+            margin-top: auto; /* Pushes to the bottom if there's space */
         }
     </style>
 </head>
@@ -211,13 +183,7 @@
         <div class="question-card">
             <div class="topic-tag" id="topic-tag">TOPIC</div>
             <div class="question-text" id="question-text">Loading Node Data...</div>
-            <div class="thai-text" id="thai-text"></div>
         </div>
-
-        <button class="decrypt-btn" id="decrypt-btn" onclick="decryptProtocol()">
-            <span>[Run Decryption Protocol]</span>
-            <span id="penalty-text">Cost: -50% XP</span>
-        </button>
 
         <div class="choices-grid" id="choices-grid">
             <!-- Choices generated via JS -->
