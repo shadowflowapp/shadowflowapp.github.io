@@ -3,26 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>A-Z Dictionary Challenge</title>
+    <title>A-Z Challenge</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700;900&display=swap" rel="stylesheet">
     <style>
         body { 
-            background-color: #09090b; /* Zinc-950 background for PC users */
+            background-color: #09090b; /* Zinc 950 */
             font-family: 'Montserrat', sans-serif;
             -webkit-tap-highlight-color: transparent;
         }
-        
-        /* AAA Ambient Backgrounds */
-        .bg-game-dark {
-            background: radial-gradient(circle at 50% 0%, #1a1a24 0%, #050505 70%);
+
+        /* AAA Device Bezel for Desktop */
+        #app-frame {
+            background: radial-gradient(circle at top, #18181b 0%, #000000 100%);
         }
 
-        /* Fluid Zoom & Shakes */
+        /* Animations */
         .zoom-in { animation: zoomIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
         @keyframes zoomIn {
-            from { opacity: 0; transform: scale(0.9); }
-            to { opacity: 1; transform: scale(1); }
+            from { opacity: 0; transform: translateY(15px) scale(0.95); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
         }
 
         .shake { animation: shake 0.4s cubic-bezier(.36,.07,.19,.97) both; }
@@ -33,181 +33,148 @@
             40%, 60% { transform: translate3d(8px, 0, 0); }
         }
 
-        .shatter { animation: shatterAnim 0.6s cubic-bezier(0.55, 0.085, 0.68, 0.53) forwards; }
+        .shatter { animation: shatterAnim 0.6s ease-in forwards; }
         @keyframes shatterAnim {
             0% { transform: translateY(0) rotate(0deg); opacity: 1; }
-            100% { transform: translateY(150px) rotate(10deg) scale(0.8); opacity: 0; }
-        }
-
-        /* Floating XP Text Animation */
-        .float-up { animation: floatUp 0.8s ease-out forwards; position: absolute; pointer-events: none; z-index: 100; }
-        @keyframes floatUp {
-            0% { opacity: 1; transform: translateY(0) scale(0.8); }
-            50% { transform: translateY(-40px) scale(1.2); }
-            100% { opacity: 0; transform: translateY(-80px) scale(1); }
+            100% { transform: translateY(100px) rotate(10deg) scale(0.9); opacity: 0; }
         }
         
         /* Neon Colors & Glows */
         .text-neon-yellow { 
             color: #ccff00; 
-            text-shadow: 0 0 10px rgba(204,255,0,0.6), 0 0 20px rgba(204,255,0,0.4); 
+            text-shadow: 0 0 10px rgba(204,255,0,0.5), 0 0 20px rgba(204,255,0,0.3); 
         }
         .text-neon-red { 
             color: #ff003c; 
-            text-shadow: 0 0 10px rgba(255,0,60,0.8), 0 0 20px rgba(255,0,60,0.5); 
+            text-shadow: 0 0 10px rgba(255,0,60,0.6), 0 0 20px rgba(255,0,60,0.4); 
         }
-        .text-neon-blue {
-            color: #00e5ff;
-            text-shadow: 0 0 10px rgba(0,229,255,0.6);
+        
+        .correct-bg { 
+            background-color: #ccff00 !important; color: #000 !important; transform: scale(1.02); 
+            border-color: #ccff00 !important; 
+            box-shadow: 0 0 20px rgba(204,255,0,0.6);
         }
-
-        /* AAA Game Button Styles */
-        .game-btn {
-            background: linear-gradient(145deg, #1f1f23, #111113);
-            box-shadow: inset 0 1px 0 rgba(255,255,255,0.1), 0 8px 15px rgba(0,0,0,0.5);
-            border: 1px solid #333;
-        }
-        .game-btn-active {
-            background: #ccff00;
-            color: #000 !important;
-            box-shadow: inset 0 -3px 0 rgba(0,0,0,0.2), 0 0 20px rgba(204,255,0,0.6);
-            border-color: #ccff00;
-            transform: scale(1.02);
-        }
-        .game-btn-wrong {
-            background: #ff003c;
-            color: #fff !important;
-            box-shadow: inset 0 -3px 0 rgba(0,0,0,0.2), 0 0 20px rgba(255,0,60,0.6);
-            border-color: #ff003c;
+        .wrong-bg { 
+            background-color: #ff003c !important; color: #fff !important; 
+            border-color: #ff003c !important;
+            box-shadow: 0 0 20px rgba(255,0,60,0.6);
         }
 
-        /* Learning Nodes (Sync) */
-        .node { transition: all 0.3s ease; }
-        .node-empty { background-color: #333; box-shadow: inset 0 1px 3px rgba(0,0,0,0.5); }
-        .node-completed { background-color: #fff; box-shadow: 0 0 8px rgba(255,255,255,0.8); }
-        .node-current { 
-            background-color: #00e5ff; 
-            box-shadow: 0 0 12px rgba(0,229,255,0.9);
-            animation: pulseNode 1s infinite alternate; 
+        /* AAA Progress/Combo Bar */
+        .segment { 
+            transition: all 0.2s ease; 
+            transform: skewX(-15deg); /* Sci-fi angled cuts */
+            border-radius: 2px;
         }
-        @keyframes pulseNode { from { opacity: 0.6; transform: scale(0.9); } to { opacity: 1; transform: scale(1.1); } }
+        .segment-empty { background-color: #27272a; } /* Zinc 800 */
+        
+        .segment-completed-learn { background-color: #f4f4f5; box-shadow: 0 0 8px rgba(255,255,255,0.4); }
+        .segment-current-learn { background-color: #ffffff; animation: pulseLearn 0.8s infinite alternate; }
+        
+        .segment-completed-quiz { background-color: #ccff00; box-shadow: 0 0 12px rgba(204,255,0,0.8); }
+        .segment-current-quiz { background-color: #71717a; animation: pulseQuiz 0.6s infinite alternate; }
+        
+        .segment-fail { background-color: #ff003c !important; box-shadow: 0 0 15px rgba(255,0,60,0.9) !important; }
 
-        /* Quiz XP Bar (AAA Style) */
-        .xp-bar-bg {
-            background: #111;
-            box-shadow: inset 0 2px 5px rgba(0,0,0,0.8);
-            border: 1px solid #333;
+        @keyframes pulseLearn {
+            from { box-shadow: 0 0 2px #fff; opacity: 0.5; }
+            to { box-shadow: 0 0 12px #fff; opacity: 1; }
         }
-        .xp-bar-fill {
-            background: linear-gradient(90deg, #88aa00 0%, #ccff00 100%);
-            box-shadow: 0 0 15px rgba(204,255,0,0.6);
-            transition: width 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
-        }
-        /* Glowing leading edge */
-        .xp-bar-flare {
-            position: absolute; right: 0; top: 0; bottom: 0; width: 10px;
-            background: #fff; filter: blur(2px); opacity: 0.8;
+        @keyframes pulseQuiz {
+            from { opacity: 0.4; }
+            to { opacity: 1; }
         }
 
-        /* Hide scrollbars */
+        /* Custom scrollbar hiding */
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     </style>
 </head>
-<body class="flex justify-center items-center h-screen w-screen overflow-hidden">
+<body class="flex justify-center items-center h-[100dvh] w-screen overflow-hidden text-white">
 
-    <!-- THE MOBILE VIEWPORT (Fixed constraint for PC, Fullscreen on Mobile) -->
-    <div id="mobile-viewport" class="w-full max-w-[420px] h-full sm:max-h-[850px] sm:h-[95vh] bg-game-dark sm:border-[8px] sm:border-zinc-800 sm:rounded-[2.5rem] shadow-[0_0_50px_rgba(0,0,0,0.8)] relative flex flex-col overflow-hidden">
-        
-        <!-- TOP UI NAVIGATION -->
-        <div id="top-bar" class="w-full p-5 hidden flex-col z-50 absolute top-0 left-0 bg-gradient-to-b from-black via-black/80 to-transparent">
+    <!-- Mobile Viewport Wrapper (Forces phone shape on PC) -->
+    <div id="app-frame" class="w-full h-full sm:h-[90vh] sm:max-w-[400px] sm:rounded-[2.5rem] sm:border-[8px] sm:border-zinc-900 relative overflow-hidden flex flex-col sm:shadow-[0_0_50px_rgba(0,0,0,0.8)]">
+
+        <!-- Top Navigation & Progress -->
+        <div id="top-bar" class="w-full p-5 hidden flex-col z-50 absolute top-0 left-0 bg-gradient-to-b from-black to-transparent">
             
-            <!-- A-Z Track -->
-            <div id="alphabet-track" class="flex overflow-x-auto gap-4 text-zinc-600 text-lg font-black no-scrollbar pb-2 items-end">
+            <!-- Global Info -->
+            <div class="flex justify-between items-end mb-2 px-1">
+                <div class="text-sm font-black text-zinc-400 tracking-widest">
+                    ROUND <span id="round-display" class="text-white text-lg">1</span>
+                </div>
+                <div class="text-xs font-black text-zinc-500 tracking-widest">
+                    SCORE <span id="global-progress" class="text-neon-yellow text-sm ml-1">0</span>
+                </div>
+            </div>
+            
+            <!-- 10-Word Combo Bar -->
+            <div id="progress-bar" class="flex w-full gap-1.5 h-2 px-1">
                 <!-- Injected via JS -->
             </div>
-
-            <div class="flex justify-between items-end mb-3 mt-1">
-                <div class="text-sm sm:text-base font-bold text-zinc-400">
-                    Lvl. <span id="current-letter-display" class="text-white">A</span> 
-                    <span class="mx-2">|</span> 
-                    <span id="letter-progress-count" class="text-neon-yellow">0</span> / <span id="letter-total-count">0</span>
-                </div>
-                <div class="text-xs sm:text-sm font-bold text-zinc-500">
-                    TOTAL: <span id="global-progress" class="text-white">0</span>
-                </div>
-            </div>
             
-            <!-- Dynamic Progress Containers -->
-            <div id="progress-container" class="w-full relative h-2 mt-1">
-                <!-- Learning Nodes (Visible in Learn Phase) -->
-                <div id="learn-progress" class="absolute inset-0 flex w-full gap-1.5 h-full opacity-0 transition-opacity duration-300">
-                    <!-- Nodes injected via JS -->
-                </div>
-                
-                <!-- AAA XP Bar (Visible in Quiz Phase) -->
-                <div id="quiz-progress" class="absolute inset-0 w-full h-full xp-bar-bg rounded-full overflow-hidden opacity-0 transition-opacity duration-300">
-                    <div id="xp-fill" class="h-full xp-bar-fill w-0 relative rounded-full">
-                        <div class="xp-bar-flare"></div>
-                    </div>
+            <!-- Letter Tracker -->
+            <div class="flex justify-between items-center mt-3 px-1">
+                <div class="text-[10px] font-bold text-zinc-500 tracking-widest">DICT PROGRESS</div>
+                <div class="text-[10px] font-bold text-zinc-500 tracking-widest">
+                    [<span id="current-letter-display" class="text-white">A</span>] <span id="letter-progress-count" class="text-neon-yellow">0</span>/<span id="letter-total-count">0</span>
                 </div>
             </div>
         </div>
 
-        <!-- 1. START SCREEN -->
-        <div id="start-view" class="flex flex-col h-full w-full justify-center items-center p-6 z-40 absolute inset-0 backdrop-blur-sm">
-            <h1 class="text-5xl sm:text-6xl font-black text-center mb-2 leading-none uppercase drop-shadow-2xl">Master<br><span class="text-neon-yellow">A to Z</span></h1>
-            <p class="text-zinc-400 text-sm font-bold text-center mb-12 uppercase tracking-[0.3em]">10/10 To Advance<br>No Mercy</p>
-            <button onclick="startChallenge()" class="w-full mt-auto mb-8 py-5 bg-neon-yellow text-black rounded-xl text-2xl font-black active:scale-95 transition-transform uppercase shadow-[0_0_20px_rgba(204,255,0,0.4)]">
-                Enter
+        <!-- START SCREEN -->
+        <div id="start-view" class="flex flex-col h-full w-full justify-center items-center p-6 z-40 fixed sm:absolute inset-0 bg-[radial-gradient(circle_at_center,_#18181b_0%,_#000000_100%)]">
+            <div class="text-zinc-600 font-black tracking-[0.3em] mb-2 text-sm">COBUILD DICTIONARY</div>
+            <h1 class="text-5xl font-black text-center mb-4 leading-none uppercase">Master<br><span class="text-neon-yellow">The Usage</span></h1>
+            <p class="text-zinc-400 text-sm font-bold text-center mb-12 uppercase tracking-widest leading-relaxed">10 Words Per Round.<br>1 Mistake = Game Over.</p>
+            <button onclick="startChallenge()" class="w-full mt-auto mb-8 py-5 bg-[#ccff00] text-black rounded-xl text-2xl font-black active:scale-95 transition-transform uppercase shadow-[0_0_20px_rgba(204,255,0,0.3)]">
+                Start Game
             </button>
         </div>
         
-        <!-- 2. LEARNING VIEW -->
-        <div id="learning-view" class="hidden flex-col h-full w-full p-6 pt-32 relative z-10">
+        <!-- LEARNING VIEW -->
+        <div id="learning-view" class="hidden flex-col h-full w-full p-6 pt-32 relative">
             <div class="flex-grow flex flex-col justify-center items-center w-full">
                 
                 <div id="word-bounds" class="w-full relative flex flex-col justify-center items-center">
-                    <h1 id="en-word" class="font-black text-white lowercase tracking-tight leading-none whitespace-nowrap zoom-in drop-shadow-lg"></h1>
-                    <span id="pos-tag" class="text-neon-blue font-bold text-xl sm:text-2xl mt-4 lowercase zoom-in tracking-widest" style="animation-delay: 0.05s;"></span>
+                    <h1 id="en-word" class="font-black text-neon-yellow lowercase tracking-tight leading-none whitespace-nowrap zoom-in"></h1>
+                    <span id="pos-tag" class="text-zinc-500 font-bold text-xl mt-3 lowercase zoom-in" style="animation-delay: 0.05s;"></span>
                 </div>
                 
-                <div class="w-full relative flex justify-center items-center mt-12 px-2">
-                    <p id="en-definition" class="text-zinc-300 font-medium text-xl sm:text-2xl text-center leading-relaxed zoom-in" style="animation-delay: 0.1s;"></p>
+                <div class="w-full relative flex justify-center items-center mt-10">
+                    <p id="en-definition" class="text-zinc-300 font-medium text-xl text-center leading-relaxed zoom-in" style="animation-delay: 0.1s;"></p>
                 </div>
                 
             </div>
 
-            <button onclick="nextWord()" class="w-full py-5 mt-auto mb-6 bg-white text-black rounded-xl text-2xl font-black shadow-[0_0_20px_rgba(255,255,255,0.2)] active:scale-95 transition-transform uppercase">
+            <button onclick="nextWord()" class="w-full py-5 mt-auto mb-4 bg-white text-black rounded-xl text-2xl font-black shadow-[0_0_15px_rgba(255,255,255,0.2)] active:scale-95 transition-transform uppercase">
                 Next
             </button>
         </div>
 
-        <!-- 3. QUIZ VIEW (Contextual MCQ) -->
-        <div id="quiz-view" class="hidden flex-col h-full w-full p-6 pt-36 relative z-10">
+        <!-- QUIZ VIEW (Contextual MCQ) -->
+        <div id="quiz-view" class="hidden flex-col h-full w-full p-6 pt-32 relative">
             
-            <div class="flex-grow flex flex-col justify-center w-full relative">
-                <!-- Floating XP container -->
-                <div id="fx-container" class="absolute inset-0 pointer-events-none flex justify-center items-center z-50"></div>
-
-                <div class="w-full relative flex justify-center items-center mb-10">
-                    <p id="quiz-sentence" class="font-bold text-gray-200 text-xl sm:text-3xl text-center leading-relaxed zoom-in drop-shadow-md"></p>
+            <div class="flex-grow flex flex-col justify-center w-full">
+                <div class="w-full relative flex justify-center items-center mb-8">
+                    <p id="quiz-sentence" class="font-bold text-zinc-100 text-xl text-center leading-relaxed zoom-in drop-shadow-md"></p>
                 </div>
             </div>
 
-            <div id="quiz-options" class="mt-auto mb-6 flex flex-col w-full space-y-3 zoom-in" style="animation-delay: 0.1s;">
+            <div id="quiz-options" class="mt-auto mb-4 flex flex-col w-full space-y-3 zoom-in" style="animation-delay: 0.1s;">
                 <!-- Buttons generated dynamically -->
             </div>
         </div>
 
-        <!-- 4. RESULT VIEW -->
-        <div id="result-view" class="hidden flex-col h-full w-full justify-center items-center p-6 text-center z-20 backdrop-blur-md">
-            <h2 id="result-title" class="text-5xl sm:text-6xl font-black uppercase mb-2 leading-none drop-shadow-lg"></h2>
-            <p id="result-subtitle" class="text-lg font-bold text-zinc-400 mb-10 uppercase tracking-[0.2em]"></p>
+        <!-- RESULT VIEW -->
+        <div id="result-view" class="hidden flex-col h-full w-full justify-center items-center p-6 text-center bg-[radial-gradient(circle_at_center,_#18181b_0%,_#000000_100%)]">
+            <div id="result-icon" class="text-6xl mb-4 zoom-in"></div>
+            <h2 id="result-title" class="text-4xl font-black uppercase mb-2 leading-none zoom-in" style="animation-delay: 0.1s;"></h2>
+            <p id="result-subtitle" class="text-sm font-bold text-zinc-400 mb-10 uppercase tracking-widest zoom-in" style="animation-delay: 0.2s;"></p>
             
-            <div class="text-[6rem] sm:text-[7rem] font-black leading-none mb-auto mt-10" id="final-score"></div>
+            <div class="text-[5rem] font-black leading-none mb-auto mt-4 zoom-in" style="animation-delay: 0.3s;" id="final-score"></div>
             
-            <button id="result-btn" class="w-full mt-auto mb-8 py-5 rounded-xl text-2xl font-black active:scale-95 transition-transform uppercase shadow-2xl">
+            <button id="result-btn" class="w-full mt-auto mb-8 py-5 rounded-xl text-2xl font-black active:scale-95 transition-transform uppercase zoom-in" style="animation-delay: 0.4s;">
             </button>
         </div>
 
