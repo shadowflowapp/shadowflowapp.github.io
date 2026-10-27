@@ -4,124 +4,54 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Dictionary Challenge</title>
-    <!-- Confetti Library for the win effect -->
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
         
-        /* PC Background */
-        body { 
-            background-color: #0a0a0a; 
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
-            height: 100dvh; /* dvh fixes mobile browser UI cutoffs */
-            overflow: hidden;
-        }
+        body { background-color: #0a0a0a; display: flex; justify-content: center; align-items: center; height: 100dvh; overflow: hidden; }
 
-        /* Mobile Viewport Lock */
         #app-container {
-            width: 100%;
-            max-width: 400px;
-            height: 100dvh;
-            max-height: 850px;
-            background-color: #121212;
-            color: #ffffff;
-            display: flex;
-            flex-direction: column;
-            position: relative;
-            box-shadow: 0 0 30px rgba(0,0,0,0.8);
-            border-radius: 12px;
-            overflow: hidden;
+            width: 100%; max-width: 400px; height: 100dvh; max-height: 850px;
+            background-color: #121212; color: #ffffff; display: flex; flex-direction: column;
+            position: relative; box-shadow: 0 0 30px rgba(0,0,0,0.8); border-radius: 12px; overflow: hidden;
         }
-        
-        @media (max-width: 400px) {
-            #app-container { border-radius: 0; }
-        }
+        @media (max-width: 400px) { #app-container { border-radius: 0; } }
 
-        #header { 
-            padding: 15px; 
-            font-size: 1.2rem; 
-            font-weight: bold; 
-            background: #1f1f1f; 
-            border-bottom: 2px solid #00e5ff; 
-            text-align: center; 
-            flex-shrink: 0;
-            z-index: 10; 
-        }
+        #header { padding: 15px; font-size: 1.2rem; font-weight: bold; background: #1f1f1f; border-bottom: 2px solid #00e5ff; text-align: center; flex-shrink: 0; z-index: 10; }
         .score-highlight { color: #00e5ff; font-size: 1.5rem; }
         
-        /* Normal Flashcard UI */
-        #flashcard { 
-            flex: 1; 
-            display: flex; 
-            flex-direction: column; 
-            justify-content: center; 
-            align-items: center; 
-            padding: 20px; 
-            text-align: center; 
-            overflow-y: auto;
-        }
+        #flashcard { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 20px; text-align: center; overflow-y: auto; }
         
         #word { font-size: 3rem; font-weight: 900; margin-bottom: 5px; letter-spacing: 1px; text-transform: capitalize; }
+        
+        /* New Pronunciation Styles */
+        #pronunciation { display: flex; gap: 10px; font-size: 1.1rem; margin-bottom: 10px; color: #aaaaaa; }
+        #ipa { font-family: 'Courier New', Courier, monospace; }
+        #thai-pronounce { color: #ffcc00; }
+        
         #pos { font-size: 1.2rem; color: #ff5555; margin-bottom: 15px; font-style: italic; }
         #thai { font-size: 2rem; color: #4CAF50; margin-bottom: 30px; line-height: 1.2; }
         
-        .btn { 
-            padding: 15px 10px; 
-            font-size: 1.1rem; 
-            font-weight: bold; 
-            border: none; 
-            border-radius: 12px; 
-            cursor: pointer; 
-            transition: 0.1s; 
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
+        .btn { padding: 15px 10px; font-size: 1.1rem; font-weight: bold; border: none; border-radius: 12px; cursor: pointer; transition: 0.1s; display: flex; justify-content: center; align-items: center; }
         .btn:active { transform: scale(0.95); }
         
-        #audio-btn { 
-            background: #0088ff; 
-            color: white; 
-            margin-bottom: 30px; 
-            border-radius: 50%; 
-            width: 65px; 
-            height: 65px; 
-            font-size: 1.5rem; 
-            box-shadow: 0 4px 10px rgba(0, 136, 255, 0.4);
-        }
+        #audio-btn { background: #0088ff; color: white; margin-bottom: 30px; border-radius: 50%; width: 65px; height: 65px; font-size: 1.5rem; box-shadow: 0 4px 10px rgba(0, 136, 255, 0.4); }
         
-        /* Bottom Controls Fixed Layout */
-        #controls { 
-            display: flex; 
-            gap: 15px;
-            padding: 15px 20px 25px 20px; /* Extra bottom padding for iPhone home bar */
-            background: #1f1f1f; 
-            flex-shrink: 0;
-            z-index: 10; 
-        }
+        #controls { display: flex; gap: 15px; padding: 15px 20px 25px 20px; background: #1f1f1f; flex-shrink: 0; z-index: 10; }
         #back-btn { background: #333; color: white; flex: 1; }
         #next-btn { background: #00e5ff; color: #000; flex: 1.5; box-shadow: 0 0 10px rgba(0, 229, 255, 0.4); }
         
-        /* VAULT LOCKDOWN UI (New Smooth Theme) */
         #quiz-container { 
-            display: none; 
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
+            display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
             background: linear-gradient(135deg, #1a0000 0%, #4d0000 100%);
             flex-direction: column; justify-content: center; align-items: center; 
             padding: 20px; text-align: center; z-index: 20;
         }
         
         .smooth-breathe { animation: breathe 2s infinite alternate; }
-        @keyframes breathe {
-            from { box-shadow: inset 0 0 0px #ff0000; }
-            to { box-shadow: inset 0 0 40px #ff0000; }
-        }
+        @keyframes breathe { from { box-shadow: inset 0 0 0px #ff0000; } to { box-shadow: inset 0 0 40px #ff0000; } }
 
         .lockdown-title { font-size: 1.8rem; color: #ff3333; font-weight: 900; letter-spacing: 3px; margin-bottom: 15px; text-transform: uppercase; }
-        
-        /* Visual Timer Bar */
         #timer-bar-container { width: 100%; height: 12px; background: #333; border-radius: 10px; margin-bottom: 20px; overflow: hidden; }
         #timer-bar { height: 100%; width: 100%; background: #ff3333; transition: width 0.1s linear; }
         
@@ -136,17 +66,12 @@
         .quiz-option.correct { background: #4CAF50; border-color: #4CAF50; }
         .quiz-option.wrong { background: #ff3333; border-color: #ff3333; }
 
-        #loading-screen {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: #121212; display: flex; flex-direction: column;
-            justify-content: center; align-items: center; z-index: 50;
-        }
+        #loading-screen { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #121212; display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 50; }
     </style>
 </head>
 <body>
 
 <div id="app-container">
-    <!-- Loading overlay while fetching DB -->
     <div id="loading-screen">
         <h2 style="color: #00e5ff; margin-bottom: 15px;">Loading Database...</h2>
         <div style="width: 50px; height: 50px; border: 5px solid #333; border-top: 5px solid #00e5ff; border-radius: 50%; animation: spin 1s linear infinite;"></div>
@@ -157,20 +82,21 @@
         Words Banked: <span id="score" class="score-highlight">0</span>
     </div>
 
-    <!-- Main Flashcard -->
     <div id="flashcard">
         <div id="word">...</div>
+        <div id="pronunciation">
+            <span id="ipa">...</span> &bull; <span id="thai-pronounce">...</span>
+        </div>
         <div id="pos">...</div>
         <button id="audio-btn" class="btn" onclick="playAudio()">🔊</button>
         <div id="thai">...</div>
     </div>
 
-    <!-- Vault Lockdown Container -->
     <div id="quiz-container">
         <div class="lockdown-title">🔒 VAULT LOCKDOWN 🔒</div>
         <div id="timer-bar-container"><div id="timer-bar"></div></div>
-        <div style="color: #ccc; margin-bottom: 5px; font-size: 0.9rem;">Prove your knowledge to secure the vault!</div>
-        <div style="font-size: 1.1rem; color: #00e5ff; margin-bottom: 15px;">Security Check: <span id="quiz-progress">1/3</span></div>
+        <div style="color: #ccc; margin-bottom: 5px; font-size: 0.9rem;">Clear all 10 words to advance!</div>
+        <div style="font-size: 1.1rem; color: #00e5ff; margin-bottom: 15px;">Security Check: <span id="quiz-progress">1/10</span></div>
         <div id="quiz-word">...</div>
         <div id="quiz-options" style="width: 100%; overflow-y: auto;"></div>
     </div>
