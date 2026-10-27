@@ -30,6 +30,7 @@ async function initApp() {
 
 // --- SOUND EFFECTS ENGINE ---
 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
 function playBeep(freq, type, duration) {
     if(audioCtx.state === 'suspended') audioCtx.resume();
     let osc = audioCtx.createOscillator();
@@ -38,6 +39,30 @@ function playBeep(freq, type, duration) {
     osc.connect(audioCtx.destination);
     osc.start();
     osc.stop(audioCtx.currentTime + duration);
+}
+
+// Custom arcade-style "Level Up / Coin" chime for correct answers
+function playCorrectSound() {
+    if(audioCtx.state === 'suspended') audioCtx.resume();
+    let now = audioCtx.currentTime;
+    
+    let osc = audioCtx.createOscillator();
+    let gainNode = audioCtx.createGain();
+    
+    osc.type = 'sine';
+    // Ascending 2-note arpeggio (C6 -> E6)
+    osc.frequency.setValueAtTime(1046.50, now);          
+    osc.frequency.setValueAtTime(1318.51, now + 0.1);    
+    
+    // Quick fade out so it sounds punchy
+    gainNode.gain.setValueAtTime(0.3, now);
+    gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
+    
+    osc.connect(gainNode);
+    gainNode.connect(audioCtx.destination);
+    
+    osc.start(now);
+    osc.stop(now + 0.3);
 }
 
 function playAudio(word = null) {
@@ -119,34 +144,50 @@ let currentQuizWord = {};
 function startGauntlet() {
     document.getElementById('quiz-container').style.display = 'flex';
     document.getElementById('app-container').classList.add('danger-pulse');
-    playBeep(200, 'sawtooth', 0.5); // Intense start sound
+    
+    playBeep(200, 'sawtooth', 0.6); // Intense start buzz
 
     // Extract exactly the 10 words they just learned and shuffle them
     const batchWords = db.slice(currentIndex - 9, currentIndex + 1);
     quizBatchQueue = batchWords.sort(() => Math.random() - 0.5);
 
-    timeLeft = MAX_TIME;
-    currentQuestionIndex = 0;
-    generateQuizQuestion();
+    // Show a READY screen briefly so the start buzz and TTS audio do NOT overlap
+    document.getElementById('timer-text').innerText = "READY!";
+    document.getElementById('quiz-word').innerHTML = "";
+    document.getElementById('quiz-options').innerHTML = '';
     
-    gauntletTimer = setInterval(() => {
-        timeLeft -= 0.1;
-        document.getElementById('timer-text').innerText = Math.max(0, timeLeft).toFixed(1);
+    setTimeout(() => {
+        timeLeft = MAX_TIME;
+        currentQuestionIndex = 0;
+        generateQuizQuestion();
         
-        // Heartbeat tempo increases when time is under 5 seconds
-        if(timeLeft < 5.0 && timeLeft > 0) {
-            if(Math.floor(timeLeft * 10) % 10 === 0) playBeep(800, 'square', 0.05);
-        }
+        gauntletTimer = setInterval(() => {
+            timeLeft -= 0.1;
+            document.getElementById('timer-text').innerText = Math.max(0, timeLeft).toFixed(1);
+            
+            // Heartbeat tempo increases when time is under 5 seconds
+            if(timeLeft < 5.0 && timeLeft > 0) {
+                if(Math.floor(timeLeft * 10) % 10 === 0) playBeep(800, 'square', 0.05);
+            }
 
-        if (timeLeft <= 0) {
-            failGauntlet();
-        }
-    }, 100);
+            if (timeLeft <= 0) {
+                failGauntlet();
+            }
+        }, 100);
+    }, 600); // 600ms delay gives the start buzz time to finish
 }
 
 function generateQuizQuestion() {
     currentQuizWord = quizBatchQueue[currentQuestionIndex];
-    document.getElementById('quiz-word').innerText = currentQuizWord.w.toUpperCase();
+    
+    // Inject Word + Part of Speech dynamically
+    document.getElementById('quiz-word').innerHTML = `
+        ${currentQuizWord.w.toUpperCase()} 
+        <br>
+        <span style="font-size: 1.5rem; color: #ff007f; font-family: 'Nunito', sans-serif; background: #222; padding: 2px 10px; border-radius: 10px; border: 2px solid #000;">
+            ${currentQuizWord.p}
+        </span>
+    `;
     
     // Auto-play audio on question load
     playAudio(currentQuizWord.w);
@@ -196,7 +237,7 @@ function checkAnswer(selectedThai, buttonElement) {
     Array.from(document.getElementsByClassName('quiz-option')).forEach(b => b.style.pointerEvents = 'none');
 
     if (selectedThai === currentQuizWord.t) {
-        playBeep(1200, 'sine', 0.1); // Success ding
+        playCorrectSound(); // Play the new satisfying arcade chime
         buttonElement.classList.add('correct');
         
         setTimeout(() => {
