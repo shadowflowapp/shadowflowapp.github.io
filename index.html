@@ -3,107 +3,176 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Dictionary Challenge</title>
+    <title>Mr. Beast Word Challenge</title>
+    <!-- Confetti Library -->
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <!-- Loud, Impactful Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Bangers&family=Nunito:wght@800;900&display=swap" rel="stylesheet">
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
         
-        body { background-color: #0a0a0a; display: flex; justify-content: center; align-items: center; height: 100dvh; overflow: hidden; }
+        body { 
+            background: #000; 
+            display: flex; justify-content: center; align-items: center; 
+            height: 100dvh; overflow: hidden; 
+            font-family: 'Nunito', sans-serif;
+        }
 
         #app-container {
-            width: 100%; max-width: 400px; height: 100dvh; max-height: 850px;
-            background-color: #121212; color: #ffffff; display: flex; flex-direction: column;
-            position: relative; box-shadow: 0 0 30px rgba(0,0,0,0.8); border-radius: 12px; overflow: hidden;
+            width: 100%; max-width: 420px; height: 100dvh; max-height: 900px;
+            background: radial-gradient(circle, #2a0066 0%, #000000 100%);
+            color: #fff; display: flex; flex-direction: column;
+            position: relative; box-shadow: 0 0 50px rgba(0,229,255,0.3); 
+            border-radius: 20px; overflow: hidden;
+            border: 4px solid #111;
         }
-        @media (max-width: 400px) { #app-container { border-radius: 0; } }
+        @media (max-width: 420px) { #app-container { border-radius: 0; border: none; } }
 
-        #header { padding: 15px; font-size: 1.2rem; font-weight: bold; background: #1f1f1f; border-bottom: 2px solid #00e5ff; text-align: center; flex-shrink: 0; z-index: 10; }
-        .score-highlight { color: #00e5ff; font-size: 1.5rem; }
+        /* HEADER */
+        #header { 
+            padding: 15px; text-align: center; font-size: 1.5rem; 
+            font-family: 'Bangers', cursive; letter-spacing: 2px;
+            background: #ffe600; color: #000;
+            border-bottom: 6px solid #ccb800;
+            flex-shrink: 0; z-index: 10;
+        }
+
+        /* FLASHCARD AREA */
+        #flashcard { 
+            flex: 1; display: flex; flex-direction: column; 
+            justify-content: center; align-items: center; 
+            padding: 20px; text-align: center;
+        }
         
-        #flashcard { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 20px; text-align: center; overflow-y: auto; }
+        #word { 
+            font-family: 'Bangers', cursive; font-size: 4.5rem; 
+            color: #ffffff; letter-spacing: 2px; line-height: 1;
+            text-shadow: 4px 4px 0 #000, -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000;
+            margin-bottom: 10px;
+        }
         
-        #word { font-size: 3rem; font-weight: 900; margin-bottom: 5px; letter-spacing: 1px; text-transform: capitalize; }
+        #pronunciation { 
+            font-size: 1.3rem; font-weight: 900; margin-bottom: 15px; 
+            color: #00e5ff; text-shadow: 2px 2px 0 #000;
+        }
+        #ipa { color: #ff007f; }
         
-        /* New Pronunciation Styles */
-        #pronunciation { display: flex; gap: 10px; font-size: 1.1rem; margin-bottom: 10px; color: #aaaaaa; }
-        #ipa { font-family: 'Courier New', Courier, monospace; }
-        #thai-pronounce { color: #ffcc00; }
+        #pos { 
+            background: #ff007f; color: white; padding: 5px 15px; 
+            border-radius: 20px; font-weight: 900; text-transform: uppercase; 
+            font-size: 1rem; border: 3px solid #000; box-shadow: 3px 3px 0 #000;
+            margin-bottom: 25px;
+        }
+
+        #audio-btn { 
+            background: #00e5ff; color: #000; 
+            width: 80px; height: 80px; border-radius: 50%; 
+            font-size: 2.5rem; display: flex; justify-content: center; align-items: center;
+            border: 4px solid #000; cursor: pointer;
+            box-shadow: 0 8px 0 #008899, 0 15px 20px rgba(0,0,0,0.5);
+            margin-bottom: 30px; transition: 0.1s;
+        }
+        #audio-btn:active { transform: translateY(8px); box-shadow: 0 0px 0 #008899; }
         
-        #pos { font-size: 1.2rem; color: #ff5555; margin-bottom: 15px; font-style: italic; }
-        #thai { font-size: 2rem; color: #4CAF50; margin-bottom: 30px; line-height: 1.2; }
+        #thai { 
+            font-size: 3rem; color: #ffe600; font-weight: 900; 
+            text-shadow: 3px 3px 0 #000, -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000;
+            line-height: 1.1;
+        }
         
-        .btn { padding: 15px 10px; font-size: 1.1rem; font-weight: bold; border: none; border-radius: 12px; cursor: pointer; transition: 0.1s; display: flex; justify-content: center; align-items: center; }
-        .btn:active { transform: scale(0.95); }
+        /* BOTTOM CONTROLS */
+        #controls { 
+            display: flex; gap: 15px; padding: 20px; 
+            background: rgba(0,0,0,0.8); flex-shrink: 0;
+        }
         
-        #audio-btn { background: #0088ff; color: white; margin-bottom: 30px; border-radius: 50%; width: 65px; height: 65px; font-size: 1.5rem; box-shadow: 0 4px 10px rgba(0, 136, 255, 0.4); }
+        .nav-btn {
+            flex: 1; padding: 20px; font-size: 1.5rem; font-weight: 900; 
+            border: 4px solid #000; border-radius: 15px; cursor: pointer;
+            text-transform: uppercase; transition: 0.1s;
+        }
+        #back-btn { background: #fff; color: #000; box-shadow: 0 6px 0 #999; }
+        #back-btn:active { transform: translateY(6px); box-shadow: 0 0px 0 #999; }
         
-        #controls { display: flex; gap: 15px; padding: 15px 20px 25px 20px; background: #1f1f1f; flex-shrink: 0; z-index: 10; }
-        #back-btn { background: #333; color: white; flex: 1; }
-        #next-btn { background: #00e5ff; color: #000; flex: 1.5; box-shadow: 0 0 10px rgba(0, 229, 255, 0.4); }
-        
+        #next-btn { background: #ffe600; color: #000; box-shadow: 0 6px 0 #ccb800; flex: 1.5; font-size: 1.8rem; }
+        #next-btn:active { transform: translateY(6px); box-shadow: 0 0px 0 #ccb800; }
+
+        /* THE GAUNTLET QUIZ (Game Show Vibe) */
         #quiz-container { 
             display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
-            background: linear-gradient(135deg, #1a0000 0%, #4d0000 100%);
-            flex-direction: column; justify-content: center; align-items: center; 
-            padding: 20px; text-align: center; z-index: 20;
+            background: repeating-linear-gradient(45deg, #111, #111 20px, #000 20px, #000 40px);
+            flex-direction: column; justify-content: space-between; align-items: center; 
+            padding: 20px 15px 40px 15px; z-index: 20;
         }
-        
-        .smooth-breathe { animation: breathe 2s infinite alternate; }
-        @keyframes breathe { from { box-shadow: inset 0 0 0px #ff0000; } to { box-shadow: inset 0 0 40px #ff0000; } }
 
-        .lockdown-title { font-size: 1.8rem; color: #ff3333; font-weight: 900; letter-spacing: 3px; margin-bottom: 15px; text-transform: uppercase; }
-        #timer-bar-container { width: 100%; height: 12px; background: #333; border-radius: 10px; margin-bottom: 20px; overflow: hidden; }
-        #timer-bar { height: 100%; width: 100%; background: #ff3333; transition: width 0.1s linear; }
-        
-        #quiz-word { font-size: 2.2rem; font-weight: bold; margin-bottom: 20px; color: white; }
+        .danger-pulse { animation: dangerBg 0.5s infinite alternate; }
+        @keyframes dangerBg { from { box-shadow: inset 0 0 20px #ff0000; } to { box-shadow: inset 0 0 80px #ff0000; } }
+
+        #timer-text {
+            font-family: 'Bangers', cursive; font-size: 5rem; color: #fff;
+            text-shadow: 4px 4px 0 #ff0000; margin-top: 10px; line-height: 1;
+        }
+
+        #quiz-word { 
+            font-family: 'Bangers', cursive; font-size: 4rem; color: #ffe600; 
+            text-shadow: 4px 4px 0 #000; text-align: center; width: 100%;
+            margin-bottom: auto; margin-top: 20vh;
+        }
+
+        /* 2x2 Grid for Answers */
+        #quiz-options { 
+            display: grid; grid-template-columns: 1fr 1fr; gap: 15px; 
+            width: 100%; margin-top: auto;
+        }
         
         .quiz-option { 
-            background: #1f1f1f; color: #fff; margin: 8px 0; padding: 15px; width: 100%; 
-            border-radius: 10px; font-size: 1.2rem; font-weight: bold; border: 1px solid #444; 
-            cursor: pointer; transition: 0.1s;
+            padding: 25px 10px; font-size: 1.8rem; font-weight: 900; 
+            color: #fff; border: 4px solid #000; border-radius: 15px; 
+            cursor: pointer; display: flex; justify-content: center; align-items: center;
+            text-shadow: 2px 2px 0 #000; transition: 0.1s; text-align: center;
         }
-        .quiz-option:active { transform: translateY(2px); background: #333; }
-        .quiz-option.correct { background: #4CAF50; border-color: #4CAF50; }
-        .quiz-option.wrong { background: #ff3333; border-color: #ff3333; }
+        
+        /* Kahoot Style Colors */
+        .opt-0 { background: #e21b3c; box-shadow: 0 8px 0 #8c1024; }
+        .opt-1 { background: #1368ce; box-shadow: 0 8px 0 #0c4284; }
+        .opt-2 { background: #d89e00; box-shadow: 0 8px 0 #8a6500; }
+        .opt-3 { background: #26890c; box-shadow: 0 8px 0 #185707; }
 
-        #loading-screen { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #121212; display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 50; }
+        .quiz-option:active { transform: translateY(8px); box-shadow: 0 0px 0 #000 !important; }
+
+        .quiz-option.correct { background: #00ff00 !important; color: #000; text-shadow: none; box-shadow: 0 8px 0 #009900 !important; }
+        .quiz-option.wrong { background: #333 !important; color: #555; text-shadow: none; box-shadow: 0 8px 0 #111 !important; opacity: 0.5; }
+
+        #loading-screen { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #000; display: flex; justify-content: center; align-items: center; z-index: 50; color: #ffe600; font-family: 'Bangers', cursive; font-size: 3rem; }
     </style>
 </head>
 <body>
 
 <div id="app-container">
-    <div id="loading-screen">
-        <h2 style="color: #00e5ff; margin-bottom: 15px;">Loading Database...</h2>
-        <div style="width: 50px; height: 50px; border: 5px solid #333; border-top: 5px solid #00e5ff; border-radius: 50%; animation: spin 1s linear infinite;"></div>
-        <style>@keyframes spin { 100% { transform: rotate(360deg); } }</style>
-    </div>
+    <div id="loading-screen">LOADING...</div>
 
-    <div id="header">
-        Words Banked: <span id="score" class="score-highlight">0</span>
-    </div>
+    <div id="header">WORDS CONQUERED: <span id="score">0</span></div>
 
     <div id="flashcard">
+        <div id="pos">...</div>
         <div id="word">...</div>
         <div id="pronunciation">
             <span id="ipa">...</span> &bull; <span id="thai-pronounce">...</span>
         </div>
-        <div id="pos">...</div>
-        <button id="audio-btn" class="btn" onclick="playAudio()">🔊</button>
+        <button id="audio-btn" onclick="playAudio()">▶</button>
         <div id="thai">...</div>
     </div>
 
+    <!-- The Gauntlet -->
     <div id="quiz-container">
-        <div class="lockdown-title">🔒 VAULT LOCKDOWN 🔒</div>
-        <div id="timer-bar-container"><div id="timer-bar"></div></div>
-        <div style="color: #ccc; margin-bottom: 5px; font-size: 0.9rem;">Clear all 10 words to advance!</div>
-        <div style="font-size: 1.1rem; color: #00e5ff; margin-bottom: 15px;">Security Check: <span id="quiz-progress">1/10</span></div>
+        <div id="timer-text">30.0</div>
         <div id="quiz-word">...</div>
-        <div id="quiz-options" style="width: 100%; overflow-y: auto;"></div>
+        <div id="quiz-options"></div>
     </div>
 
     <div id="controls">
-        <button id="back-btn" class="btn" onclick="prevWord()">BACK</button>
-        <button id="next-btn" class="btn" onclick="nextWord()">NEXT ⚡</button>
+        <button id="back-btn" class="nav-btn" onclick="prevWord()">Back</button>
+        <button id="next-btn" class="nav-btn" onclick="nextWord()">NEXT!</button>
     </div>
 </div>
 
