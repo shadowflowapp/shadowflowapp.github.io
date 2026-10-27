@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Dictionary Challenge</title>
-    <!-- Confetti Library for Mr. Beast vibes -->
+    <!-- Confetti Library for the win effect -->
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
@@ -15,117 +15,169 @@
             display: flex; 
             justify-content: center; 
             align-items: center; 
-            height: 100vh; 
+            height: 100dvh; /* dvh fixes mobile browser UI cutoffs */
+            overflow: hidden;
         }
 
         /* Mobile Viewport Lock */
         #app-container {
             width: 100%;
-            max-width: 400px; /* Locks width for PC */
-            height: 100vh;
-            max-height: 850px; /* Locks height for PC */
+            max-width: 400px;
+            height: 100dvh;
+            max-height: 850px;
             background-color: #121212;
             color: #ffffff;
             display: flex;
             flex-direction: column;
             position: relative;
-            overflow: hidden;
             box-shadow: 0 0 30px rgba(0,0,0,0.8);
             border-radius: 12px;
+            overflow: hidden;
         }
         
-        /* Remove border radius on actual mobile */
         @media (max-width: 400px) {
-            #app-container { max-height: 100vh; border-radius: 0; }
+            #app-container { border-radius: 0; }
         }
 
-        #header { padding: 20px; font-size: 1.2rem; font-weight: bold; background: #1f1f1f; border-bottom: 2px solid #ffcc00; text-align: center; z-index: 10; }
-        .score-highlight { color: #ffcc00; font-size: 1.5rem; }
+        #header { 
+            padding: 15px; 
+            font-size: 1.2rem; 
+            font-weight: bold; 
+            background: #1f1f1f; 
+            border-bottom: 2px solid #00e5ff; 
+            text-align: center; 
+            flex-shrink: 0;
+            z-index: 10; 
+        }
+        .score-highlight { color: #00e5ff; font-size: 1.5rem; }
         
         /* Normal Flashcard UI */
-        #flashcard { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 20px; text-align: center; }
-        #word { font-size: 3.5rem; font-weight: 900; margin-bottom: 10px; letter-spacing: 1px; text-transform: capitalize; }
-        #pos { font-size: 1.5rem; color: #ff5555; margin-bottom: 20px; font-style: italic; }
-        #thai { font-size: 2.5rem; color: #4CAF50; margin-bottom: 40px; }
+        #flashcard { 
+            flex: 1; 
+            display: flex; 
+            flex-direction: column; 
+            justify-content: center; 
+            align-items: center; 
+            padding: 20px; 
+            text-align: center; 
+            overflow-y: auto;
+        }
         
-        .btn { padding: 15px 20px; font-size: 1.2rem; font-weight: bold; border: none; border-radius: 50px; cursor: pointer; transition: 0.1s; }
+        #word { font-size: 3rem; font-weight: 900; margin-bottom: 5px; letter-spacing: 1px; text-transform: capitalize; }
+        #pos { font-size: 1.2rem; color: #ff5555; margin-bottom: 15px; font-style: italic; }
+        #thai { font-size: 2rem; color: #4CAF50; margin-bottom: 30px; line-height: 1.2; }
+        
+        .btn { 
+            padding: 15px 10px; 
+            font-size: 1.1rem; 
+            font-weight: bold; 
+            border: none; 
+            border-radius: 12px; 
+            cursor: pointer; 
+            transition: 0.1s; 
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
         .btn:active { transform: scale(0.95); }
         
-        #audio-btn { background: #0088ff; color: white; margin-bottom: 40px; border-radius: 50%; width: 70px; height: 70px; font-size: 1.5rem; display: flex; justify-content: center; align-items: center; }
+        #audio-btn { 
+            background: #0088ff; 
+            color: white; 
+            margin-bottom: 30px; 
+            border-radius: 50%; 
+            width: 65px; 
+            height: 65px; 
+            font-size: 1.5rem; 
+            box-shadow: 0 4px 10px rgba(0, 136, 255, 0.4);
+        }
         
-        #controls { display: flex; justify-content: space-between; padding: 20px; background: #1f1f1f; z-index: 10; }
-        #back-btn { background: #333; color: white; width: 45%; }
-        #next-btn { background: #ffcc00; color: #000; width: 45%; }
+        /* Bottom Controls Fixed Layout */
+        #controls { 
+            display: flex; 
+            gap: 15px;
+            padding: 15px 20px 25px 20px; /* Extra bottom padding for iPhone home bar */
+            background: #1f1f1f; 
+            flex-shrink: 0;
+            z-index: 10; 
+        }
+        #back-btn { background: #333; color: white; flex: 1; }
+        #next-btn { background: #00e5ff; color: #000; flex: 1.5; box-shadow: 0 0 10px rgba(0, 229, 255, 0.4); }
         
-        /* DEATHRUN QUIZ UI */
+        /* VAULT LOCKDOWN UI (New Smooth Theme) */
         #quiz-container { 
             display: none; 
             position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
-            background: #990000; 
+            background: linear-gradient(135deg, #1a0000 0%, #4d0000 100%);
             flex-direction: column; justify-content: center; align-items: center; 
             padding: 20px; text-align: center; z-index: 20;
         }
         
-        .timer { font-size: 4rem; font-weight: 900; color: #ffcc00; margin-bottom: 10px; text-shadow: 2px 2px 0 #000; }
-        .death-title { font-size: 2rem; color: white; font-weight: 900; letter-spacing: 2px; margin-bottom: 20px; text-transform: uppercase; animation: pulse 0.5s infinite alternate; }
-        #quiz-word { font-size: 2.5rem; font-weight: bold; margin-bottom: 20px; color: white; }
+        .smooth-breathe { animation: breathe 2s infinite alternate; }
+        @keyframes breathe {
+            from { box-shadow: inset 0 0 0px #ff0000; }
+            to { box-shadow: inset 0 0 40px #ff0000; }
+        }
+
+        .lockdown-title { font-size: 1.8rem; color: #ff3333; font-weight: 900; letter-spacing: 3px; margin-bottom: 15px; text-transform: uppercase; }
+        
+        /* Visual Timer Bar */
+        #timer-bar-container { width: 100%; height: 12px; background: #333; border-radius: 10px; margin-bottom: 20px; overflow: hidden; }
+        #timer-bar { height: 100%; width: 100%; background: #ff3333; transition: width 0.1s linear; }
+        
+        #quiz-word { font-size: 2.2rem; font-weight: bold; margin-bottom: 20px; color: white; }
         
         .quiz-option { 
-            background: #ffffff; color: #000; margin: 10px 0; padding: 15px; width: 100%; 
-            border-radius: 10px; font-size: 1.4rem; font-weight: bold; border: none; cursor: pointer;
-            box-shadow: 0 4px 0 #cccccc;
+            background: #1f1f1f; color: #fff; margin: 8px 0; padding: 15px; width: 100%; 
+            border-radius: 10px; font-size: 1.2rem; font-weight: bold; border: 1px solid #444; 
+            cursor: pointer; transition: 0.1s;
         }
-        .quiz-option:active { transform: translateY(4px); box-shadow: none; }
+        .quiz-option:active { transform: translateY(2px); background: #333; }
+        .quiz-option.correct { background: #4CAF50; border-color: #4CAF50; }
+        .quiz-option.wrong { background: #ff3333; border-color: #ff3333; }
 
-        /* Animations */
-        @keyframes pulse { from { transform: scale(1); } to { transform: scale(1.05); } }
-        @keyframes shake {
-            0% { transform: translate(1px, 1px) rotate(0deg); }
-            10% { transform: translate(-1px, -2px) rotate(-1deg); }
-            20% { transform: translate(-3px, 0px) rotate(1deg); }
-            30% { transform: translate(3px, 2px) rotate(0deg); }
-            40% { transform: translate(1px, -1px) rotate(1deg); }
-            50% { transform: translate(-1px, 2px) rotate(-1deg); }
-            60% { transform: translate(-3px, 1px) rotate(0deg); }
-            70% { transform: translate(3px, 1px) rotate(-1deg); }
-            80% { transform: translate(-1px, -1px) rotate(1deg); }
-            90% { transform: translate(1px, 2px) rotate(0deg); }
-            100% { transform: translate(1px, -2px) rotate(-1deg); }
+        #loading-screen {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: #121212; display: flex; flex-direction: column;
+            justify-content: center; align-items: center; z-index: 50;
         }
-        .shaking { animation: shake 0.3s; animation-iteration-count: infinite; }
-
-        /* Dim flashcard when loading */
-        .hidden { display: none !important; }
     </style>
 </head>
 <body>
 
 <div id="app-container">
+    <!-- Loading overlay while fetching DB -->
+    <div id="loading-screen">
+        <h2 style="color: #00e5ff; margin-bottom: 15px;">Loading Database...</h2>
+        <div style="width: 50px; height: 50px; border: 5px solid #333; border-top: 5px solid #00e5ff; border-radius: 50%; animation: spin 1s linear infinite;"></div>
+        <style>@keyframes spin { 100% { transform: rotate(360deg); } }</style>
+    </div>
+
     <div id="header">
-        Words Conquered: <span id="score" class="score-highlight">0</span>
+        Words Banked: <span id="score" class="score-highlight">0</span>
     </div>
 
     <!-- Main Flashcard -->
     <div id="flashcard">
-        <div id="word">Loading...</div>
+        <div id="word">...</div>
         <div id="pos">...</div>
         <button id="audio-btn" class="btn" onclick="playAudio()">🔊</button>
         <div id="thai">...</div>
     </div>
 
-    <!-- Deathrun Container -->
+    <!-- Vault Lockdown Container -->
     <div id="quiz-container">
-        <div class="death-title">☠️ DEATHRUN ☠️</div>
-        <div id="timer" class="timer">10.0</div>
-        <div style="color: white; margin-bottom: 5px;">Match 3 words to survive!</div>
-        <div style="font-size: 1.2rem; color: #ffcc00; margin-bottom: 20px;">Progress: <span id="quiz-progress">1/3</span></div>
+        <div class="lockdown-title">🔒 VAULT LOCKDOWN 🔒</div>
+        <div id="timer-bar-container"><div id="timer-bar"></div></div>
+        <div style="color: #ccc; margin-bottom: 5px; font-size: 0.9rem;">Prove your knowledge to secure the vault!</div>
+        <div style="font-size: 1.1rem; color: #00e5ff; margin-bottom: 15px;">Security Check: <span id="quiz-progress">1/3</span></div>
         <div id="quiz-word">...</div>
-        <div id="quiz-options" style="width: 100%;"></div>
+        <div id="quiz-options" style="width: 100%; overflow-y: auto;"></div>
     </div>
 
     <div id="controls">
         <button id="back-btn" class="btn" onclick="prevWord()">BACK</button>
-        <button id="next-btn" class="btn" onclick="nextWord()">NEXT 🔥</button>
+        <button id="next-btn" class="btn" onclick="nextWord()">NEXT ⚡</button>
     </div>
 </div>
 
