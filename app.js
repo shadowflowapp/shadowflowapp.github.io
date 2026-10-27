@@ -22,7 +22,6 @@ async function initApp() {
     }
 }
 
-// Buzzy UI sounds using Web Audio API
 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 function playBeep(freq, type, duration) {
     if(audioCtx.state === 'suspended') audioCtx.resume();
@@ -37,6 +36,10 @@ function playBeep(freq, type, duration) {
 function playAudio(word = null) {
     if (db.length === 0) return;
     const textToSpeak = word || db[currentIndex].w;
+    
+    // Stop any currently playing audio so it doesn't overlap in rapid-fire quiz mode
+    synth.cancel(); 
+    
     const utterance = new SpeechSynthesisUtterance(textToSpeak);
     if(americanMaleVoice) utterance.voice = americanMaleVoice;
     utterance.rate = 0.85; 
@@ -47,8 +50,7 @@ function updateUI() {
     if (db.length === 0) return;
     const currentWord = db[currentIndex];
     document.getElementById('word').innerText = currentWord.w.toUpperCase();
-    document.getElementById('ipa').innerText = currentWord.i || "";
-    document.getElementById('thai-pronounce').innerText = currentWord.tp || "";
+    document.getElementById('pronunciation').innerText = currentWord.i || "";
     document.getElementById('pos').innerText = currentWord.p;
     document.getElementById('thai').innerText = currentWord.t;
     document.getElementById('score').innerText = score;
@@ -76,8 +78,26 @@ function nextWord() {
     }
 }
 
-// --- THE GAUNTLET ---
+// --- CUSTOM MODAL SYSTEM ---
+let modalCallback = null;
 
+function showModal(title, desc, buttonText, callback) {
+    document.getElementById('modal-title').innerText = title;
+    document.getElementById('modal-desc').innerText = desc;
+    document.querySelector('.modal-btn').innerText = buttonText;
+    modalCallback = callback;
+    document.getElementById('custom-modal').classList.add('show');
+}
+
+function closeModal() {
+    document.getElementById('custom-modal').classList.remove('show');
+    if (modalCallback) {
+        modalCallback();
+        modalCallback = null;
+    }
+}
+
+// --- THE GAUNTLET ---
 let gauntletTimer;
 let timeLeft;
 const MAX_TIME = 30.0;
@@ -101,7 +121,6 @@ function startGauntlet() {
         timeLeft -= 0.1;
         document.getElementById('timer-text').innerText = Math.max(0, timeLeft).toFixed(1);
         
-        // Intensity increases under 5 seconds
         if(timeLeft < 5.0 && timeLeft > 0) {
             if(Math.floor(timeLeft * 10) % 10 === 0) playBeep(800, 'square', 0.05);
         }
@@ -116,6 +135,9 @@ function generateQuizQuestion() {
     currentQuizWord = quizBatchQueue[currentQuestionIndex];
     document.getElementById('quiz-word').innerText = currentQuizWord.w.toUpperCase();
     
+    // Auto-play audio on question load
+    playAudio(currentQuizWord.w);
+    
     let options = [currentQuizWord.t];
     while(options.length < 4) {
         let randomWrong = db[Math.floor(Math.random() * db.length)].t;
@@ -128,7 +150,7 @@ function generateQuizQuestion() {
     
     options.forEach((opt, index) => {
         const btn = document.createElement('div');
-        btn.className = `quiz-option opt-${index}`; // Gives it the Game Show colors
+        btn.className = `quiz-option opt-${index}`; 
         btn.innerText = opt;
         btn.onclick = (e) => checkAnswer(opt, e.currentTarget);
         optionsContainer.appendChild(btn);
@@ -136,7 +158,6 @@ function generateQuizQuestion() {
 }
 
 function checkAnswer(selectedThai, buttonElement) {
-    // Disable all buttons immediately to prevent double clicks
     Array.from(document.getElementsByClassName('quiz-option')).forEach(b => b.style.pointerEvents = 'none');
 
     if (selectedThai === currentQuizWord.t) {
@@ -155,7 +176,7 @@ function checkAnswer(selectedThai, buttonElement) {
         buttonElement.classList.add('wrong');
         setTimeout(() => {
             failGauntlet();
-        }, 500);
+        }, 300);
     }
 }
 
@@ -164,7 +185,7 @@ function passGauntlet() {
     document.getElementById('quiz-container').style.display = 'none';
     document.getElementById('app-container').classList.remove('danger-pulse');
     
-    confetti({ particleCount: 300, spread: 120, origin: { y: 0.5 }, colors: ['#ffe600', '#00e5ff', '#ff007f'] });
+    confetti({ particleCount: 300, spread: 120, origin: { y: 0.5 }, colors: ['#ffe600', '#00e5ff', '#00ff00'] });
 
     currentIndex++;
     if (currentIndex > score) score = currentIndex;
@@ -174,17 +195,17 @@ function passGauntlet() {
 
 function failGauntlet() {
     clearInterval(gauntletTimer);
-    document.getElementById('quiz-container').style.display = 'none';
-    document.getElementById('app-container').classList.remove('danger-pulse');
     
-    // Quick timeout alert so they know what happened
-    setTimeout(() => {
-        alert("FAIL! 💀 Back to the start of the batch!");
+    // Trigger the Custom Modal
+    showModal("FAIL! 💀", "You did not clear the batch. Back to the start!", "TRY AGAIN", () => {
+        document.getElementById('quiz-container').style.display = 'none';
+        document.getElementById('app-container').classList.remove('danger-pulse');
+        
         currentIndex = currentIndex - 9;
         score = currentIndex; 
         updateUI();
         playAudio();
-    }, 100);
+    });
 }
 
 initApp();
