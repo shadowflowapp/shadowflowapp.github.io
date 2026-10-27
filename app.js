@@ -1,22 +1,4 @@
-// Hardcoded MVP database (expand by loading db.jsonl in production)
-const db = [
-    {w: "abandon", p: "v.", t: "ละทิ้ง, ปล่อย"},
-    {w: "ability", p: "n.", t: "ความสามารถ"},
-    {w: "able", p: "adj.", t: "สามารถ"},
-    {w: "abnormal", p: "adj.", t: "ผิดปกติ"},
-    {w: "aboard", p: "adv.", t: "บนเรือ, บนรถไฟ"},
-    {w: "abolish", p: "v.", t: "ยกเลิก, ล้มล้าง"},
-    {w: "abort", p: "v.", t: "ยกเลิก, ทำแท้ง"},
-    {w: "about", p: "prep.", t: "เกี่ยวกับ, ประมาณ"},
-    {w: "above", p: "prep.", t: "เหนือ, สูงกว่า"},
-    {w: "abroad", p: "adv.", t: "ต่างประเทศ"},
-    {w: "absence", p: "n.", t: "การขาด, การไม่อยู่"},
-    {w: "absent", p: "adj.", t: "ขาด, ไม่อยู่"},
-    {w: "absolute", p: "adj.", t: "สมบูรณ์, แน่นอน"},
-    {w: "absorb", p: "v.", t: "ดูดซับ, รับรู้"},
-    {w: "abstract", p: "adj.", t: "นามธรรม"}
-];
-
+let db = []; // Will be populated dynamically
 let currentIndex = 0;
 let score = 0;
 
@@ -29,7 +11,28 @@ synth.onvoiceschanged = () => {
     if(!americanMaleVoice) americanMaleVoice = voices.find(v => v.lang === 'en-US');
 };
 
+// Fetch Database on Load
+async function initApp() {
+    try {
+        const response = await fetch('db.jsonl');
+        const text = await response.text();
+        
+        // Parse JSONL (split by line, ignore empty lines, parse to JSON)
+        db = text.split('\n')
+                 .filter(line => line.trim() !== '')
+                 .map(line => JSON.parse(line));
+        
+        // Hide loading screen and show first word
+        document.getElementById('loading-screen').style.display = 'none';
+        updateUI();
+    } catch (error) {
+        alert("Error loading database. Make sure db.jsonl is in the same folder and you are running a local server.");
+        console.error(error);
+    }
+}
+
 function playAudio(word = null) {
+    if (db.length === 0) return;
     const textToSpeak = word || db[currentIndex].w;
     const utterance = new SpeechSynthesisUtterance(textToSpeak);
     if(americanMaleVoice) utterance.voice = americanMaleVoice;
@@ -38,12 +41,12 @@ function playAudio(word = null) {
 }
 
 function updateUI() {
+    if (db.length === 0) return;
     const currentWord = db[currentIndex];
     document.getElementById('word').innerText = currentWord.w;
     document.getElementById('pos').innerText = currentWord.p;
     document.getElementById('thai').innerText = currentWord.t;
     document.getElementById('score').innerText = score;
-    playAudio();
 }
 
 function prevWord() {
@@ -55,10 +58,10 @@ function prevWord() {
 
 function nextWord() {
     if (currentIndex < db.length - 1) {
-        // Did they just finish learning 10 new words? Trigger Deathrun on moving to the 11th.
+        // Did they just finish learning 10 new words? Trigger Vault Lockdown.
         if (score === currentIndex && (currentIndex + 1) % 10 === 0) {
             score++;
-            startDeathrun();
+            startLockdown();
             return;
         }
 
@@ -66,42 +69,46 @@ function nextWord() {
         if (currentIndex > score) score = currentIndex;
         
         updateUI();
+        playAudio(); // Auto play audio on new word for fast pacing
     }
 }
 
-// --- DEATHRUN MECHANIC ---
+// --- VAULT LOCKDOWN MECHANIC (Smooth Theme) ---
 
-let deathrunTimer;
+let lockdownTimer;
 let timeLeft;
+const MAX_TIME = 10.0;
 let questionsToPass = 3;
 let currentQuestionIndex = 0;
-let currentDeathrunWord = {};
+let currentQuizWord = {};
 
-function startDeathrun() {
+function startLockdown() {
     document.getElementById('quiz-container').style.display = 'flex';
-    document.getElementById('app-container').classList.add('shaking');
+    document.getElementById('app-container').classList.add('smooth-breathe');
     
-    // Play scary alert sound (using Web Audio API beep)
+    // Smooth alert beep
     let audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     let oscillator = audioCtx.createOscillator();
-    oscillator.type = 'sawtooth';
-    oscillator.frequency.setValueAtTime(150, audioCtx.currentTime); // low buzz
+    oscillator.type = 'sine';
+    oscillator.frequency.setValueAtTime(400, audioCtx.currentTime);
     oscillator.connect(audioCtx.destination);
     oscillator.start();
-    oscillator.stop(audioCtx.currentTime + 0.5);
+    oscillator.stop(audioCtx.currentTime + 0.3);
 
-    timeLeft = 10.0;
+    timeLeft = MAX_TIME;
     currentQuestionIndex = 0;
     generateQuizQuestion();
     
-    deathrunTimer = setInterval(() => {
-        timeLeft -= 0.1;
-        document.getElementById('timer').innerText = timeLeft.toFixed(1);
+    // Visual Timer update (100 times a second for buttery smooth bar shrinking)
+    lockdownTimer = setInterval(() => {
+        timeLeft -= 0.05;
+        let percentage = (timeLeft / MAX_TIME) * 100;
+        document.getElementById('timer-bar').style.width = `${Math.max(0, percentage)}%`;
         
         if (timeLeft <= 0) {
-            failDeathrun();
+            failLockdown();
         }
-    }, 100);
+    }, 50);
 }
 
 function generateQuizQuestion() {
@@ -110,12 +117,12 @@ function generateQuizQuestion() {
     // Get a random word from the last 10 words learned
     const minIndex = currentIndex - 9;
     const randomIndex = Math.floor(Math.random() * 10) + minIndex;
-    currentDeathrunWord = db[randomIndex];
+    currentQuizWord = db[randomIndex];
 
-    document.getElementById('quiz-word').innerText = currentDeathrunWord.w;
+    document.getElementById('quiz-word').innerText = currentQuizWord.w;
     
-    // Generate options (1 correct, 3 random wrong answers)
-    let options = [currentDeathrunWord.t];
+    // Generate options (1 correct, 3 random wrong answers from entire DB)
+    let options = [currentQuizWord.t];
     while(options.length < 4) {
         let randomWrong = db[Math.floor(Math.random() * db.length)].t;
         if(!options.includes(randomWrong)) {
@@ -133,56 +140,64 @@ function generateQuizQuestion() {
         const btn = document.createElement('button');
         btn.className = 'quiz-option';
         btn.innerText = opt;
-        btn.onclick = () => checkAnswer(opt);
+        btn.onclick = (e) => checkAnswer(opt, e.target);
         optionsContainer.appendChild(btn);
     });
 }
 
-function checkAnswer(selectedThai) {
-    if (selectedThai === currentDeathrunWord.t) {
-        // Correct!
-        currentQuestionIndex++;
-        if (currentQuestionIndex >= questionsToPass) {
-            passDeathrun();
-        } else {
-            generateQuizQuestion(); // Next rapid fire question
-        }
+function checkAnswer(selectedThai, buttonElement) {
+    if (selectedThai === currentQuizWord.t) {
+        // Correct - brief flash of green
+        buttonElement.classList.add('correct');
+        setTimeout(() => {
+            currentQuestionIndex++;
+            if (currentQuestionIndex >= questionsToPass) {
+                passLockdown();
+            } else {
+                generateQuizQuestion();
+            }
+        }, 150);
     } else {
-        // Wrong! Immediate death.
-        failDeathrun();
+        // Wrong - flash red and immediate fail
+        buttonElement.classList.add('wrong');
+        setTimeout(() => {
+            failLockdown();
+        }, 150);
     }
 }
 
-function passDeathrun() {
-    clearInterval(deathrunTimer);
+function passLockdown() {
+    clearInterval(lockdownTimer);
     document.getElementById('quiz-container').style.display = 'none';
-    document.getElementById('app-container').classList.remove('shaking');
+    document.getElementById('app-container').classList.remove('smooth-breathe');
     
-    // Mr Beast Confetti
+    // Success Confetti
     confetti({
         particleCount: 150,
-        spread: 100,
-        origin: { y: 0.6 },
-        colors: ['#ffcc00', '#ffffff', '#4CAF50']
+        spread: 80,
+        origin: { y: 0.5 },
+        colors: ['#00e5ff', '#ffffff', '#4CAF50']
     });
 
     currentIndex++;
     if (currentIndex > score) score = currentIndex;
     updateUI();
+    playAudio();
 }
 
-function failDeathrun() {
-    clearInterval(deathrunTimer);
+function failLockdown() {
+    clearInterval(lockdownTimer);
     document.getElementById('quiz-container').style.display = 'none';
-    document.getElementById('app-container').classList.remove('shaking');
+    document.getElementById('app-container').classList.remove('smooth-breathe');
     
-    alert("💀 YOU DIED! You must review the last 10 words again!");
+    alert("❌ ACCESS DENIED. Vault lock triggered. Review the last 10 words!");
     
-    // Punishment: Push them back 9 words so they have to review
+    // Punishment: Push them back 9 words
     currentIndex = currentIndex - 9;
-    score = currentIndex; // Reset their real score to match the punishment
+    score = currentIndex; 
     updateUI();
+    playAudio();
 }
 
-// Init
-updateUI();
+// Start app
+initApp();
