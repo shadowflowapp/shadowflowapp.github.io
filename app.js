@@ -14,16 +14,24 @@ async function initApp() {
     try {
         const response = await fetch('db.jsonl');
         const text = await response.text();
-        
-        db = text.split('\n')
-                 .filter(line => line.trim() !== '')
-                 .map(line => JSON.parse(line));
-        
+        db = text.split('\n').filter(line => line.trim() !== '').map(line => JSON.parse(line));
         document.getElementById('loading-screen').style.display = 'none';
         updateUI();
     } catch (error) {
-        alert("Error loading database. Ensure db.jsonl is present and running on a local server.");
+        document.getElementById('loading-screen').innerText = "ERROR!";
     }
+}
+
+// Buzzy UI sounds using Web Audio API
+const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+function playBeep(freq, type, duration) {
+    if(audioCtx.state === 'suspended') audioCtx.resume();
+    let osc = audioCtx.createOscillator();
+    osc.type = type;
+    osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+    osc.connect(audioCtx.destination);
+    osc.start();
+    osc.stop(audioCtx.currentTime + duration);
 }
 
 function playAudio(word = null) {
@@ -31,16 +39,16 @@ function playAudio(word = null) {
     const textToSpeak = word || db[currentIndex].w;
     const utterance = new SpeechSynthesisUtterance(textToSpeak);
     if(americanMaleVoice) utterance.voice = americanMaleVoice;
-    utterance.rate = 0.9; 
+    utterance.rate = 0.85; 
     synth.speak(utterance);
 }
 
 function updateUI() {
     if (db.length === 0) return;
     const currentWord = db[currentIndex];
-    document.getElementById('word').innerText = currentWord.w;
-    document.getElementById('ipa').innerText = currentWord.i || "N/A";
-    document.getElementById('thai-pronounce').innerText = currentWord.tp || "N/A";
+    document.getElementById('word').innerText = currentWord.w.toUpperCase();
+    document.getElementById('ipa').innerText = currentWord.i || "";
+    document.getElementById('thai-pronounce').innerText = currentWord.tp || "";
     document.getElementById('pos').innerText = currentWord.p;
     document.getElementById('thai').innerText = currentWord.t;
     document.getElementById('score').innerText = score;
@@ -57,10 +65,9 @@ function nextWord() {
     if (currentIndex < db.length - 1) {
         if (score === currentIndex && (currentIndex + 1) % 10 === 0) {
             score++;
-            startLockdown();
+            startGauntlet();
             return;
         }
-
         currentIndex++;
         if (currentIndex > score) score = currentIndex;
         
@@ -69,28 +76,20 @@ function nextWord() {
     }
 }
 
-// --- EXHAUSTIVE BATCH LOCKDOWN ---
+// --- THE GAUNTLET ---
 
-let lockdownTimer;
+let gauntletTimer;
 let timeLeft;
-const MAX_TIME = 30.0; // 30 seconds to answer all 10 words
+const MAX_TIME = 30.0;
 let currentQuestionIndex = 0;
 let quizBatchQueue = [];
 let currentQuizWord = {};
 
-function startLockdown() {
+function startGauntlet() {
     document.getElementById('quiz-container').style.display = 'flex';
-    document.getElementById('app-container').classList.add('smooth-breathe');
-    
-    let audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    let oscillator = audioCtx.createOscillator();
-    oscillator.type = 'sine';
-    oscillator.frequency.setValueAtTime(400, audioCtx.currentTime);
-    oscillator.connect(audioCtx.destination);
-    oscillator.start();
-    oscillator.stop(audioCtx.currentTime + 0.3);
+    document.getElementById('app-container').classList.add('danger-pulse');
+    playBeep(200, 'sawtooth', 0.5);
 
-    // Extract exact 10 words they just learned and shuffle them
     const batchWords = db.slice(currentIndex - 9, currentIndex + 1);
     quizBatchQueue = batchWords.sort(() => Math.random() - 0.5);
 
@@ -98,75 +97,74 @@ function startLockdown() {
     currentQuestionIndex = 0;
     generateQuizQuestion();
     
-    lockdownTimer = setInterval(() => {
-        timeLeft -= 0.05;
-        let percentage = (timeLeft / MAX_TIME) * 100;
-        document.getElementById('timer-bar').style.width = `${Math.max(0, percentage)}%`;
+    gauntletTimer = setInterval(() => {
+        timeLeft -= 0.1;
+        document.getElementById('timer-text').innerText = Math.max(0, timeLeft).toFixed(1);
         
-        if (timeLeft <= 0) {
-            failLockdown();
+        // Intensity increases under 5 seconds
+        if(timeLeft < 5.0 && timeLeft > 0) {
+            if(Math.floor(timeLeft * 10) % 10 === 0) playBeep(800, 'square', 0.05);
         }
-    }, 50);
+
+        if (timeLeft <= 0) {
+            failGauntlet();
+        }
+    }, 100);
 }
 
 function generateQuizQuestion() {
-    document.getElementById('quiz-progress').innerText = `${currentQuestionIndex + 1}/10`;
-    
     currentQuizWord = quizBatchQueue[currentQuestionIndex];
-    document.getElementById('quiz-word').innerText = currentQuizWord.w;
+    document.getElementById('quiz-word').innerText = currentQuizWord.w.toUpperCase();
     
     let options = [currentQuizWord.t];
     while(options.length < 4) {
         let randomWrong = db[Math.floor(Math.random() * db.length)].t;
-        if(!options.includes(randomWrong)) {
-            options.push(randomWrong);
-        }
+        if(!options.includes(randomWrong)) options.push(randomWrong);
     }
-    
     options.sort(() => Math.random() - 0.5);
     
     const optionsContainer = document.getElementById('quiz-options');
     optionsContainer.innerHTML = '';
     
-    options.forEach(opt => {
-        const btn = document.createElement('button');
-        btn.className = 'quiz-option';
+    options.forEach((opt, index) => {
+        const btn = document.createElement('div');
+        btn.className = `quiz-option opt-${index}`; // Gives it the Game Show colors
         btn.innerText = opt;
-        btn.onclick = (e) => checkAnswer(opt, e.target);
+        btn.onclick = (e) => checkAnswer(opt, e.currentTarget);
         optionsContainer.appendChild(btn);
     });
 }
 
 function checkAnswer(selectedThai, buttonElement) {
+    // Disable all buttons immediately to prevent double clicks
+    Array.from(document.getElementsByClassName('quiz-option')).forEach(b => b.style.pointerEvents = 'none');
+
     if (selectedThai === currentQuizWord.t) {
+        playBeep(1200, 'sine', 0.1);
         buttonElement.classList.add('correct');
         setTimeout(() => {
             currentQuestionIndex++;
             if (currentQuestionIndex >= 10) {
-                passLockdown();
+                passGauntlet();
             } else {
                 generateQuizQuestion();
             }
-        }, 150);
+        }, 300);
     } else {
+        playBeep(150, 'sawtooth', 0.4);
         buttonElement.classList.add('wrong');
         setTimeout(() => {
-            failLockdown();
-        }, 150);
+            failGauntlet();
+        }, 500);
     }
 }
 
-function passLockdown() {
-    clearInterval(lockdownTimer);
+function passGauntlet() {
+    clearInterval(gauntletTimer);
     document.getElementById('quiz-container').style.display = 'none';
-    document.getElementById('app-container').classList.remove('smooth-breathe');
+    document.getElementById('app-container').classList.remove('danger-pulse');
     
-    confetti({
-        particleCount: 200,
-        spread: 90,
-        origin: { y: 0.5 },
-        colors: ['#00e5ff', '#ffffff', '#ffcc00']
-    });
+    confetti({ particleCount: 300, spread: 120, origin: { y: 0.5 }, colors: ['#ffe600', '#00e5ff', '#ff007f'] });
 
     currentIndex++;
     if (currentIndex > score) score = currentIndex;
@@ -174,17 +172,19 @@ function passLockdown() {
     playAudio();
 }
 
-function failLockdown() {
-    clearInterval(lockdownTimer);
+function failGauntlet() {
+    clearInterval(gauntletTimer);
     document.getElementById('quiz-container').style.display = 'none';
-    document.getElementById('app-container').classList.remove('smooth-breathe');
+    document.getElementById('app-container').classList.remove('danger-pulse');
     
-    alert("❌ BATCH FAILED. You must master all 10 words. Try again!");
-    
-    currentIndex = currentIndex - 9;
-    score = currentIndex; 
-    updateUI();
-    playAudio();
+    // Quick timeout alert so they know what happened
+    setTimeout(() => {
+        alert("FAIL! 💀 Back to the start of the batch!");
+        currentIndex = currentIndex - 9;
+        score = currentIndex; 
+        updateUI();
+        playAudio();
+    }, 100);
 }
 
 initApp();
