@@ -1,8 +1,7 @@
-let db = []; // Will be populated dynamically
+let db = []; 
 let currentIndex = 0;
 let score = 0;
 
-// Speech Setup
 const synth = window.speechSynthesis;
 let americanMaleVoice = null;
 synth.onvoiceschanged = () => {
@@ -11,23 +10,19 @@ synth.onvoiceschanged = () => {
     if(!americanMaleVoice) americanMaleVoice = voices.find(v => v.lang === 'en-US');
 };
 
-// Fetch Database on Load
 async function initApp() {
     try {
         const response = await fetch('db.jsonl');
         const text = await response.text();
         
-        // Parse JSONL (split by line, ignore empty lines, parse to JSON)
         db = text.split('\n')
                  .filter(line => line.trim() !== '')
                  .map(line => JSON.parse(line));
         
-        // Hide loading screen and show first word
         document.getElementById('loading-screen').style.display = 'none';
         updateUI();
     } catch (error) {
-        alert("Error loading database. Make sure db.jsonl is in the same folder and you are running a local server.");
-        console.error(error);
+        alert("Error loading database. Ensure db.jsonl is present and running on a local server.");
     }
 }
 
@@ -44,6 +39,8 @@ function updateUI() {
     if (db.length === 0) return;
     const currentWord = db[currentIndex];
     document.getElementById('word').innerText = currentWord.w;
+    document.getElementById('ipa').innerText = currentWord.i || "N/A";
+    document.getElementById('thai-pronounce').innerText = currentWord.tp || "N/A";
     document.getElementById('pos').innerText = currentWord.p;
     document.getElementById('thai').innerText = currentWord.t;
     document.getElementById('score').innerText = score;
@@ -58,7 +55,6 @@ function prevWord() {
 
 function nextWord() {
     if (currentIndex < db.length - 1) {
-        // Did they just finish learning 10 new words? Trigger Vault Lockdown.
         if (score === currentIndex && (currentIndex + 1) % 10 === 0) {
             score++;
             startLockdown();
@@ -69,24 +65,23 @@ function nextWord() {
         if (currentIndex > score) score = currentIndex;
         
         updateUI();
-        playAudio(); // Auto play audio on new word for fast pacing
+        playAudio();
     }
 }
 
-// --- VAULT LOCKDOWN MECHANIC (Smooth Theme) ---
+// --- EXHAUSTIVE BATCH LOCKDOWN ---
 
 let lockdownTimer;
 let timeLeft;
-const MAX_TIME = 10.0;
-let questionsToPass = 3;
+const MAX_TIME = 30.0; // 30 seconds to answer all 10 words
 let currentQuestionIndex = 0;
+let quizBatchQueue = [];
 let currentQuizWord = {};
 
 function startLockdown() {
     document.getElementById('quiz-container').style.display = 'flex';
     document.getElementById('app-container').classList.add('smooth-breathe');
     
-    // Smooth alert beep
     let audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     let oscillator = audioCtx.createOscillator();
     oscillator.type = 'sine';
@@ -95,11 +90,14 @@ function startLockdown() {
     oscillator.start();
     oscillator.stop(audioCtx.currentTime + 0.3);
 
+    // Extract exact 10 words they just learned and shuffle them
+    const batchWords = db.slice(currentIndex - 9, currentIndex + 1);
+    quizBatchQueue = batchWords.sort(() => Math.random() - 0.5);
+
     timeLeft = MAX_TIME;
     currentQuestionIndex = 0;
     generateQuizQuestion();
     
-    // Visual Timer update (100 times a second for buttery smooth bar shrinking)
     lockdownTimer = setInterval(() => {
         timeLeft -= 0.05;
         let percentage = (timeLeft / MAX_TIME) * 100;
@@ -112,16 +110,11 @@ function startLockdown() {
 }
 
 function generateQuizQuestion() {
-    document.getElementById('quiz-progress').innerText = `${currentQuestionIndex + 1}/${questionsToPass}`;
+    document.getElementById('quiz-progress').innerText = `${currentQuestionIndex + 1}/10`;
     
-    // Get a random word from the last 10 words learned
-    const minIndex = currentIndex - 9;
-    const randomIndex = Math.floor(Math.random() * 10) + minIndex;
-    currentQuizWord = db[randomIndex];
-
+    currentQuizWord = quizBatchQueue[currentQuestionIndex];
     document.getElementById('quiz-word').innerText = currentQuizWord.w;
     
-    // Generate options (1 correct, 3 random wrong answers from entire DB)
     let options = [currentQuizWord.t];
     while(options.length < 4) {
         let randomWrong = db[Math.floor(Math.random() * db.length)].t;
@@ -130,7 +123,6 @@ function generateQuizQuestion() {
         }
     }
     
-    // Shuffle options
     options.sort(() => Math.random() - 0.5);
     
     const optionsContainer = document.getElementById('quiz-options');
@@ -147,18 +139,16 @@ function generateQuizQuestion() {
 
 function checkAnswer(selectedThai, buttonElement) {
     if (selectedThai === currentQuizWord.t) {
-        // Correct - brief flash of green
         buttonElement.classList.add('correct');
         setTimeout(() => {
             currentQuestionIndex++;
-            if (currentQuestionIndex >= questionsToPass) {
+            if (currentQuestionIndex >= 10) {
                 passLockdown();
             } else {
                 generateQuizQuestion();
             }
         }, 150);
     } else {
-        // Wrong - flash red and immediate fail
         buttonElement.classList.add('wrong');
         setTimeout(() => {
             failLockdown();
@@ -171,12 +161,11 @@ function passLockdown() {
     document.getElementById('quiz-container').style.display = 'none';
     document.getElementById('app-container').classList.remove('smooth-breathe');
     
-    // Success Confetti
     confetti({
-        particleCount: 150,
-        spread: 80,
+        particleCount: 200,
+        spread: 90,
         origin: { y: 0.5 },
-        colors: ['#00e5ff', '#ffffff', '#4CAF50']
+        colors: ['#00e5ff', '#ffffff', '#ffcc00']
     });
 
     currentIndex++;
@@ -190,14 +179,12 @@ function failLockdown() {
     document.getElementById('quiz-container').style.display = 'none';
     document.getElementById('app-container').classList.remove('smooth-breathe');
     
-    alert("❌ ACCESS DENIED. Vault lock triggered. Review the last 10 words!");
+    alert("❌ BATCH FAILED. You must master all 10 words. Try again!");
     
-    // Punishment: Push them back 9 words
     currentIndex = currentIndex - 9;
     score = currentIndex; 
     updateUI();
     playAudio();
 }
 
-// Start app
 initApp();
