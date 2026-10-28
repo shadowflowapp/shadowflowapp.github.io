@@ -1,100 +1,15 @@
-{"w": "the", "p": "art.", "t": "ที่เฉพาะเจาะจง", "i": "/ðə/"}
-{"w": "be", "p": "v.", "t": "เป็น", "i": "/bi/"}
-{"w": "to", "p": "prep.", "t": "ถึง", "i": "/tu/"}
-{"w": "of", "p": "prep.", "t": "ของ", "i": "/ʌv/"}
-{"w": "and", "p": "conj.", "t": "และ", "i": "/ænd/"}
-{"w": "a", "p": "art.", "t": "หนึ่ง", "i": "/ə/"}
-{"w": "in", "p": "prep.", "t": "ใน", "i": "/ɪn/"}
-{"w": "that", "p": "conj.", "t": "นั่น", "i": "/ðæt/"}
-{"w": "have", "p": "v.", "t": "มี", "i": "/hæv/"}
-{"w": "i", "p": "pron.", "t": "ฉัน", "i": "/aɪ/"}
-{"w": "it", "p": "pron.", "t": "มัน", "i": "/ɪt/"}
-{"w": "for", "p": "prep.", "t": "สำหรับ", "i": "/fɔr/"}
-{"w": "not", "p": "adv.", "t": "ไม่", "i": "/nɑt/"}
-{"w": "on", "p": "prep.", "t": "บน", "i": "/ɑn/"}
-{"w": "with", "p": "prep.", "t": "กับ", "i": "/wɪθ/"}
-{"w": "he", "p": "pron.", "t": "เขา", "i": "/hi/"}
-{"w": "as", "p": "prep.", "t": "เหมือน", "i": "/æz/"}
-{"w": "you", "p": "pron.", "t": "คุณ", "i": "/ju/"}
-{"w": "do", "p": "v.", "t": "ทำ", "i": "/du/"}
-{"w": "at", "p": "prep.", "t": "ที่", "i": "/æt/"}
-{"w": "this", "p": "pron.", "t": "นี่", "i": "/ðɪs/"}
-{"w": "but", "p": "conj.", "t": "แต่", "i": "/bʌt/"}
-{"w": "his", "p": "pron.", "t": "ของเขา", "i": "/hɪz/"}
-{"w": "by", "p": "prep.", "t": "โดย", "i": "/baɪ/"}
-{"w": "from", "p": "prep.", "t": "จาก", "i": "/frʌm/"}
-{"w": "they", "p": "pron.", "t": "พวกเขา", "i": "/ðeɪ/"}
-{"w": "we", "p": "pron.", "t": "พวกเรา", "i": "/wi/"}
-{"w": "say", "p": "v.", "t": "พูด", "i": "/seɪ/"}
-{"w": "her", "p": "pron.", "t": "ของเธอ", "i": "/hər/"}
-{"w": "she", "p": "pron.", "t": "เธอ", "i": "/ʃi/"}
-{"w": "or", "p": "conj.", "t": "หรือ", "i": "/ɔr/"}
-{"w": "an", "p": "art.", "t": "หนึ่ง", "i": "/æn/"}
-{"w": "will", "p": "v.", "t": "จะ", "i": "/wɪl/"}
-{"w": "my", "p": "pron.", "t": "ของฉัน", "i": "/maɪ/"}
-{"w": "one", "p": "n.", "t": "หนึ่ง", "i": "/wʌn/"}
-{"w": "all", "p": "adj.", "t": "ทั้งหมด", "i": "/ɔl/"}
-{"w": "would", "p": "v.", "t": "จะ", "i": "/wʊd/"}
-{"w": "there", "p": "adv.", "t": "ที่นั่น", "i": "/ðɛr/"}
-{"w": "their", "p": "pron.", "t": "ของพวกเขา", "i": "/ðɛr/"}
-{"w": "what", "p": "pron.", "t": "อะไร", "i": "/wʌt/"}
-{"w": "so", "p": "adv.", "t": "ดังนั้น", "i": "/soʊ/"}
-{"w": "up", "p": "adv.", "t": "ขึ้น", "i": "/ʌp/"}
-{"w": "out", "p": "adv.", "t": "ออก", "i": "/aʊt/"}
-{"w": "if", "p": "conj.", "t": "ถ้า", "i": "/ɪf/"}
-{"w": "about", "p": "prep.", "t": "เกี่ยวกับ", "i": "/əˈbaʊt/"}
-{"w": "who", "p": "pron.", "t": "ใคร", "i": "/hu/"}
-{"w": "get", "p": "v.", "t": "ได้รับ", "i": "/gɛt/"}
-{"w": "which", "p": "pron.", "t": "อันไหน", "i": "/wɪtʃ/"}
-{"w": "go", "p": "v.", "t": "ไป", "i": "/goʊ/"}
-{"w": "me", "p": "pron.", "t": "ฉัน", "i": "/mi/"}
-{"w": "when", "p": "conj.", "t": "เมื่อ", "i": "/wɛn/"}
-{"w": "make", "p": "v.", "t": "สร้าง", "i": "/meɪk/"}
-{"w": "can", "p": "v.", "t": "สามารถ", "i": "/kæn/"}
-{"w": "like", "p": "prep.", "t": "ชอบ", "i": "/laɪk/"}
-{"w": "time", "p": "n.", "t": "เวลา", "i": "/taɪm/"}
-{"w": "no", "p": "adv.", "t": "ไม่", "i": "/noʊ/"}
-{"w": "just", "p": "adv.", "t": "แค่", "i": "/dʒʌst/"}
-{"w": "him", "p": "pron.", "t": "เขา", "i": "/hɪm/"}
-{"w": "know", "p": "v.", "t": "รู้", "i": "/noʊ/"}
-{"w": "take", "p": "v.", "t": "เอา", "i": "/teɪk/"}
-{"w": "people", "p": "n.", "t": "ผู้คน", "i": "/ˈpipəl/"}
-{"w": "into", "p": "prep.", "t": "เข้าไปใน", "i": "/ˈɪntu/"}
-{"w": "year", "p": "n.", "t": "ปี", "i": "/jɪr/"}
-{"w": "your", "p": "pron.", "t": "ของคุณ", "i": "/jʊr/"}
-{"w": "good", "p": "adj.", "t": "ดี", "i": "/gʊd/"}
-{"w": "some", "p": "adj.", "t": "บางส่วน", "i": "/sʌm/"}
-{"w": "could", "p": "v.", "t": "สามารถ", "i": "/kʊd/"}
-{"w": "them", "p": "pron.", "t": "พวกเขา", "i": "/ðɛm/"}
-{"w": "see", "p": "v.", "t": "เห็น", "i": "/si/"}
-{"w": "other", "p": "adj.", "t": "อื่นๆ", "i": "/ˈʌðər/"}
-{"w": "than", "p": "conj.", "t": "กว่า", "i": "/ðæn/"}
-{"w": "then", "p": "adv.", "t": "จากนั้น", "i": "/ðɛn/"}
-{"w": "now", "p": "adv.", "t": "ตอนนี้", "i": "/naʊ/"}
-{"w": "look", "p": "v.", "t": "มอง", "i": "/lʊk/"}
-{"w": "only", "p": "adv.", "t": "เท่านั้น", "i": "/ˈoʊnli/"}
-{"w": "come", "p": "v.", "t": "มา", "i": "/kʌm/"}
-{"w": "its", "p": "pron.", "t": "ของมัน", "i": "/ɪts/"}
-{"w": "over", "p": "prep.", "t": "เหนือ", "i": "/ˈoʊvər/"}
-{"w": "think", "p": "v.", "t": "คิด", "i": "/θɪŋk/"}
-{"w": "also", "p": "adv.", "t": "ด้วย", "i": "/ˈɔlsoʊ/"}
-{"w": "back", "p": "adv.", "t": "กลับ", "i": "/bæk/"}
-{"w": "after", "p": "prep.", "t": "หลังจาก", "i": "/ˈæftər/"}
-{"w": "use", "p": "v.", "t": "ใช้", "i": "/juz/"}
-{"w": "two", "p": "n.", "t": "สอง", "i": "/tu/"}
-{"w": "how", "p": "adv.", "t": "อย่างไร", "i": "/haʊ/"}
-{"w": "our", "p": "pron.", "t": "ของพวกเรา", "i": "/aʊr/"}
-{"w": "work", "p": "v.", "t": "ทำงาน", "i": "/wɜrk/"}
-{"w": "first", "p": "adj.", "t": "แรก", "i": "/fɜrst/"}
-{"w": "well", "p": "adv.", "t": "อย่างดี", "i": "/wɛl/"}
-{"w": "way", "p": "n.", "t": "วิธี", "i": "/weɪ/"}
-{"w": "even", "p": "adv.", "t": "แม้แต่", "i": "/ˈivən/"}
-{"w": "new", "p": "adj.", "t": "ใหม่", "i": "/nu/"}
-{"w": "want", "p": "v.", "t": "ต้องการ", "i": "/wɑnt/"}
-{"w": "because", "p": "conj.", "t": "เพราะว่า", "i": "/bɪˈkɔz/"}
-{"w": "any", "p": "adj.", "t": "ใดๆ", "i": "/ˈɛni/"}
-{"w": "these", "p": "pron.", "t": "เหล่านี้", "i": "/ðiz/"}
-{"w": "give", "p": "v.", "t": "ให้", "i": "/gɪv/"}
-{"w": "day", "p": "n.", "t": "วัน", "i": "/deɪ/"}
-{"w": "most", "p": "adj.", "t": "ส่วนใหญ่", "i": "/moʊst/"}
-{"w": "us", "p": "pron.", "t": "พวกเรา", "i": "/ʌs/"}
+{"w": "make", "c": "make a decision", "s": "We don't have much time, you need to make a decision.", "t": "ตัดสินใจ"}
+{"w": "take", "c": "take a break", "s": "You look completely exhausted, go take a break.", "t": "พักผ่อน"}
+{"w": "get", "c": "get used to it", "s": "The weather is hot, but you will get used to it.", "t": "ชินกับมัน"}
+{"w": "figure", "c": "figure it out", "s": "I don't know the answer yet, but I will figure it out.", "t": "คิดให้ออก, หาทางแก้"}
+{"w": "give", "c": "give up", "s": "No matter how hard it gets, never give up.", "t": "ยอมแพ้"}
+{"w": "on", "c": "on purpose", "s": "I am so sorry, I didn't drop your phone on purpose.", "t": "ตั้งใจ, จงใจ"}
+{"w": "out", "c": "out of order", "s": "We have to use the stairs because the elevator is out of order.", "t": "เสีย, ใช้การไม่ได้"}
+{"w": "up", "c": "up to you", "s": "I don't care where we eat, it is totally up to you.", "t": "แล้วแต่คุณเลย"}
+{"w": "by", "c": "by the way", "s": "By the way, what time is the meeting tomorrow?", "t": "เออ ว่าแต่..."}
+{"w": "in", "c": "in advance", "s": "You need to buy the concert tickets in advance.", "t": "ล่วงหน้า"}
+{"w": "mind", "c": "never mind", "s": "Oh, never mind, I found my car keys.", "t": "ช่างมันเถอะ"}
+{"w": "matter", "c": "no matter what", "s": "I promise I will support you no matter what.", "t": "ไม่ว่าอะไรจะเกิดขึ้น"}
+{"w": "rid", "c": "get rid of", "s": "We need to get rid of this old broken sofa.", "t": "กำจัด, ทิ้ง"}
+{"w": "sense", "c": "make sense", "s": "Does this explanation make sense to you?", "t": "สมเหตุสมผล, เข้าใจได้"}
+{"w": "touch", "c": "keep in touch", "s": "Have a safe flight home and keep in touch!", "t": "ติดต่อกันเรื่อยๆนะ"}
