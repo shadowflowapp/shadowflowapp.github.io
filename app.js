@@ -61,14 +61,21 @@ function playCorrectSound() {
     osc.stop(now + 0.3);
 }
 
-function playAudio(text = null) {
+function speakText(text) {
     if (db.length === 0) return;
-    const textToSpeak = text || db[currentIndex].c; // Default to reading the Chunk
     synth.cancel(); 
-    const utterance = new SpeechSynthesisUtterance(textToSpeak);
+    const utterance = new SpeechSynthesisUtterance(text);
     if(americanMaleVoice) utterance.voice = americanMaleVoice;
     utterance.rate = 0.85; 
     synth.speak(utterance);
+}
+
+function playChunkAudio() {
+    speakText(db[currentIndex].c);
+}
+
+function playSentenceAudio() {
+    speakText(db[currentIndex].s);
 }
 
 // --- MAIN UI ---
@@ -82,15 +89,15 @@ function updateUI() {
 
     const currentData = db[currentIndex];
     document.getElementById('chunk').innerText = currentData.c.toUpperCase();
+    document.getElementById('level-badge').innerText = currentData.lvl.toUpperCase();
     document.getElementById('sentence').innerText = `"${currentData.s}"`;
-    document.getElementById('thai').innerText = currentData.t;
     document.getElementById('score').innerText = score;
     
     document.getElementById('global-progress-fill').style.width = `${(score / db.length) * 100}%`;
     localStorage.setItem('efl_score', score);
     
-    // Auto-play the chunk when revealing a new card
-    playAudio(currentData.c);
+    // Auto-play the chunk when opening a new card
+    playChunkAudio();
 }
 
 function prevWord() {
@@ -110,7 +117,7 @@ function nextWord() {
         currentIndex++;
         if (currentIndex > score) score = currentIndex;
 
-        // 15% Chance for a Blind Audio Ambush (Except on the 1st word or right after a Gauntlet)
+        // 15% Chance for a Blind Audio Ambush
         if (Math.random() < 0.15 && currentIndex % 10 !== 0 && currentIndex > 1) {
             startAmbush();
             return;
@@ -135,7 +142,7 @@ function closeModal() {
 }
 
 // ==========================================
-// MECHANIC 1: THE BLIND AUDIO AMBUSH
+// THE BLIND AUDIO AMBUSH
 // ==========================================
 let ambushTimerId;
 let ambushTimeLeft;
@@ -146,14 +153,11 @@ function startAmbush() {
     document.getElementById('ambush-container').style.display = 'flex';
     document.getElementById('app-container').classList.add('ambush-siren');
     
-    playBeep(400, 'square', 0.8); // Alarm sound
+    playBeep(400, 'square', 0.8); 
 
     currentAmbushWord = db[currentIndex];
-    
-    // Play the FULL SENTENCE audio (The core test)
-    setTimeout(() => { playAudio(currentAmbushWord.s); }, 500);
+    setTimeout(() => { speakText(currentAmbushWord.s); }, 500);
 
-    // Generate 4 Chunk Options
     let options = [currentAmbushWord.c];
     while(options.length < 4) {
         let randomChunk = db[Math.floor(Math.random() * db.length)].c;
@@ -182,7 +186,7 @@ function startAmbush() {
 }
 
 function replayAmbushAudio() {
-    if(currentAmbushWord) playAudio(currentAmbushWord.s);
+    if(currentAmbushWord) speakText(currentAmbushWord.s);
 }
 
 function checkAmbush(selected, btn) {
@@ -202,8 +206,8 @@ function checkAmbush(selected, btn) {
 
 function failAmbush() {
     clearInterval(ambushTimerId);
-    showModal("AMBUSH FAILED 💀", "You did not hear the context correctly. Try again!", "RETRY", () => {
-        currentIndex--; // Push back 1 word as a small penalty
+    showModal("AMBUSH FAILED 💀", "You missed the audio context. Try again!", "RETRY", () => {
+        currentIndex--; 
         if (currentIndex < 0) currentIndex = 0;
         score = currentIndex;
         updateUI();
@@ -211,7 +215,7 @@ function failAmbush() {
 }
 
 // ==========================================
-// MECHANIC 2: THE CONTEXT CLOZE GAUNTLET
+// THE CONTEXT CLOZE GAUNTLET (With Auto-Fill Blank)
 // ==========================================
 let gauntletTimer;
 let timeLeft;
@@ -252,13 +256,11 @@ function startGauntlet() {
 function generateQuizQuestion() {
     currentQuizWord = quizBatchQueue[currentQuestionIndex];
     
-    // Generate the Cloze test (Replace target word with ______)
+    // Create an identifiable blank space ID
     const regex = new RegExp(`\\b${currentQuizWord.w}\\b`, 'gi');
-    const clozeSentence = currentQuizWord.s.replace(regex, `<span class="blank-space">________</span>`);
+    const clozeSentence = currentQuizWord.s.replace(regex, `<span id="cloze-blank" class="blank-space">________</span>`);
     
     document.getElementById('quiz-sentence').innerHTML = `"${clozeSentence}"`;
-    
-    // We intentionally DO NOT autoplay audio here so they must read the context!
     
     let options = [currentQuizWord.w];
     let attempts = 0; 
@@ -287,15 +289,25 @@ function checkGauntletAnswer(selected, btn) {
     if (selected === currentQuizWord.w) {
         playCorrectSound(); 
         btn.classList.add('correct');
+        
+        // VISUAL SNAP: Fill the blank space instantly so they can read it!
+        const blankSpan = document.getElementById('cloze-blank');
+        blankSpan.innerText = selected.toUpperCase();
+        blankSpan.style.background = "transparent";
+        blankSpan.style.color = "#00ff00";
+        blankSpan.style.borderBottom = "none";
+
+        // Give them an extra 1.2 seconds to read the completed sentence before moving on
         setTimeout(() => {
             currentQuestionIndex++;
             if (currentQuestionIndex >= 10) passGauntlet();
             else generateQuizQuestion();
-        }, 400);
+        }, 1200);
+
     } else {
         playBeep(150, 'sawtooth', 0.4); 
         btn.classList.add('wrong');
-        setTimeout(() => { failGauntlet(); }, 400);
+        setTimeout(() => { failGauntlet(); }, 500);
     }
 }
 
