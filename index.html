@@ -13,7 +13,7 @@
 
         #app-container {
             width: 100%; max-width: 420px; height: 100dvh; max-height: 900px;
-            background: radial-gradient(circle, #1a0033 0%, #000000 100%);
+            background: radial-gradient(circle, #0a0f24 0%, #000000 100%);
             color: #fff; display: flex; flex-direction: column;
             position: relative; box-shadow: 0 0 50px rgba(0,229,255,0.2); 
             border: 4px solid #111; overflow: hidden;
@@ -30,16 +30,18 @@
         /* LEARNING SCREEN */
         #flashcard { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 20px; text-align: center; }
         
-        .tag { background: #ff007f; color: white; padding: 5px 15px; border-radius: 20px; font-weight: 900; text-transform: uppercase; font-size: 0.9rem; margin-bottom: 20px; }
+        .tag { background: #ff007f; color: white; padding: 5px 15px; border-radius: 20px; font-weight: 900; text-transform: uppercase; font-size: 0.9rem; margin-bottom: 10px; }
+        #level-badge { background: #8a2be2; margin-bottom: 30px; }
         
-        #chunk { font-family: 'Bangers', cursive; font-size: clamp(3rem, 12vw, 4.5rem); color: #ffe600; text-shadow: 3px 3px 0 #000; margin-bottom: 15px; line-height: 1.1; word-wrap: break-word; }
+        #chunk { font-family: 'Bangers', cursive; font-size: clamp(3.5rem, 12vw, 5rem); color: #ffe600; text-shadow: 3px 3px 0 #000; margin-bottom: 20px; line-height: 1; word-wrap: break-word; }
         
-        #sentence { font-size: 1.3rem; color: #ccc; font-style: italic; margin-bottom: 30px; line-height: 1.4; background: rgba(0,0,0,0.5); padding: 15px; border-radius: 10px; border-left: 4px solid #00e5ff; }
+        .audio-btn-main { background: #00e5ff; color: #000; width: 70px; height: 70px; border-radius: 50%; font-size: 2rem; border: 4px solid #000; cursor: pointer; box-shadow: 0 6px 0 #008899; margin-bottom: 40px; transition: 0.1s; display: flex; justify-content: center; align-items: center; }
+        .audio-btn-main:active { transform: translateY(6px); box-shadow: 0 0px 0 #008899; }
         
-        #audio-btn { background: #00e5ff; color: #000; width: 70px; height: 70px; border-radius: 50%; font-size: 2rem; border: 4px solid #000; cursor: pointer; box-shadow: 0 6px 0 #008899; margin-bottom: 20px; transition: 0.1s; }
-        #audio-btn:active { transform: translateY(6px); box-shadow: 0 0px 0 #008899; }
-        
-        #thai { font-size: 1.5rem; color: #00ff00; font-weight: 900; text-shadow: 2px 2px 0 #000; }
+        .sentence-box { background: rgba(0,0,0,0.6); padding: 20px; border-radius: 15px; border-left: 5px solid #00e5ff; display: flex; flex-direction: column; align-items: center; gap: 15px; }
+        #sentence { font-size: 1.4rem; color: #fff; font-style: italic; line-height: 1.4; }
+        .audio-btn-small { background: #ff007f; color: #fff; padding: 10px 20px; border-radius: 20px; font-weight: 900; border: 3px solid #000; cursor: pointer; box-shadow: 0 4px 0 #99004d; transition: 0.1s; display: flex; gap: 10px; align-items: center; }
+        .audio-btn-small:active { transform: translateY(4px); box-shadow: 0 0px 0 #99004d; }
 
         /* CONTROLS */
         #controls { display: flex; gap: 15px; padding: 20px; background: rgba(0,0,0,0.9); flex-shrink: 0; }
@@ -59,7 +61,7 @@
         .timer-text { font-family: 'Bangers', cursive; font-size: 4rem; color: #fff; text-shadow: 3px 3px 0 #ff0000; line-height: 1; margin-top: 10px; }
         
         #quiz-sentence { font-size: 1.8rem; color: #fff; text-align: center; margin-top: 10vh; margin-bottom: auto; line-height: 1.4; font-weight: 900; }
-        .blank-space { color: #ffe600; text-decoration: underline; text-decoration-color: #ff007f; text-decoration-thickness: 4px; }
+        .blank-space { color: #ffe600; background: rgba(255,230,0,0.2); padding: 0 10px; border-bottom: 4px solid #ffe600; transition: 0.2s; }
 
         /* THE AMBUSH (Blind Audio) */
         #ambush-container { background: #0a0000; }
@@ -71,7 +73,7 @@
 
         /* MULTIPLE CHOICE GRID */
         .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; width: 100%; margin-top: auto; }
-        .quiz-option { padding: 20px 10px; font-size: clamp(1.2rem, 5vw, 1.6rem); font-weight: 900; color: #fff; border: 4px solid #000; border-radius: 15px; cursor: pointer; display: flex; justify-content: center; align-items: center; text-shadow: 2px 2px 0 #000; transition: 0.1s; text-align: center; font-family: 'Bangers', cursive; letter-spacing: 1px; }
+        .quiz-option { padding: 20px 10px; font-size: clamp(1.3rem, 5vw, 1.8rem); font-weight: 900; color: #fff; border: 4px solid #000; border-radius: 15px; cursor: pointer; display: flex; justify-content: center; align-items: center; text-shadow: 2px 2px 0 #000; transition: 0.1s; text-align: center; font-family: 'Bangers', cursive; letter-spacing: 1px; }
         
         .opt-0 { background: #e21b3c; box-shadow: 0 6px 0 #8c1024; }
         .opt-1 { background: #1368ce; box-shadow: 0 6px 0 #0c4284; }
@@ -81,7 +83,7 @@
         .quiz-option.correct { background: #00ff00 !important; color: #000; text-shadow: none; box-shadow: 0 6px 0 #009900 !important; }
         .quiz-option.wrong { background: #333 !important; color: #555; text-shadow: none; box-shadow: 0 6px 0 #111 !important; opacity: 0.5; }
 
-        /* CUSTOM MODAL POPUP */
+        /* MODAL POPUP */
         #custom-modal { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 100; display: flex; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: 0.2s ease; }
         #custom-modal.show { opacity: 1; pointer-events: all; }
         .modal-content { background: #1a1a1a; border: 6px solid #ff007f; border-radius: 20px; padding: 40px 20px; text-align: center; width: 85%; transform: scale(0.7); transition: 0.3s; }
@@ -106,14 +108,19 @@
 
     <!-- 1. LEARNING SCREEN -->
     <div id="flashcard">
-        <div class="tag">Learn the Phrase</div>
+        <div class="tag">TARGET CHUNK</div>
+        <div id="level-badge" class="tag">...</div>
+        
         <div id="chunk">...</div>
-        <button id="audio-btn" onclick="playAudio()">🔊</button>
-        <div id="sentence">...</div>
-        <div id="thai">...</div>
+        <button class="audio-btn-main" onclick="playChunkAudio()">🔊</button>
+        
+        <div class="sentence-box">
+            <div id="sentence">...</div>
+            <button class="audio-btn-small" onclick="playSentenceAudio()">🔊 Listen in Context</button>
+        </div>
     </div>
 
-    <!-- 2. THE CLOZE GAUNTLET (Test Context) -->
+    <!-- 2. THE CLOZE GAUNTLET -->
     <div id="quiz-container">
         <div id="quiz-timer" class="timer-text">30.0</div>
         <div class="tag" style="background: #ffe600; color: #000; margin-top: 10px;">FILL THE BLANK</div>
@@ -121,12 +128,12 @@
         <div id="quiz-options" class="options-grid"></div>
     </div>
 
-    <!-- 3. BLIND AUDIO AMBUSH (Test Listening) -->
+    <!-- 3. BLIND AUDIO AMBUSH -->
     <div id="ambush-container">
         <div id="ambush-timer" class="timer-text">7.0</div>
         <div id="ambush-title">BLIND AMBUSH!</div>
         <div id="ambush-desc">Listen to the sentence and select the CHUNK you heard!</div>
-        <button id="audio-btn" style="margin-top: 20px;" onclick="replayAmbushAudio()">🔊</button>
+        <button class="audio-btn-main" style="margin-top: 20px;" onclick="replayAmbushAudio()">🔊</button>
         <div id="ambush-options" class="options-grid"></div>
     </div>
 
