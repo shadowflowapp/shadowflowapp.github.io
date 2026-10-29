@@ -35,11 +35,14 @@
         /* INTEL / FLASHCARD DISPLAY */
         #flashcard { flex: 1; display: flex; flex-direction: column; padding: 25px 20px; width: 100%; overflow-y: auto; overflow-x: hidden; gap: 20px; }
         
-        /* Module 1: The Word */
+        /* Module 1: The Word & IPA */
         .word-module { display: flex; flex-direction: column; align-items: center; justify-content: center; margin-bottom: 10px; }
-        .text-fit-container { width: 100%; overflow: hidden; white-space: nowrap; display: flex; justify-content: center; align-items: center; margin-bottom: 15px; }
+        .text-fit-container { width: 100%; overflow: hidden; white-space: nowrap; display: flex; justify-content: center; align-items: center; margin-bottom: 5px; }
         #word { font-family: 'Righteous', cursive; color: #fff; letter-spacing: 2px; line-height: 1.1; text-shadow: 4px 4px 0px #0a0c10; text-transform: uppercase; }
         
+        /* The Restored IPA */
+        #ipa { font-size: 1.1rem; color: #66fcf1; font-family: 'Courier New', Courier, monospace; font-weight: 700; margin-bottom: 15px; letter-spacing: 1px; }
+
         .main-audio-btn { 
             background: #66fcf1; color: #050608; width: 70px; height: 70px; font-size: 2rem; 
             display: flex; justify-content: center; align-items: center; cursor: pointer; 
@@ -59,8 +62,8 @@
         
         #sentence { font-size: 1.3rem; color: #fff; font-weight: 900; line-height: 1.5; font-style: italic; }
         
-        /* DYNAMIC WORD HIGHLIGHTER */
-        .highlight-word { color: #ff007f; text-shadow: 0 0 15px rgba(255, 0, 127, 0.6); font-weight: 900; text-transform: uppercase; }
+        /* DYNAMIC WORD HIGHLIGHTER (Case-sensitive removed so it respects original sentence) */
+        .highlight-word { color: #ff007f; text-shadow: 0 0 15px rgba(255, 0, 127, 0.6); font-weight: 900; }
 
         .context-audio-btn { 
             background: rgba(102, 252, 241, 0.1); color: #66fcf1; border: 1px solid #66fcf1; 
@@ -119,11 +122,12 @@
     <div id="global-progress-bg"><div id="global-progress-fill"></div></div>
 
     <div id="flashcard">
-        <!-- Module 1: Word -->
+        <!-- Module 1: Word & IPA -->
         <div class="word-module">
             <div class="text-fit-container" style="height: 5.5rem;">
                 <div id="word">...</div>
             </div>
+            <div id="ipa">...</div>
             <button class="main-audio-btn" onclick="playWordAudio()">🔊</button>
         </div>
         
