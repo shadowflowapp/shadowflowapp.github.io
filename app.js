@@ -1,8 +1,10 @@
 let db = []; 
 let shuffledIndices = [];
 let currentIndex = 0; 
-let score = 0; // Represents fully CLEARED words via Quiz
+let wordsCleared = 0; // Tracks DB progress
+let xpScore = 0; // Tactical XP Score
 
+// --- SPEECH SYNTHESIS ---
 const synth = window.speechSynthesis;
 let americanMaleVoice = null;
 synth.onvoiceschanged = () => {
@@ -10,14 +12,12 @@ synth.onvoiceschanged = () => {
     americanMaleVoice = voices.find(v => v.lang === 'en-US' && (v.name.includes('Male') || v.name.includes('Google'))) || voices.find(v => v.lang === 'en-US');
 };
 
-// --- JS AUTO-SCALER (Fixes Long Words Cutting Off) ---
+// --- JS AUTO-SCALER ---
 function fitText(elementId, maxRem) {
     const el = document.getElementById(elementId);
     if (!el) return;
     let currentRem = maxRem;
     el.style.fontSize = currentRem + 'rem';
-    
-    // While the text overflows its container, shrink the font size
     while (el.scrollWidth > el.parentElement.clientWidth && currentRem > 1) {
         currentRem -= 0.2;
         el.style.fontSize = currentRem + 'rem';
@@ -30,93 +30,72 @@ async function initApp() {
         const text = await response.text();
         db = text.split('\n').filter(line => line.trim() !== '').map(line => JSON.parse(line));
         
-        // Handle Shuffling
-        let storedOrder = localStorage.getItem('mrbeast_order');
+        let storedOrder = localStorage.getItem('tac_order');
         if (storedOrder) {
             shuffledIndices = JSON.parse(storedOrder);
             if(shuffledIndices.length !== db.length) {
                 shuffledIndices = db.map((_, i) => i).sort(() => Math.random() - 0.5);
-                localStorage.setItem('mrbeast_order', JSON.stringify(shuffledIndices));
+                localStorage.setItem('tac_order', JSON.stringify(shuffledIndices));
             }
         } else {
             shuffledIndices = db.map((_, i) => i).sort(() => Math.random() - 0.5);
-            localStorage.setItem('mrbeast_order', JSON.stringify(shuffledIndices));
+            localStorage.setItem('tac_order', JSON.stringify(shuffledIndices));
         }
 
-        // SAVE FILE MIGRATION BUG FIX
-        // If users have an old score that isn't a multiple of 10, it breaks the Gauntlet math. This forces it to align.
-        if (localStorage.getItem('mrbeast_score_v2')) {
-            score = parseInt(localStorage.getItem('mrbeast_score_v2'));
-        } else if (localStorage.getItem('mrbeast_score')) {
-            let legacyScore = parseInt(localStorage.getItem('mrbeast_score'));
-            score = Math.floor(legacyScore / 10) * 10; 
-            localStorage.setItem('mrbeast_score_v2', score);
-        }
+        if (localStorage.getItem('tac_cleared')) wordsCleared = parseInt(localStorage.getItem('tac_cleared'));
+        if (localStorage.getItem('tac_xp')) xpScore = parseInt(localStorage.getItem('tac_xp'));
         
-        currentIndex = score; 
+        currentIndex = wordsCleared; 
         
         document.getElementById('loading-screen').style.display = 'none';
         updateUI();
     } catch (error) {
-        document.getElementById('loading-screen').innerText = "ERROR LOADING DATABASE!";
+        document.getElementById('loading-screen').innerText = "DATA CORRUPTION";
     }
 }
 
-// --- SWIPE & KEYBOARD CONTROLS (Anti-Cheat added) ---
-let touchstartX = 0;
-let touchendX = 0;
-document.addEventListener('touchstart', e => { touchstartX = e.changedTouches[0].screenX; }, {passive: true});
-document.addEventListener('touchend', e => {
-    touchendX = e.changedTouches[0].screenX;
-    handleGesture();
-}, {passive: true});
-document.addEventListener('keydown', e => {
-    // PREVENT CHEATING OR GLITCHES IN GAUNTLET/MODALS
-    if (document.getElementById('quiz-container').style.display === 'flex') return;
-    if (document.getElementById('custom-modal').classList.contains('show')) return;
-    
-    if (e.key === 'ArrowRight') nextWord();
-    if (e.key === 'ArrowLeft') prevWord();
-});
-
-function handleGesture() {
-    if (document.getElementById('quiz-container').style.display === 'flex') return;
-    if (document.getElementById('custom-modal').classList.contains('show')) return;
-    if (touchendX < touchstartX - 50) nextWord(); // Swipe Left -> Next
-    if (touchendX > touchstartX + 50) prevWord(); // Swipe Right -> Prev
-}
-
-// --- SOUNDS ---
+// --- TACTICAL SOUND ENGINEERING (Web Audio API) ---
 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-function playBeep(freq, type, duration) {
+
+function playTacBeep(freq, type, duration, vol=0.1) {
     if(audioCtx.state === 'suspended') audioCtx.resume();
     let osc = audioCtx.createOscillator();
+    let gain = audioCtx.createGain();
     osc.type = type;
     osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-    osc.connect(audioCtx.destination);
+    gain.gain.setValueAtTime(vol, audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + duration);
+    osc.connect(gain); gain.connect(audioCtx.destination);
     osc.start(); osc.stop(audioCtx.currentTime + duration);
 }
-function playCorrectSound() {
-    if(audioCtx.state === 'suspended') audioCtx.resume();
-    let now = audioCtx.currentTime;
-    let osc = audioCtx.createOscillator();
-    let gainNode = audioCtx.createGain();
-    osc.type = 'sine';
-    osc.frequency.setValueAtTime(1046.50, now); osc.frequency.setValueAtTime(1318.51, now + 0.1);    
-    gainNode.gain.setValueAtTime(0.3, now); gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
-    osc.connect(gainNode); gainNode.connect(audioCtx.destination);
-    osc.start(now); osc.stop(now + 0.3);
+
+// CoD Hit-marker sound (Correct)
+function playHitMarker() {
+    playTacBeep(4000, 'square', 0.05, 0.05);
+    setTimeout(() => playTacBeep(6000, 'sine', 0.05, 0.05), 20);
 }
+
+// Damage/Armor hit sound (Wrong)
+function playDamageThud() {
+    playTacBeep(150, 'sawtooth', 0.3, 0.3);
+    setTimeout(() => playTacBeep(100, 'square', 0.2, 0.4), 50);
+}
+
 function playAudio(word = null) {
     if (db.length === 0) return;
+    synth.cancel(); // STRICT CANCEL to prevent overlaps
     const textToSpeak = word || db[shuffledIndices[currentIndex]].w;
-    synth.cancel(); 
     const utterance = new SpeechSynthesisUtterance(textToSpeak);
     if(americanMaleVoice) utterance.voice = americanMaleVoice;
     utterance.rate = 0.85; synth.speak(utterance);
 }
 
 // --- UI UPDATES ---
+function updateXPDisplay() {
+    // Format XP with leading zeros (e.g. 00450)
+    document.getElementById('xp-box').innerText = xpScore.toString().padStart(5, '0');
+}
+
 function updateUI() {
     if (db.length === 0 || currentIndex >= db.length) return;
     const currentWord = db[shuffledIndices[currentIndex]];
@@ -125,44 +104,64 @@ function updateUI() {
     document.getElementById('ipa').innerText = currentWord.i || "";
     document.getElementById('pos').innerText = currentWord.p;
     document.getElementById('thai').innerText = currentWord.t;
-    document.getElementById('score').innerText = score;
     
-    // Auto-scale the fonts based on word length!
+    updateXPDisplay();
+    document.getElementById('progress-text').innerText = `${wordsCleared} / ${db.length}`;
+    
     fitText('word', 4.5);
     fitText('thai', 3.5);
     
     let batchPos = (currentIndex % 10) + 1;
-    document.getElementById('batch-progress').innerText = `${batchPos} / 10`;
-    document.getElementById('global-progress-fill').style.width = `${(score / db.length) * 100}%`;
+    document.getElementById('global-progress-fill').style.width = `${(wordsCleared / db.length) * 100}%`;
 
     const nextBtn = document.getElementById('next-btn');
     if (batchPos === 10) {
-        nextBtn.innerText = "ENTER GAUNTLET ⚔️";
+        nextBtn.innerText = "ENGAGE ⚔️";
         nextBtn.classList.add('quiz-ready');
     } else {
-        nextBtn.innerText = "NEXT";
+        nextBtn.innerText = "[ NEXT ]";
         nextBtn.classList.remove('quiz-ready');
     }
 }
 
 function prevWord() {
-    if (currentIndex > score) {
+    synth.cancel(); // Force stop current audio immediately
+    if (currentIndex > wordsCleared) {
         currentIndex--;
         updateUI();
+        playAudio(); // Auto-play the new word
     }
 }
 
 function nextWord() {
+    synth.cancel(); // Force stop current audio immediately
     if (currentIndex < db.length) {
-        if ((currentIndex + 1) % 10 === 0 && currentIndex - score === 9) {
+        if ((currentIndex + 1) % 10 === 0 && currentIndex - wordsCleared === 9) {
             startGauntlet();
             return;
         }
         currentIndex++;
         updateUI();
-        playAudio();
+        playAudio(); // Auto-play the new word
     }
 }
+
+// --- SWIPE & KEYBOARD ---
+let touchstartX = 0; let touchendX = 0;
+document.addEventListener('touchstart', e => { touchstartX = e.changedTouches[0].screenX; }, {passive: true});
+document.addEventListener('touchend', e => {
+    touchendX = e.changedTouches[0].screenX;
+    if (document.getElementById('quiz-container').style.display !== 'flex' && !document.getElementById('custom-modal').classList.contains('show')) {
+        if (touchendX < touchstartX - 50) nextWord();
+        if (touchendX > touchstartX + 50) prevWord();
+    }
+}, {passive: true});
+document.addEventListener('keydown', e => {
+    if (document.getElementById('quiz-container').style.display !== 'flex' && !document.getElementById('custom-modal').classList.contains('show')) {
+        if (e.key === 'ArrowRight') nextWord();
+        if (e.key === 'ArrowLeft') prevWord();
+    }
+});
 
 // --- MODAL ---
 let modalCallback = null;
@@ -178,7 +177,7 @@ function closeModal() {
     if (modalCallback) { modalCallback(); modalCallback = null; }
 }
 
-// --- THE GAUNTLET QUIZ ENGINE ---
+// --- THE ENGAGEMENT ZONE (CoD Quiz) ---
 let gauntletTimer;
 let gauntletEndTime;
 const MAX_TIME = 30.0;
@@ -186,16 +185,22 @@ let currentQuestionIndex = 0;
 let quizBatchQueue = [];
 let currentQuizWord = {};
 let isBlindAudio = false;
+let attemptsLeft = 2; // ARMOR SYSTEM
+
+function triggerDamageFlash() {
+    const overlay = document.getElementById('damage-overlay');
+    overlay.classList.add('taking-damage');
+    setTimeout(() => overlay.classList.remove('taking-damage'), 150);
+}
 
 function startGauntlet() {
     document.getElementById('quiz-container').style.display = 'flex';
-    document.getElementById('app-container').classList.add('danger-pulse');
-    playBeep(200, 'sawtooth', 0.6);
+    playTacBeep(300, 'square', 0.1); setTimeout(() => playTacBeep(400, 'square', 0.2), 150); // Start Beep
 
-    const batchIndices = shuffledIndices.slice(score, score + 10);
+    const batchIndices = shuffledIndices.slice(wordsCleared, wordsCleared + 10);
     quizBatchQueue = batchIndices.map(i => db[i]).sort(() => Math.random() - 0.5);
 
-    document.getElementById('timer-text').innerText = "READY!";
+    document.getElementById('timer-text').innerText = "ENGAGING...";
     document.getElementById('quiz-word').innerHTML = "";
     document.getElementById('quiz-pos').innerText = "";
     document.getElementById('quiz-options').innerHTML = '';
@@ -210,29 +215,27 @@ function startGauntlet() {
             if(timeLeft <= 0) timeLeft = 0;
             
             document.getElementById('timer-text').innerText = timeLeft.toFixed(1);
-            if(timeLeft < 5.0 && timeLeft > 0 && Math.floor(timeLeft * 10) % 10 === 0) playBeep(800, 'square', 0.05);
+            if(timeLeft < 5.0 && timeLeft > 0 && Math.floor(timeLeft * 10) % 10 === 0) playTacBeep(800, 'sine', 0.05, 0.05);
 
-            if (timeLeft <= 0) failGauntlet();
+            if (timeLeft <= 0) failGauntlet("TIME EXPIRED");
         }, 100);
-    }, 600);
+    }, 800);
 }
 
-function playQuizAudio() {
-    playAudio(currentQuizWord.w);
-}
+function playQuizAudio() { synth.cancel(); playAudio(currentQuizWord.w); }
 
 function generateQuizQuestion() {
     currentQuizWord = quizBatchQueue[currentQuestionIndex];
-    
+    attemptsLeft = 2; // Reset armor
     isBlindAudio = Math.random() < 0.3;
 
     if (isBlindAudio) {
-        document.getElementById('quiz-word').innerHTML = `<span style="color: #ff007f; animation: pulse 1s infinite alternate;">🔊 BLIND AUDIO</span>`;
-        document.getElementById('quiz-pos').innerText = "LISTEN CAREFULLY";
+        // EMPTY BRACKETS FOR CLASSIFIED AUDIO (No Text!)
+        document.getElementById('quiz-word').innerHTML = `<span style="color: #444;">[ ■ ■ ■ ]</span>`;
+        document.getElementById('quiz-pos').innerText = "CLASSIFIED";
     } else {
         document.getElementById('quiz-word').innerHTML = currentQuizWord.w.toUpperCase();
         document.getElementById('quiz-pos').innerText = currentQuizWord.p;
-        // Auto-scale the quiz word
         fitText('quiz-word', 4.0);
     }
     
@@ -263,14 +266,27 @@ function generateQuizQuestion() {
 }
 
 function checkAnswer(selectedThai, buttonElement) {
-    Array.from(document.getElementsByClassName('quiz-option')).forEach(b => b.style.pointerEvents = 'none');
+    let timeLeft = (gauntletEndTime - Date.now()) / 1000;
+    if(timeLeft < 0) timeLeft = 0;
 
     if (selectedThai === currentQuizWord.t) {
-        playCorrectSound(); 
+        // CORRECT (Kill Confirm)
+        Array.from(document.getElementsByClassName('quiz-option')).forEach(b => b.style.pointerEvents = 'none');
+        playHitMarker(); 
         buttonElement.classList.add('correct');
         
+        // Calculate XP
+        let wordBaseXp = 100;
+        let speedBonus = Math.floor((timeLeft / MAX_TIME) * 50); // Up to +50 based on speed
+        let totalGain = wordBaseXp + speedBonus;
+        if (isBlindAudio) totalGain *= 2; // Multiplier
+        if (attemptsLeft === 1) totalGain = Math.floor(totalGain / 2); // 50% penalty if they missed once
+        
+        xpScore += totalGain;
+        updateXPDisplay();
+
         if (isBlindAudio) {
-            document.getElementById('quiz-word').innerHTML = `<span style="color: #00ff00;">${currentQuizWord.w.toUpperCase()}</span>`;
+            document.getElementById('quiz-word').innerHTML = `<span style="color: #8bc34a;">${currentQuizWord.w.toUpperCase()}</span>`;
             fitText('quiz-word', 4.0);
         }
         
@@ -279,41 +295,55 @@ function checkAnswer(selectedThai, buttonElement) {
             if (currentQuestionIndex >= 10) passGauntlet();
             else generateQuizQuestion();
         }, 400);
+
     } else {
-        playBeep(150, 'sawtooth', 0.4); 
+        // WRONG (Taking Damage)
+        attemptsLeft--;
+        playDamageThud();
+        triggerDamageFlash();
         buttonElement.classList.add('wrong');
-        setTimeout(() => { failGauntlet(); }, 400);
+        buttonElement.style.pointerEvents = 'none'; // Disable just this button
+        
+        xpScore -= 50; // XP Penalty
+        if(xpScore < 0) xpScore = 0;
+        updateXPDisplay();
+
+        if (attemptsLeft <= 0) {
+            Array.from(document.getElementsByClassName('quiz-option')).forEach(b => b.style.pointerEvents = 'none');
+            setTimeout(() => { failGauntlet("ARMOR COMPROMISED"); }, 400);
+        }
     }
 }
 
 function passGauntlet() {
     clearInterval(gauntletTimer);
     document.getElementById('quiz-container').style.display = 'none';
-    document.getElementById('app-container').classList.remove('danger-pulse');
     
-    confetti({ particleCount: 300, spread: 120, origin: { y: 0.5 }, colors: ['#ffe600', '#00e5ff', '#00ff00'] });
-
-    score += 10; 
-    currentIndex = score; 
-    localStorage.setItem('mrbeast_score_v2', score);
+    wordsCleared += 10; 
+    currentIndex = wordsCleared; 
     
-    if (score >= db.length) {
-        showModal("🏆 FINISHER! 🏆", "YOU CONQUERED THE DICTIONARY!", "RESTART", () => {
-            score = 0; currentIndex = 0; localStorage.setItem('mrbeast_score_v2', 0); updateUI();
+    localStorage.setItem('tac_cleared', wordsCleared);
+    localStorage.setItem('tac_xp', xpScore);
+    
+    if (wordsCleared >= db.length) {
+        showModal("OPERATION COMPLETE", "ALL INTEL SECURED.", "RESTART", () => {
+            wordsCleared = 0; currentIndex = 0; xpScore = 0;
+            localStorage.setItem('tac_cleared', 0); localStorage.setItem('tac_xp', 0); updateUI();
         });
     } else {
         updateUI();
-        playAudio();
+        playAudio(); // Auto-play the first word of the next batch!
     }
 }
 
-function failGauntlet() {
+function failGauntlet(reason) {
     clearInterval(gauntletTimer);
-    showModal("FAIL! 💀", "You did not clear the batch. Back to the start!", "TRY AGAIN", () => {
+    showModal("KIA", reason + "\nFALLING BACK TO CHECKPOINT.", "REDEPLOY", () => {
         document.getElementById('quiz-container').style.display = 'none';
-        document.getElementById('app-container').classList.remove('danger-pulse');
         
-        currentIndex = score; 
+        currentIndex = wordsCleared; // Reset to start of un-cleared batch
+        localStorage.setItem('tac_xp', xpScore); // Save the XP penalties they took!
+        
         updateUI();
         playAudio();
     });
