@@ -3,37 +3,37 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Fluency: Minimal</title>
-    <!-- Clean, modern LA tech font -->
+    <title>Fluency: Midnight Zen</title>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Outfit', sans-serif; }
         
         body { 
-            /* Soft sunset gradient background */
-            background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+            /* Deep, matte charcoal - easier on the eyes than pure black */
+            background: #0f1115; 
             display: flex; justify-content: center; align-items: center; 
-            height: 100dvh; overflow: hidden; touch-action: pan-y; color: #2d3748;
+            height: 100dvh; overflow: hidden; touch-action: pan-y; color: #e2e8f0;
         }
 
         #app-container {
             width: 100%; max-width: 420px; height: 100dvh; max-height: 900px;
-            background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px);
+            background: #181b21; /* Slightly elevated slate */
             display: flex; flex-direction: column; position: relative; 
-            box-shadow: 0 20px 50px rgba(252, 182, 159, 0.3);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+            border: 1px solid #23272f;
         }
-        @media (min-width: 421px) { #app-container { height: 95dvh; border-radius: 30px; } }
+        @media (min-width: 421px) { #app-container { height: 95dvh; border-radius: 24px; } }
 
         /* HEADER & PROGRESS */
         #top-bar { padding: 25px 25px 15px 25px; flex-shrink: 0; }
         .progress-label { 
-            font-size: 0.85rem; color: #a0aec0; letter-spacing: 2px; 
+            font-size: 0.85rem; color: #64748b; letter-spacing: 2px; 
             font-weight: 800; text-align: center; margin-bottom: 8px; 
         }
-        #learned-count { color: #fcb69f; font-size: 1rem; }
+        #learned-count { color: #38bdf8; font-size: 1rem; }
         
-        .progress-bar-bg { width: 100%; height: 6px; background: #edf2f7; border-radius: 10px; overflow: hidden; }
-        .progress-bar-fill { height: 100%; width: 0%; background: linear-gradient(90deg, #fcb69f, #ff7e5f); transition: width 0.5s ease; border-radius: 10px; }
+        .progress-bar-bg { width: 100%; height: 6px; background: #23272f; border-radius: 10px; overflow: hidden; }
+        .progress-bar-fill { height: 100%; width: 0%; background: linear-gradient(90deg, #0ea5e9, #38bdf8); transition: width 0.5s ease; border-radius: 10px; }
 
         /* FLASHCARD CONTENT */
         #flashcard { flex: 1; display: flex; flex-direction: column; padding: 10px 25px 20px 25px; overflow-y: auto; overflow-x: hidden; }
@@ -41,38 +41,39 @@
         .word-block { display: flex; flex-direction: column; align-items: center; justify-content: center; margin: 20px 0 30px 0; }
         
         .text-fit-container { width: 100%; overflow: hidden; white-space: nowrap; display: flex; justify-content: center; align-items: center; }
-        #word { font-size: 3rem; font-weight: 800; color: #2d3748; letter-spacing: -1px; text-transform: capitalize; }
+        /* Soft off-white text to prevent astigmatism glare */
+        #word { font-size: 3rem; font-weight: 800; color: #f8fafc; letter-spacing: -1px; text-transform: capitalize; }
         
-        #ipa { font-size: 1.1rem; color: #43c6ac; font-weight: 600; margin: 5px 0 15px 0; letter-spacing: 1px; }
+        #ipa { font-size: 1.1rem; color: #38bdf8; font-weight: 600; margin: 5px 0 15px 0; letter-spacing: 1px; }
 
-        /* Elegant Play Button */
+        /* Elegant Play Button - Dark Mode */
         .play-btn-main {
-            width: 60px; height: 60px; border-radius: 50%; border: none;
-            background: #fff; box-shadow: 0 10px 25px rgba(0,0,0,0.08);
-            color: #ff7e5f; font-size: 1.5rem; display: flex; justify-content: center; align-items: center;
+            width: 60px; height: 60px; border-radius: 50%; border: 1px solid #2d333b;
+            background: #23272f; box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+            color: #38bdf8; font-size: 1.5rem; display: flex; justify-content: center; align-items: center;
             cursor: pointer; transition: 0.2s ease;
         }
-        .play-btn-main:active { transform: scale(0.92); box-shadow: 0 5px 10px rgba(0,0,0,0.05); }
+        .play-btn-main:active { transform: scale(0.92); background: #1e2228; }
 
-        .divider { height: 1px; background: #edf2f7; width: 100%; margin: 10px 0 25px 0; }
+        .divider { height: 1px; background: #23272f; width: 100%; margin: 10px 0 25px 0; }
 
         /* INFO BLOCKS (Definition & Sentence) */
         .info-block { margin-bottom: 25px; }
-        .block-label { font-size: 0.75rem; color: #a0aec0; letter-spacing: 2px; font-weight: 800; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
+        .block-label { font-size: 0.75rem; color: #64748b; letter-spacing: 2px; font-weight: 800; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
         
-        #definition { font-size: 1.2rem; color: #4a5568; font-weight: 400; line-height: 1.6; }
+        /* Cool grays for reading text */
+        #definition { font-size: 1.2rem; color: #94a3b8; font-weight: 400; line-height: 1.6; }
+        #sentence { font-size: 1.2rem; color: #cbd5e1; font-weight: 600; line-height: 1.6; }
         
-        #sentence { font-size: 1.2rem; color: #2d3748; font-weight: 600; line-height: 1.6; }
-        
-        /* Highlight Target Word (Ocean Teal) */
-        .highlight-word { color: #43c6ac; font-weight: 800; }
+        /* Highlight Target Word (Soothing Sky Blue) */
+        .highlight-word { color: #38bdf8; font-weight: 800; }
 
         .play-btn-small {
-            background: rgba(67, 198, 172, 0.1); color: #43c6ac; border: none;
+            background: rgba(56, 189, 248, 0.1); color: #38bdf8; border: none;
             padding: 6px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 800;
             cursor: pointer; transition: 0.2s ease; letter-spacing: 1px;
         }
-        .play-btn-small:active { background: #43c6ac; color: #fff; transform: scale(0.95); }
+        .play-btn-small:active { background: #38bdf8; color: #0f1115; transform: scale(0.95); }
 
         /* MINIMAL CONTROLS */
         #controls { display: flex; gap: 15px; padding: 20px 25px 30px 25px; flex-shrink: 0; }
@@ -80,23 +81,23 @@
             flex: 1; padding: 18px; font-size: 1rem; font-weight: 800; border: none; border-radius: 16px;
             cursor: pointer; transition: 0.2s ease; letter-spacing: 1px;
         }
-        #back-btn { background: #edf2f7; color: #718096; }
-        #back-btn:active { background: #e2e8f0; transform: scale(0.98); }
+        #back-btn { background: #1e2228; color: #64748b; border: 1px solid #2d333b; }
+        #back-btn:active { background: #181b21; transform: scale(0.98); }
         
-        #next-btn { background: linear-gradient(135deg, #ff7e5f, #fcb69f); color: #fff; box-shadow: 0 10px 20px rgba(255, 126, 95, 0.3); }
-        #next-btn:active { transform: scale(0.98); box-shadow: 0 5px 10px rgba(255, 126, 95, 0.2); }
+        #next-btn { background: #38bdf8; color: #0f1115; box-shadow: 0 10px 20px rgba(56, 189, 248, 0.2); }
+        #next-btn:active { transform: scale(0.98); box-shadow: 0 5px 10px rgba(56, 189, 248, 0.1); }
 
         /* MODAL */
-        #custom-modal { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.8); backdrop-filter: blur(5px); z-index: 100; display: flex; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: 0.3s ease; }
+        #custom-modal { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 17, 21, 0.85); backdrop-filter: blur(5px); z-index: 100; display: flex; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: 0.3s ease; }
         #custom-modal.show { opacity: 1; pointer-events: all; }
-        .modal-content { background: #fff; border-radius: 24px; padding: 40px 30px; text-align: center; width: 85%; transform: translateY(20px); transition: 0.3s ease; box-shadow: 0 20px 40px rgba(0,0,0,0.1); }
+        .modal-content { background: #181b21; border-radius: 24px; padding: 40px 30px; text-align: center; width: 85%; transform: translateY(20px); transition: 0.3s ease; box-shadow: 0 20px 40px rgba(0,0,0,0.5); border: 1px solid #23272f; }
         #custom-modal.show .modal-content { transform: translateY(0); }
-        .modal-title { font-size: 2rem; color: #2d3748; margin-bottom: 10px; font-weight: 800; letter-spacing: -1px; }
-        .modal-desc { font-size: 1.1rem; color: #718096; margin-bottom: 30px; }
-        .modal-btn { background: #2d3748; color: #fff; font-size: 1.1rem; font-weight: 600; padding: 15px 30px; border: none; border-radius: 12px; cursor: pointer; width: 100%; transition: 0.2s; }
+        .modal-title { font-size: 2rem; color: #f8fafc; margin-bottom: 10px; font-weight: 800; letter-spacing: -1px; }
+        .modal-desc { font-size: 1.1rem; color: #94a3b8; margin-bottom: 30px; }
+        .modal-btn { background: #38bdf8; color: #0f1115; font-size: 1.1rem; font-weight: 800; padding: 15px 30px; border: none; border-radius: 12px; cursor: pointer; width: 100%; transition: 0.2s; }
         .modal-btn:active { transform: scale(0.98); }
         
-        #loading-screen { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #fff; display: flex; justify-content: center; align-items: center; z-index: 150; color: #ff7e5f; font-weight: 800; font-size: 2rem; letter-spacing: 2px; }
+        #loading-screen { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #0f1115; display: flex; justify-content: center; align-items: center; z-index: 150; color: #38bdf8; font-weight: 800; font-size: 2rem; letter-spacing: 2px; }
     </style>
 </head>
 <body>
@@ -115,7 +116,6 @@
                 <div id="word">...</div>
             </div>
             <div id="ipa">...</div>
-            <!-- Standard Unicode Play Icon -->
             <button class="play-btn-main" onclick="playWordAudio()">▶</button>
         </div>
         
