@@ -1,15 +1,20 @@
-{"w": "make", "c": "make a decision", "s": "We don't have much time, you need to make a decision.", "lvl": "Age 4-6 (Native Child)"}
-{"w": "take", "c": "take a break", "s": "You look completely exhausted, go take a break.", "lvl": "Age 4-6 (Native Child)"}
-{"w": "get", "c": "get used to it", "s": "The weather is hot, but you will get used to it.", "lvl": "Age 7-9 (Native Kid)"}
-{"w": "figure", "c": "figure it out", "s": "I don't know the answer yet, but I will figure it out.", "lvl": "Age 7-9 (Native Kid)"}
-{"w": "give", "c": "give up", "s": "No matter how hard it gets, never give up.", "lvl": "Age 4-6 (Native Child)"}
-{"w": "on", "c": "on purpose", "s": "I am so sorry, I didn't drop your phone on purpose.", "lvl": "Age 7-9 (Native Kid)"}
-{"w": "out", "c": "out of order", "s": "We have to use the stairs because the elevator is out of order.", "lvl": "Age 10-12 (Pre-Teen)"}
-{"w": "up", "c": "up to you", "s": "I don't care where we eat, it is totally up to you.", "lvl": "Age 4-6 (Native Child)"}
-{"w": "by", "c": "by the way", "s": "By the way, what time is the meeting tomorrow?", "lvl": "Age 10-12 (Pre-Teen)"}
-{"w": "in", "c": "in advance", "s": "You need to buy the concert tickets in advance.", "lvl": "Age 13-15 (Teenager)"}
-{"w": "mind", "c": "never mind", "s": "Oh, never mind, I found my car keys.", "lvl": "Age 7-9 (Native Kid)"}
-{"w": "matter", "c": "no matter what", "s": "I promise I will support you no matter what.", "lvl": "Age 10-12 (Pre-Teen)"}
-{"w": "rid", "c": "get rid of", "s": "We need to get rid of this old broken sofa.", "lvl": "Age 7-9 (Native Kid)"}
-{"w": "sense", "c": "make sense", "s": "Does this explanation make sense to you?", "lvl": "Age 10-12 (Pre-Teen)"}
-{"w": "touch", "c": "keep in touch", "s": "Have a safe flight home and keep in touch!", "lvl": "Age 13-15 (Teenager)"}
+{"w": "abandon", "p": "v.", "t": "ละทิ้ง", "i": "/əˈbændən/"}
+{"w": "ability", "p": "n.", "t": "ความสามารถ", "i": "/əˈbɪləti/"}
+{"w": "able", "p": "adj.", "t": "สามารถ", "i": "/ˈeɪbəl/"}
+{"w": "abnormal", "p": "adj.", "t": "ผิดปกติ", "i": "/æbˈnɔrməl/"}
+{"w": "aboard", "p": "adv.", "t": "บนเรือ", "i": "/əˈbɔrd/"}
+{"w": "abolish", "p": "v.", "t": "ยกเลิก", "i": "/əˈbɑlɪʃ/"}
+{"w": "abort", "p": "v.", "t": "ทำแท้ง", "i": "/əˈbɔrt/"}
+{"w": "about", "p": "prep.", "t": "เกี่ยวกับ", "i": "/əˈbaʊt/"}
+{"w": "above", "p": "prep.", "t": "เหนือ", "i": "/əˈbʌv/"}
+{"w": "abroad", "p": "adv.", "t": "ต่างประเทศ", "i": "/əˈbrɔd/"}
+{"w": "absence", "p": "n.", "t": "การขาด", "i": "/ˈæbsəns/"}
+{"w": "absent", "p": "adj.", "t": "ไม่อยู่", "i": "/ˈæbsənt/"}
+{"w": "absolute", "p": "adj.", "t": "สมบูรณ์", "i": "/ˈæbsəˌlut/"}
+{"w": "absorb", "p": "v.", "t": "ดูดซับ", "i": "/əbˈzɔrb/"}
+{"w": "abstract", "p": "adj.", "t": "นามธรรม", "i": "/æbˈstrækt/"}
+{"w": "absurd", "p": "adj.", "t": "ไร้สาระ", "i": "/əbˈsɜrd/"}
+{"w": "abundance", "p": "n.", "t": "อุดมสมบูรณ์", "i": "/əˈbʌndəns/"}
+{"w": "abuse", "p": "v.", "t": "ข่มเหง", "i": "/əˈbjus/"}
+{"w": "academic", "p": "adj.", "t": "วิชาการ", "i": "/ˌækəˈdɛmɪk/"}
+{"w": "academy", "p": "n.", "t": "สถาบัน", "i": "/əˈkædəmi/"}
