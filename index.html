@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Fluency: AAA Injector</title>
+    <title>Fluency: AAA Immersion</title>
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;900&family=Righteous&display=swap" rel="stylesheet">
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Nunito', sans-serif; }
@@ -12,14 +12,6 @@
             background: #0b0c10; display: flex; justify-content: center; align-items: center; 
             height: 100dvh; overflow: hidden; touch-action: pan-y; color: #fff;
         }
-
-        /* DAMAGE OVERLAY */
-        #damage-overlay {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            box-shadow: inset 0 0 0px 0px rgba(255, 0, 60, 0);
-            pointer-events: none; z-index: 99; transition: box-shadow 0.1s ease-out;
-        }
-        .taking-damage { box-shadow: inset 0 0 100px 30px rgba(255, 0, 60, 0.8) !important; background: rgba(255,0,60,0.15); }
 
         #app-container {
             width: 100%; max-width: 420px; height: 100dvh; max-height: 900px;
@@ -72,36 +64,8 @@
         }
         #back-btn:active { transform: translateY(4px); box-shadow: 0 0px 0 #0b0c10; }
         
-        #next-btn { background: #66fcf1; color: #0b0c10; flex: 1.5; box-shadow: 0 4px 0 #45a29e; }
+        #next-btn { background: #66fcf1; color: #0b0c10; flex: 1.5; box-shadow: 0 4px 0 #45a29e; position: relative; }
         #next-btn:active { transform: translateY(4px); box-shadow: 0 0px 0 #45a29e; }
-        #next-btn.quiz-ready { background: #ff007f; color: #fff; box-shadow: 0 4px 0 #b30059; animation: pulse 1s infinite alternate; }
-
-        @keyframes pulse { from { transform: scale(1); } to { transform: scale(1.03); } }
-
-        /* CLOZE GAUNTLET (Quiz) */
-        #quiz-container { display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #0b0c10; flex-direction: column; justify-content: space-between; align-items: center; padding: 20px 15px 30px 15px; z-index: 20; overflow: hidden; }
-        
-        .timer-wrap { width: 100%; display: flex; justify-content: center; margin-top: 10px; }
-        #timer-text { font-family: 'Righteous', cursive; font-size: clamp(2.5rem, 8vw, 4rem); color: #ff007f; line-height: 1; text-shadow: 0 0 15px rgba(255,0,127,0.5); white-space: nowrap; }
-        
-        .quiz-center-wrap { margin-top: 2vh; margin-bottom: auto; width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; flex: 1; }
-        
-        /* The Cloze Sentence */
-        #quiz-sentence { font-size: 1.4rem; color: #fff; font-weight: 700; line-height: 1.5; text-align: center; background: rgba(31, 40, 51, 0.5); padding: 20px; border-radius: 12px; border: 1px solid #1f2833; width: 100%; }
-        
-        .blank-space { color: #66fcf1; text-shadow: 0 0 10px rgba(102,252,241,0.5); border-bottom: 3px solid #ff007f; padding: 0 10px; display: inline-block; min-width: 100px; text-align: center; transition: 0.2s; }
-        .blank-space.filled { color: #0b0c10; background: #66fcf1; border-bottom: none; border-radius: 5px; text-shadow: none; font-weight: 900; }
-
-        #quiz-options { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; width: 100%; margin-top: 15px; }
-        .quiz-option { 
-            padding: 20px 10px; font-size: clamp(1rem, 4.5vw, 1.3rem); font-weight: 900; color: #fff; 
-            background: #1f2833; border: 2px solid #1f2833; border-radius: 12px; cursor: pointer; 
-            display: flex; justify-content: center; align-items: center; transition: 0.15s; text-align: center; line-height: 1.1; text-transform: uppercase;
-            box-shadow: 0 5px 0 #0b0c10;
-        }
-        .quiz-option:active { transform: translateY(5px); box-shadow: 0 0px 0 #0b0c10; }
-        .quiz-option.correct { background: #66fcf1 !important; color: #0b0c10; border-color: #66fcf1; box-shadow: 0 5px 0 #45a29e; }
-        .quiz-option.wrong { background: #ff007f !important; color: #fff; border-color: #ff007f; box-shadow: 0 5px 0 #b30059; opacity: 0.5; pointer-events: none; }
 
         /* FLOATING XP PARTICLES */
         .xp-pop {
@@ -131,8 +95,6 @@
 </head>
 <body>
 
-<div id="damage-overlay"></div>
-
 <div id="app-container">
     <div id="loading-screen">LOADING...</div>
 
@@ -158,19 +120,6 @@
         <div class="sentence-box">
             <div id="sentence">...</div>
         </div>
-    </div>
-
-    <!-- ENGAGEMENT ZONE (CLOZE QUIZ) -->
-    <div id="quiz-container">
-        <div class="timer-wrap">
-            <div id="timer-text">30.0</div>
-        </div>
-        
-        <div class="quiz-center-wrap">
-            <div id="quiz-sentence">...</div>
-        </div>
-        
-        <div id="quiz-options"></div>
     </div>
 
     <div id="custom-modal">
