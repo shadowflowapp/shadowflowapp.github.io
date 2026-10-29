@@ -1,8 +1,8 @@
 let db = []; 
 let shuffledIndices = [];
 let currentIndex = 0; 
-let wordsCleared = 0; // Tracks DB progress
-let xpScore = 0; // Tactical XP Score
+let wordsCleared = 0; 
+let xpScore = 0; 
 
 // --- SPEECH SYNTHESIS ---
 const synth = window.speechSynthesis;
@@ -19,7 +19,7 @@ function fitText(elementId, maxRem) {
     let currentRem = maxRem;
     el.style.fontSize = currentRem + 'rem';
     while (el.scrollWidth > el.parentElement.clientWidth && currentRem > 1) {
-        currentRem -= 0.2;
+        currentRem -= 0.15;
         el.style.fontSize = currentRem + 'rem';
     }
 }
@@ -30,34 +30,33 @@ async function initApp() {
         const text = await response.text();
         db = text.split('\n').filter(line => line.trim() !== '').map(line => JSON.parse(line));
         
-        let storedOrder = localStorage.getItem('tac_order');
+        let storedOrder = localStorage.getItem('aaa_order');
         if (storedOrder) {
             shuffledIndices = JSON.parse(storedOrder);
             if(shuffledIndices.length !== db.length) {
                 shuffledIndices = db.map((_, i) => i).sort(() => Math.random() - 0.5);
-                localStorage.setItem('tac_order', JSON.stringify(shuffledIndices));
+                localStorage.setItem('aaa_order', JSON.stringify(shuffledIndices));
             }
         } else {
             shuffledIndices = db.map((_, i) => i).sort(() => Math.random() - 0.5);
-            localStorage.setItem('tac_order', JSON.stringify(shuffledIndices));
+            localStorage.setItem('aaa_order', JSON.stringify(shuffledIndices));
         }
 
-        if (localStorage.getItem('tac_cleared')) wordsCleared = parseInt(localStorage.getItem('tac_cleared'));
-        if (localStorage.getItem('tac_xp')) xpScore = parseInt(localStorage.getItem('tac_xp'));
+        if (localStorage.getItem('aaa_cleared')) wordsCleared = parseInt(localStorage.getItem('aaa_cleared'));
+        if (localStorage.getItem('aaa_xp')) xpScore = parseInt(localStorage.getItem('aaa_xp'));
         
         currentIndex = wordsCleared; 
         
         document.getElementById('loading-screen').style.display = 'none';
         updateUI();
     } catch (error) {
-        document.getElementById('loading-screen').innerText = "DATA CORRUPTION";
+        document.getElementById('loading-screen').innerText = "ERROR LOADING DATA";
     }
 }
 
-// --- TACTICAL SOUND ENGINEERING (Web Audio API) ---
+// --- SOUND ENGINEERING ---
 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-
-function playTacBeep(freq, type, duration, vol=0.1) {
+function playSynthBeep(freq, type, duration, vol=0.1) {
     if(audioCtx.state === 'suspended') audioCtx.resume();
     let osc = audioCtx.createOscillator();
     let gain = audioCtx.createGain();
@@ -69,16 +68,12 @@ function playTacBeep(freq, type, duration, vol=0.1) {
     osc.start(); osc.stop(audioCtx.currentTime + duration);
 }
 
-// CoD Hit-marker sound (Correct)
-function playHitMarker() {
-    playTacBeep(4000, 'square', 0.05, 0.05);
-    setTimeout(() => playTacBeep(6000, 'sine', 0.05, 0.05), 20);
+function playHitSound() {
+    playSynthBeep(1200, 'sine', 0.1, 0.2);
+    setTimeout(() => playSynthBeep(1800, 'sine', 0.1, 0.2), 50);
 }
-
-// Damage/Armor hit sound (Wrong)
-function playDamageThud() {
-    playTacBeep(150, 'sawtooth', 0.3, 0.3);
-    setTimeout(() => playTacBeep(100, 'square', 0.2, 0.4), 50);
+function playDamageSound() {
+    playSynthBeep(150, 'sawtooth', 0.2, 0.3);
 }
 
 function playAudio(word = null) {
@@ -90,51 +85,55 @@ function playAudio(word = null) {
     utterance.rate = 0.85; synth.speak(utterance);
 }
 
-// --- UI UPDATES ---
+// --- UI & NAVIGATION ---
 function updateXPDisplay() {
-    // Format XP with leading zeros (e.g. 00450)
-    document.getElementById('xp-box').innerText = xpScore.toString().padStart(5, '0');
+    // Animate the score counting up would be nice, but instant is fine for MVP
+    document.getElementById('xp-box').innerText = xpScore.toLocaleString();
 }
 
 function updateUI() {
     if (db.length === 0 || currentIndex >= db.length) return;
     const currentWord = db[shuffledIndices[currentIndex]];
     
-    document.getElementById('word').innerText = currentWord.w.toUpperCase();
-    document.getElementById('ipa').innerText = currentWord.i || "";
-    document.getElementById('pos').innerText = currentWord.p;
+    document.getElementById('word').innerText = currentWord.w;
     document.getElementById('thai').innerText = currentWord.t;
     
     updateXPDisplay();
-    document.getElementById('progress-text').innerText = `${wordsCleared} / ${db.length}`;
-    
     fitText('word', 4.5);
     fitText('thai', 3.5);
     
     let batchPos = (currentIndex % 10) + 1;
     document.getElementById('global-progress-fill').style.width = `${(wordsCleared / db.length) * 100}%`;
 
+    const backBtn = document.getElementById('back-btn');
+    // Hide PREV button if they are at the start of their un-cleared batch
+    if (currentIndex === wordsCleared) {
+        backBtn.style.visibility = 'hidden';
+    } else {
+        backBtn.style.visibility = 'visible';
+    }
+
     const nextBtn = document.getElementById('next-btn');
     if (batchPos === 10) {
         nextBtn.innerText = "ENGAGE ⚔️";
         nextBtn.classList.add('quiz-ready');
     } else {
-        nextBtn.innerText = "[ NEXT ]";
+        nextBtn.innerText = "NEXT";
         nextBtn.classList.remove('quiz-ready');
     }
 }
 
 function prevWord() {
-    synth.cancel(); // Force stop current audio immediately
+    synth.cancel(); 
     if (currentIndex > wordsCleared) {
         currentIndex--;
         updateUI();
-        playAudio(); // Auto-play the new word
+        playAudio();
     }
 }
 
 function nextWord() {
-    synth.cancel(); // Force stop current audio immediately
+    synth.cancel(); 
     if (currentIndex < db.length) {
         if ((currentIndex + 1) % 10 === 0 && currentIndex - wordsCleared === 9) {
             startGauntlet();
@@ -142,11 +141,11 @@ function nextWord() {
         }
         currentIndex++;
         updateUI();
-        playAudio(); // Auto-play the new word
+        playAudio(); 
     }
 }
 
-// --- SWIPE & KEYBOARD ---
+// --- SWIPE CONTROLS ---
 let touchstartX = 0; let touchendX = 0;
 document.addEventListener('touchstart', e => { touchstartX = e.changedTouches[0].screenX; }, {passive: true});
 document.addEventListener('touchend', e => {
@@ -177,7 +176,7 @@ function closeModal() {
     if (modalCallback) { modalCallback(); modalCallback = null; }
 }
 
-// --- THE ENGAGEMENT ZONE (CoD Quiz) ---
+// --- THE ENGAGEMENT ZONE (Quiz) ---
 let gauntletTimer;
 let gauntletEndTime;
 const MAX_TIME = 30.0;
@@ -185,7 +184,7 @@ let currentQuestionIndex = 0;
 let quizBatchQueue = [];
 let currentQuizWord = {};
 let isBlindAudio = false;
-let attemptsLeft = 2; // ARMOR SYSTEM
+let attemptsLeft = 2; 
 
 function triggerDamageFlash() {
     const overlay = document.getElementById('damage-overlay');
@@ -193,16 +192,30 @@ function triggerDamageFlash() {
     setTimeout(() => overlay.classList.remove('taking-damage'), 150);
 }
 
+// FLOATING XP PARTICLE EFFECT
+function spawnXPPop(amount, btnElement, isCrit) {
+    const rect = btnElement.getBoundingClientRect();
+    const popup = document.createElement('div');
+    popup.className = isCrit ? 'xp-pop crit' : 'xp-pop';
+    popup.innerText = `+${amount} XP`;
+    // Spawn at the center of the clicked button
+    popup.style.left = (rect.left + rect.width / 2) + 'px';
+    popup.style.top = rect.top + 'px';
+    document.body.appendChild(popup);
+    setTimeout(() => popup.remove(), 1000); // Clean up DOM
+}
+
 function startGauntlet() {
     document.getElementById('quiz-container').style.display = 'flex';
-    playTacBeep(300, 'square', 0.1); setTimeout(() => playTacBeep(400, 'square', 0.2), 150); // Start Beep
+    playSynthBeep(400, 'square', 0.2); 
 
     const batchIndices = shuffledIndices.slice(wordsCleared, wordsCleared + 10);
     quizBatchQueue = batchIndices.map(i => db[i]).sort(() => Math.random() - 0.5);
 
     document.getElementById('timer-text').innerText = "ENGAGING...";
+    fitText('timer-text', 4.5); // Ensure "ENGAGING" fits perfectly
+    
     document.getElementById('quiz-word').innerHTML = "";
-    document.getElementById('quiz-pos').innerText = "";
     document.getElementById('quiz-options').innerHTML = '';
     
     setTimeout(() => {
@@ -215,7 +228,7 @@ function startGauntlet() {
             if(timeLeft <= 0) timeLeft = 0;
             
             document.getElementById('timer-text').innerText = timeLeft.toFixed(1);
-            if(timeLeft < 5.0 && timeLeft > 0 && Math.floor(timeLeft * 10) % 10 === 0) playTacBeep(800, 'sine', 0.05, 0.05);
+            if(timeLeft < 5.0 && timeLeft > 0 && Math.floor(timeLeft * 10) % 10 === 0) playSynthBeep(800, 'sine', 0.05, 0.05);
 
             if (timeLeft <= 0) failGauntlet("TIME EXPIRED");
         }, 100);
@@ -226,16 +239,13 @@ function playQuizAudio() { synth.cancel(); playAudio(currentQuizWord.w); }
 
 function generateQuizQuestion() {
     currentQuizWord = quizBatchQueue[currentQuestionIndex];
-    attemptsLeft = 2; // Reset armor
+    attemptsLeft = 2; 
     isBlindAudio = Math.random() < 0.3;
 
     if (isBlindAudio) {
-        // EMPTY BRACKETS FOR CLASSIFIED AUDIO (No Text!)
-        document.getElementById('quiz-word').innerHTML = `<span style="color: #444;">[ ■ ■ ■ ]</span>`;
-        document.getElementById('quiz-pos').innerText = "CLASSIFIED";
+        document.getElementById('quiz-word').innerHTML = `<span style="color: #66fcf1; opacity: 0.5;">[ ■ ■ ■ ]</span>`;
     } else {
-        document.getElementById('quiz-word').innerHTML = currentQuizWord.w.toUpperCase();
-        document.getElementById('quiz-pos').innerText = currentQuizWord.p;
+        document.getElementById('quiz-word').innerHTML = currentQuizWord.w;
         fitText('quiz-word', 4.0);
     }
     
@@ -270,23 +280,26 @@ function checkAnswer(selectedThai, buttonElement) {
     if(timeLeft < 0) timeLeft = 0;
 
     if (selectedThai === currentQuizWord.t) {
-        // CORRECT (Kill Confirm)
+        // CORRECT
         Array.from(document.getElementsByClassName('quiz-option')).forEach(b => b.style.pointerEvents = 'none');
-        playHitMarker(); 
+        playHitSound(); 
         buttonElement.classList.add('correct');
         
         // Calculate XP
         let wordBaseXp = 100;
-        let speedBonus = Math.floor((timeLeft / MAX_TIME) * 50); // Up to +50 based on speed
+        let speedBonus = Math.floor((timeLeft / MAX_TIME) * 50); 
         let totalGain = wordBaseXp + speedBonus;
-        if (isBlindAudio) totalGain *= 2; // Multiplier
-        if (attemptsLeft === 1) totalGain = Math.floor(totalGain / 2); // 50% penalty if they missed once
+        if (isBlindAudio) totalGain *= 2; 
+        if (attemptsLeft === 1) totalGain = Math.floor(totalGain / 2); // 50% penalty if missed once
         
         xpScore += totalGain;
         updateXPDisplay();
+        
+        // Spawn Floating Visual
+        spawnXPPop(totalGain, buttonElement, isBlindAudio);
 
         if (isBlindAudio) {
-            document.getElementById('quiz-word').innerHTML = `<span style="color: #8bc34a;">${currentQuizWord.w.toUpperCase()}</span>`;
+            document.getElementById('quiz-word').innerHTML = `<span style="color: #66fcf1;">${currentQuizWord.w.toUpperCase()}</span>`;
             fitText('quiz-word', 4.0);
         }
         
@@ -294,15 +307,14 @@ function checkAnswer(selectedThai, buttonElement) {
             currentQuestionIndex++;
             if (currentQuestionIndex >= 10) passGauntlet();
             else generateQuizQuestion();
-        }, 400);
+        }, 500);
 
     } else {
-        // WRONG (Taking Damage)
+        // WRONG 
         attemptsLeft--;
-        playDamageThud();
+        playDamageSound();
         triggerDamageFlash();
         buttonElement.classList.add('wrong');
-        buttonElement.style.pointerEvents = 'none'; // Disable just this button
         
         xpScore -= 50; // XP Penalty
         if(xpScore < 0) xpScore = 0;
@@ -310,7 +322,7 @@ function checkAnswer(selectedThai, buttonElement) {
 
         if (attemptsLeft <= 0) {
             Array.from(document.getElementsByClassName('quiz-option')).forEach(b => b.style.pointerEvents = 'none');
-            setTimeout(() => { failGauntlet("ARMOR COMPROMISED"); }, 400);
+            setTimeout(() => { failGauntlet("MISSION FAILED"); }, 400);
         }
     }
 }
@@ -319,30 +331,33 @@ function passGauntlet() {
     clearInterval(gauntletTimer);
     document.getElementById('quiz-container').style.display = 'none';
     
+    // Confetti Victory
+    confetti({ particleCount: 300, spread: 120, origin: { y: 0.5 }, colors: ['#66fcf1', '#ff007f', '#ffffff'] });
+
     wordsCleared += 10; 
     currentIndex = wordsCleared; 
     
-    localStorage.setItem('tac_cleared', wordsCleared);
-    localStorage.setItem('tac_xp', xpScore);
+    localStorage.setItem('aaa_cleared', wordsCleared);
+    localStorage.setItem('aaa_xp', xpScore);
     
     if (wordsCleared >= db.length) {
-        showModal("OPERATION COMPLETE", "ALL INTEL SECURED.", "RESTART", () => {
+        showModal("GAME CLEARED", "ALL WORDS MASTERED.", "RESTART", () => {
             wordsCleared = 0; currentIndex = 0; xpScore = 0;
-            localStorage.setItem('tac_cleared', 0); localStorage.setItem('tac_xp', 0); updateUI();
+            localStorage.setItem('aaa_cleared', 0); localStorage.setItem('aaa_xp', 0); updateUI();
         });
     } else {
         updateUI();
-        playAudio(); // Auto-play the first word of the next batch!
+        playAudio(); 
     }
 }
 
 function failGauntlet(reason) {
     clearInterval(gauntletTimer);
-    showModal("KIA", reason + "\nFALLING BACK TO CHECKPOINT.", "REDEPLOY", () => {
+    showModal("DEFEAT", reason + "\nTRY AGAIN.", "RETRY", () => {
         document.getElementById('quiz-container').style.display = 'none';
         
-        currentIndex = wordsCleared; // Reset to start of un-cleared batch
-        localStorage.setItem('tac_xp', xpScore); // Save the XP penalties they took!
+        currentIndex = wordsCleared; 
+        localStorage.setItem('aaa_xp', xpScore); 
         
         updateUI();
         playAudio();
