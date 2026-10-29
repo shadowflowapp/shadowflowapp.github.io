@@ -1,9 +1,8 @@
 let db = []; 
 let currentIndex = 0;
 let score = 0;
-let currentAmbushWord = null;
 
-// --- SPEECH SETUP ---
+// --- SPEECH SYNTHESIS SETUP ---
 const synth = window.speechSynthesis;
 let americanMaleVoice = null;
 synth.onvoiceschanged = () => {
@@ -12,6 +11,7 @@ synth.onvoiceschanged = () => {
     if(!americanMaleVoice) americanMaleVoice = voices.find(v => v.lang === 'en-US');
 };
 
+// --- INITIALIZATION & LOAD SAVE DATA ---
 async function initApp() {
     try {
         const response = await fetch('db.jsonl');
@@ -19,20 +19,26 @@ async function initApp() {
         db = text.split('\n').filter(line => line.trim() !== '').map(line => JSON.parse(line));
         
         document.getElementById('total-words').innerText = db.length;
-        if (localStorage.getItem('efl_score')) {
-            score = parseInt(localStorage.getItem('efl_score'));
+
+        // Load progress from browser storage
+        if (localStorage.getItem('mrbeast_score')) {
+            score = parseInt(localStorage.getItem('mrbeast_score'));
             currentIndex = score;
-            if (currentIndex >= db.length) { currentIndex = db.length - 1; score = currentIndex; }
+            
+            if (currentIndex >= db.length) {
+                currentIndex = db.length - 1;
+                score = currentIndex;
+            }
         }
         
         document.getElementById('loading-screen').style.display = 'none';
         updateUI();
     } catch (error) {
-        document.getElementById('loading-screen').innerText = "ERROR!";
+        document.getElementById('loading-screen').innerText = "ERROR LOADING DATABASE!";
     }
 }
 
-// --- SOUND ENGINE ---
+// --- SOUND EFFECTS ---
 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
 function playBeep(freq, type, duration) {
@@ -50,64 +56,75 @@ function playCorrectSound() {
     let now = audioCtx.currentTime;
     let osc = audioCtx.createOscillator();
     let gainNode = audioCtx.createGain();
+    
     osc.type = 'sine';
     osc.frequency.setValueAtTime(1046.50, now);          
     osc.frequency.setValueAtTime(1318.51, now + 0.1);    
+    
     gainNode.gain.setValueAtTime(0.3, now);
     gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
+    
     osc.connect(gainNode);
     gainNode.connect(audioCtx.destination);
+    
     osc.start(now);
     osc.stop(now + 0.3);
 }
 
-function speakText(text) {
+function playAudio(word = null) {
     if (db.length === 0) return;
+    const textToSpeak = word || db[currentIndex].w;
+    
     synth.cancel(); 
-    const utterance = new SpeechSynthesisUtterance(text);
+    const utterance = new SpeechSynthesisUtterance(textToSpeak);
     if(americanMaleVoice) utterance.voice = americanMaleVoice;
     utterance.rate = 0.85; 
     synth.speak(utterance);
 }
 
-function playChunkAudio() {
-    speakText(db[currentIndex].c);
-}
-
-function playSentenceAudio() {
-    speakText(db[currentIndex].s);
-}
-
-// --- MAIN UI ---
+// --- UI & PROGRESS BAR UPDATES ---
 function updateUI() {
     if (db.length === 0) return;
-    document.getElementById('flashcard').style.display = 'flex';
-    document.getElementById('quiz-container').style.display = 'none';
-    document.getElementById('ambush-container').style.display = 'none';
-    document.getElementById('controls').style.display = 'flex';
-    document.getElementById('app-container').className = '';
-
-    const currentData = db[currentIndex];
-    document.getElementById('chunk').innerText = currentData.c.toUpperCase();
-    document.getElementById('level-badge').innerText = currentData.lvl.toUpperCase();
-    document.getElementById('sentence').innerText = `"${currentData.s}"`;
+    const currentWord = db[currentIndex];
+    
+    // Update Main Info
+    document.getElementById('word').innerText = currentWord.w.toUpperCase();
+    document.getElementById('ipa').innerText = currentWord.i || "";
+    document.getElementById('pos').innerText = currentWord.p;
+    document.getElementById('thai').innerText = currentWord.t;
     document.getElementById('score').innerText = score;
     
-    document.getElementById('global-progress-fill').style.width = `${(score / db.length) * 100}%`;
-    localStorage.setItem('efl_score', score);
+    // Dynamic Letter Extraction
+    const letter = currentWord.w.charAt(0).toUpperCase();
+    document.getElementById('current-letter').innerText = letter;
+
+    // The Finisher XP Bar
+    const progressPercent = (score / db.length) * 100;
+    document.getElementById('global-progress-fill').style.width = `${progressPercent}%`;
+
+    // Save Progress!
+    localStorage.setItem('mrbeast_score', score);
     
-    // Auto-play the chunk when opening a new card
-    playChunkAudio();
+    // THE ULTIMATE FINISHER CHECK
+    if (score >= db.length && db.length > 0) {
+        showModal("🏆 FINISHER! 🏆", "YOU CONQUERED THE ENTIRE DICTIONARY!", "RESTART", () => {
+            score = 0;
+            currentIndex = 0;
+            localStorage.setItem('mrbeast_score', 0);
+            updateUI();
+        });
+    }
 }
 
 function prevWord() {
-    if (currentIndex > 0) { currentIndex--; updateUI(); }
+    if (currentIndex > 0) {
+        currentIndex--;
+        updateUI();
+    }
 }
 
 function nextWord() {
     if (currentIndex < db.length - 1) {
-        
-        // Gauntlet Check (Every 10 words)
         if (score === currentIndex && (currentIndex + 1) % 10 === 0) {
             score++; 
             startGauntlet();
@@ -116,107 +133,30 @@ function nextWord() {
         
         currentIndex++;
         if (currentIndex > score) score = currentIndex;
-
-        // 15% Chance for a Blind Audio Ambush
-        if (Math.random() < 0.15 && currentIndex % 10 !== 0 && currentIndex > 1) {
-            startAmbush();
-            return;
-        }
         
         updateUI();
+        playAudio();
     }
 }
 
-// --- MODAL ---
+// --- CUSTOM MODAL ---
 let modalCallback = null;
-function showModal(title, desc, btnText, cb) {
+function showModal(title, desc, buttonText, callback) {
     document.getElementById('modal-title').innerText = title;
     document.getElementById('modal-desc').innerText = desc;
-    document.querySelector('.modal-btn').innerText = btnText;
-    modalCallback = cb;
+    document.querySelector('.modal-btn').innerText = buttonText;
+    modalCallback = callback;
     document.getElementById('custom-modal').classList.add('show');
 }
 function closeModal() {
     document.getElementById('custom-modal').classList.remove('show');
-    if (modalCallback) { modalCallback(); modalCallback = null; }
-}
-
-// ==========================================
-// THE BLIND AUDIO AMBUSH
-// ==========================================
-let ambushTimerId;
-let ambushTimeLeft;
-
-function startAmbush() {
-    document.getElementById('flashcard').style.display = 'none';
-    document.getElementById('controls').style.display = 'none';
-    document.getElementById('ambush-container').style.display = 'flex';
-    document.getElementById('app-container').classList.add('ambush-siren');
-    
-    playBeep(400, 'square', 0.8); 
-
-    currentAmbushWord = db[currentIndex];
-    setTimeout(() => { speakText(currentAmbushWord.s); }, 500);
-
-    let options = [currentAmbushWord.c];
-    while(options.length < 4) {
-        let randomChunk = db[Math.floor(Math.random() * db.length)].c;
-        if(!options.includes(randomChunk)) options.push(randomChunk);
-    }
-    options.sort(() => Math.random() - 0.5);
-
-    const container = document.getElementById('ambush-options');
-    container.innerHTML = '';
-    options.forEach((opt, index) => {
-        const btn = document.createElement('div');
-        btn.className = `quiz-option opt-${index}`; 
-        btn.innerText = opt.toUpperCase();
-        btn.onclick = (e) => checkAmbush(opt, e.currentTarget);
-        container.appendChild(btn);
-    });
-
-    ambushTimeLeft = 7.0;
-    document.getElementById('ambush-timer').innerText = "7.0";
-    
-    ambushTimerId = setInterval(() => {
-        ambushTimeLeft -= 0.1;
-        document.getElementById('ambush-timer').innerText = Math.max(0, ambushTimeLeft).toFixed(1);
-        if(ambushTimeLeft <= 0) failAmbush();
-    }, 100);
-}
-
-function replayAmbushAudio() {
-    if(currentAmbushWord) speakText(currentAmbushWord.s);
-}
-
-function checkAmbush(selected, btn) {
-    Array.from(document.getElementById('ambush-options').children).forEach(b => b.style.pointerEvents = 'none');
-    clearInterval(ambushTimerId);
-
-    if (selected === currentAmbushWord.c) {
-        playCorrectSound();
-        btn.classList.add('correct');
-        setTimeout(() => { updateUI(); }, 800);
-    } else {
-        playBeep(150, 'sawtooth', 0.4);
-        btn.classList.add('wrong');
-        setTimeout(() => { failAmbush(); }, 500);
+    if (modalCallback) {
+        modalCallback();
+        modalCallback = null;
     }
 }
 
-function failAmbush() {
-    clearInterval(ambushTimerId);
-    showModal("AMBUSH FAILED 💀", "You missed the audio context. Try again!", "RETRY", () => {
-        currentIndex--; 
-        if (currentIndex < 0) currentIndex = 0;
-        score = currentIndex;
-        updateUI();
-    });
-}
-
-// ==========================================
-// THE CONTEXT CLOZE GAUNTLET (With Auto-Fill Blank)
-// ==========================================
+// --- THE GAUNTLET QUIZ ENGINE ---
 let gauntletTimer;
 let timeLeft;
 const MAX_TIME = 30.0;
@@ -225,8 +165,6 @@ let quizBatchQueue = [];
 let currentQuizWord = {};
 
 function startGauntlet() {
-    document.getElementById('flashcard').style.display = 'none';
-    document.getElementById('controls').style.display = 'none';
     document.getElementById('quiz-container').style.display = 'flex';
     document.getElementById('app-container').classList.add('danger-pulse');
     
@@ -235,8 +173,9 @@ function startGauntlet() {
     const batchWords = db.slice(currentIndex - 9, currentIndex + 1);
     quizBatchQueue = batchWords.sort(() => Math.random() - 0.5);
 
-    document.getElementById('quiz-timer').innerText = "READY!";
-    document.getElementById('quiz-sentence').innerHTML = "";
+    // "READY" screen to prevent audio overlapping
+    document.getElementById('timer-text').innerText = "READY!";
+    document.getElementById('quiz-word').innerHTML = "";
     document.getElementById('quiz-options').innerHTML = '';
     
     setTimeout(() => {
@@ -246,9 +185,15 @@ function startGauntlet() {
         
         gauntletTimer = setInterval(() => {
             timeLeft -= 0.1;
-            document.getElementById('quiz-timer').innerText = Math.max(0, timeLeft).toFixed(1);
-            if(timeLeft < 5.0 && timeLeft > 0 && Math.floor(timeLeft * 10) % 10 === 0) playBeep(800, 'square', 0.05);
-            if (timeLeft <= 0) failGauntlet();
+            document.getElementById('timer-text').innerText = Math.max(0, timeLeft).toFixed(1);
+            
+            if(timeLeft < 5.0 && timeLeft > 0) {
+                if(Math.floor(timeLeft * 10) % 10 === 0) playBeep(800, 'square', 0.05);
+            }
+
+            if (timeLeft <= 0) {
+                failGauntlet();
+            }
         }, 100);
     }, 600);
 }
@@ -256,75 +201,100 @@ function startGauntlet() {
 function generateQuizQuestion() {
     currentQuizWord = quizBatchQueue[currentQuestionIndex];
     
-    // Create an identifiable blank space ID
-    const regex = new RegExp(`\\b${currentQuizWord.w}\\b`, 'gi');
-    const clozeSentence = currentQuizWord.s.replace(regex, `<span id="cloze-blank" class="blank-space">________</span>`);
+    document.getElementById('quiz-word').innerHTML = `
+        ${currentQuizWord.w.toUpperCase()} 
+        <br>
+        <span style="font-size: 1.5rem; color: #ff007f; font-family: 'Nunito', sans-serif; background: #222; padding: 2px 10px; border-radius: 10px; border: 2px solid #000;">
+            ${currentQuizWord.p}
+        </span>
+    `;
     
-    document.getElementById('quiz-sentence').innerHTML = `"${clozeSentence}"`;
+    playAudio(currentQuizWord.w);
     
-    let options = [currentQuizWord.w];
+    let options = [currentQuizWord.t];
     let attempts = 0; 
+    
+    // Pick 3 wrong answers (Similarity filter applied!)
     while(options.length < 4 && attempts < 1000) {
         attempts++;
-        let randomWord = db[Math.floor(Math.random() * db.length)].w;
-        if(!options.includes(randomWord)) options.push(randomWord);
+        let randomWrong = db[Math.floor(Math.random() * db.length)].t;
+        
+        let isExactMatch = options.includes(randomWrong);
+        let isTooSimilar = options.some(opt => opt.includes(randomWrong) || randomWrong.includes(opt));
+        
+        if(!isExactMatch && !isTooSimilar) {
+            options.push(randomWrong);
+        }
+    }
+    
+    // Failsafe
+    while (options.length < 4) {
+        options.push(db[Math.floor(Math.random() * db.length)].t + " ");
     }
     
     options.sort(() => Math.random() - 0.5);
-    const container = document.getElementById('quiz-options');
-    container.innerHTML = '';
+    
+    const optionsContainer = document.getElementById('quiz-options');
+    optionsContainer.innerHTML = '';
     
     options.forEach((opt, index) => {
         const btn = document.createElement('div');
         btn.className = `quiz-option opt-${index}`; 
-        btn.innerText = opt.toUpperCase();
-        btn.onclick = (e) => checkGauntletAnswer(opt, e.currentTarget);
-        container.appendChild(btn);
+        btn.innerText = opt.trim();
+        btn.onclick = (e) => checkAnswer(opt, e.currentTarget);
+        optionsContainer.appendChild(btn);
     });
 }
 
-function checkGauntletAnswer(selected, btn) {
-    Array.from(document.getElementById('quiz-options').children).forEach(b => b.style.pointerEvents = 'none');
+function checkAnswer(selectedThai, buttonElement) {
+    Array.from(document.getElementsByClassName('quiz-option')).forEach(b => b.style.pointerEvents = 'none');
 
-    if (selected === currentQuizWord.w) {
+    if (selectedThai === currentQuizWord.t) {
         playCorrectSound(); 
-        btn.classList.add('correct');
+        buttonElement.classList.add('correct');
         
-        // VISUAL SNAP: Fill the blank space instantly so they can read it!
-        const blankSpan = document.getElementById('cloze-blank');
-        blankSpan.innerText = selected.toUpperCase();
-        blankSpan.style.background = "transparent";
-        blankSpan.style.color = "#00ff00";
-        blankSpan.style.borderBottom = "none";
-
-        // Give them an extra 1.2 seconds to read the completed sentence before moving on
         setTimeout(() => {
             currentQuestionIndex++;
-            if (currentQuestionIndex >= 10) passGauntlet();
-            else generateQuizQuestion();
-        }, 1200);
-
+            if (currentQuestionIndex >= 10) {
+                passGauntlet();
+            } else {
+                generateQuizQuestion();
+            }
+        }, 300);
     } else {
         playBeep(150, 'sawtooth', 0.4); 
-        btn.classList.add('wrong');
-        setTimeout(() => { failGauntlet(); }, 500);
+        buttonElement.classList.add('wrong');
+        
+        setTimeout(() => {
+            failGauntlet();
+        }, 300);
     }
 }
 
 function passGauntlet() {
     clearInterval(gauntletTimer);
-    confetti({ particleCount: 300, spread: 120, origin: { y: 0.5 }, colors: ['#ffe600', '#00e5ff', '#ff007f'] });
+    document.getElementById('quiz-container').style.display = 'none';
+    document.getElementById('app-container').classList.remove('danger-pulse');
+    
+    confetti({ particleCount: 300, spread: 120, origin: { y: 0.5 }, colors: ['#ffe600', '#00e5ff', '#00ff00'] });
+
     currentIndex++;
     if (currentIndex > score) score = currentIndex;
     updateUI();
+    playAudio();
 }
 
 function failGauntlet() {
     clearInterval(gauntletTimer);
-    showModal("BATCH FAILED 💀", "You broke the context chain. Back to the start of the batch!", "TRY AGAIN", () => {
+    
+    showModal("FAIL! 💀", "You did not clear the batch. Back to the start!", "TRY AGAIN", () => {
+        document.getElementById('quiz-container').style.display = 'none';
+        document.getElementById('app-container').classList.remove('danger-pulse');
+        
         currentIndex = currentIndex - 9;
         score = currentIndex; 
         updateUI();
+        playAudio();
     });
 }
 
