@@ -1,5 +1,4 @@
 let db = []; 
-let shuffledIndices = [];
 let currentIndex = 0; 
 let highestIndexSeen = 0; 
 let xpScore = 0; 
@@ -28,23 +27,13 @@ async function initApp() {
     try {
         const response = await fetch('db.jsonl');
         const text = await response.text();
+        // A-to-Z Loading: No shuffling!
         db = text.split('\n').filter(line => line.trim() !== '').map(line => JSON.parse(line));
         
-        let storedOrder = localStorage.getItem('aaa_learn_order');
-        if (storedOrder) {
-            shuffledIndices = JSON.parse(storedOrder);
-            if(shuffledIndices.length !== db.length) {
-                shuffledIndices = db.map((_, i) => i).sort(() => Math.random() - 0.5);
-                localStorage.setItem('aaa_learn_order', JSON.stringify(shuffledIndices));
-            }
-        } else {
-            shuffledIndices = db.map((_, i) => i).sort(() => Math.random() - 0.5);
-            localStorage.setItem('aaa_learn_order', JSON.stringify(shuffledIndices));
-        }
-
-        if (localStorage.getItem('aaa_highest')) highestIndexSeen = parseInt(localStorage.getItem('aaa_highest'));
-        if (localStorage.getItem('aaa_current')) currentIndex = parseInt(localStorage.getItem('aaa_current'));
-        if (localStorage.getItem('aaa_xp')) xpScore = parseInt(localStorage.getItem('aaa_xp'));
+        // Load progression data
+        if (localStorage.getItem('a2z_highest')) highestIndexSeen = parseInt(localStorage.getItem('a2z_highest'));
+        if (localStorage.getItem('a2z_current')) currentIndex = parseInt(localStorage.getItem('a2z_current'));
+        if (localStorage.getItem('a2z_xp')) xpScore = parseInt(localStorage.getItem('a2z_xp'));
         
         document.getElementById('loading-screen').style.display = 'none';
         updateUI();
@@ -69,7 +58,7 @@ function playSynthBeep(freq, type, duration, vol=0.1) {
 
 function speakText(text) {
     if (db.length === 0) return;
-    synth.cancel(); 
+    synth.cancel(); // STRICT CANCEL to prevent overlapping
     const utterance = new SpeechSynthesisUtterance(text);
     if(americanMaleVoice) utterance.voice = americanMaleVoice;
     utterance.rate = 0.85; 
@@ -77,12 +66,12 @@ function speakText(text) {
 }
 
 function playWordAudio() {
-    const currentWord = db[shuffledIndices[currentIndex]].w;
+    const currentWord = db[currentIndex].w;
     speakText(currentWord);
 }
 
 function playSentenceAudio() {
-    const currentSentence = db[shuffledIndices[currentIndex]].s;
+    const currentSentence = db[currentIndex].s;
     speakText(currentSentence);
 }
 
@@ -106,17 +95,17 @@ function updateXPDisplay() {
 
 function updateUI() {
     if (db.length === 0 || currentIndex >= db.length) return;
-    const currentData = db[shuffledIndices[currentIndex]];
+    const currentData = db[currentIndex]; // A-to-Z Order
     
     document.getElementById('word').innerText = currentData.w;
+    document.getElementById('ipa').innerText = currentData.i;
     document.getElementById('definition').innerText = currentData.d;
     
-    // DYNAMIC REGEX HIGHLIGHTER: Finds the target word and wraps it in a glowing <span>
-    // Using \b ensures we only match whole words, not partial words. 'gi' means global & case-insensitive.
+    // DYNAMIC REGEX HIGHLIGHTER: Finds target word & wraps it.
+    // 'match' preserves the exact original capitalization of the sentence!
     const regex = new RegExp(`\\b${currentData.w}\\b`, 'gi');
     const highlightedSentence = currentData.s.replace(regex, match => `<span class="highlight-word">${match}</span>`);
     
-    // Use innerHTML so the <span> actually renders as HTML instead of plain text
     document.getElementById('sentence').innerHTML = `"${highlightedSentence}"`;
     
     updateXPDisplay();
@@ -136,7 +125,7 @@ function prevWord() {
     synth.cancel(); 
     if (currentIndex > 0) {
         currentIndex--;
-        localStorage.setItem('aaa_current', currentIndex);
+        localStorage.setItem('a2z_current', currentIndex);
         updateUI();
         playWordAudio();
     }
@@ -149,24 +138,24 @@ function nextWord() {
             highestIndexSeen++;
             xpScore += 100;
             
-            localStorage.setItem('aaa_highest', highestIndexSeen);
-            localStorage.setItem('aaa_xp', xpScore);
+            localStorage.setItem('a2z_highest', highestIndexSeen);
+            localStorage.setItem('a2z_xp', xpScore);
             
             const nextBtn = document.getElementById('next-btn');
             spawnXPPop(100, nextBtn);
         }
         
         currentIndex++;
-        localStorage.setItem('aaa_current', currentIndex);
+        localStorage.setItem('a2z_current', currentIndex);
         updateUI();
         playWordAudio(); 
         
     } else if (currentIndex === db.length - 1) {
         showModal("DATABASE CLEARED", "YOU MASTERED EVERY WORD.", "RESTART", () => {
             currentIndex = 0; highestIndexSeen = 0; xpScore = 0;
-            localStorage.setItem('aaa_current', 0);
-            localStorage.setItem('aaa_highest', 0);
-            localStorage.setItem('aaa_xp', 0);
+            localStorage.setItem('a2z_current', 0);
+            localStorage.setItem('a2z_highest', 0);
+            localStorage.setItem('a2z_xp', 0);
             updateUI();
         });
     }
