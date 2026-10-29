@@ -3,69 +3,79 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Fluency: AAA Immersion</title>
+    <title>Fluency: Immersion Protocol</title>
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;900&family=Righteous&display=swap" rel="stylesheet">
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Nunito', sans-serif; }
         
         body { 
-            background: #0b0c10; display: flex; justify-content: center; align-items: center; 
+            background: #050608; display: flex; justify-content: center; align-items: center; 
             height: 100dvh; overflow: hidden; touch-action: pan-y; color: #fff;
         }
 
         #app-container {
             width: 100%; max-width: 420px; height: 100dvh; max-height: 900px;
-            background: linear-gradient(135deg, #1f2833 0%, #0b0c10 100%);
+            background: linear-gradient(180deg, #121820 0%, #050608 100%);
             display: flex; flex-direction: column; position: relative; 
-            box-shadow: 0 0 40px rgba(102, 252, 241, 0.1); overflow: hidden;
+            box-shadow: 0 0 50px rgba(102, 252, 241, 0.05); overflow: hidden;
         }
 
-        /* SLEEK HUD HEADER */
+        /* HUD HEADER */
         #top-bar { 
             display: flex; flex-direction: column; justify-content: center; align-items: center; 
-            padding: 15px 20px 10px 20px; background: rgba(11, 12, 16, 0.8); backdrop-filter: blur(10px);
+            padding: 20px 20px 15px 20px; background: rgba(5, 6, 8, 0.8); backdrop-filter: blur(10px);
             border-bottom: 2px solid #66fcf1; z-index: 10; flex-shrink: 0; 
         }
-        .hud-label { font-size: 0.8rem; color: #c5c6c7; letter-spacing: 2px; text-transform: uppercase; font-weight: 900; margin-bottom: 2px; }
-        #xp-box { font-family: 'Righteous', cursive; font-size: 2.5rem; color: #66fcf1; text-shadow: 0 0 15px rgba(102, 252, 241, 0.6); line-height: 1; }
+        .hud-label { font-size: 0.8rem; color: #8892b0; letter-spacing: 3px; text-transform: uppercase; font-weight: 900; margin-bottom: 4px; }
+        #xp-box { font-family: 'Righteous', cursive; font-size: 2.8rem; color: #66fcf1; text-shadow: 0 0 20px rgba(102, 252, 241, 0.5); line-height: 1; }
         
-        #global-progress-bg { width: 100%; height: 4px; background: #1f2833; flex-shrink: 0; }
-        #global-progress-fill { height: 100%; width: 0%; background: #ff007f; transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 0 10px #ff007f; }
+        #global-progress-bg { width: 100%; height: 4px; background: #1a2230; flex-shrink: 0; }
+        #global-progress-fill { height: 100%; width: 0%; background: #ff007f; transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 0 12px #ff007f; }
 
         /* INTEL / FLASHCARD DISPLAY */
-        #flashcard { flex: 1; display: flex; flex-direction: column; align-items: center; padding: 20px 15px; text-align: center; width: 100%; overflow: hidden; }
+        #flashcard { flex: 1; display: flex; flex-direction: column; padding: 25px 20px; width: 100%; overflow-y: auto; overflow-x: hidden; gap: 20px; }
         
-        #pos-badge { background: #ff007f; color: #fff; padding: 2px 10px; border-radius: 8px; font-weight: 900; text-transform: uppercase; font-size: 0.9rem; letter-spacing: 1px; margin-bottom: 10px; }
+        /* Module 1: The Word */
+        .word-module { display: flex; flex-direction: column; align-items: center; justify-content: center; margin-bottom: 10px; }
+        .text-fit-container { width: 100%; overflow: hidden; white-space: nowrap; display: flex; justify-content: center; align-items: center; margin-bottom: 15px; }
+        #word { font-family: 'Righteous', cursive; color: #fff; letter-spacing: 2px; line-height: 1.1; text-shadow: 4px 4px 0px #0a0c10; text-transform: uppercase; }
         
-        .text-fit-container { width: 100%; overflow: hidden; white-space: nowrap; display: flex; justify-content: center; align-items: center; }
-        #word { font-family: 'Righteous', cursive; color: #fff; letter-spacing: 2px; line-height: 1.1; text-shadow: 3px 3px 0px #1f2833; text-transform: uppercase; }
-        #ipa { font-size: 1.2rem; color: #66fcf1; font-family: 'Courier New', Courier, monospace; font-weight: 700; margin-bottom: 15px; }
-
-        .def-box { background: rgba(0,0,0,0.4); padding: 15px; border-left: 3px solid #ff007f; border-radius: 8px; margin-bottom: 15px; width: 100%; }
-        #definition { font-size: 1.1rem; color: #c5c6c7; font-weight: 700; line-height: 1.3; }
-
-        .sentence-box { background: rgba(31, 40, 51, 0.8); padding: 15px; border-left: 3px solid #66fcf1; border-radius: 8px; width: 100%; flex: 1; display: flex; align-items: center; justify-content: center; font-style: italic; }
-        #sentence { font-size: 1.2rem; color: #fff; font-weight: 700; line-height: 1.4; }
-
-        #audio-btn { 
-            background: #66fcf1; color: #0b0c10; width: 60px; height: 60px; font-size: 2rem; 
+        .main-audio-btn { 
+            background: #66fcf1; color: #050608; width: 70px; height: 70px; font-size: 2rem; 
             display: flex; justify-content: center; align-items: center; cursor: pointer; 
-            margin: 15px 0; transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); 
-            flex-shrink: 0; border: none; border-radius: 50%; box-shadow: 0 5px 15px rgba(102, 252, 241, 0.3);
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); border: none; border-radius: 50%; 
+            box-shadow: 0 8px 20px rgba(102, 252, 241, 0.2);
         }
-        #audio-btn:active { transform: scale(0.9) translateY(5px); box-shadow: 0 2px 5px rgba(102, 252, 241, 0.2); }
+        .main-audio-btn:active { transform: scale(0.9) translateY(4px); box-shadow: 0 2px 5px rgba(102, 252, 241, 0.15); }
+
+        /* Module 2 & 3: Definition and Context */
+        .data-module { background: rgba(18, 24, 32, 0.7); border-radius: 12px; padding: 20px; border-left: 4px solid #ff007f; box-shadow: inset 0 0 20px rgba(0,0,0,0.5); }
+        .data-module.context { border-left-color: #66fcf1; }
+        
+        .module-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 8px; }
+        .module-title { font-size: 0.8rem; color: #8892b0; letter-spacing: 2px; text-transform: uppercase; font-weight: 900; }
+        
+        #definition { font-size: 1.2rem; color: #e6f1ff; font-weight: 700; line-height: 1.5; }
+        #sentence { font-size: 1.3rem; color: #fff; font-weight: 900; line-height: 1.5; font-style: italic; }
+
+        .context-audio-btn { 
+            background: rgba(102, 252, 241, 0.1); color: #66fcf1; border: 1px solid #66fcf1; 
+            padding: 5px 12px; border-radius: 6px; font-size: 0.85rem; font-weight: 900; 
+            cursor: pointer; display: flex; align-items: center; gap: 6px; transition: 0.15s; 
+        }
+        .context-audio-btn:active { background: #66fcf1; color: #050608; transform: scale(0.95); }
         
         /* CONTROLS */
-        #controls { display: flex; gap: 10px; padding: 15px; background: rgba(11,12,16,0.9); flex-shrink: 0; border-top: 1px solid #1f2833; }
+        #controls { display: flex; gap: 15px; padding: 20px; background: rgba(5,6,8,0.95); flex-shrink: 0; border-top: 1px solid #1a2230; }
         .nav-btn { 
-            flex: 1; padding: 15px; font-size: 1.2rem; font-weight: 900; background: #1f2833; color: #c5c6c7; 
-            border: none; border-radius: 10px; cursor: pointer; transition: 0.15s; letter-spacing: 1px;
-            box-shadow: 0 4px 0 #0b0c10;
+            flex: 1; padding: 18px; font-size: 1.2rem; font-weight: 900; background: #1a2230; color: #8892b0; 
+            border: none; border-radius: 12px; cursor: pointer; transition: 0.15s; letter-spacing: 1px;
+            box-shadow: 0 5px 0 #020203;
         }
-        #back-btn:active { transform: translateY(4px); box-shadow: 0 0px 0 #0b0c10; }
+        #back-btn:active { transform: translateY(5px); box-shadow: 0 0px 0 #020203; }
         
-        #next-btn { background: #66fcf1; color: #0b0c10; flex: 1.5; box-shadow: 0 4px 0 #45a29e; position: relative; }
-        #next-btn:active { transform: translateY(4px); box-shadow: 0 0px 0 #45a29e; }
+        #next-btn { background: #66fcf1; color: #050608; flex: 1.5; box-shadow: 0 5px 0 #3b938e; }
+        #next-btn:active { transform: translateY(5px); box-shadow: 0 0px 0 #3b938e; }
 
         /* FLOATING XP PARTICLES */
         .xp-pop {
@@ -81,16 +91,16 @@
         }
 
         /* MODAL */
-        #custom-modal { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(11,12,16,0.95); z-index: 100; display: flex; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: 0.2s ease; }
+        #custom-modal { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(5,6,8,0.95); z-index: 100; display: flex; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: 0.2s ease; }
         #custom-modal.show { opacity: 1; pointer-events: all; }
-        .modal-content { background: #1f2833; border-radius: 20px; padding: 40px 20px; text-align: center; width: 85%; transform: scale(0.9); transition: 0.2s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 20px 50px rgba(0,0,0,0.5); border: 2px solid #66fcf1; }
+        .modal-content { background: #121820; border-radius: 20px; padding: 40px 20px; text-align: center; width: 85%; transform: scale(0.9); transition: 0.2s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 20px 50px rgba(0,0,0,0.8); border: 2px solid #66fcf1; }
         #custom-modal.show .modal-content { transform: scale(1); }
         .modal-title { font-family: 'Righteous', cursive; font-size: 2.5rem; color: #66fcf1; margin-bottom: 10px; line-height: 1.1; }
-        .modal-desc { font-size: 1.2rem; font-weight: 900; color: #c5c6c7; margin-bottom: 30px; }
+        .modal-desc { font-size: 1.2rem; font-weight: 900; color: #8892b0; margin-bottom: 30px; }
         .modal-btn { background: #ff007f; color: #fff; font-family: 'Righteous', cursive; font-size: 1.5rem; padding: 15px 30px; border: none; border-radius: 12px; cursor: pointer; width: 100%; transition: 0.1s; box-shadow: 0 5px 0 #b30059; }
         .modal-btn:active { transform: translateY(5px); box-shadow: 0 0px 0 #b30059; }
         
-        #loading-screen { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #0b0c10; display: flex; justify-content: center; align-items: center; z-index: 150; color: #66fcf1; font-family: 'Righteous', cursive; font-size: 3rem; }
+        #loading-screen { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #050608; display: flex; justify-content: center; align-items: center; z-index: 150; color: #66fcf1; font-family: 'Righteous', cursive; font-size: 3rem; }
     </style>
 </head>
 <body>
@@ -105,19 +115,28 @@
     <div id="global-progress-bg"><div id="global-progress-fill"></div></div>
 
     <div id="flashcard">
-        <div id="pos-badge">...</div>
-        <div class="text-fit-container" style="height: 5rem; margin-bottom: 0;">
-            <div id="word">...</div>
+        <!-- Module 1: Word -->
+        <div class="word-module">
+            <div class="text-fit-container" style="height: 5.5rem;">
+                <div id="word">...</div>
+            </div>
+            <button class="main-audio-btn" onclick="playWordAudio()">🔊</button>
         </div>
-        <div id="ipa">...</div>
         
-        <div class="def-box">
+        <!-- Module 2: Definition -->
+        <div class="data-module">
+            <div class="module-header">
+                <span class="module-title">DEFINITION</span>
+            </div>
             <div id="definition">...</div>
         </div>
         
-        <button id="audio-btn" onclick="playAudio()">▶</button>
-        
-        <div class="sentence-box">
+        <!-- Module 3: Context Sentence -->
+        <div class="data-module context">
+            <div class="module-header">
+                <span class="module-title">CONTEXT INJECTION</span>
+                <button class="context-audio-btn" onclick="playSentenceAudio()">▶ PLAY AUDIO</button>
+            </div>
             <div id="sentence">...</div>
         </div>
     </div>
