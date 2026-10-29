@@ -10,17 +10,30 @@ synth.onvoiceschanged = () => {
     americanMaleVoice = voices.find(v => v.lang === 'en-US' && (v.name.includes('Male') || v.name.includes('Google'))) || voices.find(v => v.lang === 'en-US');
 };
 
+// --- JS AUTO-SCALER (Fixes Long Words Cutting Off) ---
+function fitText(elementId, maxRem) {
+    const el = document.getElementById(elementId);
+    if (!el) return;
+    let currentRem = maxRem;
+    el.style.fontSize = currentRem + 'rem';
+    
+    // While the text overflows its container, shrink the font size
+    while (el.scrollWidth > el.parentElement.clientWidth && currentRem > 1) {
+        currentRem -= 0.2;
+        el.style.fontSize = currentRem + 'rem';
+    }
+}
+
 async function initApp() {
     try {
         const response = await fetch('db.jsonl');
         const text = await response.text();
         db = text.split('\n').filter(line => line.trim() !== '').map(line => JSON.parse(line));
         
-        // Handle Shuffling & Storage
+        // Handle Shuffling
         let storedOrder = localStorage.getItem('mrbeast_order');
         if (storedOrder) {
             shuffledIndices = JSON.parse(storedOrder);
-            // Re-sync if DB size changed
             if(shuffledIndices.length !== db.length) {
                 shuffledIndices = db.map((_, i) => i).sort(() => Math.random() - 0.5);
                 localStorage.setItem('mrbeast_order', JSON.stringify(shuffledIndices));
@@ -30,10 +43,17 @@ async function initApp() {
             localStorage.setItem('mrbeast_order', JSON.stringify(shuffledIndices));
         }
 
-        if (localStorage.getItem('mrbeast_score')) {
-            score = parseInt(localStorage.getItem('mrbeast_score'));
-            currentIndex = score; // Always resume at the start of the current un-cleared batch
+        // SAVE FILE MIGRATION BUG FIX
+        // If users have an old score that isn't a multiple of 10, it breaks the Gauntlet math. This forces it to align.
+        if (localStorage.getItem('mrbeast_score_v2')) {
+            score = parseInt(localStorage.getItem('mrbeast_score_v2'));
+        } else if (localStorage.getItem('mrbeast_score')) {
+            let legacyScore = parseInt(localStorage.getItem('mrbeast_score'));
+            score = Math.floor(legacyScore / 10) * 10; 
+            localStorage.setItem('mrbeast_score_v2', score);
         }
+        
+        currentIndex = score; 
         
         document.getElementById('loading-screen').style.display = 'none';
         updateUI();
@@ -42,7 +62,7 @@ async function initApp() {
     }
 }
 
-// --- SWIPE & KEYBOARD CONTROLS ---
+// --- SWIPE & KEYBOARD CONTROLS (Anti-Cheat added) ---
 let touchstartX = 0;
 let touchendX = 0;
 document.addEventListener('touchstart', e => { touchstartX = e.changedTouches[0].screenX; }, {passive: true});
@@ -51,6 +71,10 @@ document.addEventListener('touchend', e => {
     handleGesture();
 }, {passive: true});
 document.addEventListener('keydown', e => {
+    // PREVENT CHEATING OR GLITCHES IN GAUNTLET/MODALS
+    if (document.getElementById('quiz-container').style.display === 'flex') return;
+    if (document.getElementById('custom-modal').classList.contains('show')) return;
+    
     if (e.key === 'ArrowRight') nextWord();
     if (e.key === 'ArrowLeft') prevWord();
 });
@@ -103,14 +127,14 @@ function updateUI() {
     document.getElementById('thai').innerText = currentWord.t;
     document.getElementById('score').innerText = score;
     
-    // Batch Progress Tracker (1 to 10)
+    // Auto-scale the fonts based on word length!
+    fitText('word', 4.5);
+    fitText('thai', 3.5);
+    
     let batchPos = (currentIndex % 10) + 1;
     document.getElementById('batch-progress').innerText = `${batchPos} / 10`;
-
-    // Global XP Bar based on CLEARED score
     document.getElementById('global-progress-fill').style.width = `${(score / db.length) * 100}%`;
 
-    // Toggle Quiz Button State
     const nextBtn = document.getElementById('next-btn');
     if (batchPos === 10) {
         nextBtn.innerText = "ENTER GAUNTLET ⚔️";
@@ -122,7 +146,6 @@ function updateUI() {
 }
 
 function prevWord() {
-    // Prevent going back into a previous CLEARED batch
     if (currentIndex > score) {
         currentIndex--;
         updateUI();
@@ -155,7 +178,7 @@ function closeModal() {
     if (modalCallback) { modalCallback(); modalCallback = null; }
 }
 
-// --- THE GAUNTLET QUIZ ENGINE (Anti-Cheat Timer & Blind Audio) ---
+// --- THE GAUNTLET QUIZ ENGINE ---
 let gauntletTimer;
 let gauntletEndTime;
 const MAX_TIME = 30.0;
@@ -169,17 +192,16 @@ function startGauntlet() {
     document.getElementById('app-container').classList.add('danger-pulse');
     playBeep(200, 'sawtooth', 0.6);
 
-    // Get the exact 10 words of the current batch
     const batchIndices = shuffledIndices.slice(score, score + 10);
     quizBatchQueue = batchIndices.map(i => db[i]).sort(() => Math.random() - 0.5);
 
     document.getElementById('timer-text').innerText = "READY!";
     document.getElementById('quiz-word').innerHTML = "";
+    document.getElementById('quiz-pos').innerText = "";
     document.getElementById('quiz-options').innerHTML = '';
     
     setTimeout(() => {
         currentQuestionIndex = 0;
-        // ANTI-CHEAT TIMER: Uses Date.now() so tab-switching doesn't pause it
         gauntletEndTime = Date.now() + (MAX_TIME * 1000);
         generateQuizQuestion();
         
@@ -202,19 +224,16 @@ function playQuizAudio() {
 function generateQuizQuestion() {
     currentQuizWord = quizBatchQueue[currentQuestionIndex];
     
-    // 30% Chance for Blind Audio Challenge
     isBlindAudio = Math.random() < 0.3;
 
     if (isBlindAudio) {
-        document.getElementById('quiz-word').innerHTML = `
-            <span style="color: #ff007f; animation: pulse 1s infinite alternate;">🔊 BLIND AUDIO</span>
-        `;
+        document.getElementById('quiz-word').innerHTML = `<span style="color: #ff007f; animation: pulse 1s infinite alternate;">🔊 BLIND AUDIO</span>`;
+        document.getElementById('quiz-pos').innerText = "LISTEN CAREFULLY";
     } else {
-        document.getElementById('quiz-word').innerHTML = `
-            ${currentQuizWord.w.toUpperCase()} 
-            <br>
-            <span style="font-size: 1.5rem; color: #ff007f; background: #222; padding: 2px 10px; border-radius: 10px; border: 2px solid #000;">${currentQuizWord.p}</span>
-        `;
+        document.getElementById('quiz-word').innerHTML = currentQuizWord.w.toUpperCase();
+        document.getElementById('quiz-pos').innerText = currentQuizWord.p;
+        // Auto-scale the quiz word
+        fitText('quiz-word', 4.0);
     }
     
     playQuizAudio();
@@ -250,9 +269,9 @@ function checkAnswer(selectedThai, buttonElement) {
         playCorrectSound(); 
         buttonElement.classList.add('correct');
         
-        // If it was blind audio, reveal the English word upon correct answer
         if (isBlindAudio) {
             document.getElementById('quiz-word').innerHTML = `<span style="color: #00ff00;">${currentQuizWord.w.toUpperCase()}</span>`;
+            fitText('quiz-word', 4.0);
         }
         
         setTimeout(() => {
@@ -274,13 +293,13 @@ function passGauntlet() {
     
     confetti({ particleCount: 300, spread: 120, origin: { y: 0.5 }, colors: ['#ffe600', '#00e5ff', '#00ff00'] });
 
-    score += 10; // Officially clear the batch!
-    currentIndex = score; // Move to the first word of the NEXT batch
-    localStorage.setItem('mrbeast_score', score);
+    score += 10; 
+    currentIndex = score; 
+    localStorage.setItem('mrbeast_score_v2', score);
     
     if (score >= db.length) {
         showModal("🏆 FINISHER! 🏆", "YOU CONQUERED THE DICTIONARY!", "RESTART", () => {
-            score = 0; currentIndex = 0; localStorage.setItem('mrbeast_score', 0); updateUI();
+            score = 0; currentIndex = 0; localStorage.setItem('mrbeast_score_v2', 0); updateUI();
         });
     } else {
         updateUI();
@@ -294,7 +313,6 @@ function failGauntlet() {
         document.getElementById('quiz-container').style.display = 'none';
         document.getElementById('app-container').classList.remove('danger-pulse');
         
-        // Punishment: Resets to the beginning of the uncleared batch
         currentIndex = score; 
         updateUI();
         playAudio();
