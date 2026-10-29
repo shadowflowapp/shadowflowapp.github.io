@@ -7,13 +7,11 @@ const synth = window.speechSynthesis;
 let americanVoice = null;
 synth.onvoiceschanged = () => {
     const voices = synth.getVoices();
-    // Prioritize natural US voices
     americanVoice = voices.find(v => v.lang === 'en-US' && (v.name.includes('Natural') || v.name.includes('Google'))) 
                     || voices.find(v => v.lang === 'en-US');
 };
 
 // --- HETERONYM PRONUNCIATION ENGINE ---
-// Browser TTS cannot read IPA. If a word has two pronunciations, we feed it a phonetic spelling instead.
 function getPhoneticSpelling(word, pos) {
     const wordLower = word.toLowerCase();
     const heteronyms = {
@@ -50,12 +48,10 @@ async function initApp() {
     try {
         const response = await fetch('db.jsonl');
         const text = await response.text();
-        // A-to-Z Loading
         db = text.split('\n').filter(line => line.trim() !== '').map(line => JSON.parse(line));
         
         document.getElementById('total-count').innerText = db.length;
 
-        // Load progression data
         if (localStorage.getItem('la_highest')) highestIndexSeen = parseInt(localStorage.getItem('la_highest'));
         if (localStorage.getItem('la_current')) currentIndex = parseInt(localStorage.getItem('la_current'));
         
@@ -68,7 +64,7 @@ async function initApp() {
 
 function speakText(text) {
     if (db.length === 0) return;
-    synth.cancel(); // STRICT CANCEL to prevent overlapping
+    synth.cancel(); 
     const utterance = new SpeechSynthesisUtterance(text);
     if (americanVoice) utterance.voice = americanVoice;
     utterance.rate = 0.85; 
@@ -77,14 +73,20 @@ function speakText(text) {
 
 function playWordAudio() {
     const currentData = db[currentIndex];
-    // Use the phonetic spelling engine for the isolated word
     const textToSpeak = getPhoneticSpelling(currentData.w, currentData.p);
     speakText(textToSpeak);
 }
 
 function playSentenceAudio() {
-    const currentSentence = db[currentIndex].s;
-    speakText(currentSentence);
+    const currentData = db[currentIndex];
+    const phoneticWord = getPhoneticSpelling(currentData.w, currentData.p);
+    
+    // HIDDEN PHONETIC REPLACEMENT
+    // Replaces the target word in the sentence string with the phonetic spelling just for audio
+    const regex = new RegExp(`\\b${currentData.w}\\b`, 'gi');
+    const spokenSentence = currentData.s.replace(regex, phoneticWord);
+    
+    speakText(spokenSentence);
 }
 
 // --- UI & NAVIGATION ---
@@ -96,8 +98,6 @@ function updateUI() {
     document.getElementById('ipa').innerText = currentData.i;
     document.getElementById('definition').innerText = currentData.d;
     
-    // DYNAMIC REGEX HIGHLIGHTER
-    // Preserves exact original capitalization of the target word in the sentence
     const regex = new RegExp(`\\b${currentData.w}\\b`, 'gi');
     const highlightedSentence = currentData.s.replace(regex, match => `<span class="highlight-word">${match}</span>`);
     
@@ -105,13 +105,10 @@ function updateUI() {
     
     fitText('word', 3.5);
     
-    // Update Learned Count
-    // Learned count is the highest index they have seen + 1
     const displayCount = Math.max(currentIndex + 1, highestIndexSeen + 1);
     document.getElementById('learned-count').innerText = displayCount;
     document.getElementById('progress-bar-fill').style.width = `${(displayCount / db.length) * 100}%`;
 
-    // Hide PREV button on the first word
     const backBtn = document.getElementById('back-btn');
     if (currentIndex === 0) {
         backBtn.style.visibility = 'hidden';
@@ -144,7 +141,6 @@ function nextWord() {
         playWordAudio(); 
         
     } else if (currentIndex === db.length - 1) {
-        // End of Database
         showModal("DICTIONARY COMPLETED", "You have successfully reviewed all entries.", "RESTART", () => {
             currentIndex = 0; highestIndexSeen = 0;
             localStorage.setItem('la_current', 0);
