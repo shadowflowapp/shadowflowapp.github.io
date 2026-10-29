@@ -29,18 +29,33 @@
         #global-progress-fill { height: 100%; width: 0%; background: linear-gradient(90deg, #00e5ff, #00ff00); transition: width 0.4s; box-shadow: 0 0 15px rgba(0, 255, 0, 0.6); }
 
         /* FLASHCARD AREA */
-        #flashcard { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 20px; text-align: center; width: 100%; }
+        #flashcard { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 20px; text-align: center; width: 100%; overflow: hidden; }
         
         #pos { background: #ff007f; color: white; padding: 5px 15px; border-radius: 20px; font-weight: 900; text-transform: uppercase; font-size: 1rem; border: 3px solid #000; box-shadow: 3px 3px 0 #000; margin-bottom: 15px; }
         
-        #word { font-family: 'Bangers', cursive; font-size: clamp(3rem, 12vw, 5rem); color: #ffffff; letter-spacing: 2px; line-height: 1.1; text-shadow: 4px 4px 0 #000, -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000; margin-bottom: 10px; width: 100%; word-wrap: break-word; padding: 0 10px; }
+        #word { 
+            font-family: 'Bangers', cursive; 
+            font-size: clamp(1.8rem, 10vw, 4.5rem); 
+            color: #ffffff; letter-spacing: 2px; line-height: 1.1; 
+            text-shadow: 4px 4px 0 #000, -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000; 
+            margin-bottom: 10px; width: 100%; 
+            white-space: nowrap; 
+            padding: 0 10px; 
+        }
         
         #ipa { font-size: 1.5rem; font-weight: 900; margin-bottom: 25px; color: #ff007f; text-shadow: 2px 2px 0 #000; font-family: 'Courier New', Courier, monospace; }
         
-        #audio-btn { background: #00e5ff; color: #000; width: 80px; height: 80px; border-radius: 50%; font-size: 2.5rem; display: flex; justify-content: center; align-items: center; border: 4px solid #000; cursor: pointer; box-shadow: 0 8px 0 #008899; margin-bottom: 30px; transition: 0.1s; }
+        #audio-btn { background: #00e5ff; color: #000; width: 80px; height: 80px; border-radius: 50%; font-size: 2.5rem; display: flex; justify-content: center; align-items: center; border: 4px solid #000; cursor: pointer; box-shadow: 0 8px 0 #008899; margin-bottom: 30px; transition: 0.1s; flex-shrink: 0; }
         #audio-btn:active { transform: translateY(8px); box-shadow: 0 0px 0 #008899; }
         
-        #thai { font-size: clamp(2.5rem, 10vw, 3.5rem); color: #ffe600; font-weight: 900; text-shadow: 3px 3px 0 #000, -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000; line-height: 1.1; width: 100%; word-wrap: break-word; padding: 0 10px; }
+        #thai { 
+            font-size: clamp(1.5rem, 8vw, 3.5rem); 
+            color: #ffe600; font-weight: 900; 
+            text-shadow: 3px 3px 0 #000, -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000; 
+            line-height: 1.1; width: 100%; 
+            white-space: nowrap; 
+            padding: 0 10px; 
+        }
         
         /* CONTROLS */
         #controls { display: flex; gap: 15px; padding: 20px; background: rgba(0,0,0,0.8); flex-shrink: 0; }
@@ -51,16 +66,24 @@
         #next-btn:active { transform: translateY(6px); box-shadow: 0 0px 0 #ccb800; }
 
         /* THE GAUNTLET QUIZ */
-        #quiz-container { display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: repeating-linear-gradient(45deg, #111, #111 20px, #000 20px, #000 40px); flex-direction: column; justify-content: space-between; align-items: center; padding: 20px 15px 40px 15px; z-index: 20; }
+        #quiz-container { display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: repeating-linear-gradient(45deg, #111, #111 20px, #000 20px, #000 40px); flex-direction: column; justify-content: space-between; align-items: center; padding: 20px 15px 40px 15px; z-index: 20; overflow: hidden; }
         
         .danger-pulse { animation: dangerBg 0.5s infinite alternate; }
         @keyframes dangerBg { from { box-shadow: inset 0 0 20px #ff0000; } to { box-shadow: inset 0 0 80px #ff0000; } }
 
         #timer-text { font-family: 'Bangers', cursive; font-size: 5rem; color: #fff; text-shadow: 4px 4px 0 #ff0000; margin-top: 10px; line-height: 1; }
-        #quiz-word { font-family: 'Bangers', cursive; font-size: clamp(2.5rem, 12vw, 4rem); color: #ffe600; text-shadow: 4px 4px 0 #000; text-align: center; width: 100%; margin-bottom: auto; margin-top: 20vh; word-wrap: break-word; padding: 0 10px; }
+        
+        #quiz-word { 
+            font-family: 'Bangers', cursive; 
+            font-size: clamp(1.8rem, 10vw, 4rem); 
+            color: #ffe600; text-shadow: 4px 4px 0 #000; text-align: center; width: 100%; 
+            margin-bottom: auto; margin-top: 20vh; 
+            white-space: nowrap; 
+            padding: 0 10px; 
+        }
 
         #quiz-options { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; width: 100%; margin-top: auto; }
-        .quiz-option { padding: 25px 10px; font-size: clamp(1.2rem, 6vw, 1.8rem); font-weight: 900; color: #fff; border: 4px solid #000; border-radius: 15px; cursor: pointer; display: flex; justify-content: center; align-items: center; text-shadow: 2px 2px 0 #000; transition: 0.1s; text-align: center; word-wrap: break-word; }
+        .quiz-option { padding: 25px 10px; font-size: clamp(1.1rem, 5vw, 1.6rem); font-weight: 900; color: #fff; border: 4px solid #000; border-radius: 15px; cursor: pointer; display: flex; justify-content: center; align-items: center; text-shadow: 2px 2px 0 #000; transition: 0.1s; text-align: center; word-wrap: break-word; line-height: 1.2; }
         .opt-0 { background: #e21b3c; box-shadow: 0 8px 0 #8c1024; }
         .opt-1 { background: #1368ce; box-shadow: 0 8px 0 #0c4284; }
         .opt-2 { background: #d89e00; box-shadow: 0 8px 0 #8a6500; }
