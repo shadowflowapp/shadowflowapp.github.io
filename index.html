@@ -3,147 +3,133 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Fluency: Immersion Protocol</title>
-    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;900&family=Righteous&display=swap" rel="stylesheet">
+    <title>Fluency: Minimal</title>
+    <!-- Clean, modern LA tech font -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Nunito', sans-serif; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Outfit', sans-serif; }
         
         body { 
-            background: #050608; display: flex; justify-content: center; align-items: center; 
-            height: 100dvh; overflow: hidden; touch-action: pan-y; color: #fff;
+            /* Soft sunset gradient background */
+            background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+            display: flex; justify-content: center; align-items: center; 
+            height: 100dvh; overflow: hidden; touch-action: pan-y; color: #2d3748;
         }
 
         #app-container {
             width: 100%; max-width: 420px; height: 100dvh; max-height: 900px;
-            background: linear-gradient(180deg, #121820 0%, #050608 100%);
+            background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px);
             display: flex; flex-direction: column; position: relative; 
-            box-shadow: 0 0 50px rgba(102, 252, 241, 0.05); overflow: hidden;
+            box-shadow: 0 20px 50px rgba(252, 182, 159, 0.3);
         }
+        @media (min-width: 421px) { #app-container { height: 95dvh; border-radius: 30px; } }
 
-        /* HUD HEADER */
-        #top-bar { 
-            display: flex; flex-direction: column; justify-content: center; align-items: center; 
-            padding: 20px 20px 15px 20px; background: rgba(5, 6, 8, 0.8); backdrop-filter: blur(10px);
-            border-bottom: 2px solid #66fcf1; z-index: 10; flex-shrink: 0; 
+        /* HEADER & PROGRESS */
+        #top-bar { padding: 25px 25px 15px 25px; flex-shrink: 0; }
+        .progress-label { 
+            font-size: 0.85rem; color: #a0aec0; letter-spacing: 2px; 
+            font-weight: 800; text-align: center; margin-bottom: 8px; 
         }
-        .hud-label { font-size: 0.8rem; color: #8892b0; letter-spacing: 3px; text-transform: uppercase; font-weight: 900; margin-bottom: 4px; }
-        #xp-box { font-family: 'Righteous', cursive; font-size: 2.8rem; color: #66fcf1; text-shadow: 0 0 20px rgba(102, 252, 241, 0.5); line-height: 1; }
+        #learned-count { color: #fcb69f; font-size: 1rem; }
         
-        #global-progress-bg { width: 100%; height: 4px; background: #1a2230; flex-shrink: 0; }
-        #global-progress-fill { height: 100%; width: 0%; background: #ff007f; transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 0 12px #ff007f; }
+        .progress-bar-bg { width: 100%; height: 6px; background: #edf2f7; border-radius: 10px; overflow: hidden; }
+        .progress-bar-fill { height: 100%; width: 0%; background: linear-gradient(90deg, #fcb69f, #ff7e5f); transition: width 0.5s ease; border-radius: 10px; }
 
-        /* INTEL / FLASHCARD DISPLAY */
-        #flashcard { flex: 1; display: flex; flex-direction: column; padding: 25px 20px; width: 100%; overflow-y: auto; overflow-x: hidden; gap: 20px; }
+        /* FLASHCARD CONTENT */
+        #flashcard { flex: 1; display: flex; flex-direction: column; padding: 10px 25px 20px 25px; overflow-y: auto; overflow-x: hidden; }
         
-        /* Module 1: The Word & IPA */
-        .word-module { display: flex; flex-direction: column; align-items: center; justify-content: center; margin-bottom: 10px; }
-        .text-fit-container { width: 100%; overflow: hidden; white-space: nowrap; display: flex; justify-content: center; align-items: center; margin-bottom: 5px; }
-        #word { font-family: 'Righteous', cursive; color: #fff; letter-spacing: 2px; line-height: 1.1; text-shadow: 4px 4px 0px #0a0c10; text-transform: uppercase; }
+        .word-block { display: flex; flex-direction: column; align-items: center; justify-content: center; margin: 20px 0 30px 0; }
         
-        /* The Restored IPA */
-        #ipa { font-size: 1.1rem; color: #66fcf1; font-family: 'Courier New', Courier, monospace; font-weight: 700; margin-bottom: 15px; letter-spacing: 1px; }
+        .text-fit-container { width: 100%; overflow: hidden; white-space: nowrap; display: flex; justify-content: center; align-items: center; }
+        #word { font-size: 3rem; font-weight: 800; color: #2d3748; letter-spacing: -1px; text-transform: capitalize; }
+        
+        #ipa { font-size: 1.1rem; color: #43c6ac; font-weight: 600; margin: 5px 0 15px 0; letter-spacing: 1px; }
 
-        .main-audio-btn { 
-            background: #66fcf1; color: #050608; width: 70px; height: 70px; font-size: 2rem; 
-            display: flex; justify-content: center; align-items: center; cursor: pointer; 
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); border: none; border-radius: 50%; 
-            box-shadow: 0 8px 20px rgba(102, 252, 241, 0.2);
+        /* Elegant Play Button */
+        .play-btn-main {
+            width: 60px; height: 60px; border-radius: 50%; border: none;
+            background: #fff; box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+            color: #ff7e5f; font-size: 1.5rem; display: flex; justify-content: center; align-items: center;
+            cursor: pointer; transition: 0.2s ease;
         }
-        .main-audio-btn:active { transform: scale(0.9) translateY(4px); box-shadow: 0 2px 5px rgba(102, 252, 241, 0.15); }
+        .play-btn-main:active { transform: scale(0.92); box-shadow: 0 5px 10px rgba(0,0,0,0.05); }
 
-        /* Module 2 & 3: Definition and Context */
-        .data-module { background: rgba(18, 24, 32, 0.7); border-radius: 12px; padding: 20px; border-left: 4px solid #ff007f; box-shadow: inset 0 0 20px rgba(0,0,0,0.5); }
-        .data-module.context { border-left-color: #66fcf1; }
-        
-        .module-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 8px; }
-        .module-title { font-size: 0.8rem; color: #8892b0; letter-spacing: 2px; text-transform: uppercase; font-weight: 900; }
-        
-        #definition { font-size: 1.2rem; color: #e6f1ff; font-weight: 700; line-height: 1.5; }
-        
-        #sentence { font-size: 1.3rem; color: #fff; font-weight: 900; line-height: 1.5; font-style: italic; }
-        
-        /* DYNAMIC WORD HIGHLIGHTER (Case-sensitive removed so it respects original sentence) */
-        .highlight-word { color: #ff007f; text-shadow: 0 0 15px rgba(255, 0, 127, 0.6); font-weight: 900; }
+        .divider { height: 1px; background: #edf2f7; width: 100%; margin: 10px 0 25px 0; }
 
-        .context-audio-btn { 
-            background: rgba(102, 252, 241, 0.1); color: #66fcf1; border: 1px solid #66fcf1; 
-            padding: 5px 12px; border-radius: 6px; font-size: 0.85rem; font-weight: 900; 
-            cursor: pointer; display: flex; align-items: center; gap: 6px; transition: 0.15s; 
-        }
-        .context-audio-btn:active { background: #66fcf1; color: #050608; transform: scale(0.95); }
+        /* INFO BLOCKS (Definition & Sentence) */
+        .info-block { margin-bottom: 25px; }
+        .block-label { font-size: 0.75rem; color: #a0aec0; letter-spacing: 2px; font-weight: 800; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
         
-        /* CONTROLS */
-        #controls { display: flex; gap: 15px; padding: 20px; background: rgba(5,6,8,0.95); flex-shrink: 0; border-top: 1px solid #1a2230; }
-        .nav-btn { 
-            flex: 1; padding: 18px; font-size: 1.2rem; font-weight: 900; background: #1a2230; color: #8892b0; 
-            border: none; border-radius: 12px; cursor: pointer; transition: 0.15s; letter-spacing: 1px;
-            box-shadow: 0 5px 0 #020203;
-        }
-        #back-btn:active { transform: translateY(5px); box-shadow: 0 0px 0 #020203; }
+        #definition { font-size: 1.2rem; color: #4a5568; font-weight: 400; line-height: 1.6; }
         
-        #next-btn { background: #66fcf1; color: #050608; flex: 1.5; box-shadow: 0 5px 0 #3b938e; }
-        #next-btn:active { transform: translateY(5px); box-shadow: 0 0px 0 #3b938e; }
+        #sentence { font-size: 1.2rem; color: #2d3748; font-weight: 600; line-height: 1.6; }
+        
+        /* Highlight Target Word (Ocean Teal) */
+        .highlight-word { color: #43c6ac; font-weight: 800; }
 
-        /* FLOATING XP PARTICLES */
-        .xp-pop {
-            position: absolute; font-family: 'Righteous', cursive; font-size: 2.2rem; color: #66fcf1;
-            text-shadow: 0 0 15px rgba(102,252,241,0.8), 0px 4px 0px #000;
-            pointer-events: none; z-index: 1000; transform: translate(-50%, -50%);
-            animation: floatUp 1s cubic-bezier(0.2, 1, 0.3, 1) forwards;
+        .play-btn-small {
+            background: rgba(67, 198, 172, 0.1); color: #43c6ac; border: none;
+            padding: 6px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 800;
+            cursor: pointer; transition: 0.2s ease; letter-spacing: 1px;
         }
-        @keyframes floatUp {
-            0% { opacity: 1; transform: translate(-50%, -50%) scale(0.5); }
-            30% { transform: translate(-50%, -120%) scale(1.2); }
-            100% { opacity: 0; transform: translate(-50%, -250%) scale(1); }
+        .play-btn-small:active { background: #43c6ac; color: #fff; transform: scale(0.95); }
+
+        /* MINIMAL CONTROLS */
+        #controls { display: flex; gap: 15px; padding: 20px 25px 30px 25px; flex-shrink: 0; }
+        .nav-btn {
+            flex: 1; padding: 18px; font-size: 1rem; font-weight: 800; border: none; border-radius: 16px;
+            cursor: pointer; transition: 0.2s ease; letter-spacing: 1px;
         }
+        #back-btn { background: #edf2f7; color: #718096; }
+        #back-btn:active { background: #e2e8f0; transform: scale(0.98); }
+        
+        #next-btn { background: linear-gradient(135deg, #ff7e5f, #fcb69f); color: #fff; box-shadow: 0 10px 20px rgba(255, 126, 95, 0.3); }
+        #next-btn:active { transform: scale(0.98); box-shadow: 0 5px 10px rgba(255, 126, 95, 0.2); }
 
         /* MODAL */
-        #custom-modal { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(5,6,8,0.95); z-index: 100; display: flex; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: 0.2s ease; }
+        #custom-modal { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.8); backdrop-filter: blur(5px); z-index: 100; display: flex; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: 0.3s ease; }
         #custom-modal.show { opacity: 1; pointer-events: all; }
-        .modal-content { background: #121820; border-radius: 20px; padding: 40px 20px; text-align: center; width: 85%; transform: scale(0.9); transition: 0.2s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 20px 50px rgba(0,0,0,0.8); border: 2px solid #66fcf1; }
-        #custom-modal.show .modal-content { transform: scale(1); }
-        .modal-title { font-family: 'Righteous', cursive; font-size: 2.5rem; color: #66fcf1; margin-bottom: 10px; line-height: 1.1; }
-        .modal-desc { font-size: 1.2rem; font-weight: 900; color: #8892b0; margin-bottom: 30px; }
-        .modal-btn { background: #ff007f; color: #fff; font-family: 'Righteous', cursive; font-size: 1.5rem; padding: 15px 30px; border: none; border-radius: 12px; cursor: pointer; width: 100%; transition: 0.1s; box-shadow: 0 5px 0 #b30059; }
-        .modal-btn:active { transform: translateY(5px); box-shadow: 0 0px 0 #b30059; }
+        .modal-content { background: #fff; border-radius: 24px; padding: 40px 30px; text-align: center; width: 85%; transform: translateY(20px); transition: 0.3s ease; box-shadow: 0 20px 40px rgba(0,0,0,0.1); }
+        #custom-modal.show .modal-content { transform: translateY(0); }
+        .modal-title { font-size: 2rem; color: #2d3748; margin-bottom: 10px; font-weight: 800; letter-spacing: -1px; }
+        .modal-desc { font-size: 1.1rem; color: #718096; margin-bottom: 30px; }
+        .modal-btn { background: #2d3748; color: #fff; font-size: 1.1rem; font-weight: 600; padding: 15px 30px; border: none; border-radius: 12px; cursor: pointer; width: 100%; transition: 0.2s; }
+        .modal-btn:active { transform: scale(0.98); }
         
-        #loading-screen { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #050608; display: flex; justify-content: center; align-items: center; z-index: 150; color: #66fcf1; font-family: 'Righteous', cursive; font-size: 3rem; }
+        #loading-screen { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #fff; display: flex; justify-content: center; align-items: center; z-index: 150; color: #ff7e5f; font-weight: 800; font-size: 2rem; letter-spacing: 2px; }
     </style>
 </head>
 <body>
 
 <div id="app-container">
-    <div id="loading-screen">LOADING...</div>
+    <div id="loading-screen">LOADING</div>
 
     <div id="top-bar">
-        <span class="hud-label">OPERATIVE SCORE</span>
-        <div id="xp-box">0</div>
+        <div class="progress-label">LEARNED: <span id="learned-count">0</span> / <span id="total-count">0</span></div>
+        <div class="progress-bar-bg"><div id="progress-bar-fill" class="progress-bar-fill"></div></div>
     </div>
-    <div id="global-progress-bg"><div id="global-progress-fill"></div></div>
 
     <div id="flashcard">
-        <!-- Module 1: Word & IPA -->
-        <div class="word-module">
-            <div class="text-fit-container" style="height: 5.5rem;">
+        <div class="word-block">
+            <div class="text-fit-container" style="height: 4rem;">
                 <div id="word">...</div>
             </div>
             <div id="ipa">...</div>
-            <button class="main-audio-btn" onclick="playWordAudio()">🔊</button>
+            <!-- Standard Unicode Play Icon -->
+            <button class="play-btn-main" onclick="playWordAudio()">▶</button>
         </div>
         
-        <!-- Module 2: Definition -->
-        <div class="data-module">
-            <div class="module-header">
-                <span class="module-title">DEFINITION</span>
-            </div>
+        <div class="divider"></div>
+        
+        <div class="info-block">
+            <div class="block-label">DEFINITION</div>
             <div id="definition">...</div>
         </div>
         
-        <!-- Module 3: Context Sentence -->
-        <div class="data-module context">
-            <div class="module-header">
-                <span class="module-title">CONTEXT INJECTION</span>
-                <button class="context-audio-btn" onclick="playSentenceAudio()">▶ PLAY AUDIO</button>
+        <div class="info-block">
+            <div class="block-label">
+                CONTEXT 
+                <button class="play-btn-small" onclick="playSentenceAudio()">▶ PLAY</button>
             </div>
             <div id="sentence">...</div>
         </div>
@@ -153,7 +139,7 @@
         <div class="modal-content">
             <div class="modal-title" id="modal-title">...</div>
             <div class="modal-desc" id="modal-desc">...</div>
-            <button class="modal-btn" onclick="closeModal()">CONTINUE</button>
+            <button class="modal-btn" onclick="closeModal()">OK</button>
         </div>
     </div>
 
