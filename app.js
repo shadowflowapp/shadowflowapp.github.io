@@ -30,20 +30,20 @@ async function initApp() {
         const text = await response.text();
         db = text.split('\n').filter(line => line.trim() !== '').map(line => JSON.parse(line));
         
-        let storedOrder = localStorage.getItem('aaa_order');
+        let storedOrder = localStorage.getItem('cloze_order');
         if (storedOrder) {
             shuffledIndices = JSON.parse(storedOrder);
             if(shuffledIndices.length !== db.length) {
                 shuffledIndices = db.map((_, i) => i).sort(() => Math.random() - 0.5);
-                localStorage.setItem('aaa_order', JSON.stringify(shuffledIndices));
+                localStorage.setItem('cloze_order', JSON.stringify(shuffledIndices));
             }
         } else {
             shuffledIndices = db.map((_, i) => i).sort(() => Math.random() - 0.5);
-            localStorage.setItem('aaa_order', JSON.stringify(shuffledIndices));
+            localStorage.setItem('cloze_order', JSON.stringify(shuffledIndices));
         }
 
-        if (localStorage.getItem('aaa_cleared')) wordsCleared = parseInt(localStorage.getItem('aaa_cleared'));
-        if (localStorage.getItem('aaa_xp')) xpScore = parseInt(localStorage.getItem('aaa_xp'));
+        if (localStorage.getItem('cloze_cleared')) wordsCleared = parseInt(localStorage.getItem('cloze_cleared'));
+        if (localStorage.getItem('cloze_xp')) xpScore = parseInt(localStorage.getItem('cloze_xp'));
         
         currentIndex = wordsCleared; 
         
@@ -72,9 +72,7 @@ function playHitSound() {
     playSynthBeep(1200, 'sine', 0.1, 0.2);
     setTimeout(() => playSynthBeep(1800, 'sine', 0.1, 0.2), 50);
 }
-function playDamageSound() {
-    playSynthBeep(150, 'sawtooth', 0.2, 0.3);
-}
+function playDamageSound() { playSynthBeep(150, 'sawtooth', 0.2, 0.3); }
 
 function playAudio(word = null) {
     if (db.length === 0) return;
@@ -87,7 +85,6 @@ function playAudio(word = null) {
 
 // --- UI & NAVIGATION ---
 function updateXPDisplay() {
-    // Animate the score counting up would be nice, but instant is fine for MVP
     document.getElementById('xp-box').innerText = xpScore.toLocaleString();
 }
 
@@ -96,11 +93,13 @@ function updateUI() {
     const currentWord = db[shuffledIndices[currentIndex]];
     
     document.getElementById('word').innerText = currentWord.w;
-    document.getElementById('thai').innerText = currentWord.t;
+    document.getElementById('pos-badge').innerText = currentWord.p;
+    document.getElementById('ipa').innerText = currentWord.i;
+    document.getElementById('definition').innerText = currentWord.d;
+    document.getElementById('sentence').innerText = `"${currentWord.s}"`;
     
     updateXPDisplay();
-    fitText('word', 4.5);
-    fitText('thai', 3.5);
+    fitText('word', 4.0);
     
     let batchPos = (currentIndex % 10) + 1;
     document.getElementById('global-progress-fill').style.width = `${(wordsCleared / db.length) * 100}%`;
@@ -176,14 +175,13 @@ function closeModal() {
     if (modalCallback) { modalCallback(); modalCallback = null; }
 }
 
-// --- THE ENGAGEMENT ZONE (Quiz) ---
+// --- THE CONTEXT INJECTOR (Cloze Quiz) ---
 let gauntletTimer;
 let gauntletEndTime;
 const MAX_TIME = 30.0;
 let currentQuestionIndex = 0;
 let quizBatchQueue = [];
 let currentQuizWord = {};
-let isBlindAudio = false;
 let attemptsLeft = 2; 
 
 function triggerDamageFlash() {
@@ -193,16 +191,15 @@ function triggerDamageFlash() {
 }
 
 // FLOATING XP PARTICLE EFFECT
-function spawnXPPop(amount, btnElement, isCrit) {
+function spawnXPPop(amount, btnElement) {
     const rect = btnElement.getBoundingClientRect();
     const popup = document.createElement('div');
-    popup.className = isCrit ? 'xp-pop crit' : 'xp-pop';
+    popup.className = 'xp-pop';
     popup.innerText = `+${amount} XP`;
-    // Spawn at the center of the clicked button
     popup.style.left = (rect.left + rect.width / 2) + 'px';
     popup.style.top = rect.top + 'px';
     document.body.appendChild(popup);
-    setTimeout(() => popup.remove(), 1000); // Clean up DOM
+    setTimeout(() => popup.remove(), 1000); 
 }
 
 function startGauntlet() {
@@ -212,10 +209,8 @@ function startGauntlet() {
     const batchIndices = shuffledIndices.slice(wordsCleared, wordsCleared + 10);
     quizBatchQueue = batchIndices.map(i => db[i]).sort(() => Math.random() - 0.5);
 
-    document.getElementById('timer-text').innerText = "ENGAGING...";
-    fitText('timer-text', 4.5); // Ensure "ENGAGING" fits perfectly
-    
-    document.getElementById('quiz-word').innerHTML = "";
+    document.getElementById('timer-text').innerText = "INJECTING...";
+    document.getElementById('quiz-sentence').innerHTML = "";
     document.getElementById('quiz-options').innerHTML = '';
     
     setTimeout(() => {
@@ -235,32 +230,25 @@ function startGauntlet() {
     }, 800);
 }
 
-function playQuizAudio() { synth.cancel(); playAudio(currentQuizWord.w); }
-
 function generateQuizQuestion() {
     currentQuizWord = quizBatchQueue[currentQuestionIndex];
     attemptsLeft = 2; 
-    isBlindAudio = Math.random() < 0.3;
 
-    if (isBlindAudio) {
-        document.getElementById('quiz-word').innerHTML = `<span style="color: #66fcf1; opacity: 0.5;">[ ■ ■ ■ ]</span>`;
-    } else {
-        document.getElementById('quiz-word').innerHTML = currentQuizWord.w;
-        fitText('quiz-word', 4.0);
-    }
+    // THE CLOZE INJECTOR
+    // Finds the exact target word (case insensitive, whole word boundaries) and replaces it with a blank
+    const regex = new RegExp(`\\b${currentQuizWord.w}\\b`, 'gi');
+    const clozeSentence = currentQuizWord.s.replace(regex, `<span id="cloze-blank" class="blank-space">[ _______ ]</span>`);
     
-    playQuizAudio();
+    document.getElementById('quiz-sentence').innerHTML = `"${clozeSentence}"`;
     
-    let options = [currentQuizWord.t];
+    // Generate Options (4 random English Words)
+    let options = [currentQuizWord.w];
     let attempts = 0; 
     while(options.length < 4 && attempts < 1000) {
         attempts++;
-        let randomWrong = db[Math.floor(Math.random() * db.length)].t;
-        let isExactMatch = options.includes(randomWrong);
-        let isTooSimilar = options.some(opt => opt.includes(randomWrong) || randomWrong.includes(opt));
-        if(!isExactMatch && !isTooSimilar) options.push(randomWrong);
+        let randomWrong = db[Math.floor(Math.random() * db.length)].w;
+        if(!options.includes(randomWrong)) options.push(randomWrong);
     }
-    while (options.length < 4) options.push(db[Math.floor(Math.random() * db.length)].t + " ");
     
     options.sort(() => Math.random() - 0.5);
     const optionsContainer = document.getElementById('quiz-options');
@@ -269,45 +257,46 @@ function generateQuizQuestion() {
     options.forEach((opt, index) => {
         const btn = document.createElement('div');
         btn.className = `quiz-option opt-${index}`; 
-        btn.innerText = opt.trim();
+        btn.innerText = opt;
         btn.onclick = (e) => checkAnswer(opt, e.currentTarget);
         optionsContainer.appendChild(btn);
     });
 }
 
-function checkAnswer(selectedThai, buttonElement) {
+function checkAnswer(selectedWord, buttonElement) {
     let timeLeft = (gauntletEndTime - Date.now()) / 1000;
     if(timeLeft < 0) timeLeft = 0;
 
-    if (selectedThai === currentQuizWord.t) {
+    if (selectedWord === currentQuizWord.w) {
         // CORRECT
         Array.from(document.getElementsByClassName('quiz-option')).forEach(b => b.style.pointerEvents = 'none');
         playHitSound(); 
         buttonElement.classList.add('correct');
         
+        // SNAP THE WORD INTO THE BLANK
+        const blank = document.getElementById('cloze-blank');
+        if(blank) {
+            blank.innerText = currentQuizWord.w.toUpperCase();
+            blank.classList.add('filled');
+        }
+        
         // Calculate XP
         let wordBaseXp = 100;
         let speedBonus = Math.floor((timeLeft / MAX_TIME) * 50); 
         let totalGain = wordBaseXp + speedBonus;
-        if (isBlindAudio) totalGain *= 2; 
-        if (attemptsLeft === 1) totalGain = Math.floor(totalGain / 2); // 50% penalty if missed once
+        if (attemptsLeft === 1) totalGain = Math.floor(totalGain / 2); 
         
         xpScore += totalGain;
         updateXPDisplay();
         
         // Spawn Floating Visual
-        spawnXPPop(totalGain, buttonElement, isBlindAudio);
-
-        if (isBlindAudio) {
-            document.getElementById('quiz-word').innerHTML = `<span style="color: #66fcf1;">${currentQuizWord.w.toUpperCase()}</span>`;
-            fitText('quiz-word', 4.0);
-        }
+        spawnXPPop(totalGain, buttonElement);
         
         setTimeout(() => {
             currentQuestionIndex++;
             if (currentQuestionIndex >= 10) passGauntlet();
             else generateQuizQuestion();
-        }, 500);
+        }, 600);
 
     } else {
         // WRONG 
@@ -322,7 +311,7 @@ function checkAnswer(selectedThai, buttonElement) {
 
         if (attemptsLeft <= 0) {
             Array.from(document.getElementsByClassName('quiz-option')).forEach(b => b.style.pointerEvents = 'none');
-            setTimeout(() => { failGauntlet("MISSION FAILED"); }, 400);
+            setTimeout(() => { failGauntlet("SYSTEM FAILURE"); }, 400);
         }
     }
 }
@@ -331,19 +320,18 @@ function passGauntlet() {
     clearInterval(gauntletTimer);
     document.getElementById('quiz-container').style.display = 'none';
     
-    // Confetti Victory
     confetti({ particleCount: 300, spread: 120, origin: { y: 0.5 }, colors: ['#66fcf1', '#ff007f', '#ffffff'] });
 
     wordsCleared += 10; 
     currentIndex = wordsCleared; 
     
-    localStorage.setItem('aaa_cleared', wordsCleared);
-    localStorage.setItem('aaa_xp', xpScore);
+    localStorage.setItem('cloze_cleared', wordsCleared);
+    localStorage.setItem('cloze_xp', xpScore);
     
     if (wordsCleared >= db.length) {
-        showModal("GAME CLEARED", "ALL WORDS MASTERED.", "RESTART", () => {
+        showModal("GAME CLEARED", "ALL MODULES MASTERED.", "RESTART", () => {
             wordsCleared = 0; currentIndex = 0; xpScore = 0;
-            localStorage.setItem('aaa_cleared', 0); localStorage.setItem('aaa_xp', 0); updateUI();
+            localStorage.setItem('cloze_cleared', 0); localStorage.setItem('cloze_xp', 0); updateUI();
         });
     } else {
         updateUI();
@@ -357,7 +345,7 @@ function failGauntlet(reason) {
         document.getElementById('quiz-container').style.display = 'none';
         
         currentIndex = wordsCleared; 
-        localStorage.setItem('aaa_xp', xpScore); 
+        localStorage.setItem('cloze_xp', xpScore); 
         
         updateUI();
         playAudio();
