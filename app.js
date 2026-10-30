@@ -7,29 +7,32 @@ const synth = window.speechSynthesis;
 let americanVoice = null;
 synth.onvoiceschanged = () => {
     const voices = synth.getVoices();
+    // Prioritize natural US voices
     americanVoice = voices.find(v => v.lang === 'en-US' && (v.name.includes('Natural') || v.name.includes('Google'))) 
                     || voices.find(v => v.lang === 'en-US');
 };
 
 // --- HETERONYM PRONUNCIATION ENGINE ---
+// Browser TTS cannot read IPA. We must use "Phonetic Respelling" using normal English phonics.
 function getPhoneticSpelling(word, pos) {
     const wordLower = word.toLowerCase();
     const heteronyms = {
         "tear": { "v.": "tare", "n.": "teer" },
         "lead": { "v.": "leed", "n.": "led" },
-        "bow": { "v.": "baow", "n.": "boh" },
-        "wind": { "v.": "wynd", "n.": "wind" },
-        "minute": { "n.": "min-it", "adj.": "my-noot" },
-        "record": { "v.": "ri-cord", "n.": "rec-ord" },
-        "live": { "v.": "liv", "adj.": "lyv" },
-        "close": { "v.": "cloze", "adj.": "clohs" },
+        "bow": { "v.": "bough", "n.": "boe" },       // bough rhymes with cow, boe rhymes with toe
+        "wind": { "v.": "wined", "n.": "wind" },     // wined rhymes with find
+        "minute": { "n.": "minnit", "adj.": "my-noot" },
+        "record": { "v.": "ree-cord", "n.": "reck-erd" },
+        "live": { "v.": "liv", "adj.": "lyve" },     // lyve rhymes with hive
+        "close": { "v.": "cloze", "adj.": "cloce" }, // cloze (verb), cloce (close proximity)
         "use": { "v.": "yuze", "n.": "yoos" }
     };
     
+    // If the word has a special pronunciation based on its part of speech, return it.
     if (heteronyms[wordLower] && heteronyms[wordLower][pos]) {
         return heteronyms[wordLower][pos];
     }
-    return word; // Default: just read the word normally
+    return word; // Default: return the normal word
 }
 
 // --- JS AUTO-SCALER ---
@@ -62,9 +65,10 @@ async function initApp() {
     }
 }
 
+// Universal Speak Function (NEVER feed this raw IPA)
 function speakText(text) {
     if (db.length === 0) return;
-    synth.cancel(); 
+    synth.cancel(); // STRICT CANCEL to prevent overlapping
     const utterance = new SpeechSynthesisUtterance(text);
     if (americanVoice) utterance.voice = americanVoice;
     utterance.rate = 0.85; 
@@ -73,6 +77,7 @@ function speakText(text) {
 
 function playWordAudio() {
     const currentData = db[currentIndex];
+    // Gets the phonetic respelling (e.g. "wined" instead of "wind")
     const textToSpeak = getPhoneticSpelling(currentData.w, currentData.p);
     speakText(textToSpeak);
 }
@@ -81,10 +86,14 @@ function playSentenceAudio() {
     const currentData = db[currentIndex];
     const phoneticWord = getPhoneticSpelling(currentData.w, currentData.p);
     
+    let spokenSentence = currentData.s;
+    
     // HIDDEN PHONETIC REPLACEMENT
-    // Replaces the target word in the sentence string with the phonetic spelling just for audio
-    const regex = new RegExp(`\\b${currentData.w}\\b`, 'gi');
-    const spokenSentence = currentData.s.replace(regex, phoneticWord);
+    // Only alter the sentence if we are dealing with a heteronym
+    if (phoneticWord !== currentData.w) {
+        const regex = new RegExp(`\\b${currentData.w}\\b`, 'gi');
+        spokenSentence = currentData.s.replace(regex, phoneticWord);
+    }
     
     speakText(spokenSentence);
 }
@@ -98,6 +107,8 @@ function updateUI() {
     document.getElementById('ipa').innerText = currentData.i;
     document.getElementById('definition').innerText = currentData.d;
     
+    // VISUAL HIGHLIGHTER
+    // This keeps the original spelling and capitalization on the screen.
     const regex = new RegExp(`\\b${currentData.w}\\b`, 'gi');
     const highlightedSentence = currentData.s.replace(regex, match => `<span class="highlight-word">${match}</span>`);
     
