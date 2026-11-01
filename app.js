@@ -11,6 +11,22 @@ synth.onvoiceschanged = () => {
                     || voices.find(v => v.lang === 'en-US');
 };
 
+// --- AUTO-SCALER (Fixes Word Cutting) ---
+function fitText(elementId, maxRem) {
+    const el = document.getElementById(elementId);
+    const parent = el.parentElement; // The word-wrapper bounding box
+    if (!el || !parent) return;
+    
+    let currentRem = maxRem;
+    el.style.fontSize = currentRem + 'rem';
+    
+    // Aggressively shrink text if it's wider than its container (stops at 1rem min-size)
+    while (el.scrollWidth > parent.clientWidth && currentRem > 1) {
+        currentRem -= 0.1;
+        el.style.fontSize = currentRem + 'rem';
+    }
+}
+
 // --- INITIALIZATION ---
 async function initApp() {
     buildLetterNav();
@@ -94,8 +110,11 @@ function updateUI() {
     const currentData = currentDb[currentIndex];
     
     document.getElementById('word').innerText = currentData.w;
+    document.getElementById('pos').innerText = currentData.p;
     document.getElementById('ipa').innerText = currentData.i;
     document.getElementById('definition').innerText = currentData.d;
+    
+    fitText('word', 3.5);
     
     // Sync UI elements
     document.getElementById('word-slider').value = currentIndex;
@@ -139,18 +158,21 @@ function nextWord() {
     }
 }
 
-// --- MOBILE SWIPE GESTURES ---
+// --- RESTRICTED MOBILE SWIPE GESTURES ---
 let touchstartX = 0; 
 let touchendX = 0;
 let touchstartY = 0;
 let touchendY = 0;
 
-document.addEventListener('touchstart', e => { 
+// Attach touch events ONLY to the flashcard area so it doesn't conflict with sliders/nav
+const flashcardArea = document.getElementById('flashcard');
+
+flashcardArea.addEventListener('touchstart', e => { 
     touchstartX = e.changedTouches[0].screenX; 
     touchstartY = e.changedTouches[0].screenY; 
 }, {passive: true});
 
-document.addEventListener('touchend', e => {
+flashcardArea.addEventListener('touchend', e => {
     touchendX = e.changedTouches[0].screenX;
     touchendY = e.changedTouches[0].screenY;
     
@@ -170,14 +192,9 @@ document.addEventListener('keydown', e => {
     if (e.key === 'ArrowLeft') prevWord();
 });
 
-// Auto-scale huge words
+// Re-run the auto-scaler if the user rotates their phone or resizes window
 window.addEventListener('resize', () => {
-    const wordEl = document.getElementById('word');
-    if(wordEl && wordEl.scrollWidth > wordEl.parentElement.clientWidth) {
-        wordEl.style.fontSize = '2.5rem';
-    } else {
-        wordEl.style.fontSize = '3.5rem';
-    }
+    fitText('word', 3.5);
 });
 
 initApp();
