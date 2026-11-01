@@ -1,6 +1,6 @@
 let currentDb = []; 
 let currentIndex = 0; 
-let activeLetter = 'a'; // Default starting letter
+let activeLetter = 'a'; 
 
 // --- SPEECH SYNTHESIS ---
 const synth = window.speechSynthesis;
@@ -17,7 +17,6 @@ async function initApp() {
     await loadLetterDb(activeLetter);
 }
 
-// Generate A-Z buttons dynamically
 function buildLetterNav() {
     const nav = document.getElementById('letter-nav');
     nav.innerHTML = '';
@@ -32,7 +31,6 @@ function buildLetterNav() {
     });
 }
 
-// Fetch the specific JSONL file from the /db folder
 async function loadLetterDb(letter) {
     document.getElementById('loading-screen').style.display = 'flex';
     document.getElementById('error-screen').style.display = 'none';
@@ -44,10 +42,8 @@ async function loadLetterDb(letter) {
         const text = await response.text();
         currentDb = text.split('\n').filter(line => line.trim() !== '').map(line => JSON.parse(line));
         
-        // Reset index for new letter
         currentIndex = 0;
         
-        // Update Slider limits
         const slider = document.getElementById('word-slider');
         slider.max = currentDb.length - 1;
         slider.value = 0;
@@ -62,15 +58,13 @@ async function loadLetterDb(letter) {
     }
 }
 
-// Handle switching letters
 async function switchLetter(letter) {
     if (letter === activeLetter) return;
     synth.cancel();
     
     activeLetter = letter;
-    buildLetterNav(); // Update active class
+    buildLetterNav();
     
-    // Scroll the clicked letter into view smoothly
     const activeBtn = document.querySelector('.letter-btn.active');
     if(activeBtn) activeBtn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
     
@@ -90,12 +84,11 @@ function speakText(text) {
 function playWordAudio() {
     if(currentDb.length === 0) return;
     const currentData = currentDb[currentIndex];
-    // Uses the "tts" field from DB if it exists (for heteronyms), otherwise reads the normal word
     const textToSpeak = currentData.tts || currentData.w;
     speakText(textToSpeak);
 }
 
-// --- UI & SCRUBBER CONTROL ---
+// --- UI & NAVIGATION ---
 function updateUI() {
     if (currentDb.length === 0) return;
     const currentData = currentDb[currentIndex];
@@ -104,21 +97,77 @@ function updateUI() {
     document.getElementById('ipa').innerText = currentData.i;
     document.getElementById('definition').innerText = currentData.d;
     
-    // Update the counter text above the slider
+    // Sync UI elements
+    document.getElementById('word-slider').value = currentIndex;
     document.getElementById('word-count-display').innerText = `${currentIndex + 1} / ${currentDb.length}`;
+
+    // Toggle Back button visibility
+    document.getElementById('back-btn').style.visibility = (currentIndex === 0) ? 'hidden' : 'visible';
 }
 
-// Fired rapidly as the user drags the slider
+// Slider Drag
 function scrubWord() {
     const slider = document.getElementById('word-slider');
     currentIndex = parseInt(slider.value);
-    synth.cancel(); // Stop audio immediately if scrubbing fast
+    synth.cancel(); 
     updateUI();
 }
 
-// Automatically play audio when user releases the slider
+// Slider Release (Auto-play audio)
 document.getElementById('word-slider').addEventListener('change', () => {
     playWordAudio();
+});
+
+// Button Controls
+function prevWord() {
+    if (currentDb.length === 0) return;
+    synth.cancel();
+    if (currentIndex > 0) {
+        currentIndex--;
+        updateUI();
+        playWordAudio();
+    }
+}
+
+function nextWord() {
+    if (currentDb.length === 0) return;
+    synth.cancel();
+    if (currentIndex < currentDb.length - 1) {
+        currentIndex++;
+        updateUI();
+        playWordAudio();
+    }
+}
+
+// --- MOBILE SWIPE GESTURES ---
+let touchstartX = 0; 
+let touchendX = 0;
+let touchstartY = 0;
+let touchendY = 0;
+
+document.addEventListener('touchstart', e => { 
+    touchstartX = e.changedTouches[0].screenX; 
+    touchstartY = e.changedTouches[0].screenY; 
+}, {passive: true});
+
+document.addEventListener('touchend', e => {
+    touchendX = e.changedTouches[0].screenX;
+    touchendY = e.changedTouches[0].screenY;
+    
+    // Ensure the user is swiping horizontally, not scrolling vertically
+    const deltaX = touchendX - touchstartX;
+    const deltaY = touchendY - touchstartY;
+
+    if (Math.abs(deltaX) > 50 && Math.abs(deltaX) > Math.abs(deltaY)) {
+        if (deltaX < 0) nextWord(); // Swipe Left -> Next
+        if (deltaX > 0) prevWord(); // Swipe Right -> Prev
+    }
+}, {passive: true});
+
+// --- KEYBOARD CONTROLS ---
+document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight') nextWord();
+    if (e.key === 'ArrowLeft') prevWord();
 });
 
 // Auto-scale huge words
