@@ -18,6 +18,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
   let currentWords = [];
   let currentIndex = 0;
+  let autoplayTimeout = null;
+  let userInteracted = false; // Tracks if user has interacted to allow autoplay
   
   // Standard Dictionary POS Mapping
   const posMap = {
@@ -30,6 +32,12 @@ document.addEventListener("DOMContentLoaded", () => {
     "conjunction": "conj.",
     "interjection": "interj."
   };
+
+  // Register user interaction to bypass browser autoplay restrictions
+  const markInteraction = () => userInteracted = true;
+  document.body.addEventListener("click", markInteraction, { once: true });
+  document.body.addEventListener("keydown", markInteraction, { once: true });
+  document.body.addEventListener("touchstart", markInteraction, { once: true });
 
   // Build A-Z Navigation
   const alphabet = "abcdefghijklmnopqrstuvwxyz".split("");
@@ -93,7 +101,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const rawPos = data.pos.toLowerCase();
     posDisplay.textContent = posMap[rawPos] || data.pos;
 
-    // Highlight the target word in the sentence (case-insensitive, whole word match)
+    // Highlight the target word
     const regex = new RegExp(`\\b(${data.word})\\b`, 'gi');
     const highlightedSentence = data.sentence.replace(regex, `<span class="highlight">$1</span>`);
     sentenceDisplay.innerHTML = highlightedSentence;
@@ -106,6 +114,21 @@ document.addEventListener("DOMContentLoaded", () => {
 
     prevBtn.disabled = currentIndex === 0;
     nextBtn.disabled = currentIndex === currentWords.length - 1;
+
+    // --- Optimized Autoplay Logic ---
+    // Instantly cancel any currently speaking audio on page shift
+    window.speechSynthesis.cancel();
+    
+    // Clear the previous timeout if the user is sliding/clicking rapidly
+    clearTimeout(autoplayTimeout);
+    
+    // Wait 300ms before playing the new word. If they trigger another word 
+    // within 300ms, the timer resets, preventing chaotic overlapping.
+    autoplayTimeout = setTimeout(() => {
+      if (currentWords.length > 0 && userInteracted) {
+        speakText(currentWords[currentIndex].word);
+      }
+    }, 300);
   }
 
   // --- Navigation Logic ---
@@ -145,21 +168,22 @@ document.addEventListener("DOMContentLoaded", () => {
   }, { passive: true });
 
   function handleSwipe() {
-    const swipeThreshold = 50; // Minimum distance to trigger swipe
-    if (touchEndX + swipeThreshold < touchStartX) goNext(); // Swipe left -> Next
-    if (touchEndX - swipeThreshold > touchStartX) goPrev(); // Swipe right -> Prev
+    const swipeThreshold = 50; 
+    if (touchEndX + swipeThreshold < touchStartX) goNext(); 
+    if (touchEndX - swipeThreshold > touchStartX) goPrev(); 
   }
 
   // --- Audio Logic (Web Speech API) ---
   function speakText(text) {
     if (!text) return;
+    
+    // Always cancel before starting a new utterance to guarantee no overlap
     window.speechSynthesis.cancel(); 
     
     const utterance = new SpeechSynthesisUtterance(text);
     const voices = window.speechSynthesis.getVoices();
     const usVoices = voices.filter(v => v.lang.startsWith("en-US"));
     
-    // Prioritize specific male voices
     const maleVoice = usVoices.find(v => v.name.includes("David") || v.name.includes("Alex") || v.name.includes("Guy") || v.name.includes("Matthew"));
     
     if (maleVoice) utterance.voice = maleVoice;
