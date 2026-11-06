@@ -1,200 +1,142 @@
-let currentDb = []; 
-let currentIndex = 0; 
-let activeLetter = 'a'; 
+document.addEventListener("DOMContentLoaded", () => {
+  const alphabetNav = document.getElementById("alphabet-nav");
+  const wordDisplay = document.getElementById("word-display");
+  const posDisplay = document.getElementById("pos-display");
+  const sentenceDisplay = document.getElementById("sentence-display");
+  const playBtn = document.getElementById("play-audio-btn");
+  const wordSlider = document.getElementById("word-slider");
+  const sliderCurrent = document.getElementById("slider-current");
+  const sliderTotal = document.getElementById("slider-total");
+  const prevBtn = document.getElementById("prev-btn");
+  const nextBtn = document.getElementById("next-btn");
 
-// --- SPEECH SYNTHESIS ---
-const synth = window.speechSynthesis;
-let americanVoice = null;
-synth.onvoiceschanged = () => {
-    const voices = synth.getVoices();
-    americanVoice = voices.find(v => v.lang === 'en-US' && (v.name.includes('Natural') || v.name.includes('Google'))) 
-                    || voices.find(v => v.lang === 'en-US');
-};
+  let currentWords = [];
+  let currentIndex = 0;
+  let currentLetter = "a";
 
-// --- AUTO-SCALER (Fixes Word Cutting) ---
-function fitText(elementId, maxRem) {
-    const el = document.getElementById(elementId);
-    const parent = el.parentElement; // The word-wrapper bounding box
-    if (!el || !parent) return;
-    
-    let currentRem = maxRem;
-    el.style.fontSize = currentRem + 'rem';
-    
-    // Aggressively shrink text if it's wider than its container (stops at 1rem min-size)
-    while (el.scrollWidth > parent.clientWidth && currentRem > 1) {
-        currentRem -= 0.1;
-        el.style.fontSize = currentRem + 'rem';
-    }
-}
-
-// --- INITIALIZATION ---
-async function initApp() {
-    buildLetterNav();
-    await loadLetterDb(activeLetter);
-}
-
-function buildLetterNav() {
-    const nav = document.getElementById('letter-nav');
-    nav.innerHTML = '';
-    const alphabet = 'abcdefghijklmnopqrstuvwxyz'.split('');
-    
-    alphabet.forEach(letter => {
-        const btn = document.createElement('button');
-        btn.className = `letter-btn ${letter === activeLetter ? 'active' : ''}`;
-        btn.innerText = letter.toUpperCase();
-        btn.onclick = () => switchLetter(letter);
-        nav.appendChild(btn);
+  // Build A-Z Navigation
+  const alphabet = "abcdefghijklmnopqrstuvwxyz".split("");
+  alphabet.forEach(letter => {
+    const btn = document.createElement("button");
+    btn.textContent = letter.toUpperCase();
+    btn.className = "letter-btn";
+    if (letter === "a") btn.classList.add("active");
+    btn.addEventListener("click", () => {
+      document.querySelectorAll(".letter-btn").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      
+      // Center the clicked letter in the scroll view
+      btn.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
+      loadLetterData(letter);
     });
-}
+    alphabetNav.appendChild(btn);
+  });
 
-async function loadLetterDb(letter) {
-    document.getElementById('loading-screen').style.display = 'flex';
-    document.getElementById('error-screen').style.display = 'none';
+  // Fetch JSONL Data
+  async function loadLetterData(letter) {
+    currentLetter = letter;
+    wordDisplay.textContent = "Loading...";
+    posDisplay.textContent = "";
+    sentenceDisplay.textContent = "";
     
     try {
-        const response = await fetch(`db/${letter}.jsonl`);
-        if (!response.ok) throw new Error("File not found");
-        
-        const text = await response.text();
-        currentDb = text.split('\n').filter(line => line.trim() !== '').map(line => JSON.parse(line));
-        
-        currentIndex = 0;
-        
-        const slider = document.getElementById('word-slider');
-        slider.max = currentDb.length - 1;
-        slider.value = 0;
-        
-        document.getElementById('loading-screen').style.display = 'none';
-        updateUI();
+      const response = await fetch(`db/${letter}.jsonl`);
+      if (!response.ok) throw new Error("Letter file not found");
+      
+      const text = await response.text();
+      
+      // Parse JSONL (ignore empty lines)
+      currentWords = text.split("\n")
+                         .filter(line => line.trim() !== "")
+                         .map(line => JSON.parse(line));
+      
+      currentIndex = 0;
+      updateUI();
     } catch (error) {
-        document.getElementById('loading-screen').style.display = 'none';
-        document.getElementById('error-screen').style.display = 'flex';
-        document.getElementById('error-screen').innerHTML = `DATABASE FOR '${letter.toUpperCase()}' NOT FOUND.<br><span style="font-size: 1rem; color: #64748b; margin-top: 10px;">Please create db/${letter}.jsonl</span>`;
-        currentDb = [];
+      currentWords = [];
+      wordDisplay.textContent = "Data Missing";
+      sentenceDisplay.textContent = `Could not load db/${letter}.jsonl`;
+      updateUI();
     }
-}
+  }
 
-async function switchLetter(letter) {
-    if (letter === activeLetter) return;
-    synth.cancel();
-    
-    activeLetter = letter;
-    buildLetterNav();
-    
-    const activeBtn = document.querySelector('.letter-btn.active');
-    if(activeBtn) activeBtn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
-    
-    await loadLetterDb(letter);
-}
+  // Update UI Elements
+  function updateUI() {
+    if (currentWords.length === 0) {
+      wordSlider.max = 0;
+      wordSlider.value = 0;
+      sliderCurrent.textContent = "0";
+      sliderTotal.textContent = "0";
+      prevBtn.disabled = true;
+      nextBtn.disabled = true;
+      return;
+    }
 
-// --- AUDIO ENGINE ---
-function speakText(text) {
-    if (currentDb.length === 0) return;
-    synth.cancel(); 
-    const utterance = new SpeechSynthesisUtterance(text);
-    if (americanVoice) utterance.voice = americanVoice;
-    utterance.rate = 0.85; 
-    synth.speak(utterance);
-}
+    const currentData = currentWords[currentIndex];
+    wordDisplay.textContent = currentData.word;
+    posDisplay.textContent = currentData.pos;
+    sentenceDisplay.textContent = currentData.sentence;
 
-function playWordAudio() {
-    if(currentDb.length === 0) return;
-    const currentData = currentDb[currentIndex];
-    const textToSpeak = currentData.tts || currentData.w;
-    speakText(textToSpeak);
-}
+    wordSlider.max = currentWords.length - 1;
+    wordSlider.value = currentIndex;
+    sliderCurrent.textContent = currentIndex + 1;
+    sliderTotal.textContent = currentWords.length;
 
-// --- UI & NAVIGATION ---
-function updateUI() {
-    if (currentDb.length === 0) return;
-    const currentData = currentDb[currentIndex];
-    
-    document.getElementById('word').innerText = currentData.w;
-    document.getElementById('pos').innerText = currentData.p;
-    document.getElementById('ipa').innerText = currentData.i;
-    document.getElementById('definition').innerText = currentData.d;
-    
-    fitText('word', 3.5);
-    
-    // Sync UI elements
-    document.getElementById('word-slider').value = currentIndex;
-    document.getElementById('word-count-display').innerText = `${currentIndex + 1} / ${currentDb.length}`;
+    prevBtn.disabled = currentIndex === 0;
+    nextBtn.disabled = currentIndex === currentWords.length - 1;
+  }
 
-    // Toggle Back button visibility
-    document.getElementById('back-btn').style.visibility = (currentIndex === 0) ? 'hidden' : 'visible';
-}
-
-// Slider Drag
-function scrubWord() {
-    const slider = document.getElementById('word-slider');
-    currentIndex = parseInt(slider.value);
-    synth.cancel(); 
-    updateUI();
-}
-
-// Slider Release (Auto-play audio)
-document.getElementById('word-slider').addEventListener('change', () => {
-    playWordAudio();
-});
-
-// Button Controls
-function prevWord() {
-    if (currentDb.length === 0) return;
-    synth.cancel();
+  // Navigation Listeners
+  prevBtn.addEventListener("click", () => {
     if (currentIndex > 0) {
-        currentIndex--;
-        updateUI();
-        playWordAudio();
+      currentIndex--;
+      updateUI();
     }
-}
+  });
 
-function nextWord() {
-    if (currentDb.length === 0) return;
-    synth.cancel();
-    if (currentIndex < currentDb.length - 1) {
-        currentIndex++;
-        updateUI();
-        playWordAudio();
+  nextBtn.addEventListener("click", () => {
+    if (currentIndex < currentWords.length - 1) {
+      currentIndex++;
+      updateUI();
     }
-}
+  });
 
-// --- RESTRICTED MOBILE SWIPE GESTURES ---
-let touchstartX = 0; 
-let touchendX = 0;
-let touchstartY = 0;
-let touchendY = 0;
+  wordSlider.addEventListener("input", (e) => {
+    currentIndex = parseInt(e.target.value, 10);
+    updateUI();
+  });
 
-// Attach touch events ONLY to the flashcard area so it doesn't conflict with sliders/nav
-const flashcardArea = document.getElementById('flashcard');
-
-flashcardArea.addEventListener('touchstart', e => { 
-    touchstartX = e.changedTouches[0].screenX; 
-    touchstartY = e.changedTouches[0].screenY; 
-}, {passive: true});
-
-flashcardArea.addEventListener('touchend', e => {
-    touchendX = e.changedTouches[0].screenX;
-    touchendY = e.changedTouches[0].screenY;
+  // Audio (Web Speech API)
+  function playAudio() {
+    if (currentWords.length === 0) return;
+    const currentData = currentWords[currentIndex];
     
-    // Ensure the user is swiping horizontally, not scrolling vertically
-    const deltaX = touchendX - touchstartX;
-    const deltaY = touchendY - touchstartY;
-
-    if (Math.abs(deltaX) > 50 && Math.abs(deltaX) > Math.abs(deltaY)) {
-        if (deltaX < 0) nextWord(); // Swipe Left -> Next
-        if (deltaX > 0) prevWord(); // Swipe Right -> Prev
+    // Read word, brief pause, then sentence
+    const textToSpeak = `${currentData.word}. ${currentData.sentence}`;
+    const utterance = new SpeechSynthesisUtterance(textToSpeak);
+    
+    // Attempt to find a male American voice (e.g., 'David', 'Alex', or standard en-US)
+    const voices = window.speechSynthesis.getVoices();
+    const usVoices = voices.filter(v => v.lang.startsWith("en-US"));
+    const maleVoice = usVoices.find(v => v.name.includes("David") || v.name.includes("Alex") || v.name.includes("Guy") || v.name.includes("Matthew"));
+    
+    if (maleVoice) {
+      utterance.voice = maleVoice;
+    } else if (usVoices.length > 0) {
+      utterance.voice = usVoices[0]; // Fallback to first available US voice
     }
-}, {passive: true});
+    
+    window.speechSynthesis.cancel(); // Stop any currently playing audio
+    window.speechSynthesis.speak(utterance);
+  }
 
-// --- KEYBOARD CONTROLS ---
-document.addEventListener('keydown', e => {
-    if (e.key === 'ArrowRight') nextWord();
-    if (e.key === 'ArrowLeft') prevWord();
+  playBtn.addEventListener("click", playAudio);
+
+  // Initialize voices (required for some browsers)
+  window.speechSynthesis.onvoiceschanged = () => {
+    window.speechSynthesis.getVoices();
+  };
+
+  // Initial Load
+  loadLetterData("a");
 });
-
-// Re-run the auto-scaler if the user rotates their phone or resizes window
-window.addEventListener('resize', () => {
-    fitText('word', 3.5);
-});
-
-initApp();
