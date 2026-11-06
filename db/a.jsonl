@@ -1,10 +1,10 @@
-{"word": "aback", "ipa": "/əˈbæk/", "pos": "adverb", "sentence": "I was taken aback by his sudden resignation from the company."}
-{"word": "abacus", "ipa": "/ˈæbəkəs/", "pos": "noun", "sentence": "The child learned to perform basic math using a wooden abacus."}
-{"word": "abandon", "ipa": "/əˈbændən/", "pos": "verb", "sentence": "The crew had to abandon the sinking ship before the storm hit."}
-{"word": "abate", "ipa": "/əˈbeɪt/", "pos": "verb", "sentence": "We waited for the heavy wind to abate before continuing our hike."}
-{"word": "ability", "ipa": "/əˈbɪləti/", "pos": "noun", "sentence": "She demonstrated a remarkable ability to learn new languages quickly."}
-{"word": "able", "ipa": "/ˈeɪbəl/", "pos": "adjective", "sentence": "With enough practice, he will be able to run a marathon."}
-{"word": "abnormal", "ipa": "/æbˈnɔːrməl/", "pos": "adjective", "sentence": "The warm weather was highly abnormal for this time of year."}
-{"word": "aboard", "ipa": "/əˈbɔːrd/", "pos": "adverb", "sentence": "The flight attendant welcomed the passengers aboard the aircraft."}
-{"word": "about", "ipa": "/əˈbaʊt/", "pos": "preposition", "sentence": "We spent the evening talking about our plans for the upcoming summer."}
-{"word": "above", "ipa": "/əˈbʌv/", "pos": "preposition", "sentence": "The eagle soared high above the snow-capped mountain peaks."}
+{"word": "aback", "ipa": "/əˈbæk/", "pos": "adverb", "definition": "If you are taken aback by something, you are completely surprised or shocked by it.", "sentence": "I was taken aback by his sudden resignation from the company."}
+{"word": "abacus", "ipa": "/ˈæbəkəs/", "pos": "noun", "definition": "An abacus is a simple device for calculating, consisting of a frame with rows of wires or grooves along which beads are slid.", "sentence": "The child learned to perform basic math using a wooden abacus."}
+{"word": "abandon", "ipa": "/əˈbændən/", "pos": "verb", "definition": "If you abandon a place, thing, or person, you leave them permanently or stop looking after them.", "sentence": "The crew had to abandon the sinking ship before the storm hit."}
+{"word": "abate", "ipa": "/əˈbeɪt/", "pos": "verb", "definition": "If something bad or undesirable abates, it becomes much less strong or severe.", "sentence": "We waited for the heavy wind to abate before continuing our hike."}
+{"word": "ability", "ipa": "/əˈbɪləti/", "pos": "noun", "definition": "Your ability to do something is the fact that you can do it, usually because you have the necessary skills or talent.", "sentence": "She demonstrated a remarkable ability to learn new languages quickly."}
+{"word": "able", "ipa": "/ˈeɪbəl/", "pos": "adjective", "definition": "If you are able to do something, you have the physical or mental power to do it.", "sentence": "With enough practice, he will be able to run a marathon."}
+{"word": "abnormal", "ipa": "/æbˈnɔːrməl/", "pos": "adjective", "definition": "If something is abnormal, it is completely different from what is usual or expected, usually in a worrying way.", "sentence": "The warm weather was highly abnormal for this time of year."}
+{"word": "aboard", "ipa": "/əˈbɔːrd/", "pos": "adverb", "definition": "If you are aboard a ship, aircraft, or train, you are on it or in it.", "sentence": "The flight attendant welcomed the passengers aboard the aircraft."}
+{"word": "about", "ipa": "/əˈbaʊt/", "pos": "preposition", "definition": "If you are talking or thinking about a subject, you are considering that subject.", "sentence": "We spent the evening talking about our plans for the upcoming summer."}
+{"word": "above", "ipa": "/əˈbʌv/", "pos": "preposition", "definition": "If one thing is above another, it is situated at a higher level than the other thing.", "sentence": "The eagle soared high above the snow-capped mountain peaks."}
