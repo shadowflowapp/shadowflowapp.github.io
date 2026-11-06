@@ -5,6 +5,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const wordDisplay = document.getElementById("word-display");
   const posDisplay = document.getElementById("pos-display");
   const ipaDisplay = document.getElementById("ipa-display");
+  const definitionDisplay = document.getElementById("definition-display");
   const sentenceDisplay = document.getElementById("sentence-display");
   
   const playWordBtn = document.getElementById("play-word-btn");
@@ -19,9 +20,8 @@ document.addEventListener("DOMContentLoaded", () => {
   let currentWords = [];
   let currentIndex = 0;
   let autoplayTimeout = null;
-  let userInteracted = false; // Tracks if user has interacted to allow autoplay
+  let userInteracted = false; 
   
-  // Standard Dictionary POS Mapping
   const posMap = {
     "noun": "n.",
     "verb": "v.",
@@ -33,13 +33,11 @@ document.addEventListener("DOMContentLoaded", () => {
     "interjection": "interj."
   };
 
-  // Register user interaction to bypass browser autoplay restrictions
   const markInteraction = () => userInteracted = true;
   document.body.addEventListener("click", markInteraction, { once: true });
   document.body.addEventListener("keydown", markInteraction, { once: true });
   document.body.addEventListener("touchstart", markInteraction, { once: true });
 
-  // Build A-Z Navigation
   const alphabet = "abcdefghijklmnopqrstuvwxyz".split("");
   alphabet.forEach(letter => {
     const btn = document.createElement("button");
@@ -56,11 +54,11 @@ document.addEventListener("DOMContentLoaded", () => {
     alphabetNav.appendChild(btn);
   });
 
-  // Fetch JSONL Data
   async function loadLetterData(letter) {
     wordDisplay.textContent = "Loading...";
     posDisplay.textContent = "";
     ipaDisplay.textContent = "";
+    definitionDisplay.textContent = "";
     sentenceDisplay.innerHTML = "";
     
     try {
@@ -77,12 +75,12 @@ document.addEventListener("DOMContentLoaded", () => {
     } catch (error) {
       currentWords = [];
       wordDisplay.textContent = "Data Missing";
+      definitionDisplay.textContent = "";
       sentenceDisplay.textContent = `Could not load db/${letter}.jsonl`;
       updateUI();
     }
   }
 
-  // Update UI Elements
   function updateUI() {
     if (currentWords.length === 0) {
       wordSlider.max = 0; wordSlider.value = 0;
@@ -93,20 +91,20 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const data = currentWords[currentIndex];
     
-    // Set Text
     wordDisplay.textContent = data.word;
-    ipaDisplay.textContent = data.ipa ? data.ipa : "";
+    ipaDisplay.textContent = data.ipa || "";
+    definitionDisplay.textContent = data.definition || "";
     
-    // Set POS with mapping
-    const rawPos = data.pos.toLowerCase();
+    const rawPos = (data.pos || "").toLowerCase();
     posDisplay.textContent = posMap[rawPos] || data.pos;
 
-    // Highlight the target word
-    const regex = new RegExp(`\\b(${data.word})\\b`, 'gi');
-    const highlightedSentence = data.sentence.replace(regex, `<span class="highlight">$1</span>`);
-    sentenceDisplay.innerHTML = highlightedSentence;
+    // Highlight the target word in the sentence
+    if (data.sentence) {
+      const regex = new RegExp(`\\b(${data.word})\\b`, 'gi');
+      const highlightedSentence = data.sentence.replace(regex, `<span class="highlight">$1</span>`);
+      sentenceDisplay.innerHTML = highlightedSentence;
+    }
 
-    // Update Controls
     wordSlider.max = currentWords.length - 1;
     wordSlider.value = currentIndex;
     sliderCurrent.textContent = currentIndex + 1;
@@ -115,15 +113,9 @@ document.addEventListener("DOMContentLoaded", () => {
     prevBtn.disabled = currentIndex === 0;
     nextBtn.disabled = currentIndex === currentWords.length - 1;
 
-    // --- Optimized Autoplay Logic ---
-    // Instantly cancel any currently speaking audio on page shift
     window.speechSynthesis.cancel();
-    
-    // Clear the previous timeout if the user is sliding/clicking rapidly
     clearTimeout(autoplayTimeout);
     
-    // Wait 300ms before playing the new word. If they trigger another word 
-    // within 300ms, the timer resets, preventing chaotic overlapping.
     autoplayTimeout = setTimeout(() => {
       if (currentWords.length > 0 && userInteracted) {
         speakText(currentWords[currentIndex].word);
@@ -131,7 +123,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }, 300);
   }
 
-  // --- Navigation Logic ---
   function goPrev() {
     if (currentIndex > 0) { currentIndex--; updateUI(); }
   }
@@ -148,13 +139,11 @@ document.addEventListener("DOMContentLoaded", () => {
     updateUI();
   });
 
-  // PC Keyboard Navigation
   document.addEventListener("keydown", (e) => {
     if (e.key === "ArrowLeft") goPrev();
     if (e.key === "ArrowRight") goNext();
   });
 
-  // Mobile Swipe Detection
   let touchStartX = 0;
   let touchEndX = 0;
 
@@ -173,17 +162,13 @@ document.addEventListener("DOMContentLoaded", () => {
     if (touchEndX - swipeThreshold > touchStartX) goPrev(); 
   }
 
-  // --- Audio Logic (Web Speech API) ---
   function speakText(text) {
     if (!text) return;
-    
-    // Always cancel before starting a new utterance to guarantee no overlap
     window.speechSynthesis.cancel(); 
     
     const utterance = new SpeechSynthesisUtterance(text);
     const voices = window.speechSynthesis.getVoices();
     const usVoices = voices.filter(v => v.lang.startsWith("en-US"));
-    
     const maleVoice = usVoices.find(v => v.name.includes("David") || v.name.includes("Alex") || v.name.includes("Guy") || v.name.includes("Matthew"));
     
     if (maleVoice) utterance.voice = maleVoice;
@@ -202,6 +187,5 @@ document.addEventListener("DOMContentLoaded", () => {
 
   window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices();
 
-  // Initial Load
   loadLetterData("a");
 });
