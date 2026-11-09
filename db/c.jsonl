@@ -1,4 +1,3 @@
-// db/c.jsonl
 {"word": "calculate", "pos": "verb", "meaning_th": "คำนวณ", "example": "Let me calculate the total cost for you."}
 {"word": "cancel", "pos": "verb", "meaning_th": "ยกเลิก", "example": "I need to cancel my subscription."}
 {"word": "capacity", "pos": "noun", "meaning_th": "ความจุ, ขีดความสามารถ", "example": "The stadium has a seating capacity of 50,000."}
