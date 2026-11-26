@@ -3,24 +3,24 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>SwipeLingo TH — Gamified English Trainer</title>
+  <title>SwipeLingo</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;500;600&family=Outfit:wght@500;700;800&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700;800&family=Noto+Sans+Thai:wght@400;500;600&display=swap" rel="stylesheet" />
   <style>
     :root {
-      --bg-outer: #05070e;
-      --bg-app: #0c111d;
-      --bg-panel: #141c2f;
-      --bg-card: linear-gradient(160deg, #1b2540 0%, #121829 100%);
-      --border-subtle: rgba(255, 255, 255, 0.08);
-      --text-main: #f8fafc;
-      --text-muted: #94a3b8;
-      --accent-green: #10b981;
-      --accent-red: #f43f5e;
-      --accent-gold: #f59e0b;
-      --accent-cyan: #06b6d4;
-      --accent-violet: #8b5cf6;
+      --bg-outer: #040508;
+      --bg-shell: #0a0d14;
+      --bg-surface: #121722;
+      --bg-card: #151b28;
+      --border: rgba(255, 255, 255, 0.07);
+      --border-strong: rgba(255, 255, 255, 0.14);
+      --text: #f8fafc;
+      --muted: #64748b;
+      --green: #10b981;
+      --red: #f43f5e;
+      --gold: #f59e0b;
+      --cyan: #06b6d4;
     }
 
     * {
@@ -32,9 +32,9 @@
     }
 
     body {
-      font-family: 'Outfit', 'Kanit', sans-serif;
-      background: radial-gradient(circle at top, #151e38 0%, var(--bg-outer) 70%);
-      color: var(--text-main);
+      font-family: 'Inter', 'Noto Sans Thai', sans-serif;
+      background: var(--bg-outer);
+      color: var(--text);
       height: 100dvh;
       width: 100vw;
       display: flex;
@@ -43,12 +43,11 @@
       overflow: hidden;
     }
 
-    /* Mobile-first vertical frame; enforces phone aspect ratio on PC */
     .phone-shell {
       position: relative;
       width: 100%;
       height: 100dvh;
-      background: var(--bg-app);
+      background: var(--bg-shell);
       display: flex;
       flex-direction: column;
       overflow: hidden;
@@ -56,510 +55,482 @@
 
     @media (min-width: 480px) {
       .phone-shell {
-        width: 410px;
-        height: min(92dvh, 840px);
-        border-radius: 36px;
-        border: 8px solid #1e293b;
-        box-shadow:
-          0 0 0 1px rgba(255, 255, 255, 0.08),
-          0 30px 70px rgba(0, 0, 0, 0.75);
+        width: 400px;
+        height: min(92dvh, 820px);
+        border-radius: 34px;
+        border: 1px solid var(--border-strong);
+        box-shadow: 0 28px 80px rgba(0, 0, 0, 0.85);
       }
     }
 
-    /* Top AAA Game HUD */
+    /* Particle FX Canvas */
+    #fxCanvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 40;
+    }
+
+    /* Minimal Top HUD */
     .hud {
       padding: 16px 18px 12px;
-      background: rgba(20, 28, 47, 0.85);
-      border-bottom: 1px solid var(--border-subtle);
-      backdrop-filter: blur(10px);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
       z-index: 10;
     }
 
-    .hud-top {
+    .hud-row {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 10px;
-      margin-bottom: 10px;
     }
 
-    .player-badge {
+    .hud-left {
       display: flex;
       align-items: center;
       gap: 10px;
       cursor: pointer;
-      padding: 4px 10px 4px 4px;
+    }
+
+    .cefr-pill {
+      padding: 4px 10px;
       border-radius: 999px;
-      background: rgba(255, 255, 255, 0.04);
-      border: 1px solid var(--border-subtle);
-      transition: background 0.2s;
-    }
-
-    .player-badge:hover {
-      background: rgba(255, 255, 255, 0.09);
-    }
-
-    .lvl-hex {
-      width: 34px;
-      height: 34px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, var(--accent-gold), #ea580c);
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      background: rgba(6, 182, 212, 0.14);
+      border: 1px solid rgba(6, 182, 212, 0.35);
+      color: #22d3ee;
+      font-size: 0.78rem;
       font-weight: 800;
-      font-size: 0.95rem;
-      color: #0b0f19;
-      box-shadow: 0 0 12px rgba(245, 158, 11, 0.45);
+      letter-spacing: 0.05em;
     }
 
-    .rank-info {
-      display: flex;
-      flex-direction: column;
-      line-height: 1.15;
-    }
-
-    .rank-title {
-      font-size: 0.72rem;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      color: var(--accent-gold);
+    .lvl-text {
+      font-size: 0.85rem;
       font-weight: 700;
+      color: var(--text);
     }
 
-    .xp-text {
-      font-size: 0.82rem;
-      color: var(--text-main);
-      font-weight: 600;
-    }
-
-    .hud-stats {
+    .hud-right {
       display: flex;
       align-items: center;
       gap: 8px;
     }
 
-    .stat-pill {
-      display: flex;
-      align-items: center;
-      gap: 5px;
-      padding: 6px 10px;
+    .streak-pill {
+      padding: 4px 10px;
       border-radius: 999px;
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid var(--border-subtle);
-      font-size: 0.82rem;
+      background: rgba(245, 158, 11, 0.12);
+      border: 1px solid rgba(245, 158, 11, 0.28);
+      color: var(--gold);
+      font-size: 0.8rem;
       font-weight: 700;
-    }
-
-    .stat-pill.streak {
-      color: #fb923c;
-      border-color: rgba(251, 146, 60, 0.35);
     }
 
     .icon-btn {
       width: 34px;
       height: 34px;
       border-radius: 50%;
-      border: 1px solid var(--border-subtle);
-      background: rgba(255, 255, 255, 0.05);
-      color: var(--text-main);
+      border: 1px solid var(--border);
+      background: var(--bg-surface);
+      color: var(--text);
       display: flex;
       align-items: center;
       justify-content: center;
       cursor: pointer;
-      font-size: 1rem;
-      transition: transform 0.15s, background 0.15s;
+      font-size: 0.95rem;
+      transition: transform 0.15s, border-color 0.2s;
     }
 
-    .icon-btn:active {
-      transform: scale(0.92);
-    }
+    .icon-btn:active { transform: scale(0.92); }
 
-    .xp-bar-track {
+    .xp-track {
       width: 100%;
-      height: 7px;
+      height: 4px;
       border-radius: 999px;
-      background: rgba(255, 255, 255, 0.08);
+      background: rgba(255, 255, 255, 0.06);
       overflow: hidden;
     }
 
-    .xp-bar-fill {
+    .xp-fill {
       height: 100%;
       width: 0%;
-      border-radius: 999px;
-      background: linear-gradient(90deg, var(--accent-cyan), var(--accent-violet), var(--accent-gold));
-      transition: width 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+      background: linear-gradient(90deg, var(--cyan), var(--green));
+      transition: width 0.4s cubic-bezier(0.22, 1, 0.36, 1);
     }
 
-    /* Card Arena */
+    /* Arena */
     .arena {
       position: relative;
       flex: 1;
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 18px;
-      overflow: hidden;
+      padding: 12px 20px;
     }
 
-    .card-stack-bg {
-      position: absolute;
-      width: calc(100% - 52px);
-      height: calc(100% - 48px);
-      max-height: 460px;
-      border-radius: 26px;
-      background: rgba(27, 37, 64, 0.45);
-      border: 1px solid var(--border-subtle);
-      transform: scale(0.94) translateY(14px);
-      pointer-events: none;
+    .card-mount {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      max-height: 470px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
     .card {
       position: relative;
       width: 100%;
       height: 100%;
-      max-height: 460px;
       border-radius: 26px;
       background: var(--bg-card);
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      box-shadow: 0 20px 45px rgba(0, 0, 0, 0.5);
-      padding: 22px;
+      border: 1px solid var(--border-strong);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.55);
+      padding: 24px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
       touch-action: none;
       cursor: grab;
       will-change: transform;
-      z-index: 2;
+      transition: box-shadow 0.25s, border-color 0.25s;
     }
 
-    .card:active {
-      cursor: grabbing;
-    }
+    .card:active { cursor: grabbing; }
 
     .card.audio-mode {
-      border-color: rgba(6, 182, 212, 0.45);
-      box-shadow: 0 20px 45px rgba(6, 182, 212, 0.15);
+      border-color: rgba(6, 182, 212, 0.35);
     }
 
-    /* Swipe Stamps */
-    .stamp {
-      position: absolute;
-      top: 26px;
-      padding: 6px 14px;
-      border-radius: 10px;
-      font-weight: 800;
-      font-size: 1.25rem;
-      letter-spacing: 0.1em;
-      border: 3px solid;
-      opacity: 0;
-      pointer-events: none;
-      z-index: 5;
-    }
-
-    .stamp.match {
-      left: 20px;
-      color: var(--accent-green);
-      border-color: var(--accent-green);
-      transform: rotate(-14deg);
-      background: rgba(16, 185, 129, 0.12);
-    }
-
-    .stamp.nope {
-      right: 20px;
-      color: var(--accent-red);
-      border-color: var(--accent-red);
-      transform: rotate(14deg);
-      background: rgba(244, 63, 94, 0.12);
-    }
-
-    .card-header {
+    .card-top {
       display: flex;
       align-items: center;
       justify-content: space-between;
     }
 
-    .tag {
+    .badge {
       font-size: 0.72rem;
       font-weight: 700;
-      text-transform: uppercase;
       letter-spacing: 0.08em;
-      padding: 5px 11px;
+      padding: 4px 10px;
       border-radius: 999px;
-      background: rgba(255, 255, 255, 0.07);
-      color: var(--text-muted);
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--muted);
     }
 
-    .tag.listening {
-      background: rgba(6, 182, 212, 0.18);
+    .badge.audio {
+      background: rgba(6, 182, 212, 0.14);
       color: #22d3ee;
-      border: 1px solid rgba(34, 211, 238, 0.35);
     }
 
-    .xp-reward-tag {
-      font-size: 0.75rem;
-      font-weight: 700;
-      color: var(--accent-gold);
+    /* Swipe Edge Glow Indicators (Minimalist replacement for big stamps) */
+    .swipe-indicator {
+      position: absolute;
+      top: 22px;
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.25rem;
+      font-weight: 800;
+      opacity: 0;
+      pointer-events: none;
+      z-index: 5;
     }
 
-    .english-zone {
+    .swipe-indicator.match {
+      left: 22px;
+      background: rgba(16, 185, 129, 0.18);
+      color: var(--green);
+      border: 2px solid var(--green);
+    }
+
+    .swipe-indicator.nope {
+      right: 22px;
+      background: rgba(244, 63, 94, 0.18);
+      color: var(--red);
+      border: 2px solid var(--red);
+    }
+
+    .en-zone {
       flex: 1;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       text-align: center;
-      padding: 12px 4px;
-      gap: 14px;
+      gap: 16px;
+      padding: 10px 0;
     }
 
-    .english-phrase {
-      font-size: 1.65rem;
+    .en-text {
       font-weight: 700;
-      line-height: 1.28;
+      line-height: 1.25;
       color: #ffffff;
+      word-break: break-word;
     }
 
-    .mini-audio-row {
+    .audio-controls {
       display: flex;
-      gap: 8px;
-    }
-
-    .audio-pill-btn {
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      background: rgba(255, 255, 255, 0.07);
-      color: var(--text-main);
-      padding: 7px 14px;
-      border-radius: 999px;
-      font-size: 0.8rem;
-      font-weight: 600;
-      cursor: pointer;
-      display: inline-flex;
       align-items: center;
-      gap: 6px;
-      transition: background 0.15s, transform 0.15s;
+      gap: 10px;
     }
 
-    .audio-pill-btn:active {
-      transform: scale(0.95);
-    }
-
-    /* Audio-Only Listening Challenge Button */
-    .big-audio-btn {
-      width: 96px;
-      height: 96px;
+    .audio-btn {
+      width: 44px;
+      height: 44px;
       border-radius: 50%;
-      border: none;
-      background: linear-gradient(135deg, var(--accent-cyan), var(--accent-violet));
-      color: white;
-      font-size: 2.2rem;
+      border: 1px solid var(--border-strong);
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text);
+      font-size: 1.1rem;
       display: flex;
       align-items: center;
       justify-content: center;
       cursor: pointer;
-      box-shadow: 0 0 0 0 rgba(6, 182, 212, 0.55);
-      animation: pulseGlow 2s infinite;
-      transition: transform 0.15s;
+      transition: transform 0.15s, background 0.15s;
     }
 
-    .big-audio-btn:active {
-      transform: scale(0.93);
+    .audio-btn:active { transform: scale(0.92); }
+
+    .audio-btn.hero {
+      width: 86px;
+      height: 86px;
+      font-size: 2rem;
+      border: none;
+      background: linear-gradient(135deg, #06b6d4, #3b82f6);
+      box-shadow: 0 12px 30px rgba(6, 182, 212, 0.35);
     }
 
-    @keyframes pulseGlow {
-      0% { box-shadow: 0 0 0 0 rgba(6, 182, 212, 0.55); }
-      70% { box-shadow: 0 0 0 18px rgba(6, 182, 212, 0); }
-      100% { box-shadow: 0 0 0 0 rgba(6, 182, 212, 0); }
-    }
-
-    .listen-hint {
-      font-size: 0.85rem;
-      color: #67e8f9;
-      font-weight: 500;
+    .audio-btn.slow {
+      width: 38px;
+      height: 38px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--muted);
     }
 
     .divider {
       height: 1px;
       width: 100%;
-      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.18), transparent);
-      margin: 8px 0;
+      background: var(--border);
     }
 
-    .thai-zone {
-      padding: 14px 6px 6px;
+    .th-zone {
+      padding: 20px 4px 8px;
       text-align: center;
     }
 
-    .thai-label {
-      font-size: 0.7rem;
-      text-transform: uppercase;
-      letter-spacing: 0.12em;
-      color: var(--text-muted);
-      margin-bottom: 6px;
-    }
-
-    .thai-meaning {
-      font-family: 'Kanit', sans-serif;
-      font-size: 1.45rem;
+    .th-text {
+      font-family: 'Noto Sans Thai', sans-serif;
+      font-size: 1.38rem;
       font-weight: 500;
-      line-height: 1.35;
+      line-height: 1.4;
       color: #e2e8f0;
     }
 
-    /* Bottom Action Controls */
-    .controls {
-      padding: 10px 24px 20px;
+    /* Post-Swipe Review Overlay */
+    .review-overlay {
+      position: absolute;
+      inset: 12px 20px;
+      max-height: 470px;
+      margin: auto;
+      border-radius: 26px;
+      background: rgba(15, 20, 31, 0.96);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--border-strong);
+      padding: 26px 24px;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      text-align: center;
+      z-index: 25;
+      cursor: pointer;
+    }
+
+    .review-overlay.show {
+      display: flex;
+      animation: fadeIn 0.18s ease-out;
+    }
+
+    .review-overlay.correct { border-color: rgba(16, 185, 129, 0.55); }
+    .review-overlay.wrong { border-color: rgba(244, 63, 94, 0.55); }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(0.96); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    .review-status {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.9rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .review-overlay.correct .review-status { color: var(--green); }
+    .review-overlay.wrong .review-status { color: var(--red); }
+
+    .review-body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 14px;
+      width: 100%;
+    }
+
+    .review-en {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: #ffffff;
+      line-height: 1.3;
+    }
+
+    .review-th-correct {
+      font-family: 'Noto Sans Thai', sans-serif;
+      font-size: 1.35rem;
+      font-weight: 600;
+      color: var(--green);
+      line-height: 1.4;
+    }
+
+    .review-th-wrong {
+      font-family: 'Noto Sans Thai', sans-serif;
+      font-size: 0.95rem;
+      color: var(--muted);
+      text-decoration: line-through;
+    }
+
+    .review-footer {
+      width: 100%;
       display: flex;
       flex-direction: column;
       align-items: center;
       gap: 10px;
     }
 
-    .btn-row {
+    .next-btn {
       width: 100%;
+      padding: 13px;
+      border-radius: 14px;
+      border: none;
+      background: rgba(255, 255, 255, 0.09);
+      color: var(--text);
+      font-weight: 700;
+      font-size: 0.95rem;
+      cursor: pointer;
+    }
+
+    .timer-bar {
+      width: 100%;
+      height: 3px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.08);
+      overflow: hidden;
+    }
+
+    .timer-fill {
+      height: 100%;
+      width: 100%;
+      background: var(--green);
+      transform-origin: left;
+    }
+
+    /* Bottom Action Bar */
+    .controls {
+      padding: 12px 24px 26px;
       display: flex;
       align-items: center;
       justify-content: space-evenly;
     }
 
     .action-btn {
-      width: 64px;
-      height: 64px;
+      width: 60px;
+      height: 60px;
       border-radius: 50%;
-      border: 2px solid;
-      background: var(--bg-panel);
-      font-size: 1.65rem;
+      border: 1.5px solid;
+      background: var(--bg-surface);
+      font-size: 1.5rem;
       display: flex;
       align-items: center;
       justify-content: center;
       cursor: pointer;
-      transition: transform 0.15s, box-shadow 0.2s;
+      transition: transform 0.15s;
     }
 
-    .action-btn:active {
-      transform: scale(0.9);
-    }
-
-    .action-btn.nope {
-      color: var(--accent-red);
-      border-color: rgba(244, 63, 94, 0.45);
-      box-shadow: 0 8px 20px rgba(244, 63, 94, 0.18);
-    }
-
-    .action-btn.match {
-      color: var(--accent-green);
-      border-color: rgba(16, 185, 129, 0.45);
-      box-shadow: 0 8px 20px rgba(16, 185, 129, 0.18);
-    }
-
+    .action-btn:active { transform: scale(0.9); }
+    .action-btn.nope { color: var(--red); border-color: rgba(244, 63, 94, 0.35); }
+    .action-btn.match { color: var(--green); border-color: rgba(16, 185, 129, 0.35); }
     .action-btn.replay {
-      width: 48px;
-      height: 48px;
-      font-size: 1.15rem;
-      color: var(--accent-cyan);
-      border-color: rgba(6, 182, 212, 0.4);
-    }
-
-    .hint-bar {
-      font-size: 0.72rem;
-      color: var(--text-muted);
-      letter-spacing: 0.03em;
-    }
-
-    /* Feedback Toast */
-    .toast {
-      position: absolute;
-      bottom: 112px;
-      left: 50%;
-      transform: translateX(-50%) translateY(20px);
-      width: calc(100% - 36px);
-      padding: 12px 14px;
-      border-radius: 14px;
-      background: rgba(15, 23, 42, 0.96);
-      border: 1px solid var(--border-subtle);
-      font-family: 'Kanit', 'Outfit', sans-serif;
-      font-size: 0.86rem;
-      line-height: 1.35;
-      text-align: center;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.22s, transform 0.22s;
-      z-index: 20;
-    }
-
-    .toast.show {
-      opacity: 1;
-      transform: translateX(-50%) translateY(0);
-    }
-
-    .toast.correct {
-      border-color: rgba(16, 185, 129, 0.6);
-      color: #a7f3d0;
-    }
-
-    .toast.wrong {
-      border-color: rgba(244, 63, 94, 0.6);
-      color: #fecdd3;
-    }
-
-    /* Floating XP Pop */
-    .xp-pop {
-      position: absolute;
-      top: 42%;
-      left: 50%;
-      transform: translate(-50%, 0);
-      font-size: 1.35rem;
-      font-weight: 800;
-      color: var(--accent-gold);
-      text-shadow: 0 2px 12px rgba(245, 158, 11, 0.6);
-      pointer-events: none;
-      z-index: 30;
-      animation: floatUp 0.9s ease-out forwards;
-    }
-
-    @keyframes floatUp {
-      0% { opacity: 1; transform: translate(-50%, 0) scale(0.9); }
-      100% { opacity: 0; transform: translate(-50%, -65px) scale(1.15); }
+      width: 46px;
+      height: 46px;
+      font-size: 1.05rem;
+      color: var(--cyan);
+      border-color: rgba(6, 182, 212, 0.3);
     }
 
     /* Dashboard Modal */
     .modal-backdrop {
       position: absolute;
       inset: 0;
-      background: rgba(5, 7, 14, 0.82);
-      backdrop-filter: blur(6px);
+      background: rgba(4, 5, 8, 0.85);
+      backdrop-filter: blur(8px);
       display: none;
       align-items: flex-end;
       z-index: 50;
     }
 
-    .modal-backdrop.open {
-      display: flex;
-    }
+    .modal-backdrop.open { display: flex; }
 
-    .dashboard-sheet {
+    .sheet {
       width: 100%;
-      max-height: 84%;
-      background: #111827;
-      border-top-left-radius: 28px;
-      border-top-right-radius: 28px;
-      border-top: 1px solid rgba(255, 255, 255, 0.12);
-      padding: 20px;
+      max-height: 85%;
+      background: #0f141f;
+      border-top-left-radius: 26px;
+      border-top-right-radius: 26px;
+      border-top: 1px solid var(--border-strong);
+      padding: 22px;
       overflow-y: auto;
       display: flex;
       flex-direction: column;
       gap: 16px;
     }
 
-    .sheet-header {
+    .sheet-head {
       display: flex;
       align-items: center;
       justify-content: space-between;
     }
 
-    .sheet-header h2 {
-      font-size: 1.15rem;
-      letter-spacing: 0.03em;
+    .sheet-head h2 { font-size: 1.05rem; font-weight: 700; }
+
+    .auth-card {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 14px;
+      border-radius: 14px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border);
+    }
+
+    .google-btn {
+      padding: 8px 14px;
+      border-radius: 10px;
+      border: none;
+      background: #ffffff;
+      color: #0f172a;
+      font-weight: 700;
+      font-size: 0.82rem;
+      cursor: pointer;
     }
 
     .stats-grid {
@@ -569,21 +540,21 @@
     }
 
     .stat-box {
-      background: rgba(255, 255, 255, 0.04);
-      border: 1px solid var(--border-subtle);
-      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border);
+      border-radius: 14px;
       padding: 12px;
     }
 
     .stat-box .label {
-      font-size: 0.72rem;
-      color: var(--text-muted);
+      font-size: 0.7rem;
+      color: var(--muted);
       text-transform: uppercase;
       letter-spacing: 0.06em;
     }
 
-    .stat-box .value {
-      font-size: 1.35rem;
+    .stat-box .val {
+      font-size: 1.3rem;
       font-weight: 800;
       margin-top: 4px;
     }
@@ -595,113 +566,114 @@
     }
 
     .mistake-item {
-      background: rgba(244, 63, 94, 0.08);
-      border: 1px solid rgba(244, 63, 94, 0.22);
+      background: rgba(244, 63, 94, 0.07);
+      border: 1px solid rgba(244, 63, 94, 0.2);
       border-radius: 12px;
       padding: 10px 12px;
-      font-size: 0.85rem;
+      font-size: 0.84rem;
     }
 
-    .mistake-item .en {
-      font-weight: 700;
-      color: #fff;
-    }
-
-    .mistake-item .th {
-      font-family: 'Kanit', sans-serif;
-      color: #a7f3d0;
-      margin-top: 2px;
-    }
+    .mistake-item .en { font-weight: 700; color: #fff; }
+    .mistake-item .th { font-family: 'Noto Sans Thai', sans-serif; color: var(--green); margin-top: 2px; }
 
     .reset-btn {
       padding: 11px;
       border-radius: 12px;
-      border: 1px solid rgba(244, 63, 94, 0.4);
-      background: rgba(244, 63, 94, 0.12);
+      border: 1px solid rgba(244, 63, 94, 0.35);
+      background: transparent;
       color: #fda4af;
-      font-weight: 700;
+      font-weight: 600;
+      font-size: 0.85rem;
       cursor: pointer;
     }
   </style>
 </head>
 <body>
   <div class="phone-shell">
-    <!-- AAA Game HUD -->
-    <header class="hud">
-      <div class="hud-top">
-        <div class="player-badge" id="openDashboardBtn" title="Open Player Dashboard">
-          <div class="lvl-hex" id="hudLevel">1</div>
-          <div class="rank-info">
-            <span class="rank-title" id="hudRank">ROOKIE</span>
-            <span class="xp-text" id="hudXp">0 / 100 XP</span>
-          </div>
-        </div>
+    <canvas id="fxCanvas"></canvas>
 
-        <div class="hud-stats">
-          <div class="stat-pill streak" id="hudStreak">🔥 0</div>
-          <button class="icon-btn" id="soundToggleBtn" title="Toggle Sound Effects">🔊</button>
-          <button class="icon-btn" id="statsBtn" title="Dashboard">📊</button>
+    <!-- Minimal HUD -->
+    <header class="hud">
+      <div class="hud-row">
+        <div class="hud-left" id="openDashboardBtn">
+          <span class="cefr-pill" id="hudCefr">A1</span>
+          <span class="lvl-text" id="hudLevel">LVL 1</span>
+        </div>
+        <div class="hud-right">
+          <div class="streak-pill" id="hudStreak">🔥 0</div>
+          <button class="icon-btn" id="soundToggleBtn" aria-label="SFX">🔊</button>
+          <button class="icon-btn" id="statsBtn" aria-label="Profile">☰</button>
         </div>
       </div>
-      <div class="xp-bar-track">
-        <div class="xp-bar-fill" id="xpBarFill"></div>
+      <div class="xp-track">
+        <div class="xp-fill" id="xpFill"></div>
       </div>
     </header>
 
-    <!-- Swipe Card Arena -->
-    <main class="arena" id="arena">
-      <div class="card-stack-bg"></div>
-      <div id="cardMount" style="width:100%; height:100%; max-height:460px; display:flex; align-items:center; justify-content:center;"></div>
+    <!-- Card Arena -->
+    <main class="arena">
+      <div class="card-mount" id="cardMount"></div>
+
+      <!-- Post-Swipe Review Overlay -->
+      <div class="review-overlay" id="reviewOverlay">
+        <div class="review-status" id="reviewStatus"></div>
+        <div class="review-body">
+          <div class="review-en" id="reviewEn"></div>
+          <button class="audio-btn" id="reviewAudioBtn" aria-label="Play audio">🔊</button>
+          <div class="review-th-correct" id="reviewThCorrect"></div>
+          <div class="review-th-wrong" id="reviewThWrong"></div>
+        </div>
+        <div class="review-footer">
+          <div class="timer-bar" id="reviewTimerBar"><div class="timer-fill" id="reviewTimerFill"></div></div>
+          <button class="next-btn" id="reviewNextBtn">Continue</button>
+        </div>
+      </div>
     </main>
 
-    <!-- Instant Learning Toast -->
-    <div class="toast" id="feedbackToast"></div>
-
-    <!-- Bottom Controls -->
+    <!-- Controls -->
     <footer class="controls">
-      <div class="btn-row">
-        <button class="action-btn nope" id="btnNope" aria-label="Not Match">✕</button>
-        <button class="action-btn replay" id="btnReplay" aria-label="Play Audio">🔊</button>
-        <button class="action-btn match" id="btnMatch" aria-label="Match">✓</button>
-      </div>
-      <div class="hint-bar">Swipe Left (Wrong) • Swipe Right (Match) • Keys: ← / → / Space</div>
+      <button class="action-btn nope" id="btnNope" aria-label="Wrong">✕</button>
+      <button class="action-btn replay" id="btnReplay" aria-label="Listen">🔊</button>
+      <button class="action-btn match" id="btnMatch" aria-label="Match">✓</button>
     </footer>
 
-    <!-- Player Dashboard Modal -->
+    <!-- Dashboard & Auth Sheet -->
     <div class="modal-backdrop" id="dashboardModal">
-      <div class="dashboard-sheet">
-        <div class="sheet-header">
-          <h2>🏆 Player Dashboard</h2>
+      <div class="sheet">
+        <div class="sheet-head">
+          <h2>Profile</h2>
           <button class="icon-btn" id="closeDashboardBtn">✕</button>
+        </div>
+
+        <div class="auth-card">
+          <div>
+            <div style="font-size:0.88rem; font-weight:700;" id="authUserLabel">Guest</div>
+            <div style="font-size:0.72rem; color:var(--muted);" id="authSubLabel">Local storage mode</div>
+          </div>
+          <button class="google-btn" id="googleAuthBtn">Sign in with Google</button>
         </div>
 
         <div class="stats-grid">
           <div class="stat-box">
+            <div class="label">CEFR Rating</div>
+            <div class="val" id="statCefr" style="color: var(--cyan);">A1 (1.5)</div>
+          </div>
+          <div class="stat-box">
             <div class="label">Total XP</div>
-            <div class="value" id="statTotalXp" style="color: var(--accent-gold);">0</div>
+            <div class="val" id="statXp" style="color: var(--gold);">0</div>
           </div>
           <div class="stat-box">
             <div class="label">Accuracy</div>
-            <div class="value" id="statAccuracy" style="color: var(--accent-green);">0%</div>
+            <div class="val" id="statAcc" style="color: var(--green);">0%</div>
           </div>
           <div class="stat-box">
             <div class="label">Best Streak</div>
-            <div class="value" id="statBestStreak" style="color: #fb923c;">0</div>
-          </div>
-          <div class="stat-box">
-            <div class="label">Listening Skill</div>
-            <div class="value" id="statListening" style="color: var(--accent-cyan);">0%</div>
+            <div class="val" id="statBestStreak" style="color: #fb923c;">0</div>
           </div>
         </div>
 
-        <div>
-          <div style="font-size:0.8rem; color:var(--text-muted); margin-bottom:8px; text-transform:uppercase; letter-spacing:0.06em;">
-            Recent Mistakes to Review
-          </div>
-          <div class="mistakes-list" id="mistakesList"></div>
-        </div>
-
-        <button class="reset-btn" id="resetProgressBtn">Reset Progress</button>
+        <div class="mistakes-list" id="mistakesList"></div>
+        <button class="reset-btn" id="resetBtn">Reset Progress</button>
       </div>
     </div>
   </div>
