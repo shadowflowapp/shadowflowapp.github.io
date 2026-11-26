@@ -1,33 +1,32 @@
 (() => {
   'use strict';
 
-  // =========================================================================
-  // 1. SUPABASE-READY CONFIGURATION & DATA SERVICE LAYER
-  //    When migrating to Supabase:
-  //    1) Include @supabase/supabase-js in index.html
-  //    2) Set SUPABASE_CONFIG.enabled = true with your project URL & anonKey
-  //    3) Map tables: `phrases`, `profiles`, `attempt_logs`
-  // =========================================================================
   const SUPABASE_CONFIG = {
     enabled: false,
     url: '',
     anonKey: ''
   };
 
-  const STORAGE_KEY = 'swipelago_adaptive_v2';
+  const STORAGE_KEY = 'swipelago_gta_v3';
   const SWIPE_THRESHOLD = 85;
-  const N_PLUS_ONE_OFFSET = 0.35; // Feeds content slightly above current skill
+  const N_PLUS_ONE_OFFSET = 0.35;
+  const CEFR_BUCKETS = ['a1', 'a2', 'b1', 'b2', 'c1', 'c2'];
 
-  const FALLBACK_DB = [
-    { id: 1, cefr: 'A1', difficulty: 1.0, en: 'Water', th_correct: 'น้ำ', th_wrong: 'ไฟ' },
-    { id: 2, cefr: 'A2', difficulty: 2.2, en: "I'm running late.", th_correct: 'ฉันกำลังจะไปสายแล้ว', th_wrong: 'ฉันกำลังวิ่งออกกำลังกาย' },
-    { id: 3, cefr: 'B1', difficulty: 3.2, en: 'Give me a heads-up.', th_correct: 'ช่วยบอกล่วงหน้าด้วยนะ', th_wrong: 'ช่วยเงยหน้าขึ้นมองหน่อยนะ' },
-    { id: 4, cefr: 'B2', difficulty: 4.2, en: 'Take a rain check.', th_correct: 'ขอเลื่อนไปคราวหน้านะ', th_wrong: 'ช่วยเช็กพยากรณ์อากาศหน่อย' },
-    { id: 5, cefr: 'C1', difficulty: 5.0, en: 'Ubiquitous', th_correct: 'มีอยู่ทุกหนทุกแห่ง', th_wrong: 'หายากและมีค่ามาก' }
+  const GTA_RANKS = [
+    { minLvl: 1, name: 'STREET' },
+    { minLvl: 3, name: 'HUSTLER' },
+    { minLvl: 6, name: 'ENFORCER' },
+    { minLvl: 10, name: 'BOSS' },
+    { minLvl: 15, name: 'KINGPIN' },
+    { minLvl: 20, name: 'LEGEND' }
   ];
 
+  // =========================================================================
+  // 1. DATA SERVICE (Dynamic db/a1..c2.jsonl + Supabase RPC Ready)
+  // =========================================================================
   const DataService = {
     supabase: null,
+    bucketCache: new Map(),
 
     init() {
       if (SUPABASE_CONFIG.enabled && window.supabase) {
@@ -37,42 +36,78 @@
 
     async signInWithGoogle() {
       if (!this.supabase) {
-        alert('Supabase is not connected yet. Add your URL & anonKey in SUPABASE_CONFIG to enable Google Sign-In.');
-        return null;
+        alert('Connect Supabase URL & anonKey in SUPABASE_CONFIG to enable Google Sign-In.');
+        return;
       }
-      const { data, error } = await this.supabase.auth.signInWithOAuth({ provider: 'google' });
-      if (error) console.error(error);
-      return data;
+      await this.supabase.auth.signInWithOAuth({ provider: 'google' });
     },
 
-    async fetchPhrases() {
+    // Fetches only the CEFR bucket file needed (e.g. db/a1.jsonl) and caches it
+    async loadBucket(cefr) {
+      if (this.bucketCache.has(cefr)) return this.bucketCache.get(cefr);
+
       if (this.supabase) {
-        const { data, error } = await this.supabase.from('phrases').select('*');
-        if (!error && data?.length) return data;
+        const { data, error } = await this.supabase.rpc('get_next_batch', { limit_count: 25 });
+        if (!error && data?.length) {
+          this.bucketCache.set(cefr, data);
+          return data;
+        }
       }
+
       try {
-        const res = await fetch('./db.jsonl');
-        if (!res.ok) throw new Error('HTTP ' + res.status);
+        const res = await fetch(`./db/${cefr}.jsonl`);
+        if (!res.ok) throw new Error(`Missing db/${cefr}.jsonl`);
         const text = await res.text();
-        const rows = text.split('\n').map(l => l.trim()).filter(Boolean).map(l => JSON.parse(l));
-        if (rows.length) return rows;
-      } catch (e) {
-        console.warn('Using fallback DB (serve via local HTTP server to load db.jsonl).', e);
+        const rows = text
+          .split('\n')
+          .map(l => l.trim())
+          .filter(Boolean)
+          .map((line, idx) => {
+            const obj = JSON.parse(line);
+            return {
+              key: `${cefr}_${idx}`, // No manual id required in JSONL
+              cefr,
+              difficulty: Number(obj.difficulty) || bucketDefaultDifficulty(cefr),
+              en: obj.en,
+              th_correct: obj.th_correct,
+              th_wrong: obj.th_wrong
+            };
+          });
+        this.bucketCache.set(cefr, rows);
+        return rows;
+      } catch {
+        this.bucketCache.set(cefr, []);
+        return [];
       }
-      return FALLBACK_DB;
+    },
+
+    // Loads target n+1 bucket and adjacent bucket; falls back to any available bucket if some files don't exist yet
+    async getCandidatePool(targetDifficulty) {
+      const primary = difficultyToBucket(targetDifficulty);
+      const idx = CEFR_BUCKETS.indexOf(primary);
+      const neighbors = [primary, CEFR_BUCKETS[idx - 1], CEFR_BUCKETS[idx + 1]].filter(Boolean);
+
+      const loaded = await Promise.all(neighbors.map(b => this.loadBucket(b)));
+      let pool = loaded.flat();
+
+      if (pool.length === 0) {
+        const all = await Promise.all(CEFR_BUCKETS.map(b => this.loadBucket(b)));
+        pool = all.flat();
+      }
+      return pool;
     },
 
     loadProfile() {
       const defaults = {
         userId: null,
         xp: 0,
-        skillRating: 1.5, // Continuous CEFR scale: 1.0 (A1) -> 6.0 (C2)
+        skillRating: 1.2, // Hidden CEFR scale: 1.0 (a1) -> 6.0 (c2)
         streak: 0,
         bestStreak: 0,
         totalAnswered: 0,
         totalCorrect: 0,
         soundEnabled: true,
-        recentIds: [],
+        recentKeys: [],
         mistakes: []
       };
       try {
@@ -93,88 +128,95 @@
           streak: profile.streak,
           best_streak: profile.bestStreak,
           total_answered: profile.totalAnswered,
-          total_correct: profile.totalCorrect,
-          updated_at: new Date().toISOString()
+          total_correct: profile.totalCorrect
         });
-      }
-    },
-
-    async logAttempt(attempt) {
-      if (this.supabase && attempt.userId) {
-        await this.supabase.from('attempt_logs').insert(attempt);
       }
     }
   };
 
-  // =========================================================================
-  // 2. ADAPTIVE LEARNING ENGINE (n+1 / Elo-style Rating)
-  // =========================================================================
-  function ratingToCefr(rating) {
-    if (rating < 2.0) return 'A1';
-    if (rating < 3.0) return 'A2';
-    if (rating < 4.0) return 'B1';
-    if (rating < 5.0) return 'B2';
-    if (rating < 5.75) return 'C1';
-    return 'C2';
+  function difficultyToBucket(d) {
+    if (d < 2.0) return 'a1';
+    if (d < 3.0) return 'a2';
+    if (d < 4.0) return 'b1';
+    if (d < 5.0) return 'b2';
+    if (d < 5.75) return 'c1';
+    return 'c2';
   }
 
-  function selectAdaptivePhrase(phrases, profile) {
-    const targetDifficulty = Math.min(6.0, Math.max(1.0, profile.skillRating + N_PLUS_ONE_OFFSET));
-    const cooldown = new Set(profile.recentIds.slice(-8));
+  function bucketDefaultDifficulty(cefr) {
+    return { a1: 1.4, a2: 2.4, b1: 3.4, b2: 4.4, c1: 5.3, c2: 5.9 }[cefr] || 1.5;
+  }
 
-    let pool = phrases.filter(p => !cooldown.has(p.id));
-    if (pool.length === 0) pool = phrases;
+  // =========================================================================
+  // 2. HIDDEN ADAPTIVE ENGINE (n+1)
+  // =========================================================================
+  function pickAdaptiveCard(pool, profile) {
+    const target = Math.min(6.0, Math.max(1.0, profile.skillRating + N_PLUS_ONE_OFFSET));
+    const cooldown = new Set(profile.recentKeys.slice(-10));
 
-    // Score by closeness to n+1 target + slight random exploration
-    const scored = pool.map(p => {
-      const dist = Math.abs(p.difficulty - targetDifficulty);
-      const jitter = Math.random() * 0.45;
-      return { phrase: p, score: dist + jitter };
+    let candidates = pool.filter(p => !cooldown.has(p.key));
+    if (candidates.length === 0) candidates = pool;
+
+    candidates.sort((a, b) => {
+      const scoreA = Math.abs(a.difficulty - target) + Math.random() * 0.45;
+      const scoreB = Math.abs(b.difficulty - target) + Math.random() * 0.45;
+      return scoreA - scoreB;
     });
 
-    scored.sort((a, b) => a.score - b.score);
-    return scored[0].phrase;
+    return candidates[0];
   }
 
   function updateSkillRating(profile, cardDifficulty, isCorrect, isAudioOnly) {
-    // Expected probability of answering correctly
     const expected = 1 / (1 + Math.pow(10, (cardDifficulty - profile.skillRating) / 1.5));
-    const actual = isCorrect ? 1 : 0;
-    const kFactor = isAudioOnly ? 0.32 : 0.24;
-    const nextRating = profile.skillRating + kFactor * (actual - expected);
-    profile.skillRating = Math.round(Math.min(6.0, Math.max(1.0, nextRating)) * 100) / 100;
+    const k = isAudioOnly ? 0.32 : 0.24;
+    const next = profile.skillRating + k * ((isCorrect ? 1 : 0) - expected);
+    profile.skillRating = Math.round(Math.min(6.0, Math.max(1.0, next)) * 100) / 100;
   }
 
   // =========================================================================
-  // 3. PARTICLE VISUAL EFFECTS (Correct Answer Burst)
+  // 3. HOMING PARTICLES (Glowing Card -> XP Bar)
   // =========================================================================
+  const phoneShell = document.getElementById('phoneShell');
   const fxCanvas = document.getElementById('fxCanvas');
   const fxCtx = fxCanvas.getContext('2d');
+  const xpTrack = document.getElementById('xpTrack');
   let particles = [];
   let fxRaf = null;
 
-  function resizeFxCanvas() {
-    const rect = fxCanvas.parentElement.getBoundingClientRect();
-    fxCanvas.width = rect.width;
-    fxCanvas.height = rect.height;
+  function resizeFx() {
+    const r = phoneShell.getBoundingClientRect();
+    fxCanvas.width = r.width;
+    fxCanvas.height = r.height;
   }
 
-  function burstParticles() {
-    resizeFxCanvas();
-    const cx = fxCanvas.width / 2;
-    const cy = fxCanvas.height * 0.44;
-    const colors = ['#10b981', '#34d399', '#f59e0b', '#22d3ee', '#ffffff'];
+  function launchXpParticles(fromEl) {
+    resizeFx();
+    const shellRect = phoneShell.getBoundingClientRect();
+    const cardRect = fromEl.getBoundingClientRect();
+    const barRect = xpTrack.getBoundingClientRect();
 
-    for (let i = 0; i < 28; i++) {
-      const angle = (Math.PI * 2 * i) / 28 + (Math.random() - 0.5) * 0.3;
-      const speed = 3 + Math.random() * 5.5;
+    const startX = cardRect.left - shellRect.left + cardRect.width / 2;
+    const startY = cardRect.top - shellRect.top + cardRect.height / 2;
+    const targetX = barRect.left - shellRect.left + Math.min(barRect.width - 10, Math.max(10, barRect.width * 0.5));
+    const targetY = barRect.top - shellRect.top + barRect.height / 2;
+
+    const colors = ['#00e676', '#00e5ff', '#f5b700', '#ffffff'];
+
+    for (let i = 0; i < 22; i++) {
+      const spreadX = (Math.random() - 0.5) * cardRect.width * 0.7;
+      const spreadY = (Math.random() - 0.5) * cardRect.height * 0.5;
       particles.push({
-        x: cx,
-        y: cy,
-        vx: Math.cos(angle) * speed,
-        vy: Math.sin(angle) * speed - 1.5,
-        size: 3 + Math.random() * 4,
-        alpha: 1,
+        x: startX + spreadX,
+        y: startY + spreadY,
+        sx: startX + spreadX,
+        sy: startY + spreadY,
+        cx: startX + spreadX * 1.6 + (Math.random() - 0.5) * 80,
+        cy: startY - 60 - Math.random() * 90,
+        tx: targetX + (Math.random() - 0.5) * 60,
+        ty: targetY,
+        t: 0,
+        speed: 0.028 + Math.random() * 0.018,
+        size: 3 + Math.random() * 3.5,
         color: colors[i % colors.length]
       });
     }
@@ -184,19 +226,36 @@
 
   function animateParticles() {
     fxCtx.clearRect(0, 0, fxCanvas.width, fxCanvas.height);
-    particles.forEach(p => {
-      p.x += p.vx;
-      p.y += p.vy;
-      p.vy += 0.16; // subtle gravity
-      p.alpha -= 0.025;
-      fxCtx.globalAlpha = Math.max(0, p.alpha);
+    let arrived = false;
+
+    for (let i = particles.length - 1; i >= 0; i--) {
+      const p = particles[i];
+      p.t += p.speed;
+      if (p.t >= 1) {
+        particles.splice(i, 1);
+        arrived = true;
+        continue;
+      }
+      // Quadratic Bezier curve from card to XP bar
+      const inv = 1 - p.t;
+      p.x = inv * inv * p.sx + 2 * inv * p.t * p.cx + p.t * p.t * p.tx;
+      p.y = inv * inv * p.sy + 2 * inv * p.t * p.cy + p.t * p.t * p.ty;
+
+      fxCtx.save();
+      fxCtx.shadowBlur = 10;
+      fxCtx.shadowColor = p.color;
       fxCtx.fillStyle = p.color;
+      fxCtx.globalAlpha = 1 - p.t * 0.25;
       fxCtx.beginPath();
-      fxCtx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+      fxCtx.arc(p.x, p.y, p.size * (1 - p.t * 0.4), 0, Math.PI * 2);
       fxCtx.fill();
-    });
-    particles = particles.filter(p => p.alpha > 0);
-    fxCtx.globalAlpha = 1;
+      fxCtx.restore();
+    }
+
+    if (arrived) {
+      xpTrack.classList.add('pulse');
+      setTimeout(() => xpTrack.classList.remove('pulse'), 180);
+    }
 
     if (particles.length > 0) {
       fxRaf = requestAnimationFrame(animateParticles);
@@ -248,25 +307,25 @@
       if (type === 'correct') {
         osc.type = 'triangle';
         osc.frequency.setValueAtTime(523.25, now);
-        osc.frequency.exponentialRampToValueAtTime(880, now + 0.14);
+        osc.frequency.exponentialRampToValueAtTime(1046.5, now + 0.14);
         gain.gain.setValueAtTime(0.14, now);
         gain.gain.exponentialRampToValueAtTime(0.001, now + 0.22);
         osc.start(now);
         osc.stop(now + 0.23);
       } else {
         osc.type = 'sawtooth';
-        osc.frequency.setValueAtTime(190, now);
-        osc.frequency.exponentialRampToValueAtTime(115, now + 0.18);
-        gain.gain.setValueAtTime(0.1, now);
-        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.22);
+        osc.frequency.setValueAtTime(160, now);
+        osc.frequency.exponentialRampToValueAtTime(90, now + 0.22);
+        gain.gain.setValueAtTime(0.11, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
         osc.start(now);
-        osc.stop(now + 0.23);
+        osc.stop(now + 0.26);
       }
     } catch { /* ignore */ }
   }
 
   // =========================================================================
-  // 5. ADAPTIVE TYPOGRAPHY (1 to 10+ words)
+  // 5. HELPERS & GAME LOOP
   // =========================================================================
   function getAdaptiveFontSize(text) {
     const len = text.length;
@@ -286,7 +345,9 @@
       level++;
       need = Math.round(100 * Math.pow(1.25, level - 1));
     }
-    return { level, rem, need };
+    let rank = GTA_RANKS[0].name;
+    for (const r of GTA_RANKS) if (level >= r.minLvl) rank = r.name;
+    return { level, rem, need, rank };
   }
 
   function escapeHtml(str) {
@@ -295,32 +356,38 @@
     }[ch]));
   }
 
-  // =========================================================================
-  // 6. CORE GAME LOOP & UI
-  // =========================================================================
-  let phrases = [];
   let player = DataService.loadProfile();
   let currentCard = null;
-  let isReviewing = false;
-  let reviewTimer = null;
+  let isLocked = false;
 
+  const arena = document.getElementById('arena');
   const cardMount = document.getElementById('cardMount');
   const reviewOverlay = document.getElementById('reviewOverlay');
-  const reviewTimerBar = document.getElementById('reviewTimerBar');
-  const reviewTimerFill = document.getElementById('reviewTimerFill');
   const dashboardModal = document.getElementById('dashboardModal');
 
   function updateHud() {
     const lvl = getLevelInfo(player.xp);
-    document.getElementById('hudCefr').textContent = ratingToCefr(player.skillRating);
     document.getElementById('hudLevel').textContent = `LVL ${lvl.level}`;
+    document.getElementById('hudXp').textContent = `${player.xp} XP`;
     document.getElementById('hudStreak').textContent = `🔥 ${player.streak}`;
     document.getElementById('xpFill').style.width = `${Math.min(100, (lvl.rem / lvl.need) * 100)}%`;
     document.getElementById('soundToggleBtn').textContent = player.soundEnabled ? '🔊' : '🔇';
   }
 
-  function renderNextCard() {
-    const entry = selectAdaptivePhrase(phrases, player);
+  async function renderNextCard() {
+    const target = Math.min(6.0, Math.max(1.0, player.skillRating + N_PLUS_ONE_OFFSET));
+    const pool = await DataService.getCandidatePool(target);
+
+    if (pool.length === 0) {
+      cardMount.innerHTML = `
+        <div class="empty-state">
+          No database files found.<br/><br/>
+          Add <code>db/a1.jsonl</code> and serve via a local server.
+        </div>`;
+      return;
+    }
+
+    const entry = pickAdaptiveCard(pool, player);
     const isMatch = Math.random() < 0.5;
     const isAudioOnly = Math.random() < 0.32;
 
@@ -340,8 +407,7 @@
       <div class="swipe-indicator nope">✕</div>
 
       <div class="card-top">
-        <span class="badge">${currentCard.cefr}</span>
-        ${isAudioOnly ? '<span class="badge audio">🎧</span>' : ''}
+        ${isAudioOnly ? '<span class="audio-tag">🎧 AUDIO</span>' : ''}
       </div>
 
       <div class="en-zone">
@@ -368,7 +434,6 @@
       </div>
     `;
 
-    // Audio buttons (manual tap only — no auto-play)
     cardEl.querySelectorAll('[data-audio]').forEach(btn => {
       btn.addEventListener('pointerdown', e => e.stopPropagation());
       btn.addEventListener('click', e => {
@@ -391,7 +456,7 @@
     let dx = 0;
 
     cardEl.addEventListener('pointerdown', e => {
-      if (isReviewing) return;
+      if (isLocked) return;
       dragging = true;
       startX = e.clientX;
       startY = e.clientY;
@@ -428,34 +493,52 @@
     cardEl.addEventListener('pointercancel', release);
   }
 
+  function spawnXpPop(text) {
+    const pop = document.createElement('div');
+    pop.className = 'xp-pop';
+    pop.textContent = text;
+    arena.appendChild(pop);
+    setTimeout(() => pop.remove(), 760);
+  }
+
   function handleAnswer(swipedRight, cardEl) {
-    if (isReviewing || !currentCard) return;
-    isReviewing = true;
+    if (isLocked || !currentCard) return;
+    isLocked = true;
 
     const el = cardEl || cardMount.querySelector('.card');
-    if (el) {
-      const dir = swipedRight ? 1 : -1;
-      el.style.transition = 'transform 0.24s ease-in, opacity 0.24s ease-in';
-      el.style.transform = `translate3d(${dir * 420}px, 24px, 0) rotate(${dir * 20}deg)`;
-      el.style.opacity = '0';
-    }
-
     const isCorrect = swipedRight === currentCard.isMatch;
-    player.totalAnswered++;
-    player.recentIds = [...player.recentIds.slice(-15), currentCard.id];
 
+    player.totalAnswered++;
+    player.recentKeys = [...player.recentKeys.slice(-20), currentCard.key];
     updateSkillRating(player, currentCard.difficulty, isCorrect, currentCard.isAudioOnly);
 
-    let earnedXp = 0;
     if (isCorrect) {
       player.totalCorrect++;
       player.streak++;
       if (player.streak > player.bestStreak) player.bestStreak = player.streak;
       const base = currentCard.isAudioOnly ? 35 : 20;
-      earnedXp = Math.round(base * (player.streak >= 5 ? 1.5 : 1));
+      const earnedXp = Math.round(base * (player.streak >= 5 ? 1.5 : 1));
       player.xp += earnedXp;
+
       playSfx('correct');
-      burstParticles();
+      DataService.saveProfile(player);
+
+      // Glow card + launch homing particles to XP bar (NO review overlay)
+      if (el) {
+        el.style.transition = 'transform 0.22s ease, opacity 0.28s ease 0.16s, box-shadow 0.2s';
+        el.classList.add('glow-correct');
+        el.style.transform = 'translate3d(0, -10px, 0) scale(1.03)';
+        launchXpParticles(el);
+        setTimeout(() => { el.style.opacity = '0'; }, 160);
+      }
+
+      spawnXpPop(`+${earnedXp} XP`);
+      setTimeout(updateHud, 220);
+
+      setTimeout(() => {
+        isLocked = false;
+        renderNextCard();
+      }, 480);
     } else {
       player.streak = 0;
       playSfx('wrong');
@@ -463,30 +546,22 @@
         { en: currentCard.en, th: currentCard.th_correct },
         ...player.mistakes.filter(m => m.en !== currentCard.en)
       ].slice(0, 8);
+
+      DataService.saveProfile(player);
+      updateHud();
+
+      if (el) {
+        const dir = swipedRight ? 1 : -1;
+        el.style.transition = 'transform 0.24s ease-in, opacity 0.24s ease-in';
+        el.style.transform = `translate3d(${dir * 420}px, 24px, 0) rotate(${dir * 20}deg)`;
+        el.style.opacity = '0';
+      }
+
+      showWrongReview();
     }
-
-    DataService.saveProfile(player);
-    DataService.logAttempt({
-      userId: player.userId,
-      phraseId: currentCard.id,
-      isCorrect,
-      isAudioOnly: currentCard.isAudioOnly,
-      skillAfter: player.skillRating,
-      createdAt: new Date().toISOString()
-    });
-
-    updateHud();
-    showReview(isCorrect, earnedXp);
   }
 
-  function showReview(isCorrect, earnedXp) {
-    clearTimeout(reviewTimer);
-    reviewOverlay.className = `review-overlay show ${isCorrect ? 'correct' : 'wrong'}`;
-
-    document.getElementById('reviewStatus').textContent = isCorrect
-      ? `✓ Correct  +${earnedXp} XP`
-      : '✕ Not quite';
-
+  function showWrongReview() {
     document.getElementById('reviewEn').textContent = currentCard.en;
     document.getElementById('reviewThCorrect').textContent = currentCard.th_correct;
 
@@ -497,42 +572,21 @@
     } else {
       wrongEl.style.display = 'none';
     }
-
-    // Correct: auto-advance after 2.2s (or tap immediately). Wrong: wait for user tap.
-    if (isCorrect) {
-      reviewTimerBar.style.display = 'block';
-      reviewTimerFill.style.transition = 'none';
-      reviewTimerFill.style.transform = 'scaleX(1)';
-      requestAnimationFrame(() => {
-        reviewTimerFill.style.transition = 'transform 2.2s linear';
-        reviewTimerFill.style.transform = 'scaleX(0)';
-      });
-      reviewTimer = setTimeout(closeReviewAndAdvance, 2200);
-    } else {
-      reviewTimerBar.style.display = 'none';
-    }
+    reviewOverlay.classList.add('show');
   }
 
-  function closeReviewAndAdvance() {
-    if (!isReviewing) return;
-    clearTimeout(reviewTimer);
+  function closeReview() {
+    if (!reviewOverlay.classList.contains('show')) return;
     reviewOverlay.classList.remove('show');
-    isReviewing = false;
+    isLocked = false;
     renderNextCard();
   }
 
   // =========================================================================
-  // 7. EVENTS & DASHBOARD
+  // 6. CONTROLS & DASHBOARD
   // =========================================================================
-  document.getElementById('reviewNextBtn').addEventListener('click', e => {
-    e.stopPropagation();
-    closeReviewAndAdvance();
-  });
-
-  reviewOverlay.addEventListener('click', closeReviewAndAdvance);
-
-  document.getElementById('reviewAudioBtn').addEventListener('click', e => {
-    e.stopPropagation();
+  document.getElementById('reviewNextBtn').addEventListener('click', closeReview);
+  document.getElementById('reviewAudioBtn').addEventListener('click', () => {
     if (currentCard) speakEnglish(currentCard.en, 0.95);
   });
 
@@ -549,8 +603,10 @@
   });
 
   function openDashboard() {
+    const lvl = getLevelInfo(player.xp);
     const acc = player.totalAnswered ? Math.round((player.totalCorrect / player.totalAnswered) * 100) : 0;
-    document.getElementById('statCefr').textContent = `${ratingToCefr(player.skillRating)} (${player.skillRating.toFixed(1)})`;
+
+    document.getElementById('statRank').textContent = lvl.rank;
     document.getElementById('statXp').textContent = player.xp;
     document.getElementById('statAcc').textContent = `${acc}%`;
     document.getElementById('statBestStreak').textContent = `🔥 ${player.bestStreak}`;
@@ -558,7 +614,7 @@
     const listEl = document.getElementById('mistakesList');
     listEl.innerHTML = player.mistakes.length
       ? player.mistakes.map(m => `<div class="mistake-item"><div class="en">${escapeHtml(m.en)}</div><div class="th">${escapeHtml(m.th)}</div></div>`).join('')
-      : `<div style="color:var(--muted); font-size:0.84rem; text-align:center; padding:8px;">No mistakes yet</div>`;
+      : `<div style="color:var(--muted); font-size:0.84rem; text-align:center; padding:8px;">Clean record</div>`;
 
     dashboardModal.classList.add('open');
   }
@@ -584,10 +640,10 @@
 
   window.addEventListener('keydown', e => {
     if (dashboardModal.classList.contains('open')) return;
-    if (isReviewing) {
+    if (reviewOverlay.classList.contains('show')) {
       if (e.key === 'Enter' || e.key === ' ') {
         e.preventDefault();
-        closeReviewAndAdvance();
+        closeReview();
       }
       return;
     }
@@ -600,13 +656,12 @@
   });
 
   // Boot
-  async function init() {
+  function init() {
     DataService.init();
     initVoices();
-    resizeFxCanvas();
-    window.addEventListener('resize', resizeFxCanvas);
+    resizeFx();
+    window.addEventListener('resize', resizeFx);
     updateHud();
-    phrases = await DataService.fetchPhrases();
     renderNextCard();
   }
 
