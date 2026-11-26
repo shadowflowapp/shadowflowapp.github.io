@@ -6,21 +6,22 @@
   <title>SwipeLingo</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700;800&family=Noto+Sans+Thai:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@600;700&family=Inter:wght@500;700&family=Noto+Sans+Thai:wght@400;500;600&display=swap" rel="stylesheet" />
   <style>
     :root {
-      --bg-outer: #040508;
-      --bg-shell: #0a0d14;
-      --bg-surface: #121722;
-      --bg-card: #151b28;
-      --border: rgba(255, 255, 255, 0.07);
-      --border-strong: rgba(255, 255, 255, 0.14);
-      --text: #f8fafc;
-      --muted: #64748b;
-      --green: #10b981;
-      --red: #f43f5e;
-      --gold: #f59e0b;
-      --cyan: #06b6d4;
+      --bg-outer: #050507;
+      --bg-shell: #0b0c10;
+      --bg-panel: #13151c;
+      --bg-card: linear-gradient(165deg, #1a1d27 0%, #101218 100%);
+      --border: rgba(255, 255, 255, 0.08);
+      --border-strong: rgba(255, 255, 255, 0.16);
+      --text: #f5f7fa;
+      --muted: #767d8f;
+      --gta-green: #00e676;
+      --gta-pink: #ff2a85;
+      --gta-gold: #f5b700;
+      --gta-cyan: #00e5ff;
+      --gta-red: #ff3b5c;
     }
 
     * {
@@ -33,7 +34,10 @@
 
     body {
       font-family: 'Inter', 'Noto Sans Thai', sans-serif;
-      background: var(--bg-outer);
+      background:
+        radial-gradient(circle at 20% 15%, rgba(255, 42, 133, 0.12), transparent 45%),
+        radial-gradient(circle at 80% 85%, rgba(0, 229, 255, 0.1), transparent 45%),
+        var(--bg-outer);
       color: var(--text);
       height: 100dvh;
       width: 100vw;
@@ -57,13 +61,12 @@
       .phone-shell {
         width: 400px;
         height: min(92dvh, 820px);
-        border-radius: 34px;
-        border: 1px solid var(--border-strong);
-        box-shadow: 0 28px 80px rgba(0, 0, 0, 0.85);
+        border-radius: 28px;
+        border: 2px solid #222634;
+        box-shadow: 0 28px 90px rgba(0, 0, 0, 0.9);
       }
     }
 
-    /* Particle FX Canvas */
     #fxCanvas {
       position: absolute;
       inset: 0;
@@ -73,7 +76,7 @@
       z-index: 40;
     }
 
-    /* Minimal Top HUD */
+    /* GTA HUD */
     .hud {
       padding: 16px 18px 12px;
       display: flex;
@@ -95,21 +98,23 @@
       cursor: pointer;
     }
 
-    .cefr-pill {
-      padding: 4px 10px;
-      border-radius: 999px;
-      background: rgba(6, 182, 212, 0.14);
-      border: 1px solid rgba(6, 182, 212, 0.35);
-      color: #22d3ee;
-      font-size: 0.78rem;
-      font-weight: 800;
-      letter-spacing: 0.05em;
+    .lvl-badge {
+      font-family: 'Chakra Petch', sans-serif;
+      font-weight: 700;
+      font-size: 0.95rem;
+      padding: 3px 10px;
+      background: var(--gta-gold);
+      color: #090a0d;
+      clip-path: polygon(8% 0, 100% 0, 92% 100%, 0 100%);
+      letter-spacing: 0.04em;
     }
 
-    .lvl-text {
-      font-size: 0.85rem;
+    .xp-counter {
+      font-family: 'Chakra Petch', sans-serif;
+      font-size: 0.88rem;
       font-weight: 700;
-      color: var(--text);
+      color: var(--gta-green);
+      letter-spacing: 0.04em;
     }
 
     .hud-right {
@@ -119,45 +124,53 @@
     }
 
     .streak-pill {
+      font-family: 'Chakra Petch', sans-serif;
       padding: 4px 10px;
-      border-radius: 999px;
-      background: rgba(245, 158, 11, 0.12);
-      border: 1px solid rgba(245, 158, 11, 0.28);
-      color: var(--gold);
-      font-size: 0.8rem;
+      background: rgba(255, 42, 133, 0.14);
+      border: 1px solid rgba(255, 42, 133, 0.45);
+      color: var(--gta-pink);
+      font-size: 0.82rem;
       font-weight: 700;
+      clip-path: polygon(6% 0, 100% 0, 94% 100%, 0 100%);
     }
 
     .icon-btn {
       width: 34px;
       height: 34px;
-      border-radius: 50%;
-      border: 1px solid var(--border);
-      background: var(--bg-surface);
+      border-radius: 8px;
+      border: 1px solid var(--border-strong);
+      background: var(--bg-panel);
       color: var(--text);
       display: flex;
       align-items: center;
       justify-content: center;
       cursor: pointer;
       font-size: 0.95rem;
-      transition: transform 0.15s, border-color 0.2s;
+      transition: transform 0.15s;
     }
 
     .icon-btn:active { transform: scale(0.92); }
 
     .xp-track {
+      position: relative;
       width: 100%;
-      height: 4px;
-      border-radius: 999px;
-      background: rgba(255, 255, 255, 0.06);
+      height: 7px;
+      background: #1b1e29;
+      border: 1px solid rgba(255, 255, 255, 0.08);
       overflow: hidden;
+      transition: box-shadow 0.2s;
+    }
+
+    .xp-track.pulse {
+      box-shadow: 0 0 16px rgba(0, 230, 118, 0.85);
+      border-color: var(--gta-green);
     }
 
     .xp-fill {
       height: 100%;
       width: 0%;
-      background: linear-gradient(90deg, var(--cyan), var(--green));
-      transition: width 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+      background: linear-gradient(90deg, var(--gta-cyan), var(--gta-green));
+      transition: width 0.35s cubic-bezier(0.22, 1, 0.36, 1);
     }
 
     /* Arena */
@@ -184,10 +197,10 @@
       position: relative;
       width: 100%;
       height: 100%;
-      border-radius: 26px;
+      border-radius: 18px;
       background: var(--bg-card);
-      border: 1px solid var(--border-strong);
-      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.55);
+      border: 1.5px solid var(--border-strong);
+      box-shadow: 0 22px 50px rgba(0, 0, 0, 0.65);
       padding: 24px;
       display: flex;
       flex-direction: column;
@@ -195,47 +208,48 @@
       touch-action: none;
       cursor: grab;
       will-change: transform;
-      transition: box-shadow 0.25s, border-color 0.25s;
+      transition: box-shadow 0.2s, border-color 0.2s;
     }
 
     .card:active { cursor: grabbing; }
 
     .card.audio-mode {
-      border-color: rgba(6, 182, 212, 0.35);
+      border-color: rgba(0, 229, 255, 0.45);
+    }
+
+    .card.glow-correct {
+      border-color: var(--gta-green) !important;
+      box-shadow: 0 0 38px rgba(0, 230, 118, 0.65), inset 0 0 22px rgba(0, 230, 118, 0.25) !important;
     }
 
     .card-top {
       display: flex;
       align-items: center;
-      justify-content: space-between;
+      justify-content: flex-end;
+      min-height: 24px;
     }
 
-    .badge {
+    .audio-tag {
+      font-family: 'Chakra Petch', sans-serif;
       font-size: 0.72rem;
       font-weight: 700;
-      letter-spacing: 0.08em;
-      padding: 4px 10px;
-      border-radius: 999px;
-      background: rgba(255, 255, 255, 0.05);
-      color: var(--muted);
+      padding: 3px 9px;
+      background: rgba(0, 229, 255, 0.14);
+      border: 1px solid rgba(0, 229, 255, 0.4);
+      color: var(--gta-cyan);
+      letter-spacing: 0.06em;
     }
 
-    .badge.audio {
-      background: rgba(6, 182, 212, 0.14);
-      color: #22d3ee;
-    }
-
-    /* Swipe Edge Glow Indicators (Minimalist replacement for big stamps) */
     .swipe-indicator {
       position: absolute;
-      top: 22px;
-      width: 42px;
-      height: 42px;
-      border-radius: 50%;
+      top: 20px;
+      width: 44px;
+      height: 44px;
+      border-radius: 10px;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 1.25rem;
+      font-size: 1.35rem;
       font-weight: 800;
       opacity: 0;
       pointer-events: none;
@@ -243,17 +257,17 @@
     }
 
     .swipe-indicator.match {
-      left: 22px;
-      background: rgba(16, 185, 129, 0.18);
-      color: var(--green);
-      border: 2px solid var(--green);
+      left: 20px;
+      background: rgba(0, 230, 118, 0.16);
+      color: var(--gta-green);
+      border: 2px solid var(--gta-green);
     }
 
     .swipe-indicator.nope {
-      right: 22px;
-      background: rgba(244, 63, 94, 0.18);
-      color: var(--red);
-      border: 2px solid var(--red);
+      right: 20px;
+      background: rgba(255, 59, 92, 0.16);
+      color: var(--gta-red);
+      border: 2px solid var(--gta-red);
     }
 
     .en-zone {
@@ -264,7 +278,7 @@
       justify-content: center;
       text-align: center;
       gap: 16px;
-      padding: 10px 0;
+      padding: 8px 0;
     }
 
     .en-text {
@@ -283,7 +297,7 @@
     .audio-btn {
       width: 44px;
       height: 44px;
-      border-radius: 50%;
+      border-radius: 10px;
       border: 1px solid var(--border-strong);
       background: rgba(255, 255, 255, 0.05);
       color: var(--text);
@@ -292,23 +306,26 @@
       align-items: center;
       justify-content: center;
       cursor: pointer;
-      transition: transform 0.15s, background 0.15s;
+      transition: transform 0.15s;
     }
 
     .audio-btn:active { transform: scale(0.92); }
 
     .audio-btn.hero {
-      width: 86px;
-      height: 86px;
+      width: 84px;
+      height: 84px;
+      border-radius: 50%;
       font-size: 2rem;
-      border: none;
-      background: linear-gradient(135deg, #06b6d4, #3b82f6);
-      box-shadow: 0 12px 30px rgba(6, 182, 212, 0.35);
+      border: 2px solid var(--gta-cyan);
+      background: rgba(0, 229, 255, 0.15);
+      color: var(--gta-cyan);
+      box-shadow: 0 0 28px rgba(0, 229, 255, 0.3);
     }
 
     .audio-btn.slow {
-      width: 38px;
-      height: 38px;
+      width: 42px;
+      height: 36px;
+      font-family: 'Chakra Petch', sans-serif;
       font-size: 0.78rem;
       font-weight: 700;
       color: var(--muted);
@@ -317,7 +334,7 @@
     .divider {
       height: 1px;
       width: 100%;
-      background: var(--border);
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.16), transparent);
     }
 
     .th-zone {
@@ -333,16 +350,39 @@
       color: #e2e8f0;
     }
 
-    /* Post-Swipe Review Overlay */
+    /* Floating GTA XP Pop */
+    .xp-pop {
+      position: absolute;
+      top: 44%;
+      left: 50%;
+      transform: translate(-50%, 0);
+      font-family: 'Chakra Petch', sans-serif;
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: var(--gta-green);
+      text-shadow: 0 0 18px rgba(0, 230, 118, 0.8);
+      pointer-events: none;
+      z-index: 45;
+      animation: popRise 0.75s ease-out forwards;
+    }
+
+    @keyframes popRise {
+      0% { opacity: 0; transform: translate(-50%, 10px) scale(0.8); }
+      25% { opacity: 1; transform: translate(-50%, -10px) scale(1.1); }
+      100% { opacity: 0; transform: translate(-50%, -60px) scale(1); }
+    }
+
+    /* Wrong-Answer Review Overlay */
     .review-overlay {
       position: absolute;
       inset: 12px 20px;
       max-height: 470px;
       margin: auto;
-      border-radius: 26px;
-      background: rgba(15, 20, 31, 0.96);
+      border-radius: 18px;
+      background: rgba(14, 16, 23, 0.97);
       backdrop-filter: blur(12px);
-      border: 1px solid var(--border-strong);
+      border: 2px solid var(--gta-red);
+      box-shadow: 0 0 36px rgba(255, 59, 92, 0.25);
       padding: 26px 24px;
       display: none;
       flex-direction: column;
@@ -350,41 +390,24 @@
       justify-content: space-between;
       text-align: center;
       z-index: 25;
-      cursor: pointer;
     }
 
-    .review-overlay.show {
-      display: flex;
-      animation: fadeIn 0.18s ease-out;
-    }
-
-    .review-overlay.correct { border-color: rgba(16, 185, 129, 0.55); }
-    .review-overlay.wrong { border-color: rgba(244, 63, 94, 0.55); }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: scale(0.96); }
-      to { opacity: 1; transform: scale(1); }
-    }
+    .review-overlay.show { display: flex; }
 
     .review-status {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 0.9rem;
-      font-weight: 800;
-      letter-spacing: 0.08em;
+      font-family: 'Chakra Petch', sans-serif;
+      font-size: 1rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      color: var(--gta-red);
       text-transform: uppercase;
     }
-
-    .review-overlay.correct .review-status { color: var(--green); }
-    .review-overlay.wrong .review-status { color: var(--red); }
 
     .review-body {
       display: flex;
       flex-direction: column;
       align-items: center;
       gap: 14px;
-      width: 100%;
     }
 
     .review-en {
@@ -398,7 +421,7 @@
       font-family: 'Noto Sans Thai', sans-serif;
       font-size: 1.35rem;
       font-weight: 600;
-      color: var(--green);
+      color: var(--gta-green);
       line-height: 1.4;
     }
 
@@ -409,42 +432,38 @@
       text-decoration: line-through;
     }
 
-    .review-footer {
-      width: 100%;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 10px;
-    }
-
     .next-btn {
       width: 100%;
       padding: 13px;
-      border-radius: 14px;
-      border: none;
-      background: rgba(255, 255, 255, 0.09);
+      border-radius: 10px;
+      border: 1px solid var(--border-strong);
+      background: rgba(255, 255, 255, 0.08);
       color: var(--text);
+      font-family: 'Chakra Petch', sans-serif;
       font-weight: 700;
       font-size: 0.95rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
       cursor: pointer;
     }
 
-    .timer-bar {
-      width: 100%;
-      height: 3px;
-      border-radius: 999px;
-      background: rgba(255, 255, 255, 0.08);
-      overflow: hidden;
+    /* Error / Empty DB State */
+    .empty-state {
+      text-align: center;
+      padding: 24px;
+      color: var(--muted);
+      font-size: 0.9rem;
+      line-height: 1.5;
     }
 
-    .timer-fill {
-      height: 100%;
-      width: 100%;
-      background: var(--green);
-      transform-origin: left;
+    .empty-state code {
+      color: var(--gta-cyan);
+      background: rgba(255, 255, 255, 0.06);
+      padding: 2px 6px;
+      border-radius: 4px;
     }
 
-    /* Bottom Action Bar */
+    /* Controls */
     .controls {
       padding: 12px 24px 26px;
       display: flex;
@@ -453,12 +472,12 @@
     }
 
     .action-btn {
-      width: 60px;
-      height: 60px;
-      border-radius: 50%;
+      width: 58px;
+      height: 58px;
+      border-radius: 14px;
       border: 1.5px solid;
-      background: var(--bg-surface);
-      font-size: 1.5rem;
+      background: var(--bg-panel);
+      font-size: 1.45rem;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -467,21 +486,21 @@
     }
 
     .action-btn:active { transform: scale(0.9); }
-    .action-btn.nope { color: var(--red); border-color: rgba(244, 63, 94, 0.35); }
-    .action-btn.match { color: var(--green); border-color: rgba(16, 185, 129, 0.35); }
+    .action-btn.nope { color: var(--gta-red); border-color: rgba(255, 59, 92, 0.45); }
+    .action-btn.match { color: var(--gta-green); border-color: rgba(0, 230, 118, 0.45); }
     .action-btn.replay {
       width: 46px;
       height: 46px;
       font-size: 1.05rem;
-      color: var(--cyan);
-      border-color: rgba(6, 182, 212, 0.3);
+      color: var(--gta-cyan);
+      border-color: rgba(0, 229, 255, 0.35);
     }
 
     /* Dashboard Modal */
     .modal-backdrop {
       position: absolute;
       inset: 0;
-      background: rgba(4, 5, 8, 0.85);
+      background: rgba(5, 5, 7, 0.88);
       backdrop-filter: blur(8px);
       display: none;
       align-items: flex-end;
@@ -493,10 +512,10 @@
     .sheet {
       width: 100%;
       max-height: 85%;
-      background: #0f141f;
-      border-top-left-radius: 26px;
-      border-top-right-radius: 26px;
-      border-top: 1px solid var(--border-strong);
+      background: #10121a;
+      border-top-left-radius: 22px;
+      border-top-right-radius: 22px;
+      border-top: 2px solid var(--gta-pink);
       padding: 22px;
       overflow-y: auto;
       display: flex;
@@ -510,26 +529,31 @@
       justify-content: space-between;
     }
 
-    .sheet-head h2 { font-size: 1.05rem; font-weight: 700; }
+    .sheet-head h2 {
+      font-family: 'Chakra Petch', sans-serif;
+      font-size: 1.1rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
 
     .auth-card {
       display: flex;
       align-items: center;
       justify-content: space-between;
       padding: 12px 14px;
-      border-radius: 14px;
+      border-radius: 12px;
       background: rgba(255, 255, 255, 0.04);
       border: 1px solid var(--border);
     }
 
     .google-btn {
       padding: 8px 14px;
-      border-radius: 10px;
+      border-radius: 8px;
       border: none;
       background: #ffffff;
-      color: #0f172a;
+      color: #090a0d;
       font-weight: 700;
-      font-size: 0.82rem;
+      font-size: 0.8rem;
       cursor: pointer;
     }
 
@@ -542,11 +566,12 @@
     .stat-box {
       background: rgba(255, 255, 255, 0.03);
       border: 1px solid var(--border);
-      border-radius: 14px;
+      border-radius: 12px;
       padding: 12px;
     }
 
     .stat-box .label {
+      font-family: 'Chakra Petch', sans-serif;
       font-size: 0.7rem;
       color: var(--muted);
       text-transform: uppercase;
@@ -554,8 +579,9 @@
     }
 
     .stat-box .val {
-      font-size: 1.3rem;
-      font-weight: 800;
+      font-family: 'Chakra Petch', sans-serif;
+      font-size: 1.35rem;
+      font-weight: 700;
       margin-top: 4px;
     }
 
@@ -566,38 +592,40 @@
     }
 
     .mistake-item {
-      background: rgba(244, 63, 94, 0.07);
-      border: 1px solid rgba(244, 63, 94, 0.2);
-      border-radius: 12px;
+      background: rgba(255, 59, 92, 0.08);
+      border: 1px solid rgba(255, 59, 92, 0.25);
+      border-radius: 10px;
       padding: 10px 12px;
       font-size: 0.84rem;
     }
 
     .mistake-item .en { font-weight: 700; color: #fff; }
-    .mistake-item .th { font-family: 'Noto Sans Thai', sans-serif; color: var(--green); margin-top: 2px; }
+    .mistake-item .th { font-family: 'Noto Sans Thai', sans-serif; color: var(--gta-green); margin-top: 2px; }
 
     .reset-btn {
       padding: 11px;
-      border-radius: 12px;
-      border: 1px solid rgba(244, 63, 94, 0.35);
+      border-radius: 10px;
+      border: 1px solid rgba(255, 59, 92, 0.4);
       background: transparent;
-      color: #fda4af;
-      font-weight: 600;
+      color: var(--gta-red);
+      font-family: 'Chakra Petch', sans-serif;
+      font-weight: 700;
       font-size: 0.85rem;
+      text-transform: uppercase;
       cursor: pointer;
     }
   </style>
 </head>
 <body>
-  <div class="phone-shell">
+  <div class="phone-shell" id="phoneShell">
     <canvas id="fxCanvas"></canvas>
 
-    <!-- Minimal HUD -->
+    <!-- GTA HUD (CEFR Hidden) -->
     <header class="hud">
       <div class="hud-row">
         <div class="hud-left" id="openDashboardBtn">
-          <span class="cefr-pill" id="hudCefr">A1</span>
-          <span class="lvl-text" id="hudLevel">LVL 1</span>
+          <span class="lvl-badge" id="hudLevel">LVL 1</span>
+          <span class="xp-counter" id="hudXp">0 XP</span>
         </div>
         <div class="hud-right">
           <div class="streak-pill" id="hudStreak">🔥 0</div>
@@ -605,28 +633,25 @@
           <button class="icon-btn" id="statsBtn" aria-label="Profile">☰</button>
         </div>
       </div>
-      <div class="xp-track">
+      <div class="xp-track" id="xpTrack">
         <div class="xp-fill" id="xpFill"></div>
       </div>
     </header>
 
     <!-- Card Arena -->
-    <main class="arena">
+    <main class="arena" id="arena">
       <div class="card-mount" id="cardMount"></div>
 
-      <!-- Post-Swipe Review Overlay -->
+      <!-- Wrong-Answer Review Overlay Only -->
       <div class="review-overlay" id="reviewOverlay">
-        <div class="review-status" id="reviewStatus"></div>
+        <div class="review-status">BUSTED</div>
         <div class="review-body">
           <div class="review-en" id="reviewEn"></div>
           <button class="audio-btn" id="reviewAudioBtn" aria-label="Play audio">🔊</button>
           <div class="review-th-correct" id="reviewThCorrect"></div>
           <div class="review-th-wrong" id="reviewThWrong"></div>
         </div>
-        <div class="review-footer">
-          <div class="timer-bar" id="reviewTimerBar"><div class="timer-fill" id="reviewTimerFill"></div></div>
-          <button class="next-btn" id="reviewNextBtn">Continue</button>
-        </div>
+        <button class="next-btn" id="reviewNextBtn">Continue</button>
       </div>
     </main>
 
@@ -637,38 +662,38 @@
       <button class="action-btn match" id="btnMatch" aria-label="Match">✓</button>
     </footer>
 
-    <!-- Dashboard & Auth Sheet -->
+    <!-- Dashboard Modal -->
     <div class="modal-backdrop" id="dashboardModal">
       <div class="sheet">
         <div class="sheet-head">
-          <h2>Profile</h2>
+          <h2>Player Stats</h2>
           <button class="icon-btn" id="closeDashboardBtn">✕</button>
         </div>
 
         <div class="auth-card">
           <div>
             <div style="font-size:0.88rem; font-weight:700;" id="authUserLabel">Guest</div>
-            <div style="font-size:0.72rem; color:var(--muted);" id="authSubLabel">Local storage mode</div>
+            <div style="font-size:0.72rem; color:var(--muted);" id="authSubLabel">Local mode</div>
           </div>
           <button class="google-btn" id="googleAuthBtn">Sign in with Google</button>
         </div>
 
         <div class="stats-grid">
           <div class="stat-box">
-            <div class="label">CEFR Rating</div>
-            <div class="val" id="statCefr" style="color: var(--cyan);">A1 (1.5)</div>
+            <div class="label">Rank</div>
+            <div class="val" id="statRank" style="color: var(--gta-gold);">STREET</div>
           </div>
           <div class="stat-box">
             <div class="label">Total XP</div>
-            <div class="val" id="statXp" style="color: var(--gold);">0</div>
+            <div class="val" id="statXp" style="color: var(--gta-green);">0</div>
           </div>
           <div class="stat-box">
             <div class="label">Accuracy</div>
-            <div class="val" id="statAcc" style="color: var(--green);">0%</div>
+            <div class="val" id="statAcc" style="color: var(--gta-cyan);">0%</div>
           </div>
           <div class="stat-box">
             <div class="label">Best Streak</div>
-            <div class="val" id="statBestStreak" style="color: #fb923c;">0</div>
+            <div class="val" id="statBestStreak" style="color: var(--gta-pink);">0</div>
           </div>
         </div>
 
