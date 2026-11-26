@@ -1,0 +1,25 @@
+{"id":1,"en":"Break a leg!","type":"Idiom","th_correct":"ขอให้โชคดีนะ!","th_wrong":"ระวังขาหักนะ!"}
+{"id":2,"en":"Take a rain check.","type":"Idiom","th_correct":"ขอเลื่อนไปคราวหน้านะ","th_wrong":"ช่วยเช็กพยากรณ์อากาศหน่อย"}
+{"id":3,"en":"My favorite color is gray.","type":"Sentence","th_correct":"สีโปรดของฉันคือสีเทา","th_wrong":"สีโปรดของฉันคือสีเขียว"}
+{"id":4,"en":"I'm running late.","type":"Phrase","th_correct":"ฉันกำลังจะไปสายแล้ว","th_wrong":"ฉันกำลังวิ่งออกกำลังกายตอนดึก"}
+{"id":5,"en":"Could I get the check, please?","type":"Sentence","th_correct":"ขอเช็กบิลด้วยครับ/ค่ะ","th_wrong":"ขอตรวจสอบเอกสารหน่อยครับ/ค่ะ"}
+{"id":6,"en":"It's a piece of cake.","type":"Idiom","th_correct":"มันง่ายมาก","th_wrong":"มันคือขนมเค้กหนึ่งชิ้น"}
+{"id":7,"en":"Let's call it a day.","type":"Idiom","th_correct":"พอแค่นี้ก่อนสำหรับวันนี้","th_wrong":"มาโทรนัดวันกันเถอะ"}
+{"id":8,"en":"I apologize for the delay.","type":"Sentence","th_correct":"ขออภัยในความล่าช้า","th_wrong":"ฉันขอบคุณที่รออย่างใจเย็น"}
+{"id":9,"en":"Where is the nearest subway?","type":"Sentence","th_correct":"สถานีรถไฟใต้ดินที่ใกล้ที่สุดอยู่ที่ไหน","th_wrong":"ทางม้าลายที่ใกล้ที่สุดอยู่ที่ไหน"}
+{"id":10,"en":"Hang in there!","type":"Idiom","th_correct":"อดทนไว้นะ สู้ๆ!","th_wrong":"แขวนเสื้อไว้ตรงนั้นนะ!"}
+{"id":11,"en":"I'm feeling under the weather.","type":"Idiom","th_correct":"ฉันรู้สึกไม่ค่อยสบาย","th_wrong":"ฉันกำลังยืนตากฝนอยู่"}
+{"id":12,"en":"Give me a heads-up.","type":"Phrase","th_correct":"ช่วยบอกล่วงหน้าด้วยนะ","th_wrong":"ช่วยเงยหน้าขึ้นมองหน่อยนะ"}
+{"id":13,"en":"That rings a bell.","type":"Idiom","th_correct":"ฟังดูคุ้นๆ นะ","th_wrong":"เสียงกระดิ่งดังแล้วนะ"}
+{"id":14,"en":"Let's grab a bite to eat.","type":"Phrase","th_correct":"ไปหาอะไรกินกันเถอะ","th_wrong":"ระวังโดนกัดตอนกินนะ"}
+{"id":15,"en":"She has a tight schedule.","type":"Sentence","th_correct":"เธอมีตารางงานที่แน่นมาก","th_wrong":"เธอชอบใส่เสื้อผ้าที่รัดรูป"}
+{"id":16,"en":"Don't take it personally.","type":"Phrase","th_correct":"อย่าเก็บไปคิดมากเป็นเรื่องส่วนตัวนะ","th_wrong":"อย่าหยิบของส่วนตัวฉันไปนะ"}
+{"id":17,"en":"I'm looking for an apartment downtown.","type":"Sentence","th_correct":"ฉันกำลังหาอพาร์ตเมนต์ในตัวเมือง","th_wrong":"ฉันกำลังหาบ้านพักแถวชานเมือง"}
+{"id":18,"en":"Time to hit the books.","type":"Idiom","th_correct":"ได้เวลาตั้งใจอ่านหนังสือแล้ว","th_wrong":"ได้เวลาวางหนังสือลงบนโต๊ะแล้ว"}
+{"id":19,"en":"We are on the same page.","type":"Idiom","th_correct":"เราเข้าใจตรงกัน","th_wrong":"เรากำลังอ่านหนังสือหน้าเดียวกัน"}
+{"id":20,"en":"It happened out of the blue.","type":"Idiom","th_correct":"มันเกิดขึ้นอย่างไม่คาดคิด","th_wrong":"มันเกิดขึ้นท่ามกลางท้องฟ้าสีคราม"}
+{"id":21,"en":"Take the elevator to the third floor.","type":"Sentence","th_correct":"ขึ้นลิฟต์ไปชั้นสาม","th_wrong":"ขึ้นบันไดเลื่อนไปชั้นสาม"}
+{"id":22,"en":"I'm completely burned out.","type":"Phrase","th_correct":"ฉันหมดไฟและเหนื่อยล้ามาก","th_wrong":"ฉันโดนแดดเผาจนตัวแดงหมดแล้ว"}
+{"id":23,"en":"Keep me posted.","type":"Phrase","th_correct":"คอยอัปเดตข่าวให้ฉันรู้ด้วยนะ","th_wrong":"ช่วยส่งพัสดุมาให้ฉันด้วยนะ"}
+{"id":24,"en":"It costs an arm and a leg.","type":"Idiom","th_correct":"มันแพงหูฉี่เลย","th_wrong":"ค่ารักษาพยาบาลแพงมาก"}
+{"id":25,"en":"Better late than never.","type":"Proverb","th_correct":"มาช้ายังดีกว่าไม่มา","th_wrong":"มาสายดีกว่าไม่บอกล่วงหน้า"}
