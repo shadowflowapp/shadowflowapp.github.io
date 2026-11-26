@@ -1,0 +1,100 @@
+{"difficulty":3.0,"en":"Schedule","th_correct":"ตารางเวลา","th_wrong":"ใบเสร็จรับเงิน"}
+{"difficulty":3.0,"en":"Deadline","th_correct":"กำหนดส่ง / เส้นตาย","th_wrong":"วันหยุดพักร้อน"}
+{"difficulty":3.0,"en":"Commute","th_correct":"การเดินทางไปกลับที่ทำงาน","th_wrong":"การทำงานล่วงเวลา"}
+{"difficulty":3.0,"en":"Refund","th_correct":"การคืนเงิน","th_wrong":"การมัดจำ"}
+{"difficulty":3.0,"en":"Colleague","th_correct":"เพื่อนร่วมงาน","th_wrong":"ลูกค้าประจำ"}
+{"difficulty":3.0,"en":"Opportunity","th_correct":"โอกาส","th_wrong":"อุปสรรค"}
+{"difficulty":3.0,"en":"Experience","th_correct":"ประสบการณ์","th_wrong":"ความคาดหวัง"}
+{"difficulty":3.0,"en":"Environment","th_correct":"สิ่งแวดล้อม","th_wrong":"เศรษฐกิจ"}
+{"difficulty":3.0,"en":"Confidence","th_correct":"ความมั่นใจ","th_wrong":"ความกังวล"}
+{"difficulty":3.0,"en":"Responsibility","th_correct":"ความรับผิดชอบ","th_wrong":"ความสามารถพิเศษ"}
+{"difficulty":3.1,"en":"Out of stock","th_correct":"สินค้าหมด","th_wrong":"สินค้าลดราคา"}
+{"difficulty":3.1,"en":"In advance","th_correct":"ล่วงหน้า","th_wrong":"ในภายหลัง"}
+{"difficulty":3.1,"en":"On purpose","th_correct":"ตั้งใจ / จงใจ","th_wrong":"โดยบังเอิญ"}
+{"difficulty":3.1,"en":"By mistake","th_correct":"โดยไม่ได้ตั้งใจ / ผิดพลาด","th_wrong":"อย่างระมัดระวัง"}
+{"difficulty":3.1,"en":"At the moment","th_correct":"ในขณะนี้","th_wrong":"ในอดีต"}
+{"difficulty":3.1,"en":"As soon as possible","th_correct":"เร็วที่สุดเท่าที่จะเป็นไปได้","th_wrong":"เมื่อไหร่ก็ได้ตามสะดวก"}
+{"difficulty":3.1,"en":"In the long run","th_correct":"ในระยะยาว","th_wrong":"ในระยะสั้น"}
+{"difficulty":3.1,"en":"Out of order","th_correct":"ชำรุด / ใช้งานไม่ได้","th_wrong":"ไม่เป็นระเบียบ"}
+{"difficulty":3.1,"en":"Up to date","th_correct":"ทันสมัย / เป็นปัจจุบัน","th_wrong":"ล้าสมัยไปแล้ว"}
+{"difficulty":3.1,"en":"Worth the wait","th_correct":"คุ้มค่ากับการรอคอย","th_wrong":"เสียเวลารอเปล่าๆ"}
+{"difficulty":3.2,"en":"Give me a heads-up.","th_correct":"ช่วยบอกล่วงหน้าด้วยนะ","th_wrong":"ช่วยเงยหน้าขึ้นมองหน่อยนะ"}
+{"difficulty":3.2,"en":"Figure it out","th_correct":"หาทางออก / ทำความเข้าใจให้ได้","th_wrong":"ยอมแพ้ไปก่อน"}
+{"difficulty":3.2,"en":"Put it off","th_correct":"เลื่อนออกไปก่อน","th_wrong":"รีบทำให้เสร็จ"}
+{"difficulty":3.2,"en":"Run out of time","th_correct":"เวลาหมดลงแล้ว","th_wrong":"มีเวลาเหลือเฟือ"}
+{"difficulty":3.2,"en":"Get along with","th_correct":"เข้ากันได้ดีกับ","th_wrong":"ทะเลาะกันบ่อยกับ"}
+{"difficulty":3.2,"en":"Look into it","th_correct":"ตรวจสอบรายละเอียดดู","th_wrong":"มองข้ามมันไป"}
+{"difficulty":3.2,"en":"Come up with an idea","th_correct":"คิดไอเดียขึ้นมาได้","th_wrong":"ลืมไอเดียที่คิดไว้"}
+{"difficulty":3.2,"en":"Keep me posted.","th_correct":"คอยอัปเดตข่าวให้ฉันรู้ด้วยนะ","th_wrong":"ช่วยส่งพัสดุมาให้ฉันด้วยนะ"}
+{"difficulty":3.2,"en":"Let's call it a day.","th_correct":"พอแค่นี้ก่อนสำหรับวันนี้","th_wrong":"มาโทรนัดวันกันเถอะ"}
+{"difficulty":3.2,"en":"Hang in there!","th_correct":"อดทนไว้นะ สู้ๆ!","th_wrong":"แขวนเสื้อไว้ตรงนั้นนะ!"}
+{"difficulty":3.3,"en":"That rings a bell.","th_correct":"ฟังดูคุ้นๆ นะ","th_wrong":"เสียงกระดิ่งดังแล้วนะ"}
+{"difficulty":3.3,"en":"It's up to you.","th_correct":"แล้วแต่คุณเลย","th_wrong":"มันเป็นความรับผิดชอบของฉัน"}
+{"difficulty":3.3,"en":"I'm totally burned out.","th_correct":"ฉันหมดไฟและเหนื่อยล้ามาก","th_wrong":"ฉันโดนแดดเผาจนตัวแดงหมดแล้ว"}
+{"difficulty":3.3,"en":"Don't take it personally.","th_correct":"อย่าเก็บไปคิดมากเป็นเรื่องส่วนตัวนะ","th_wrong":"อย่าหยิบของส่วนตัวฉันไปนะ"}
+{"difficulty":3.3,"en":"I'm feeling under the weather.","th_correct":"ฉันรู้สึกไม่ค่อยสบาย","th_wrong":"ฉันกำลังยืนตากฝนอยู่"}
+{"difficulty":3.3,"en":"It's a piece of cake.","th_correct":"มันง่ายมาก","th_wrong":"มันคือขนมเค้กหนึ่งชิ้น"}
+{"difficulty":3.3,"en":"Better late than never.","th_correct":"มาช้ายังดีกว่าไม่มา","th_wrong":"มาสายดีกว่าไม่บอกล่วงหน้า"}
+{"difficulty":3.3,"en":"I'm on my way.","th_correct":"ฉันกำลังเดินทางไป","th_wrong":"ฉันเพิ่งออกจากบ้านเมื่อกี้"}
+{"difficulty":3.3,"en":"Let's grab a bite to eat.","th_correct":"ไปหาอะไรกินกันเถอะ","th_wrong":"ระวังโดนกัดตอนกินนะ"}
+{"difficulty":3.3,"en":"Break a leg!","th_correct":"ขอให้โชคดีนะ!","th_wrong":"ระวังขาหักนะ!"}
+{"difficulty":3.4,"en":"I apologize for the delay.","th_correct":"ขออภัยในความล่าช้า","th_wrong":"ฉันขอบคุณที่รออย่างใจเย็น"}
+{"difficulty":3.4,"en":"We need to organize this event.","th_correct":"เราต้องจัดงานอีเวนต์นี้","th_wrong":"เราต้องยกเลิกงานอีเวนต์นี้"}
+{"difficulty":3.4,"en":"The meeting was canceled yesterday.","th_correct":"การประชุมถูกยกเลิกเมื่อวานนี้","th_wrong":"การประชุมถูกเลื่อนไปสัปดาห์หน้า"}
+{"difficulty":3.4,"en":"She has a very tight schedule.","th_correct":"เธอมีตารางงานที่แน่นมาก","th_wrong":"เธอมีเวลาว่างตลอดทั้งสัปดาห์"}
+{"difficulty":3.4,"en":"Could you do me a favor?","th_correct":"ช่วยอะไรฉันสักอย่างได้ไหม","th_wrong":"คุณอยากให้ฉันช่วยอะไรไหม"}
+{"difficulty":3.4,"en":"I'm used to waking up early.","th_correct":"ฉันชินกับการตื่นเช้าแล้ว","th_wrong":"ฉันไม่เคยตื่นเช้าได้เลย"}
+{"difficulty":3.4,"en":"He gave up smoking last year.","th_correct":"เขาเลิกสูบบุหรี่เมื่อปีที่แล้ว","th_wrong":"เขาเริ่มสูบบุหรี่เมื่อปีที่แล้ว"}
+{"difficulty":3.4,"en":"We are on the same page.","th_correct":"เราเข้าใจตรงกัน","th_wrong":"เรากำลังอ่านหนังสือหน้าเดียวกัน"}
+{"difficulty":3.4,"en":"It happened out of the blue.","th_correct":"มันเกิดขึ้นอย่างไม่คาดคิด","th_wrong":"มันเกิดขึ้นท่ามกลางท้องฟ้าสีคราม"}
+{"difficulty":3.4,"en":"This jacket is worth every penny.","th_correct":"เสื้อแจ็กเก็ตตัวนี้คุ้มค่าทุกบาททุกสตางค์","th_wrong":"เสื้อแจ็กเก็ตตัวนี้ราคาแพงเกินจริง"}
+{"difficulty":3.5,"en":"I'm not in the mood for pizza.","th_correct":"ฉันไม่มีอารมณ์อยากกินพิซซ่าเลย","th_wrong":"ฉันอยากกินพิซซ่ามากตอนนี้"}
+{"difficulty":3.5,"en":"Make sure you back up your files.","th_correct":"อย่าลืมสำรองข้อมูลไฟล์ของคุณด้วยนะ","th_wrong":"อย่าลืมลบไฟล์เก่าๆ ออกให้หมดนะ"}
+{"difficulty":3.5,"en":"She turned down the job offer.","th_correct":"เธอปฏิเสธข้อเสนองานนั้นไป","th_wrong":"เธอตอบรับข้อเสนองานนั้นทันที"}
+{"difficulty":3.5,"en":"He takes after his father.","th_correct":"เขามีนิสัยหรือหน้าตาเหมือนพ่อ","th_wrong":"เขาดูแลพ่อของเขาอย่างดี"}
+{"difficulty":3.5,"en":"We need to cut down on sugar.","th_correct":"เราต้องลดปริมาณน้ำตาลลง","th_wrong":"เราต้องซื้อน้ำตาลเพิ่มอีก"}
+{"difficulty":3.5,"en":"I ran into an old friend downtown.","th_correct":"ฉันบังเอิญเจอเพื่อนเก่าในตัวเมือง","th_wrong":"ฉันนัดกินข้าวกับเพื่อนเก่าในตัวเมือง"}
+{"difficulty":3.5,"en":"Please fill out this application form.","th_correct":"กรุณากรอกแบบฟอร์มใบสมัครนี้","th_wrong":"กรุณาตรวจสอบเอกสารใบสมัครนี้"}
+{"difficulty":3.5,"en":"The store is offering a huge discount.","th_correct":"ทางร้านกำลังจัดส่วนลดครั้งใหญ่","th_wrong":"ทางร้านกำลังจะปิดปรับปรุงชั่วคราว"}
+{"difficulty":3.5,"en":"I'm trying to get over this cold.","th_correct":"ฉันกำลังพยายามหายจากอาการหวัดนี้","th_wrong":"ฉันเพิ่งติดหวัดมาจากเพื่อนร่วมงาน"}
+{"difficulty":3.5,"en":"Let's catch up over coffee sometime.","th_correct":"ไว้นัดดื่มกาแฟอัปเดตชีวิตกันบ้างนะ","th_wrong":"ไว้ไปซื้อกาแฟร้านนั้นด้วยกันนะ"}
+{"difficulty":3.6,"en":"I regret not studying harder in college.","th_correct":"ฉันเสียดายที่ตอนอยู่มหาวิทยาลัยไม่ตั้งใจเรียนกว่านี้","th_wrong":"ฉันดีใจที่ตอนอยู่มหาวิทยาลัยตั้งใจเรียนมาก"}
+{"difficulty":3.6,"en":"She is capable of handling the pressure.","th_correct":"เธอสามารถรับมือกับความกดดันได้ดี","th_wrong":"เธอทนรับแรงกดดันในการทำงานไม่ไหว"}
+{"difficulty":3.6,"en":"The traffic was heavier than usual today.","th_correct":"วันนี้รถติดหนักกว่าปกติ","th_wrong":"วันนี้ถนนโล่งกว่าปกติมาก"}
+{"difficulty":3.6,"en":"I'm looking forward to hearing from you.","th_correct":"ฉันตั้งตารอที่จะได้รับการติดต่อกลับจากคุณ","th_wrong":"ฉันจะติดต่อกลับไปหาคุณเร็วๆ นี้"}
+{"difficulty":3.6,"en":"He insisted on paying for the dinner.","th_correct":"เขายืนกรานที่จะเป็นคนจ่ายค่าอาหารเย็น","th_wrong":"เขาขอให้ช่วยกันหารค่าอาหารเย็น"}
+{"difficulty":3.6,"en":"We should take advantage of this opportunity.","th_correct":"เราควรใช้ประโยชน์จากโอกาสนี้ให้เต็มที่","th_wrong":"เราควรมองข้ามโอกาสนี้ไปก่อน"}
+{"difficulty":3.6,"en":"My flight got rescheduled to tomorrow morning.","th_correct":"เที่ยวบินของฉันถูกเลื่อนไปเป็นพรุ่งนี้เช้า","th_wrong":"เที่ยวบินของฉันออกเดินทางเร็วกว่ากำหนด"}
+{"difficulty":3.6,"en":"She always keeps her promises.","th_correct":"เธอรักษาสัญญาเสมอ","th_wrong":"เธอมักจะลืมสิ่งที่สัญญาไว้"}
+{"difficulty":3.6,"en":"I'm not familiar with this neighborhood.","th_correct":"ฉันไม่คุ้นเคยกับย่านนี้เลย","th_wrong":"ฉันรู้จักทุกซอกทุกมุมในย่านนี้"}
+{"difficulty":3.6,"en":"He managed to finish the report on time.","th_correct":"เขาทำรายงานเสร็จทันเวลาจนได้","th_wrong":"เขาทำรายงานเสร็จไม่ทันกำหนดส่ง"}
+{"difficulty":3.7,"en":"Working remotely saves me a lot of time.","th_correct":"การทำงานจากระยะไกลช่วยประหยัดเวลาฉันไปได้มาก","th_wrong":"การทำงานจากระยะไกลทำให้ฉันเสียเวลามากขึ้น"}
+{"difficulty":3.7,"en":"I'd rather stay home than go out.","th_correct":"ฉันอยากอยู่บ้านมากกว่าออกไปข้างนอก","th_wrong":"ฉันอยากออกไปเที่ยวข้างนอกมากกว่าอยู่บ้าน"}
+{"difficulty":3.7,"en":"The instructions were clear and easy to follow.","th_correct":"คำแนะนำชัดเจนและทำตามได้ง่าย","th_wrong":"คำแนะนำซับซ้อนและเข้าใจยากมาก"}
+{"difficulty":3.7,"en":"She was disappointed with the exam results.","th_correct":"เธอผิดหวังกับผลการสอบมาก","th_wrong":"เธอภูมิใจกับผลการสอบมาก"}
+{"difficulty":3.7,"en":"We need to find a practical solution.","th_correct":"เราต้องหาทางออกที่นำไปใช้ได้จริง","th_wrong":"เราต้องสร้างปัญหาใหม่ขึ้นมาอีก"}
+{"difficulty":3.7,"en":"I'm thinking of applying for a promotion.","th_correct":"ฉันกำลังคิดจะสมัครเลื่อนตำแหน่ง","th_wrong":"ฉันกำลังคิดจะลาออกจากบริษัท"}
+{"difficulty":3.7,"en":"He apologized for interrupting the presentation.","th_correct":"เขาขอโทษที่พูดแทรกระหว่างการนำเสนอ","th_wrong":"เขาขอบคุณทุกคนที่ตั้งใจฟังการนำเสนอ"}
+{"difficulty":3.7,"en":"Regular exercise improves both mood and energy.","th_correct":"การออกกำลังกายสม่ำเสมอช่วยให้ทั้งอารมณ์และพลังงานดีขึ้น","th_wrong":"การออกกำลังกายหนักเกินไปทำให้อารมณ์เสีย"}
+{"difficulty":3.7,"en":"I can't afford to buy a new car yet.","th_correct":"ฉันยังไม่มีกำลังทรัพย์พอจะซื้อรถใหม่","th_wrong":"ฉันเพิ่งเก็บเงินซื้อรถใหม่ได้ครบแล้ว"}
+{"difficulty":3.7,"en":"The restaurant exceeded all of our expectations.","th_correct":"ร้านอาหารนี้ดีเกินความคาดหมายของเราไปมาก","th_wrong":"ร้านอาหารนี้รสชาติแย่กว่าที่คิดไว้"}
+{"difficulty":3.8,"en":"I apologize for the delay in my response.","th_correct":"ขออภัยที่ตอบกลับล่าช้า","th_wrong":"ขอบคุณที่ส่งคำตอบมาอย่างรวดเร็ว"}
+{"difficulty":3.8,"en":"Let's make sure we are on the same page.","th_correct":"เรามาทำความเข้าใจให้ตรงกันก่อนนะ","th_wrong":"เรามาอ่านหนังสือหน้าเดียวกันเถอะ"}
+{"difficulty":3.8,"en":"She has been working here for five years.","th_correct":"เธอทำงานที่นี่มาเป็นเวลาห้าปีแล้ว","th_wrong":"เธอจะลาออกจากที่นี่ในอีกห้าปีข้างหน้า"}
+{"difficulty":3.8,"en":"If I had more time, I would travel more.","th_correct":"ถ้าฉันมีเวลามากกว่านี้ ฉันคงจะเที่ยวให้มากขึ้น","th_wrong":"เพราะฉันมีเวลาว่างเยอะ ฉันเลยเที่ยวบ่อยมาก"}
+{"difficulty":3.8,"en":"We had to postpone the trip due to rain.","th_correct":"เราต้องเลื่อนทริปออกไปเพราะฝนตก","th_wrong":"เรายังคงเดินทางต่อไปแม้ฝนจะตกหนัก"}
+{"difficulty":3.8,"en":"He is responsible for managing the sales team.","th_correct":"เขารับผิดชอบในการดูแลทีมขาย","th_wrong":"เขาเพิ่งย้ายออกจากทีมขายไปอยู่ฝ่ายบุคคล"}
+{"difficulty":3.8,"en":"I'm trying to balance my work and personal life.","th_correct":"ฉันกำลังพยายามสร้างสมดุลระหว่างงานและชีวิตส่วนตัว","th_wrong":"ฉันทุ่มเทเวลาทั้งหมดให้กับการทำงานอย่างเดียว"}
+{"difficulty":3.8,"en":"The new policy will take effect next month.","th_correct":"นโยบายใหม่จะเริ่มมีผลบังคับใช้เดือนหน้า","th_wrong":"นโยบายใหม่ถูกยกเลิกไปตั้งแต่เดือนที่แล้ว"}
+{"difficulty":3.8,"en":"She encouraged me to pursue my dream.","th_correct":"เธอให้กำลังใจฉันให้ทำตามความฝัน","th_wrong":"เธอห้ามไม่ให้ฉันทำตามความฝัน"}
+{"difficulty":3.8,"en":"I didn't realize how expensive living downtown is.","th_correct":"ฉันไม่เคยรู้มาก่อนเลยว่าค่าครองชีพในเมืองจะแพงขนาดนี้","th_wrong":"ฉันรู้ดีว่าค่าครองชีพในเมืองถูกกว่าชานเมือง"}
+{"difficulty":3.9,"en":"Despite the bad weather, we enjoyed the festival.","th_correct":"แม้ว่าอากาศจะไม่ดี แต่เราก็สนุกกับเทศกาลนี้","th_wrong":"เพราะอากาศไม่ดี เราเลยตัดสินใจกลับบ้านทันที"}
+{"difficulty":3.9,"en":"You should double-check the numbers before submitting.","th_correct":"คุณควรตรวจสอบตัวเลขซ้ำอีกครั้งก่อนส่ง","th_wrong":"คุณสามารถส่งเอกสารได้เลยโดยไม่ต้องตรวจทาน"}
+{"difficulty":3.9,"en":"It takes patience to master a foreign language.","th_correct":"การจะเก่งภาษาต่างประเทศต้องอาศัยความอดทน","th_wrong":"การเรียนภาษาต่างประเทศสามารถเก่งได้ในวันเดียว"}
+{"difficulty":3.9,"en":"He was promoted because of his strong performance.","th_correct":"เขาได้รับการเลื่อนตำแหน่งเพราะผลงานที่โดดเด่น","th_wrong":"เขาถูกตักเตือนเพราะมาทำงานสายบ่อย"}
+{"difficulty":3.9,"en":"I'm grateful for all the support you gave me.","th_correct":"ฉันซาบซึ้งใจกับทุกการสนับสนุนที่คุณมอบให้","th_wrong":"ฉันต้องการขอความช่วยเหลือจากคุณเพิ่มเติม"}
+{"difficulty":3.9,"en":"The company is expanding into Southeast Asian markets.","th_correct":"บริษัทกำลังขยายธุรกิจเข้าสู่ตลาดเอเชียตะวันออกเฉียงใต้","th_wrong":"บริษัทกำลังปิดสาขาในเอเชียตะวันออกเฉียงใต้"}
+{"difficulty":3.9,"en":"She prefers working independently rather than in groups.","th_correct":"เธอชอบทำงานคนเดียวมากกว่าทำงานเป็นกลุ่ม","th_wrong":"เธอชอบทำงานเป็นทีมมากกว่าทำคนเดียว"}
+{"difficulty":3.9,"en":"We need to prioritize the most urgent tasks first.","th_correct":"เราต้องจัดลำดับความสำคัญของงานด่วนที่สุดก่อน","th_wrong":"เราควรทำงานที่ง่ายที่สุดก่อนแล้วค่อยทำงานด่วน"}
+{"difficulty":3.9,"en":"Learning from mistakes is part of personal growth.","th_correct":"การเรียนรู้จากความผิดพลาดเป็นส่วนหนึ่งของการเติบโต","th_wrong":"คนเก่งจะต้องไม่เคยทำผิดพลาดเลยสักครั้ง"}
+{"difficulty":3.9,"en":"Please notify us immediately if any issues arise.","th_correct":"กรุณาแจ้งเราทันทีหากเกิดปัญหาใดๆ ขึ้น","th_wrong":"ไม่ต้องแจ้งเราหากคุณสามารถแก้ปัญหาได้เอง"}
