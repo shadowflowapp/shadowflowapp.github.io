@@ -1,25 +1,30 @@
-{"id":1,"en":"Break a leg!","type":"Idiom","th_correct":"ขอให้โชคดีนะ!","th_wrong":"ระวังขาหักนะ!"}
-{"id":2,"en":"Take a rain check.","type":"Idiom","th_correct":"ขอเลื่อนไปคราวหน้านะ","th_wrong":"ช่วยเช็กพยากรณ์อากาศหน่อย"}
-{"id":3,"en":"My favorite color is gray.","type":"Sentence","th_correct":"สีโปรดของฉันคือสีเทา","th_wrong":"สีโปรดของฉันคือสีเขียว"}
-{"id":4,"en":"I'm running late.","type":"Phrase","th_correct":"ฉันกำลังจะไปสายแล้ว","th_wrong":"ฉันกำลังวิ่งออกกำลังกายตอนดึก"}
-{"id":5,"en":"Could I get the check, please?","type":"Sentence","th_correct":"ขอเช็กบิลด้วยครับ/ค่ะ","th_wrong":"ขอตรวจสอบเอกสารหน่อยครับ/ค่ะ"}
-{"id":6,"en":"It's a piece of cake.","type":"Idiom","th_correct":"มันง่ายมาก","th_wrong":"มันคือขนมเค้กหนึ่งชิ้น"}
-{"id":7,"en":"Let's call it a day.","type":"Idiom","th_correct":"พอแค่นี้ก่อนสำหรับวันนี้","th_wrong":"มาโทรนัดวันกันเถอะ"}
-{"id":8,"en":"I apologize for the delay.","type":"Sentence","th_correct":"ขออภัยในความล่าช้า","th_wrong":"ฉันขอบคุณที่รออย่างใจเย็น"}
-{"id":9,"en":"Where is the nearest subway?","type":"Sentence","th_correct":"สถานีรถไฟใต้ดินที่ใกล้ที่สุดอยู่ที่ไหน","th_wrong":"ทางม้าลายที่ใกล้ที่สุดอยู่ที่ไหน"}
-{"id":10,"en":"Hang in there!","type":"Idiom","th_correct":"อดทนไว้นะ สู้ๆ!","th_wrong":"แขวนเสื้อไว้ตรงนั้นนะ!"}
-{"id":11,"en":"I'm feeling under the weather.","type":"Idiom","th_correct":"ฉันรู้สึกไม่ค่อยสบาย","th_wrong":"ฉันกำลังยืนตากฝนอยู่"}
-{"id":12,"en":"Give me a heads-up.","type":"Phrase","th_correct":"ช่วยบอกล่วงหน้าด้วยนะ","th_wrong":"ช่วยเงยหน้าขึ้นมองหน่อยนะ"}
-{"id":13,"en":"That rings a bell.","type":"Idiom","th_correct":"ฟังดูคุ้นๆ นะ","th_wrong":"เสียงกระดิ่งดังแล้วนะ"}
-{"id":14,"en":"Let's grab a bite to eat.","type":"Phrase","th_correct":"ไปหาอะไรกินกันเถอะ","th_wrong":"ระวังโดนกัดตอนกินนะ"}
-{"id":15,"en":"She has a tight schedule.","type":"Sentence","th_correct":"เธอมีตารางงานที่แน่นมาก","th_wrong":"เธอชอบใส่เสื้อผ้าที่รัดรูป"}
-{"id":16,"en":"Don't take it personally.","type":"Phrase","th_correct":"อย่าเก็บไปคิดมากเป็นเรื่องส่วนตัวนะ","th_wrong":"อย่าหยิบของส่วนตัวฉันไปนะ"}
-{"id":17,"en":"I'm looking for an apartment downtown.","type":"Sentence","th_correct":"ฉันกำลังหาอพาร์ตเมนต์ในตัวเมือง","th_wrong":"ฉันกำลังหาบ้านพักแถวชานเมือง"}
-{"id":18,"en":"Time to hit the books.","type":"Idiom","th_correct":"ได้เวลาตั้งใจอ่านหนังสือแล้ว","th_wrong":"ได้เวลาวางหนังสือลงบนโต๊ะแล้ว"}
-{"id":19,"en":"We are on the same page.","type":"Idiom","th_correct":"เราเข้าใจตรงกัน","th_wrong":"เรากำลังอ่านหนังสือหน้าเดียวกัน"}
-{"id":20,"en":"It happened out of the blue.","type":"Idiom","th_correct":"มันเกิดขึ้นอย่างไม่คาดคิด","th_wrong":"มันเกิดขึ้นท่ามกลางท้องฟ้าสีคราม"}
-{"id":21,"en":"Take the elevator to the third floor.","type":"Sentence","th_correct":"ขึ้นลิฟต์ไปชั้นสาม","th_wrong":"ขึ้นบันไดเลื่อนไปชั้นสาม"}
-{"id":22,"en":"I'm completely burned out.","type":"Phrase","th_correct":"ฉันหมดไฟและเหนื่อยล้ามาก","th_wrong":"ฉันโดนแดดเผาจนตัวแดงหมดแล้ว"}
-{"id":23,"en":"Keep me posted.","type":"Phrase","th_correct":"คอยอัปเดตข่าวให้ฉันรู้ด้วยนะ","th_wrong":"ช่วยส่งพัสดุมาให้ฉันด้วยนะ"}
-{"id":24,"en":"It costs an arm and a leg.","type":"Idiom","th_correct":"มันแพงหูฉี่เลย","th_wrong":"ค่ารักษาพยาบาลแพงมาก"}
-{"id":25,"en":"Better late than never.","type":"Proverb","th_correct":"มาช้ายังดีกว่าไม่มา","th_wrong":"มาสายดีกว่าไม่บอกล่วงหน้า"}
+{"id":1,"cefr":"A1","difficulty":1.0,"en":"Water","th_correct":"น้ำ","th_wrong":"ไฟ"}
+{"id":2,"cefr":"A1","difficulty":1.2,"en":"Good morning","th_correct":"สวัสดีตอนเช้า","th_wrong":"ราตรีสวัสดิ์"}
+{"id":3,"cefr":"A1","difficulty":1.4,"en":"I like this color.","th_correct":"ฉันชอบสีนี้","th_wrong":"ฉันไม่ชอบอาหารนี้"}
+{"id":4,"cefr":"A1","difficulty":1.6,"en":"Where is the restroom?","th_correct":"ห้องน้ำอยู่ที่ไหน","th_wrong":"ห้องครัวอยู่ที่ไหน"}
+{"id":5,"cefr":"A1","difficulty":1.8,"en":"She works at a bank.","th_correct":"เธอทำงานที่ธนาคาร","th_wrong":"เธอเรียนอยู่ที่โรงเรียน"}
+{"id":6,"cefr":"A2","difficulty":2.0,"en":"Neighbor","th_correct":"เพื่อนบ้าน","th_wrong":"เพื่อนร่วมงาน"}
+{"id":7,"cefr":"A2","difficulty":2.2,"en":"I'm running late.","th_correct":"ฉันกำลังจะไปสายแล้ว","th_wrong":"ฉันกำลังวิ่งออกกำลังกาย"}
+{"id":8,"cefr":"A2","difficulty":2.4,"en":"Could I get the check, please?","th_correct":"ขอเช็กบิลด้วยครับ/ค่ะ","th_wrong":"ขอตรวจสอบกระเป๋าหน่อยครับ/ค่ะ"}
+{"id":9,"cefr":"A2","difficulty":2.6,"en":"Take the elevator to the third floor.","th_correct":"ขึ้นลิฟต์ไปชั้นสาม","th_wrong":"ขึ้นบันไดเลื่อนไปชั้นสาม"}
+{"id":10,"cefr":"A2","difficulty":2.8,"en":"We traveled downtown by subway yesterday.","th_correct":"เมื่อวานเราเข้าเมืองด้วยรถไฟใต้ดิน","th_wrong":"เมื่อวานเราไปต่างจังหวัดด้วยรถไฟ"}
+{"id":11,"cefr":"B1","difficulty":3.0,"en":"Schedule","th_correct":"ตารางเวลา","th_wrong":"ใบเสร็จรับเงิน"}
+{"id":12,"cefr":"B1","difficulty":3.2,"en":"Give me a heads-up.","th_correct":"ช่วยบอกล่วงหน้าด้วยนะ","th_wrong":"ช่วยเงยหน้าขึ้นมองหน่อยนะ"}
+{"id":13,"cefr":"B1","difficulty":3.4,"en":"I'm feeling under the weather today.","th_correct":"วันนี้ฉันรู้สึกไม่ค่อยสบาย","th_wrong":"วันนี้ฉันต้องทำงานกลางแจ้ง"}
+{"id":14,"cefr":"B1","difficulty":3.6,"en":"Let's make sure we are on the same page.","th_correct":"เรามาทำความเข้าใจให้ตรงกันก่อนนะ","th_wrong":"เรามาอ่านหนังสือหน้าเดียวกันเถอะ"}
+{"id":15,"cefr":"B1","difficulty":3.8,"en":"I apologize for the delay in my response.","th_correct":"ขออภัยที่ตอบกลับล่าช้า","th_wrong":"ขอบคุณที่ส่งคำตอบมาอย่างรวดเร็ว"}
+{"id":16,"cefr":"B2","difficulty":4.0,"en":"Inevitable","th_correct":"หลีกเลี่ยงไม่ได้","th_wrong":"ไม่น่าเชื่อถือ"}
+{"id":17,"cefr":"B2","difficulty":4.2,"en":"Take a rain check.","th_correct":"ขอเลื่อนไปคราวหน้านะ","th_wrong":"ช่วยเช็กพยากรณ์อากาศหน่อย"}
+{"id":18,"cefr":"B2","difficulty":4.4,"en":"The project fell behind schedule due to budget cuts.","th_correct":"โครงการล่าช้ากว่ากำหนดเพราะถูกตัดงบประมาณ","th_wrong":"โครงการเสร็จก่อนกำหนดเพราะได้รับงบเพิ่ม"}
+{"id":19,"cefr":"B2","difficulty":4.6,"en":"We need to analyze the data before deciding.","th_correct":"เราต้องวิเคราะห์ข้อมูลก่อนตัดสินใจ","th_wrong":"เราต้องลบข้อมูลทั้งหมดก่อนเริ่มใหม่"}
+{"id":20,"cefr":"B2","difficulty":4.8,"en":"Her explanation shed light on the complex issue.","th_correct":"คำอธิบายของเธอช่วยให้เข้าใจปัญหาที่ซับซ้อนมากขึ้น","th_wrong":"คำอธิบายของเธอทำให้เรื่องยิ่งสับสนกว่าเดิม"}
+{"id":21,"cefr":"C1","difficulty":5.0,"en":"Ubiquitous","th_correct":"มีอยู่ทุกหนทุกแห่ง","th_wrong":"หายากและมีค่ามาก"}
+{"id":22,"cefr":"C1","difficulty":5.2,"en":"A double-edged sword","th_correct":"ดาบสองคม","th_wrong":"อาวุธโบราณ"}
+{"id":23,"cefr":"C1","difficulty":5.4,"en":"Their proposal was met with widespread skepticism.","th_correct":"ข้อเสนอของพวกเขาถูกตั้งข้อสงสัยอย่างกว้างขวาง","th_wrong":"ข้อเสนอของพวกเขาได้รับการสนับสนุนอย่างท่วมท้น"}
+{"id":24,"cefr":"C1","difficulty":5.6,"en":"She articulated her vision with remarkable clarity.","th_correct":"เธอถ่ายทอดวิสัยทัศน์ได้อย่างชัดเจนน่าทึ่ง","th_wrong":"เธอปกปิดแผนการของตัวเองไว้อย่างมิดชิด"}
+{"id":25,"cefr":"C1","difficulty":5.8,"en":"The policy inadvertently exacerbated existing economic inequalities.","th_correct":"นโยบายนี้กลับยิ่งซ้ำเติมความเหลื่อมล้ำทางเศรษฐกิจโดยไม่ตั้งใจ","th_wrong":"นโยบายนี้ช่วยลดความเหลื่อมล้ำทางเศรษฐกิจได้อย่างตั้งใจ"}
+{"id":26,"cefr":"C2","difficulty":5.85,"en":"Ephemeral","th_correct":"ชั่วคราว ไม่จีรัง","th_wrong":"ยั่งยืนตลอดกาล"}
+{"id":27,"cefr":"C2","difficulty":5.9,"en":"Obfuscate","th_correct":"ทำให้คลุมเครือหรือสับสน","th_wrong":"ทำให้กระจ่างและชัดเจน"}
+{"id":28,"cefr":"C2","difficulty":5.95,"en":"His rhetoric masked an underlying pragmatic intent.","th_correct":"วาทศิลป์ของเขาซ่อนเจตนาที่เน้นผลประโยชน์จริงไว้เบื้องหลัง","th_wrong":"คำพูดที่ตรงไปตรงมาของเขาแสดงถึงอุดมคติอันบริสุทธิ์"}
+{"id":29,"cefr":"C2","difficulty":6.0,"en":"The treaty proved tenuous amid escalating geopolitical tensions.","th_correct":"สนธิสัญญาดูเปราะบางท่ามกลางความตึงเครียดทางภูมิรัฐศาสตร์ที่ทวีความรุนแรง","th_wrong":"สนธิสัญญาแข็งแกร่งขึ้นหลังความขัดแย้งระหว่างประเทศคลี่คลายลง"}
+{"id":30,"cefr":"C2","difficulty":6.0,"en":"Such complacency is antithetical to sustained institutional progress.","th_correct":"ความชะล่าใจเช่นนั้นขัดต่อความก้าวหน้าอย่างยั่งยืนขององค์กร","th_wrong":"ความพึงพอใจเช่นนั้นเป็นหัวใจสำคัญของการพัฒนาองค์กร"}
