@@ -1,162 +1,230 @@
 (() => {
   'use strict';
 
-  const STORAGE_KEY = 'swipelago_th_mvp_v1';
-  const SWIPE_THRESHOLD = 90;
+  // =========================================================================
+  // 1. SUPABASE-READY CONFIGURATION & DATA SERVICE LAYER
+  //    When migrating to Supabase:
+  //    1) Include @supabase/supabase-js in index.html
+  //    2) Set SUPABASE_CONFIG.enabled = true with your project URL & anonKey
+  //    3) Map tables: `phrases`, `profiles`, `attempt_logs`
+  // =========================================================================
+  const SUPABASE_CONFIG = {
+    enabled: false,
+    url: '',
+    anonKey: ''
+  };
 
-  // Fallback dataset in case index.html is opened directly via file:// without a local server
+  const STORAGE_KEY = 'swipelago_adaptive_v2';
+  const SWIPE_THRESHOLD = 85;
+  const N_PLUS_ONE_OFFSET = 0.35; // Feeds content slightly above current skill
+
   const FALLBACK_DB = [
-    { id: 1, en: "Break a leg!", type: "Idiom", th_correct: "ขอให้โชคดีนะ!", th_wrong: "ระวังขาหักนะ!" },
-    { id: 2, en: "My favorite color is gray.", type: "Sentence", th_correct: "สีโปรดของฉันคือสีเทา", th_wrong: "สีโปรดของฉันคือสีเขียว" },
-    { id: 3, en: "I'm running late.", type: "Phrase", th_correct: "ฉันกำลังจะไปสายแล้ว", th_wrong: "ฉันกำลังวิ่งออกกำลังกายตอนดึก" },
-    { id: 4, en: "Could I get the check, please?", type: "Sentence", th_correct: "ขอเช็กบิลด้วยครับ/ค่ะ", th_wrong: "ขอตรวจสอบเอกสารหน่อยครับ/ค่ะ" },
-    { id: 5, en: "It's a piece of cake.", type: "Idiom", th_correct: "มันง่ายมาก", th_wrong: "มันคือขนมเค้กหนึ่งชิ้น" }
+    { id: 1, cefr: 'A1', difficulty: 1.0, en: 'Water', th_correct: 'น้ำ', th_wrong: 'ไฟ' },
+    { id: 2, cefr: 'A2', difficulty: 2.2, en: "I'm running late.", th_correct: 'ฉันกำลังจะไปสายแล้ว', th_wrong: 'ฉันกำลังวิ่งออกกำลังกาย' },
+    { id: 3, cefr: 'B1', difficulty: 3.2, en: 'Give me a heads-up.', th_correct: 'ช่วยบอกล่วงหน้าด้วยนะ', th_wrong: 'ช่วยเงยหน้าขึ้นมองหน่อยนะ' },
+    { id: 4, cefr: 'B2', difficulty: 4.2, en: 'Take a rain check.', th_correct: 'ขอเลื่อนไปคราวหน้านะ', th_wrong: 'ช่วยเช็กพยากรณ์อากาศหน่อย' },
+    { id: 5, cefr: 'C1', difficulty: 5.0, en: 'Ubiquitous', th_correct: 'มีอยู่ทุกหนทุกแห่ง', th_wrong: 'หายากและมีค่ามาก' }
   ];
 
-  const RANKS = [
-    { minLevel: 1, name: "ROOKIE" },
-    { minLevel: 3, name: "EXPLORER" },
-    { minLevel: 5, name: "CHALLENGER" },
-    { minLevel: 8, name: "VANGUARD" },
-    { minLevel: 12, name: "MASTER" },
-    { minLevel: 16, name: "LEGEND" }
-  ];
+  const DataService = {
+    supabase: null,
 
-  // App State
-  let db = [];
-  let deck = [];
-  let currentCard = null;
-  let cardCounter = 0;
-  let isAnimating = false;
-  let toastTimer = null;
+    init() {
+      if (SUPABASE_CONFIG.enabled && window.supabase) {
+        this.supabase = window.supabase.createClient(SUPABASE_CONFIG.url, SUPABASE_CONFIG.anonKey);
+      }
+    },
+
+    async signInWithGoogle() {
+      if (!this.supabase) {
+        alert('Supabase is not connected yet. Add your URL & anonKey in SUPABASE_CONFIG to enable Google Sign-In.');
+        return null;
+      }
+      const { data, error } = await this.supabase.auth.signInWithOAuth({ provider: 'google' });
+      if (error) console.error(error);
+      return data;
+    },
+
+    async fetchPhrases() {
+      if (this.supabase) {
+        const { data, error } = await this.supabase.from('phrases').select('*');
+        if (!error && data?.length) return data;
+      }
+      try {
+        const res = await fetch('./db.jsonl');
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        const text = await res.text();
+        const rows = text.split('\n').map(l => l.trim()).filter(Boolean).map(l => JSON.parse(l));
+        if (rows.length) return rows;
+      } catch (e) {
+        console.warn('Using fallback DB (serve via local HTTP server to load db.jsonl).', e);
+      }
+      return FALLBACK_DB;
+    },
+
+    loadProfile() {
+      const defaults = {
+        userId: null,
+        xp: 0,
+        skillRating: 1.5, // Continuous CEFR scale: 1.0 (A1) -> 6.0 (C2)
+        streak: 0,
+        bestStreak: 0,
+        totalAnswered: 0,
+        totalCorrect: 0,
+        soundEnabled: true,
+        recentIds: [],
+        mistakes: []
+      };
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        return raw ? { ...defaults, ...JSON.parse(raw) } : defaults;
+      } catch {
+        return defaults;
+      }
+    },
+
+    async saveProfile(profile) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(profile));
+      if (this.supabase && profile.userId) {
+        await this.supabase.from('profiles').upsert({
+          id: profile.userId,
+          xp: profile.xp,
+          skill_rating: profile.skillRating,
+          streak: profile.streak,
+          best_streak: profile.bestStreak,
+          total_answered: profile.totalAnswered,
+          total_correct: profile.totalCorrect,
+          updated_at: new Date().toISOString()
+        });
+      }
+    },
+
+    async logAttempt(attempt) {
+      if (this.supabase && attempt.userId) {
+        await this.supabase.from('attempt_logs').insert(attempt);
+      }
+    }
+  };
+
+  // =========================================================================
+  // 2. ADAPTIVE LEARNING ENGINE (n+1 / Elo-style Rating)
+  // =========================================================================
+  function ratingToCefr(rating) {
+    if (rating < 2.0) return 'A1';
+    if (rating < 3.0) return 'A2';
+    if (rating < 4.0) return 'B1';
+    if (rating < 5.0) return 'B2';
+    if (rating < 5.75) return 'C1';
+    return 'C2';
+  }
+
+  function selectAdaptivePhrase(phrases, profile) {
+    const targetDifficulty = Math.min(6.0, Math.max(1.0, profile.skillRating + N_PLUS_ONE_OFFSET));
+    const cooldown = new Set(profile.recentIds.slice(-8));
+
+    let pool = phrases.filter(p => !cooldown.has(p.id));
+    if (pool.length === 0) pool = phrases;
+
+    // Score by closeness to n+1 target + slight random exploration
+    const scored = pool.map(p => {
+      const dist = Math.abs(p.difficulty - targetDifficulty);
+      const jitter = Math.random() * 0.45;
+      return { phrase: p, score: dist + jitter };
+    });
+
+    scored.sort((a, b) => a.score - b.score);
+    return scored[0].phrase;
+  }
+
+  function updateSkillRating(profile, cardDifficulty, isCorrect, isAudioOnly) {
+    // Expected probability of answering correctly
+    const expected = 1 / (1 + Math.pow(10, (cardDifficulty - profile.skillRating) / 1.5));
+    const actual = isCorrect ? 1 : 0;
+    const kFactor = isAudioOnly ? 0.32 : 0.24;
+    const nextRating = profile.skillRating + kFactor * (actual - expected);
+    profile.skillRating = Math.round(Math.min(6.0, Math.max(1.0, nextRating)) * 100) / 100;
+  }
+
+  // =========================================================================
+  // 3. PARTICLE VISUAL EFFECTS (Correct Answer Burst)
+  // =========================================================================
+  const fxCanvas = document.getElementById('fxCanvas');
+  const fxCtx = fxCanvas.getContext('2d');
+  let particles = [];
+  let fxRaf = null;
+
+  function resizeFxCanvas() {
+    const rect = fxCanvas.parentElement.getBoundingClientRect();
+    fxCanvas.width = rect.width;
+    fxCanvas.height = rect.height;
+  }
+
+  function burstParticles() {
+    resizeFxCanvas();
+    const cx = fxCanvas.width / 2;
+    const cy = fxCanvas.height * 0.44;
+    const colors = ['#10b981', '#34d399', '#f59e0b', '#22d3ee', '#ffffff'];
+
+    for (let i = 0; i < 28; i++) {
+      const angle = (Math.PI * 2 * i) / 28 + (Math.random() - 0.5) * 0.3;
+      const speed = 3 + Math.random() * 5.5;
+      particles.push({
+        x: cx,
+        y: cy,
+        vx: Math.cos(angle) * speed,
+        vy: Math.sin(angle) * speed - 1.5,
+        size: 3 + Math.random() * 4,
+        alpha: 1,
+        color: colors[i % colors.length]
+      });
+    }
+
+    if (!fxRaf) animateParticles();
+  }
+
+  function animateParticles() {
+    fxCtx.clearRect(0, 0, fxCanvas.width, fxCanvas.height);
+    particles.forEach(p => {
+      p.x += p.vx;
+      p.y += p.vy;
+      p.vy += 0.16; // subtle gravity
+      p.alpha -= 0.025;
+      fxCtx.globalAlpha = Math.max(0, p.alpha);
+      fxCtx.fillStyle = p.color;
+      fxCtx.beginPath();
+      fxCtx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+      fxCtx.fill();
+    });
+    particles = particles.filter(p => p.alpha > 0);
+    fxCtx.globalAlpha = 1;
+
+    if (particles.length > 0) {
+      fxRaf = requestAnimationFrame(animateParticles);
+    } else {
+      fxRaf = null;
+    }
+  }
+
+  // =========================================================================
+  // 4. AUDIO (US English TTS — Auto-Play Disabled) & SFX
+  // =========================================================================
   let preferredVoice = null;
   let audioCtx = null;
 
-  let player = loadPlayer();
-
-  // DOM References
-  const cardMount = document.getElementById('cardMount');
-  const arena = document.getElementById('arena');
-  const hudLevel = document.getElementById('hudLevel');
-  const hudRank = document.getElementById('hudRank');
-  const hudXp = document.getElementById('hudXp');
-  const hudStreak = document.getElementById('hudStreak');
-  const xpBarFill = document.getElementById('xpBarFill');
-  const soundToggleBtn = document.getElementById('soundToggleBtn');
-  const feedbackToast = document.getElementById('feedbackToast');
-  const dashboardModal = document.getElementById('dashboardModal');
-
-  // --- Persistence ---
-  function defaultPlayer() {
-    return {
-      xp: 0,
-      streak: 0,
-      bestStreak: 0,
-      totalAnswered: 0,
-      totalCorrect: 0,
-      listeningTotal: 0,
-      listeningCorrect: 0,
-      soundEnabled: true,
-      mistakes: []
-    };
-  }
-
-  function loadPlayer() {
-    try {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      return raw ? { ...defaultPlayer(), ...JSON.parse(raw) } : defaultPlayer();
-    } catch {
-      return defaultPlayer();
-    }
-  }
-
-  function savePlayer() {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(player));
-  }
-
-  // --- Level & XP Curve ---
-  function getLevelInfo(totalXp) {
-    let level = 1;
-    let remaining = totalXp;
-    let needed = 100;
-
-    while (remaining >= needed) {
-      remaining -= needed;
-      level++;
-      needed = Math.round(100 * Math.pow(1.25, level - 1));
-    }
-
-    let rankName = RANKS[0].name;
-    for (const r of RANKS) {
-      if (level >= r.minLevel) rankName = r.name;
-    }
-
-    return { level, rankName, currentXp: remaining, neededXp: needed };
-  }
-
-  // --- Web Audio API Synthesized SFX ---
-  function playSfx(type) {
-    if (!player.soundEnabled) return;
-    try {
-      if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-      if (audioCtx.state === 'suspended') audioCtx.resume();
-
-      const now = audioCtx.currentTime;
-      const osc = audioCtx.createOscillator();
-      const gain = audioCtx.createGain();
-      osc.connect(gain);
-      gain.connect(audioCtx.destination);
-
-      if (type === 'correct') {
-        osc.type = 'triangle';
-        osc.frequency.setValueAtTime(523.25, now);
-        osc.frequency.exponentialRampToValueAtTime(783.99, now + 0.12);
-        gain.gain.setValueAtTime(0.16, now);
-        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.22);
-        osc.start(now);
-        osc.stop(now + 0.23);
-      } else if (type === 'wrong') {
-        osc.type = 'sawtooth';
-        osc.frequency.setValueAtTime(210, now);
-        osc.frequency.exponentialRampToValueAtTime(120, now + 0.2);
-        gain.gain.setValueAtTime(0.12, now);
-        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
-        osc.start(now);
-        osc.stop(now + 0.26);
-      } else if (type === 'levelup') {
-        [523.25, 659.25, 783.99, 1046.5].forEach((freq, i) => {
-          const o = audioCtx.createOscillator();
-          const g = audioCtx.createGain();
-          o.type = 'triangle';
-          o.connect(g);
-          g.connect(audioCtx.destination);
-          o.frequency.setValueAtTime(freq, now + i * 0.08);
-          g.gain.setValueAtTime(0.14, now + i * 0.08);
-          g.gain.exponentialRampToValueAtTime(0.001, now + i * 0.08 + 0.25);
-          o.start(now + i * 0.08);
-          o.stop(now + i * 0.08 + 0.26);
-        });
-      }
-    } catch {
-      // Ignore audio errors on restricted devices
-    }
-  }
-
-  // --- American English TTS ---
   function initVoices() {
     if (!('speechSynthesis' in window)) return;
-    const pickVoice = () => {
+    const pick = () => {
       const voices = window.speechSynthesis.getVoices();
       preferredVoice =
         voices.find(v => v.lang === 'en-US' && /Google|Samantha|Aria|Natural/i.test(v.name)) ||
         voices.find(v => v.lang === 'en-US') ||
         voices.find(v => v.lang.startsWith('en'));
     };
-    pickVoice();
-    window.speechSynthesis.onvoiceschanged = pickVoice;
+    pick();
+    window.speechSynthesis.onvoiceschanged = pick;
   }
 
-  function speakEnglish(text, rate = 0.96) {
+  function speakEnglish(text, rate = 0.95) {
     if (!('speechSynthesis' in window)) return;
     window.speechSynthesis.cancel();
     const utter = new SpeechSynthesisUtterance(text);
@@ -166,306 +234,59 @@
     window.speechSynthesis.speak(utter);
   }
 
-  // --- Load JSONL Database ---
-  async function loadDatabase() {
+  function playSfx(type) {
+    if (!player.soundEnabled) return;
     try {
-      const res = await fetch('./db.jsonl');
-      if (!res.ok) throw new Error('HTTP ' + res.status);
-      const text = await res.text();
-      const parsed = text
-        .split('\n')
-        .map(line => line.trim())
-        .filter(Boolean)
-        .map(line => JSON.parse(line));
+      if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+      const now = audioCtx.currentTime;
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
 
-      if (parsed.length > 0) return parsed;
-    } catch (err) {
-      console.warn('Could not fetch db.jsonl (run via local server). Using built-in fallback.', err);
-    }
-    return FALLBACK_DB;
-  }
-
-  function shuffle(array) {
-    const arr = [...array];
-    for (let i = arr.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [arr[i], arr[j]] = [arr[j], arr[i]];
-    }
-    return arr;
-  }
-
-  function nextCardData() {
-    if (deck.length === 0) deck = shuffle(db);
-    const entry = deck.pop();
-    cardCounter++;
-
-    const isMatch = Math.random() < 0.5;
-    // Guarantee an Audio Challenge on card #3, then ~35% chance thereafter
-    const isAudioOnly = cardCounter === 3 ? true : Math.random() < 0.35;
-
-    return {
-      ...entry,
-      isMatch,
-      isAudioOnly,
-      shownThai: isMatch ? entry.th_correct : entry.th_wrong
-    };
-  }
-
-  // --- Render HUD & Card ---
-  function updateHud() {
-    const info = getLevelInfo(player.xp);
-    hudLevel.textContent = info.level;
-    hudRank.textContent = info.rankName;
-    hudXp.textContent = `${info.currentXp} / ${info.neededXp} XP`;
-    xpBarFill.style.width = `${Math.min(100, (info.currentXp / info.neededXp) * 100)}%`;
-    hudStreak.textContent = `🔥 ${player.streak}`;
-    soundToggleBtn.textContent = player.soundEnabled ? '🔊' : '🔇';
-  }
-
-  function renderCard() {
-    currentCard = nextCardData();
-    const xpReward = currentCard.isAudioOnly ? '+35 XP 🎧' : '+20 XP';
-
-    const cardEl = document.createElement('div');
-    cardEl.className = `card${currentCard.isAudioOnly ? ' audio-mode' : ''}`;
-
-    cardEl.innerHTML = `
-      <div class="stamp match">MATCH</div>
-      <div class="stamp nope">WRONG</div>
-
-      <div class="card-header">
-        <span class="tag ${currentCard.isAudioOnly ? 'listening' : ''}">
-          ${currentCard.isAudioOnly ? '🎧 Listening Challenge' : currentCard.type}
-        </span>
-        <span class="xp-reward-tag">${xpReward}</span>
-      </div>
-
-      <div class="english-zone">
-        ${
-          currentCard.isAudioOnly
-            ? `
-              <button class="big-audio-btn" data-audio="normal" aria-label="Listen to English phrase">🔊</button>
-              <div class="listen-hint">Tap to listen (US English)</div>
-              <div class="mini-audio-row">
-                <button class="audio-pill-btn" data-audio="slow">🐢 Slow 0.7x</button>
-              </div>
-            `
-            : `
-              <div class="english-phrase">${escapeHtml(currentCard.en)}</div>
-              <div class="mini-audio-row">
-                <button class="audio-pill-btn" data-audio="normal">🔊 Listen</button>
-                <button class="audio-pill-btn" data-audio="slow">🐢 Slow</button>
-              </div>
-            `
-        }
-      </div>
-
-      <div class="divider"></div>
-
-      <div class="thai-zone">
-        <div class="thai-label">Thai Meaning</div>
-        <div class="thai-meaning">${escapeHtml(currentCard.shownThai)}</div>
-      </div>
-    `;
-
-    // Audio buttons inside card (prevent triggering drag)
-    cardEl.querySelectorAll('[data-audio]').forEach(btn => {
-      btn.addEventListener('pointerdown', e => e.stopPropagation());
-      btn.addEventListener('click', e => {
-        e.stopPropagation();
-        const rate = btn.dataset.audio === 'slow' ? 0.7 : 0.96;
-        speakEnglish(currentCard.en, rate);
-      });
-    });
-
-    attachSwipeHandlers(cardEl);
-
-    cardMount.innerHTML = '';
-    cardMount.appendChild(cardEl);
-
-    // Subtle entrance animation
-    cardEl.style.transform = 'scale(0.95)';
-    cardEl.style.opacity = '0';
-    requestAnimationFrame(() => {
-      cardEl.style.transition = 'transform 0.22s ease, opacity 0.22s ease';
-      cardEl.style.transform = 'scale(1)';
-      cardEl.style.opacity = '1';
-      setTimeout(() => {
-        cardEl.style.transition = '';
-      }, 230);
-    });
-
-    // Auto-speak audio-only cards after first user interaction
-    if (currentCard.isAudioOnly && player.totalAnswered > 0) {
-      setTimeout(() => speakEnglish(currentCard.en, 0.96), 220);
-    }
-  }
-
-  // --- Unified Mobile Touch + PC Mouse Drag Physics ---
-  function attachSwipeHandlers(cardEl) {
-    const stampMatch = cardEl.querySelector('.stamp.match');
-    const stampNope = cardEl.querySelector('.stamp.nope');
-
-    let isDragging = false;
-    let startX = 0;
-    let startY = 0;
-    let currentX = 0;
-
-    cardEl.addEventListener('pointerdown', e => {
-      if (isAnimating) return;
-      isDragging = true;
-      startX = e.clientX;
-      startY = e.clientY;
-      currentX = 0;
-      cardEl.setPointerCapture(e.pointerId);
-      cardEl.style.transition = '';
-    });
-
-    cardEl.addEventListener('pointermove', e => {
-      if (!isDragging) return;
-      currentX = e.clientX - startX;
-      const dy = (e.clientY - startY) * 0.22;
-      const rotate = currentX * 0.055;
-
-      cardEl.style.transform = `translate3d(${currentX}px, ${dy}px, 0) rotate(${rotate}deg)`;
-
-      const ratio = Math.min(1, Math.abs(currentX) / SWIPE_THRESHOLD);
-      if (currentX > 0) {
-        stampMatch.style.opacity = ratio;
-        stampNope.style.opacity = 0;
+      if (type === 'correct') {
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(523.25, now);
+        osc.frequency.exponentialRampToValueAtTime(880, now + 0.14);
+        gain.gain.setValueAtTime(0.14, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.22);
+        osc.start(now);
+        osc.stop(now + 0.23);
       } else {
-        stampNope.style.opacity = ratio;
-        stampMatch.style.opacity = 0;
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(190, now);
+        osc.frequency.exponentialRampToValueAtTime(115, now + 0.18);
+        gain.gain.setValueAtTime(0.1, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.22);
+        osc.start(now);
+        osc.stop(now + 0.23);
       }
-    });
-
-    const endDrag = () => {
-      if (!isDragging) return;
-      isDragging = false;
-
-      if (currentX >= SWIPE_THRESHOLD) {
-        commitSwipe(true, cardEl);
-      } else if (currentX <= -SWIPE_THRESHOLD) {
-        commitSwipe(false, cardEl);
-      } else {
-        cardEl.style.transition = 'transform 0.28s cubic-bezier(0.22, 1, 0.36, 1)';
-        cardEl.style.transform = 'translate3d(0, 0, 0) rotate(0deg)';
-        stampMatch.style.opacity = 0;
-        stampNope.style.opacity = 0;
-      }
-    };
-
-    cardEl.addEventListener('pointerup', endDrag);
-    cardEl.addEventListener('pointercancel', endDrag);
+    } catch { /* ignore */ }
   }
 
-  // --- Evaluate Answer & Gamification ---
-  function commitSwipe(userSwipedRight, cardEl) {
-    if (isAnimating || !currentCard) return;
-    isAnimating = true;
+  // =========================================================================
+  // 5. ADAPTIVE TYPOGRAPHY (1 to 10+ words)
+  // =========================================================================
+  function getAdaptiveFontSize(text) {
+    const len = text.length;
+    if (len <= 12) return '2.25rem';
+    if (len <= 24) return '1.8rem';
+    if (len <= 42) return '1.45rem';
+    if (len <= 60) return '1.22rem';
+    return '1.08rem';
+  }
 
-    const el = cardEl || cardMount.querySelector('.card');
-    if (el) {
-      const dir = userSwipedRight ? 1 : -1;
-      el.style.transition = 'transform 0.28s ease-in, opacity 0.28s ease-in';
-      el.style.transform = `translate3d(${dir * 460}px, 30px, 0) rotate(${dir * 22}deg)`;
-      el.style.opacity = '0';
+  function getLevelInfo(totalXp) {
+    let level = 1;
+    let rem = totalXp;
+    let need = 100;
+    while (rem >= need) {
+      rem -= need;
+      level++;
+      need = Math.round(100 * Math.pow(1.25, level - 1));
     }
-
-    const isCorrect = userSwipedRight === currentCard.isMatch;
-    const prevLevel = getLevelInfo(player.xp).level;
-
-    player.totalAnswered++;
-    if (currentCard.isAudioOnly) player.listeningTotal++;
-
-    if (isCorrect) {
-      player.totalCorrect++;
-      if (currentCard.isAudioOnly) player.listeningCorrect++;
-      player.streak++;
-      if (player.streak > player.bestStreak) player.bestStreak = player.streak;
-
-      const baseXp = currentCard.isAudioOnly ? 35 : 20;
-      const multiplier = player.streak >= 10 ? 2 : player.streak >= 5 ? 1.5 : 1;
-      const earnedXp = Math.round(baseXp * multiplier);
-      player.xp += earnedXp;
-
-      const newLevel = getLevelInfo(player.xp).level;
-      playSfx(newLevel > prevLevel ? 'levelup' : 'correct');
-
-      spawnXpPop(
-        newLevel > prevLevel
-          ? `LEVEL UP! LVL ${newLevel}`
-          : `+${earnedXp} XP${multiplier > 1 ? ` (x${multiplier})` : ''}`
-      );
-
-      if (currentCard.isAudioOnly) {
-        showToast(true, `✓ Correct! "${currentCard.en}" = ${currentCard.th_correct}`);
-      } else {
-        showToast(true, `✓ Spot on! Streak: ${player.streak}`);
-      }
-    } else {
-      player.streak = 0;
-      playSfx('wrong');
-
-      // Record mistake for review (keep last 8 unique items)
-      player.mistakes = [
-        { en: currentCard.en, th: currentCard.th_correct },
-        ...player.mistakes.filter(m => m.en !== currentCard.en)
-      ].slice(0, 8);
-
-      showToast(false, `✕ "${currentCard.en}" means: ${currentCard.th_correct}`);
-    }
-
-    savePlayer();
-    updateHud();
-
-    setTimeout(() => {
-      isAnimating = false;
-      renderCard();
-    }, 280);
-  }
-
-  function spawnXpPop(text) {
-    const pop = document.createElement('div');
-    pop.className = 'xp-pop';
-    pop.textContent = text;
-    arena.appendChild(pop);
-    setTimeout(() => pop.remove(), 920);
-  }
-
-  function showToast(isCorrect, message) {
-    clearTimeout(toastTimer);
-    feedbackToast.textContent = message;
-    feedbackToast.className = `toast show ${isCorrect ? 'correct' : 'wrong'}`;
-    toastTimer = setTimeout(() => {
-      feedbackToast.classList.remove('show');
-    }, 2400);
-  }
-
-  // --- Dashboard Modal ---
-  function openDashboard() {
-    const acc = player.totalAnswered
-      ? Math.round((player.totalCorrect / player.totalAnswered) * 100)
-      : 0;
-    const listenAcc = player.listeningTotal
-      ? Math.round((player.listeningCorrect / player.listeningTotal) * 100)
-      : 0;
-
-    document.getElementById('statTotalXp').textContent = player.xp;
-    document.getElementById('statAccuracy').textContent = `${acc}%`;
-    document.getElementById('statBestStreak').textContent = `🔥 ${player.bestStreak}`;
-    document.getElementById('statListening').textContent = `${listenAcc}%`;
-
-    const listEl = document.getElementById('mistakesList');
-    if (player.mistakes.length === 0) {
-      listEl.innerHTML = `<div style="color:var(--text-muted); font-size:0.85rem;">No mistakes yet — keep swiping!</div>`;
-    } else {
-      listEl.innerHTML = player.mistakes
-        .map(m => `<div class="mistake-item"><div class="en">${escapeHtml(m.en)}</div><div class="th">${escapeHtml(m.th)}</div></div>`)
-        .join('');
-    }
-
-    dashboardModal.classList.add('open');
+    return { level, rem, need };
   }
 
   function escapeHtml(str) {
@@ -474,53 +295,319 @@
     }[ch]));
   }
 
-  // --- Wire Controls & Keyboard ---
-  document.getElementById('btnNope').addEventListener('click', () => commitSwipe(false));
-  document.getElementById('btnMatch').addEventListener('click', () => commitSwipe(true));
-  document.getElementById('btnReplay').addEventListener('click', () => {
-    if (currentCard) speakEnglish(currentCard.en, 0.96);
+  // =========================================================================
+  // 6. CORE GAME LOOP & UI
+  // =========================================================================
+  let phrases = [];
+  let player = DataService.loadProfile();
+  let currentCard = null;
+  let isReviewing = false;
+  let reviewTimer = null;
+
+  const cardMount = document.getElementById('cardMount');
+  const reviewOverlay = document.getElementById('reviewOverlay');
+  const reviewTimerBar = document.getElementById('reviewTimerBar');
+  const reviewTimerFill = document.getElementById('reviewTimerFill');
+  const dashboardModal = document.getElementById('dashboardModal');
+
+  function updateHud() {
+    const lvl = getLevelInfo(player.xp);
+    document.getElementById('hudCefr').textContent = ratingToCefr(player.skillRating);
+    document.getElementById('hudLevel').textContent = `LVL ${lvl.level}`;
+    document.getElementById('hudStreak').textContent = `🔥 ${player.streak}`;
+    document.getElementById('xpFill').style.width = `${Math.min(100, (lvl.rem / lvl.need) * 100)}%`;
+    document.getElementById('soundToggleBtn').textContent = player.soundEnabled ? '🔊' : '🔇';
+  }
+
+  function renderNextCard() {
+    const entry = selectAdaptivePhrase(phrases, player);
+    const isMatch = Math.random() < 0.5;
+    const isAudioOnly = Math.random() < 0.32;
+
+    currentCard = {
+      ...entry,
+      isMatch,
+      isAudioOnly,
+      shownThai: isMatch ? entry.th_correct : entry.th_wrong
+    };
+
+    const cardEl = document.createElement('div');
+    cardEl.className = `card${isAudioOnly ? ' audio-mode' : ''}`;
+    const enSize = getAdaptiveFontSize(currentCard.en);
+
+    cardEl.innerHTML = `
+      <div class="swipe-indicator match">✓</div>
+      <div class="swipe-indicator nope">✕</div>
+
+      <div class="card-top">
+        <span class="badge">${currentCard.cefr}</span>
+        ${isAudioOnly ? '<span class="badge audio">🎧</span>' : ''}
+      </div>
+
+      <div class="en-zone">
+        ${
+          isAudioOnly
+            ? `
+              <button class="audio-btn hero" data-audio="normal" aria-label="Play audio">🔊</button>
+              <button class="audio-btn slow" data-audio="slow" aria-label="Play slow">0.7x</button>
+            `
+            : `
+              <div class="en-text" style="font-size:${enSize};">${escapeHtml(currentCard.en)}</div>
+              <div class="audio-controls">
+                <button class="audio-btn" data-audio="normal" aria-label="Play audio">🔊</button>
+                <button class="audio-btn slow" data-audio="slow" aria-label="Play slow">0.7x</button>
+              </div>
+            `
+        }
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="th-zone">
+        <div class="th-text">${escapeHtml(currentCard.shownThai)}</div>
+      </div>
+    `;
+
+    // Audio buttons (manual tap only — no auto-play)
+    cardEl.querySelectorAll('[data-audio]').forEach(btn => {
+      btn.addEventListener('pointerdown', e => e.stopPropagation());
+      btn.addEventListener('click', e => {
+        e.stopPropagation();
+        speakEnglish(currentCard.en, btn.dataset.audio === 'slow' ? 0.7 : 0.95);
+      });
+    });
+
+    attachSwipe(cardEl);
+    cardMount.innerHTML = '';
+    cardMount.appendChild(cardEl);
+  }
+
+  function attachSwipe(cardEl) {
+    const indMatch = cardEl.querySelector('.swipe-indicator.match');
+    const indNope = cardEl.querySelector('.swipe-indicator.nope');
+    let dragging = false;
+    let startX = 0;
+    let startY = 0;
+    let dx = 0;
+
+    cardEl.addEventListener('pointerdown', e => {
+      if (isReviewing) return;
+      dragging = true;
+      startX = e.clientX;
+      startY = e.clientY;
+      dx = 0;
+      cardEl.setPointerCapture(e.pointerId);
+      cardEl.style.transition = '';
+    });
+
+    cardEl.addEventListener('pointermove', e => {
+      if (!dragging) return;
+      dx = e.clientX - startX;
+      const dy = (e.clientY - startY) * 0.2;
+      cardEl.style.transform = `translate3d(${dx}px, ${dy}px, 0) rotate(${dx * 0.05}deg)`;
+
+      const ratio = Math.min(1, Math.abs(dx) / SWIPE_THRESHOLD);
+      indMatch.style.opacity = dx > 0 ? ratio : 0;
+      indNope.style.opacity = dx < 0 ? ratio : 0;
+    });
+
+    const release = () => {
+      if (!dragging) return;
+      dragging = false;
+      if (dx >= SWIPE_THRESHOLD) handleAnswer(true, cardEl);
+      else if (dx <= -SWIPE_THRESHOLD) handleAnswer(false, cardEl);
+      else {
+        cardEl.style.transition = 'transform 0.26s cubic-bezier(0.22, 1, 0.36, 1)';
+        cardEl.style.transform = 'translate3d(0,0,0) rotate(0deg)';
+        indMatch.style.opacity = 0;
+        indNope.style.opacity = 0;
+      }
+    };
+
+    cardEl.addEventListener('pointerup', release);
+    cardEl.addEventListener('pointercancel', release);
+  }
+
+  function handleAnswer(swipedRight, cardEl) {
+    if (isReviewing || !currentCard) return;
+    isReviewing = true;
+
+    const el = cardEl || cardMount.querySelector('.card');
+    if (el) {
+      const dir = swipedRight ? 1 : -1;
+      el.style.transition = 'transform 0.24s ease-in, opacity 0.24s ease-in';
+      el.style.transform = `translate3d(${dir * 420}px, 24px, 0) rotate(${dir * 20}deg)`;
+      el.style.opacity = '0';
+    }
+
+    const isCorrect = swipedRight === currentCard.isMatch;
+    player.totalAnswered++;
+    player.recentIds = [...player.recentIds.slice(-15), currentCard.id];
+
+    updateSkillRating(player, currentCard.difficulty, isCorrect, currentCard.isAudioOnly);
+
+    let earnedXp = 0;
+    if (isCorrect) {
+      player.totalCorrect++;
+      player.streak++;
+      if (player.streak > player.bestStreak) player.bestStreak = player.streak;
+      const base = currentCard.isAudioOnly ? 35 : 20;
+      earnedXp = Math.round(base * (player.streak >= 5 ? 1.5 : 1));
+      player.xp += earnedXp;
+      playSfx('correct');
+      burstParticles();
+    } else {
+      player.streak = 0;
+      playSfx('wrong');
+      player.mistakes = [
+        { en: currentCard.en, th: currentCard.th_correct },
+        ...player.mistakes.filter(m => m.en !== currentCard.en)
+      ].slice(0, 8);
+    }
+
+    DataService.saveProfile(player);
+    DataService.logAttempt({
+      userId: player.userId,
+      phraseId: currentCard.id,
+      isCorrect,
+      isAudioOnly: currentCard.isAudioOnly,
+      skillAfter: player.skillRating,
+      createdAt: new Date().toISOString()
+    });
+
+    updateHud();
+    showReview(isCorrect, earnedXp);
+  }
+
+  function showReview(isCorrect, earnedXp) {
+    clearTimeout(reviewTimer);
+    reviewOverlay.className = `review-overlay show ${isCorrect ? 'correct' : 'wrong'}`;
+
+    document.getElementById('reviewStatus').textContent = isCorrect
+      ? `✓ Correct  +${earnedXp} XP`
+      : '✕ Not quite';
+
+    document.getElementById('reviewEn').textContent = currentCard.en;
+    document.getElementById('reviewThCorrect').textContent = currentCard.th_correct;
+
+    const wrongEl = document.getElementById('reviewThWrong');
+    if (!currentCard.isMatch) {
+      wrongEl.textContent = currentCard.th_wrong;
+      wrongEl.style.display = 'block';
+    } else {
+      wrongEl.style.display = 'none';
+    }
+
+    // Correct: auto-advance after 2.2s (or tap immediately). Wrong: wait for user tap.
+    if (isCorrect) {
+      reviewTimerBar.style.display = 'block';
+      reviewTimerFill.style.transition = 'none';
+      reviewTimerFill.style.transform = 'scaleX(1)';
+      requestAnimationFrame(() => {
+        reviewTimerFill.style.transition = 'transform 2.2s linear';
+        reviewTimerFill.style.transform = 'scaleX(0)';
+      });
+      reviewTimer = setTimeout(closeReviewAndAdvance, 2200);
+    } else {
+      reviewTimerBar.style.display = 'none';
+    }
+  }
+
+  function closeReviewAndAdvance() {
+    if (!isReviewing) return;
+    clearTimeout(reviewTimer);
+    reviewOverlay.classList.remove('show');
+    isReviewing = false;
+    renderNextCard();
+  }
+
+  // =========================================================================
+  // 7. EVENTS & DASHBOARD
+  // =========================================================================
+  document.getElementById('reviewNextBtn').addEventListener('click', e => {
+    e.stopPropagation();
+    closeReviewAndAdvance();
   });
 
-  soundToggleBtn.addEventListener('click', () => {
+  reviewOverlay.addEventListener('click', closeReviewAndAdvance);
+
+  document.getElementById('reviewAudioBtn').addEventListener('click', e => {
+    e.stopPropagation();
+    if (currentCard) speakEnglish(currentCard.en, 0.95);
+  });
+
+  document.getElementById('btnNope').addEventListener('click', () => handleAnswer(false));
+  document.getElementById('btnMatch').addEventListener('click', () => handleAnswer(true));
+  document.getElementById('btnReplay').addEventListener('click', () => {
+    if (currentCard) speakEnglish(currentCard.en, 0.95);
+  });
+
+  document.getElementById('soundToggleBtn').addEventListener('click', () => {
     player.soundEnabled = !player.soundEnabled;
-    savePlayer();
+    DataService.saveProfile(player);
     updateHud();
   });
 
+  function openDashboard() {
+    const acc = player.totalAnswered ? Math.round((player.totalCorrect / player.totalAnswered) * 100) : 0;
+    document.getElementById('statCefr').textContent = `${ratingToCefr(player.skillRating)} (${player.skillRating.toFixed(1)})`;
+    document.getElementById('statXp').textContent = player.xp;
+    document.getElementById('statAcc').textContent = `${acc}%`;
+    document.getElementById('statBestStreak').textContent = `🔥 ${player.bestStreak}`;
+
+    const listEl = document.getElementById('mistakesList');
+    listEl.innerHTML = player.mistakes.length
+      ? player.mistakes.map(m => `<div class="mistake-item"><div class="en">${escapeHtml(m.en)}</div><div class="th">${escapeHtml(m.th)}</div></div>`).join('')
+      : `<div style="color:var(--muted); font-size:0.84rem; text-align:center; padding:8px;">No mistakes yet</div>`;
+
+    dashboardModal.classList.add('open');
+  }
+
   document.getElementById('openDashboardBtn').addEventListener('click', openDashboard);
   document.getElementById('statsBtn').addEventListener('click', openDashboard);
-  document.getElementById('closeDashboardBtn').addEventListener('click', () => {
-    dashboardModal.classList.remove('open');
-  });
+  document.getElementById('closeDashboardBtn').addEventListener('click', () => dashboardModal.classList.remove('open'));
   dashboardModal.addEventListener('click', e => {
     if (e.target === dashboardModal) dashboardModal.classList.remove('open');
   });
 
-  document.getElementById('resetProgressBtn').addEventListener('click', () => {
-    if (confirm('Reset all XP, streaks, and stats?')) {
-      player = defaultPlayer();
-      savePlayer();
+  document.getElementById('googleAuthBtn').addEventListener('click', () => DataService.signInWithGoogle());
+
+  document.getElementById('resetBtn').addEventListener('click', () => {
+    if (confirm('Reset progress?')) {
+      localStorage.removeItem(STORAGE_KEY);
+      player = DataService.loadProfile();
       updateHud();
       dashboardModal.classList.remove('open');
+      renderNextCard();
     }
   });
 
   window.addEventListener('keydown', e => {
     if (dashboardModal.classList.contains('open')) return;
-    if (e.key === 'ArrowLeft') commitSwipe(false);
-    else if (e.key === 'ArrowRight') commitSwipe(true);
+    if (isReviewing) {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        closeReviewAndAdvance();
+      }
+      return;
+    }
+    if (e.key === 'ArrowLeft') handleAnswer(false);
+    else if (e.key === 'ArrowRight') handleAnswer(true);
     else if (e.key === ' ') {
       e.preventDefault();
-      if (currentCard) speakEnglish(currentCard.en, 0.96);
+      if (currentCard) speakEnglish(currentCard.en, 0.95);
     }
   });
 
-  // --- Boot ---
+  // Boot
   async function init() {
+    DataService.init();
     initVoices();
+    resizeFxCanvas();
+    window.addEventListener('resize', resizeFxCanvas);
     updateHud();
-    db = await loadDatabase();
-    renderCard();
+    phrases = await DataService.fetchPhrases();
+    renderNextCard();
   }
 
   init();
