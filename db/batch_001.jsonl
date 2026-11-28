@@ -1,20 +1,100 @@
+{"en":"How's it going?","th_correct":"เป็นไงบ้าง","th_wrong":"คุณกำลังจะไปไหน"}
+{"en":"What's up?","th_correct":"ว่าไง / มีอะไรเกิดขึ้นบ้าง","th_wrong":"ข้างบนมีอะไร"}
+{"en":"Long time no see.","th_correct":"ไม่ได้เจอกันนานเลย","th_wrong":"ฉันมองไม่ค่อยเห็นเลย"}
+{"en":"Nice to meet you.","th_correct":"ยินดีที่ได้รู้จัก","th_wrong":"ยินดีต้อนรับกลับบ้าน"}
+{"en":"Have a good one!","th_correct":"ขอให้มีวันที่ดีนะ!","th_wrong":"เลือกอันที่ดีๆ นะ!"}
+{"en":"Take care.","th_correct":"ดูแลตัวเองด้วยนะ","th_wrong":"ระวังของหายนะ"}
+{"en":"See you around.","th_correct":"ไว้เจอกันใหม่นะ","th_wrong":"มองไปรอบๆ สิ"}
+{"en":"Catch you later.","th_correct":"ไว้คุยกันทีหลังนะ","th_wrong":"เดี๋ยวฉันไปรับทีหลังนะ"}
+{"en":"Excuse me.","th_correct":"ขอโทษนะครับ/คะ (ขอทาง/เรียก)","th_wrong":"ไม่เป็นไรครับ/ค่ะ"}
+{"en":"I'm sorry.","th_correct":"ฉันขอโทษ","th_wrong":"ฉันไม่เป็นไร"}
+{"en":"My bad.","th_correct":"ความผิดฉันเอง / โทษที","th_wrong":"ฉันอารมณ์ไม่ดี"}
+{"en":"No worries.","th_correct":"ไม่ต้องห่วง / ไม่เป็นไรเลย","th_wrong":"ฉันกังวลมาก"}
+{"en":"Don't mention it.","th_correct":"ด้วยความยินดี / ไม่เป็นไรเลย","th_wrong":"อย่าเอาเรื่องนี้ไปพูดนะ"}
+{"en":"You're welcome.","th_correct":"ด้วยความยินดี","th_wrong":"เชิญเข้ามาได้เลย"}
+{"en":"Thanks a lot.","th_correct":"ขอบคุณมากเลย","th_wrong":"ขอโทษมากเลย"}
+{"en":"I really appreciate it.","th_correct":"ฉันซาบซึ้งใจมากจริงๆ","th_wrong":"ฉันไม่ค่อยเข้าใจมันเท่าไหร่"}
+{"en":"Sounds good.","th_correct":"ฟังดูดีเลย / โอเคเลย","th_wrong":"เสียงเพลงเพราะมาก"}
+{"en":"That works for me.","th_correct":"แบบนั้นฉันสะดวกเลย","th_wrong":"อันนั้นใช้ไม่ได้ผลกับฉัน"}
+{"en":"I'm down.","th_correct":"ฉันเอาด้วย / ไปด้วย","th_wrong":"ฉันกำลังรู้สึกเศร้ามาก"}
+{"en":"Count me in.","th_correct":"นับฉันรวมไปด้วยคนนะ","th_wrong":"ช่วยนับเงินให้ฉันหน่อย"}
+{"en":"Maybe next time.","th_correct":"ไว้คราวหน้าแล้วกันนะ","th_wrong":"เจอกันตอนนี้เลยนะ"}
+{"en":"Let me think about it.","th_correct":"ขอฉันคิดดูก่อนนะ","th_wrong":"ฉันตัดสินใจเรียบร้อยแล้ว"}
+{"en":"I'll get back to you.","th_correct":"เดี๋ยวฉันติดต่อกลับไปนะ","th_wrong":"เดี๋ยวฉันเดินตามหลังไปนะ"}
+{"en":"Never mind.","th_correct":"ช่างเถอะ / ไม่เป็นไร","th_wrong":"อย่าลืมเด็ดขาดนะ"}
+{"en":"Forget about it.","th_correct":"ลืมมันไปเถอะ / ไม่ต้องคิดมาก","th_wrong":"จำเรื่องนี้ไว้ให้ดีนะ"}
+{"en":"No problem.","th_correct":"ไม่มีปัญหา","th_wrong":"มีปัญหานิดหน่อย"}
+{"en":"Anytime.","th_correct":"เมื่อไหร่ก็ได้ / ด้วยความยินดี","th_wrong":"ตอนนี้ไม่ว่างเลย"}
+{"en":"Of course.","th_correct":"แน่นอนอยู่แล้ว","th_wrong":"เป็นไปไม่ได้หรอก"}
+{"en":"Absolutely.","th_correct":"อย่างแน่นอนที่สุด","th_wrong":"ไม่น่าจะใช่นะ"}
+{"en":"Definitely.","th_correct":"แน่นอน / ชัวร์เลย","th_wrong":"อาจจะไม่ก็ได้"}
+{"en":"Probably not.","th_correct":"อาจจะไม่นะ","th_wrong":"น่าจะใช่แน่นอน"}
+{"en":"I doubt it.","th_correct":"ฉันไม่ค่อยเชื่อเท่าไหร่ / ไม่น่าใช่","th_wrong":"ฉันมั่นใจร้อยเปอร์เซ็นต์"}
+{"en":"I'm not sure.","th_correct":"ฉันไม่แน่ใจ","th_wrong":"ฉันรู้คำตอบแล้ว"}
+{"en":"Beats me.","th_correct":"ฉันก็ไม่รู้เหมือนกัน","th_wrong":"เขาชนะฉันไปแล้ว"}
+{"en":"It depends.","th_correct":"มันก็แล้วแต่สถานการณ์","th_wrong":"มันแน่นอนอยู่แล้ว"}
+{"en":"Fair enough.","th_correct":"ก็ยุติธรรมดี / ฟังดูมีเหตุผล","th_wrong":"มันไม่ยุติธรรมเลย"}
+{"en":"That makes sense.","th_correct":"ก็สมเหตุสมผลดีนะ","th_wrong":"นั่นฟังดูไร้สาระมาก"}
+{"en":"I get it.","th_correct":"ฉันเข้าใจแล้ว","th_wrong":"ฉันซื้อมาแล้ว"}
+{"en":"Gotcha.","th_correct":"เข้าใจแล้ว / รับทราบ","th_wrong":"ฉันจับคุณไม่ได้"}
+{"en":"Good point.","th_correct":"ประเด็นดีมาก / จริงด้วย","th_wrong":"คะแนนดีมาก"}
+{"en":"You're right.","th_correct":"คุณพูดถูก","th_wrong":"คุณเลี้ยวขวา"}
+{"en":"I agree with you.","th_correct":"ฉันเห็นด้วยกับคุณ","th_wrong":"ฉันไม่เห็นด้วยกับคุณ"}
+{"en":"We're on the same page.","th_correct":"เราเข้าใจตรงกัน","th_wrong":"เราอ่านหนังสือหน้าเดียวกัน"}
+{"en":"Tell me about it.","th_correct":"จริงที่สุดเลย (เห็นด้วยอย่างแรง)","th_wrong":"ช่วยเล่าเรื่องนี้ให้ฟังหน่อย"}
+{"en":"No way!","th_correct":"ไม่มีทาง! / จริงดิ!","th_wrong":"ไปทางนี้ไม่ได้!"}
+{"en":"Are you serious?","th_correct":"พูดจริงเหรอเนี่ย?","th_wrong":"คุณกำลังโกรธอยู่เหรอ?"}
+{"en":"You're kidding!","th_correct":"ล้อเล่นใช่ไหมเนี่ย!","th_wrong":"คุณพูดความจริงใช่ไหม!"}
+{"en":"Just kidding.","th_correct":"แค่ล้อเล่นน่า","th_wrong":"ฉันพูดจริงนะ"}
+{"en":"Seriously?","th_correct":"จริงจังเหรอ?","th_wrong":"ใจเย็นๆ นะ?"}
+{"en":"That's awesome!","th_correct":"เจ๋งมากเลย! / สุดยอด!","th_wrong":"น่ากลัวมากเลย!"}
+{"en":"That's too bad.","th_correct":"แย่จังเลย / น่าเสียดาย","th_wrong":"ดีมากเลย"}
+{"en":"What a shame.","th_correct":"น่าเสียดายจัง","th_wrong":"น่าภูมิใจจัง"}
+{"en":"Hang in there.","th_correct":"อดทนไว้นะ สู้ๆ","th_wrong":"แขวนไว้ตรงนั้นนะ"}
+{"en":"Keep it up!","th_correct":"ทำดีต่อไปนะ!","th_wrong":"เก็บมันไว้ข้างบนนะ!"}
+{"en":"Good luck!","th_correct":"ขอให้โชคดีนะ!","th_wrong":"ยินดีด้วยนะ!"}
+{"en":"Fingers crossed.","th_correct":"ขอให้สมหวังนะ / เอาใจช่วย","th_wrong":"อย่าไขว้นิ้วนะ"}
+{"en":"Break a leg!","th_correct":"ขอให้โชคดีในการแสดงนะ!","th_wrong":"ระวังขาหักนะ!"}
+{"en":"Better late than never.","th_correct":"มาช้ายังดีกว่าไม่มา","th_wrong":"มาสายดีกว่าไม่บอกล่วงหน้า"}
+{"en":"Take your time.","th_correct":"ไม่ต้องรีบนะ ตามสบาย","th_wrong":"รีบหน่อยนะ เดี๋ยวไม่ทัน"}
+{"en":"Hurry up!","th_correct":"รีบหน่อย!","th_wrong":"ช้าๆ หน่อย!"}
+{"en":"Wait a second.","th_correct":"รอแป๊บเดียวนะ","th_wrong":"รออีกชั่วโมงนะ"}
+{"en":"Hold on.","th_correct":"รอสักครู่นะ / ถือสายรอก่อน","th_wrong":"ปล่อยมือได้เลย"}
+{"en":"Just a minute.","th_correct":"ขอเวลาสักครู่","th_wrong":"ใช้เวลานานมาก"}
+{"en":"Be right back.","th_correct":"เดี๋ยวรีบกลับมานะ","th_wrong":"ฉันกลับบ้านแล้วนะ"}
+{"en":"I'm on my way.","th_correct":"ฉันกำลังเดินทางไป","th_wrong":"ฉันยังไม่ได้ออกจากบ้าน"}
 {"en":"I'm running late.","th_correct":"ฉันกำลังจะไปสายแล้ว","th_wrong":"ฉันกำลังวิ่งออกกำลังกาย"}
-{"en":"Take a rain check.","th_correct":"ขอเลื่อนไปคราวหน้านะ","th_wrong":"ช่วยเช็กพยากรณ์อากาศหน่อย"}
-{"en":"Could I get the check, please?","th_correct":"ขอเช็กบิลด้วยครับ/ค่ะ","th_wrong":"ขอตรวจสอบเอกสารหน่อยครับ/ค่ะ"}
-{"en":"Ubiquitous","th_correct":"มีอยู่ทุกหนทุกแห่ง","th_wrong":"หายากและมีค่ามาก"}
-{"en":"Give me a heads-up.","th_correct":"ช่วยบอกล่วงหน้าด้วยนะ","th_wrong":"ช่วยเงยหน้าขึ้นมองหน่อยนะ"}
-{"en":"I'm feeling under the weather.","th_correct":"ฉันรู้สึกไม่ค่อยสบาย","th_wrong":"ฉันกำลังยืนตากฝนอยู่"}
-{"en":"Take the elevator to the third floor.","th_correct":"ขึ้นลิฟต์ไปชั้นสาม","th_wrong":"ขึ้นบันไดเลื่อนไปชั้นสาม"}
-{"en":"It's a piece of cake.","th_correct":"มันง่ายมาก","th_wrong":"มันคือขนมเค้กหนึ่งชิ้น"}
-{"en":"We are on the same page.","th_correct":"เราเข้าใจตรงกัน","th_wrong":"เรากำลังอ่านหนังสือหน้าเดียวกัน"}
-{"en":"I apologize for the delay.","th_correct":"ขออภัยในความล่าช้า","th_wrong":"ฉันขอบคุณที่รออย่างใจเย็น"}
-{"en":"Let's call it a day.","th_correct":"พอแค่นี้ก่อนสำหรับวันนี้","th_wrong":"มาโทรนัดวันกันเถอะ"}
-{"en":"That rings a bell.","th_correct":"ฟังดูคุ้นๆ นะ","th_wrong":"เสียงกระดิ่งดังแล้วนะ"}
-{"en":"Don't take it personally.","th_correct":"อย่าเก็บไปคิดมากเป็นเรื่องส่วนตัวนะ","th_wrong":"อย่าหยิบของส่วนตัวฉันไปนะ"}
-{"en":"It happened out of the blue.","th_correct":"มันเกิดขึ้นอย่างไม่คาดคิด","th_wrong":"มันเกิดขึ้นท่ามกลางท้องฟ้าสีคราม"}
-{"en":"Schedule","th_correct":"ตารางเวลา","th_wrong":"ใบเสร็จรับเงิน"}
-{"en":"Her explanation shed light on the complex issue.","th_correct":"คำอธิบายของเธอช่วยให้เข้าใจปัญหาที่ซับซ้อนมากขึ้น","th_wrong":"คำอธิบายของเธอทำให้เรื่องยิ่งสับสนกว่าเดิม"}
-{"en":"Keep me posted.","th_correct":"คอยอัปเดตข่าวให้ฉันรู้ด้วยนะ","th_wrong":"ช่วยส่งพัสดุมาให้ฉันด้วยนะ"}
-{"en":"I'm totally burned out.","th_correct":"ฉันหมดไฟและเหนื่อยล้ามาก","th_wrong":"ฉันโดนแดดเผาจนตัวแดงหมดแล้ว"}
-{"en":"A double-edged sword","th_correct":"ดาบสองคม","th_wrong":"อาวุธโบราณ"}
-{"en":"The flight was delayed by two hours.","th_correct":"เที่ยวบินล่าช้าไปสองชั่วโมง","th_wrong":"เที่ยวบินถูกยกเลิกกะทันหัน"}
+{"en":"I'm almost there.","th_correct":"ฉันใกล้จะถึงแล้ว","th_wrong":"ฉันเพิ่งออกมาเอง"}
+{"en":"Where are you at?","th_correct":"ตอนนี้คุณอยู่ตรงไหนแล้ว","th_wrong":"คุณกำลังทำอะไรอยู่"}
+{"en":"Let's grab a bite.","th_correct":"ไปหาอะไรกินกันเถอะ","th_wrong":"ระวังโดนกัดนะ"}
+{"en":"I'm starving.","th_correct":"ฉันหิวจะตายอยู่แล้ว","th_wrong":"ฉันอิ่มมากเลย"}
+{"en":"I'm full.","th_correct":"ฉันอิ่มแล้ว","th_wrong":"ฉันยังหิวอยู่เลย"}
+{"en":"It's on me.","th_correct":"มื้อนี้ฉันเลี้ยงเอง","th_wrong":"มันตกใส่ตัวฉัน"}
+{"en":"Let's split the bill.","th_correct":"เรามาหารค่าอาหารกันเถอะ","th_wrong":"ฉันขอจ่ายทั้งหมดเอง"}
+{"en":"Could I get the check?","th_correct":"ขอเช็กบิลด้วยครับ/ค่ะ","th_wrong":"ขอตรวจสอบเอกสารหน่อยครับ/ค่ะ"}
+{"en":"Can I get this to go?","th_correct":"ขอห่อกลับบ้านได้ไหม","th_wrong":"ขอนั่งทานที่ร้านได้ไหม"}
+{"en":"For here or to go?","th_correct":"ทานที่นี่หรือห่อกลับบ้านครับ/คะ","th_wrong":"จ่ายเงินสดหรือบัตรเครดิตครับ/คะ"}
+{"en":"I'll have the usual.","th_correct":"ขอแบบเดิมที่เคยสั่งครับ/ค่ะ","th_wrong":"ขอเมนูใหม่ล่าสุดครับ/ค่ะ"}
+{"en":"What do you recommend?","th_correct":"คุณแนะนำเมนูไหนดี","th_wrong":"ร้านนี้ปิดกี่โมง"}
+{"en":"How much is this?","th_correct":"อันนี้ราคาเท่าไหร่","th_wrong":"อันนี้มีกี่ชิ้น"}
+{"en":"I'm just looking.","th_correct":"ฉันแค่เดินดูเฉยๆ ครับ/ค่ะ","th_wrong":"ฉันต้องการซื้ออันนี้ครับ/ค่ะ"}
+{"en":"Can I try this on?","th_correct":"ขอลองใส่ตัวนี้ได้ไหม","th_wrong":"ขอเปลี่ยนสีตัวนี้ได้ไหม"}
+{"en":"Do you take credit cards?","th_correct":"ที่นี่รับบัตรเครดิตไหม","th_wrong":"คุณมีบัตรสมาชิกไหม"}
+{"en":"Keep the change.","th_correct":"ไม่ต้องทอนครับ/ค่ะ","th_wrong":"ช่วยทอนเงินให้ครบด้วยครับ/ค่ะ"}
+{"en":"It's out of stock.","th_correct":"สินค้าหมดแล้ว","th_wrong":"สินค้ากำลังลดราคา"}
+{"en":"It's on sale.","th_correct":"มันกำลังลดราคาอยู่","th_wrong":"มันไม่ได้มีไว้ขาย"}
+{"en":"What a rip-off!","th_correct":"แพงเกินจริง / โก่งราคาชัดๆ!","th_wrong":"ถูกมาก คุ้มสุดๆ เลย!"}
+{"en":"That's a steal!","th_correct":"ราคาถูกมาก คุ้มสุดๆ!","th_wrong":"มีคนขโมยของไป!"}
+{"en":"Where is the restroom?","th_correct":"ห้องน้ำอยู่ที่ไหน","th_wrong":"ห้องพักผ่อนอยู่ที่ไหน"}
+{"en":"How do I get there?","th_correct":"ฉันจะไปที่นั่นได้ยังไง","th_wrong":"ฉันจะซื้อสิ่งนั้นได้ยังไง"}
+{"en":"It's right around the corner.","th_correct":"มันอยู่ใกล้ๆ แค่นี้เอง (ตรงหัวมุม)","th_wrong":"มันอยู่ไกลมากต้องนั่งรถไป"}
+{"en":"You can't miss it.","th_correct":"หาง่ายมาก ไม่มีทางพลาดแน่นอน","th_wrong":"คุณอาจจะหามันไม่เจอ"}
+{"en":"I'm lost.","th_correct":"ฉันหลงทางแล้ว","th_wrong":"ฉันทำของหาย"}
+{"en":"What time is it?","th_correct":"ตอนนี้กี่โมงแล้ว","th_wrong":"วันนี้วันที่เท่าไหร่"}
+{"en":"What's the weather like?","th_correct":"อากาศเป็นยังไงบ้าง","th_wrong":"คุณชอบอากาศแบบไหน"}
+{"en":"It's pouring outside.","th_correct":"ข้างนอกฝนตกหนักมาก","th_wrong":"ข้างนอกแดดแรงมาก"}
+{"en":"It's freezing today.","th_correct":"วันนี้หนาวจับใจเลย","th_wrong":"วันนี้ร้อนอบอ้าวมาก"}
+{"en":"Stay safe.","th_correct":"ดูแลตัวเองให้ปลอดภัยนะ","th_wrong":"อยู่บ้านเฉยๆ นะ"}
+{"en":"Sleep tight.","th_correct":"หลับฝันดีนะ","th_wrong":"รีบตื่นนอนนะ"}
+{"en":"Sweet dreams.","th_correct":"ฝันดีนะ","th_wrong":"ของหวานอร่อยมาก"}
+{"en":"Have a safe trip!","th_correct":"เดินทางปลอดภัยนะ!","th_wrong":"ระวังสะดุดล้มนะ!"}
