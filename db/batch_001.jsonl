@@ -98,3 +98,903 @@
 {"en":"young","th_correct":"อายุน้อย / หนุ่มสาว","th_wrong":"ชรา"}
 {"en":"important","th_correct":"สำคัญ","th_wrong":"ไร้สาระ"}
 {"en":"public","th_correct":"สาธารณะ","th_wrong":"ส่วนตัว"}
+{"en":"month","th_correct":"เดือน","th_wrong":"สัปดาห์"}
+{"en":"lot","th_correct":"จำนวนมาก / ลานจอด","th_wrong":"จำนวนน้อย"}
+{"en":"study","th_correct":"การเรียน / การศึกษา","th_wrong":"การพักผ่อน"}
+{"en":"book","th_correct":"หนังสือ","th_wrong":"นิตยสาร"}
+{"en":"eye","th_correct":"ดวงตา","th_wrong":"ใบหู"}
+{"en":"job","th_correct":"งาน / อาชีพ","th_wrong":"งานอดิเรก"}
+{"en":"word","th_correct":"คำศัพท์","th_wrong":"ประโยค"}
+{"en":"business","th_correct":"ธุรกิจ","th_wrong":"การเกษตร"}
+{"en":"issue","th_correct":"ประเด็น / ปัญหา","th_wrong":"ทางออก"}
+{"en":"side","th_correct":"ด้าน / ข้าง","th_wrong":"ตรงกลาง"}
+{"en":"kind","th_correct":"ชนิด / ใจดี","th_wrong":"โหดร้าย"}
+{"en":"head","th_correct":"ศีรษะ / หัวหน้า","th_wrong":"หัวไหล่"}
+{"en":"house","th_correct":"บ้าน","th_wrong":"โรงแรม"}
+{"en":"service","th_correct":"การบริการ","th_wrong":"สินค้า"}
+{"en":"friend","th_correct":"เพื่อน","th_wrong":"ศัตรู"}
+{"en":"father","th_correct":"พ่อ","th_wrong":"คุณปู่"}
+{"en":"power","th_correct":"พลัง / อำนาจ","th_wrong":"ความอ่อนแอ"}
+{"en":"hour","th_correct":"ชั่วโมง","th_wrong":"วินาที"}
+{"en":"game","th_correct":"เกม / การแข่งขัน","th_wrong":"การประชุม"}
+{"en":"line","th_correct":"เส้น / แถว","th_wrong":"วงกลม"}
+{"en":"end","th_correct":"จุดจบ / ปลายทาง","th_wrong":"จุดเริ่มต้น"}
+{"en":"member","th_correct":"สมาชิก","th_wrong":"ผู้มาเยือน"}
+{"en":"law","th_correct":"กฎหมาย","th_wrong":"นิทาน"}
+{"en":"car","th_correct":"รถยนต์","th_wrong":"เครื่องบิน"}
+{"en":"city","th_correct":"เมือง","th_wrong":"ป่าไม้"}
+{"en":"community","th_correct":"ชุมชน","th_wrong":"บุคคล"}
+{"en":"name","th_correct":"ชื่อ","th_wrong":"ที่อยู่"}
+{"en":"president","th_correct":"ประธานาธิบดี / ประธาน","th_wrong":"เลขานุการ"}
+{"en":"team","th_correct":"ทีม","th_wrong":"คู่แข่ง"}
+{"en":"minute","th_correct":"นาที","th_wrong":"วัน"}
+{"en":"idea","th_correct":"ความคิด / ไอเดีย","th_wrong":"ความทรงจำ"}
+{"en":"kid","th_correct":"เด็ก","th_wrong":"ผู้สูงอายุ"}
+{"en":"body","th_correct":"ร่างกาย","th_wrong":"จิตใจ"}
+{"en":"information","th_correct":"ข้อมูล / ข่าวสาร","th_wrong":"คำโกหก"}
+{"en":"back","th_correct":"ด้านหลัง / แผ่นหลัง","th_wrong":"ด้านหน้า"}
+{"en":"parent","th_correct":"พ่อแม่ / ผู้ปกครอง","th_wrong":"ลูกหลาน"}
+{"en":"face","th_correct":"ใบหน้า","th_wrong":"ฝ่ามือ"}
+{"en":"level","th_correct":"ระดับ","th_wrong":"น้ำหนัก"}
+{"en":"office","th_correct":"สำนักงาน / ออฟฟิศ","th_wrong":"ห้องครัว"}
+{"en":"door","th_correct":"ประตู","th_wrong":"หน้าต่าง"}
+{"en":"happen","th_correct":"เกิดขึ้น","th_wrong":"หายไป"}
+{"en":"write","th_correct":"เขียน","th_wrong":"ลบ"}
+{"en":"provide","th_correct":"จัดหาให้ / มอบให้","th_wrong":"ยึดคืน"}
+{"en":"sit","th_correct":"นั่ง","th_wrong":"กระโดด"}
+{"en":"stand","th_correct":"ยืน","th_wrong":"นอน"}
+{"en":"lose","th_correct":"ทำหาย / แพ้","th_wrong":"ชนะ"}
+{"en":"pay","th_correct":"จ่ายเงิน","th_wrong":"กู้ยืม"}
+{"en":"meet","th_correct":"พบเจอ","th_wrong":"หลบเลี่ยง"}
+{"en":"include","th_correct":"รวมถึง / รวมเข้าด้วย","th_wrong":"ตัดออก"}
+{"en":"continue","th_correct":"ทำต่อไป / ต่อเนื่อง","th_wrong":"ยกเลิก"}
+{"en":"set","th_correct":"ตั้งค่า / จัดวาง","th_wrong":"รื้อถอน"}
+{"en":"learn","th_correct":"เรียนรู้","th_wrong":"สอน"}
+{"en":"change","th_correct":"เปลี่ยน / เงินทอน","th_wrong":"คงเดิม"}
+{"en":"lead","th_correct":"นำทาง / เป็นผู้นำ","th_wrong":"เดินตาม"}
+{"en":"understand","th_correct":"เข้าใจ","th_wrong":"สับสน"}
+{"en":"watch","th_correct":"เฝ้าดู / นาฬิกาข้อมือ","th_wrong":"มองข้าม"}
+{"en":"follow","th_correct":"ติดตาม / ทำตาม","th_wrong":"นำหน้า"}
+{"en":"stop","th_correct":"หยุด","th_wrong":"เร่งเครื่อง"}
+{"en":"create","th_correct":"สร้างสรรค์","th_wrong":"ทำลายทิ้ง"}
+{"en":"speak","th_correct":"พูด","th_wrong":"กระซิบ"}
+{"en":"read","th_correct":"อ่าน","th_wrong":"วาดรูป"}
+{"en":"allow","th_correct":"อนุญาต","th_wrong":"สั่งห้าม"}
+{"en":"add","th_correct":"เพิ่ม / บวก","th_wrong":"หักออก"}
+{"en":"spend","th_correct":"ใช้จ่าย / ใช้เวลา","th_wrong":"เก็บออม"}
+{"en":"grow","th_correct":"เติบโต / ปลูก","th_wrong":"หดตัว"}
+{"en":"open","th_correct":"เปิด","th_wrong":"ปิดล็อก"}
+{"en":"walk","th_correct":"เดิน","th_wrong":"คลาน"}
+{"en":"win","th_correct":"ชนะ","th_wrong":"ยอมแพ้"}
+{"en":"offer","th_correct":"เสนอให้","th_wrong":"เรียกร้อง"}
+{"en":"remember","th_correct":"จำได้","th_wrong":"ลืมเลือน"}
+{"en":"love","th_correct":"รัก","th_wrong":"โกรธ"}
+{"en":"consider","th_correct":"พิจารณา","th_wrong":"เมินเฉย"}
+{"en":"appear","th_correct":"ปรากฏตัว / ดูเหมือน","th_wrong":"ซ่อนตัว"}
+{"en":"buy","th_correct":"ซื้อ","th_wrong":"ขาย"}
+{"en":"wait","th_correct":"รอคอย","th_wrong":"รีบเร่ง"}
+{"en":"serve","th_correct":"เสิร์ฟ / รับใช้","th_wrong":"สั่งการ"}
+{"en":"die","th_correct":"ตาย / เสียชีวิต","th_wrong":"เกิดใหม่"}
+{"en":"send","th_correct":"ส่ง","th_wrong":"รับ"}
+{"en":"expect","th_correct":"คาดหวัง","th_wrong":"ประหลาดใจ"}
+{"en":"build","th_correct":"ก่อสร้าง / สร้าง","th_wrong":"ทุบทิ้ง"}
+{"en":"bad","th_correct":"แย่ / ไม่ดี","th_wrong":"ยอดเยี่ยม"}
+{"en":"same","th_correct":"เหมือนกัน","th_wrong":"ตรงกันข้าม"}
+{"en":"able","th_correct":"สามารถ","th_wrong":"ไร้ความสามารถ"}
+{"en":"sure","th_correct":"แน่ใจ","th_wrong":"ลังเล"}
+{"en":"free","th_correct":"ฟรี / อิสระ","th_wrong":"ติดคุก"}
+{"en":"true","th_correct":"จริง / ถูกต้อง","th_wrong":"เท็จ"}
+{"en":"full","th_correct":"เต็ม / อิ่ม","th_wrong":"ว่างเปล่า"}
+{"en":"special","th_correct":"พิเศษ","th_wrong":"ธรรมดา"}
+{"en":"easy","th_correct":"ง่าย","th_wrong":"ซับซ้อน"}
+{"en":"clear","th_correct":"ชัดเจน / ใส","th_wrong":"ขุ่นมัว"}
+{"en":"recent","th_correct":"เมื่อเร็วๆ นี้ / ล่าสุด","th_wrong":"โบราณ"}
+{"en":"certain","th_correct":"แน่นอน / บางอย่าง","th_wrong":"ไม่แน่นอน"}
+{"en":"personal","th_correct":"ส่วนตัว","th_wrong":"ส่วนรวม"}
+{"en":"red","th_correct":"สีแดง","th_wrong":"สีเหลือง"}
+{"en":"difficult","th_correct":"ยาก","th_wrong":"สะดวก"}
+{"en":"available","th_correct":"ว่าง / มีพร้อมใช้งาน","th_wrong":"หมดสต็อก"}
+{"en":"likely","th_correct":"มีแนวโน้ม / น่าจะ","th_wrong":"ไม่มีทาง"}
+{"en":"short","th_correct":"สั้น / เตี้ย","th_wrong":"ยาว"}
+{"en":"single","th_correct":"เดี่ยว / โสด","th_wrong":"แต่งงานแล้ว"}
+{"en":"medical","th_correct":"ทางการแพทย์","th_wrong":"ทางการเงิน"}
+{"en":"health","th_correct":"สุขภาพ","th_wrong":"ความมั่งคั่ง"}
+{"en":"person","th_correct":"บุคคล / คน","th_wrong":"สิ่งของ"}
+{"en":"art","th_correct":"ศิลปะ","th_wrong":"คณิตศาสตร์"}
+{"en":"war","th_correct":"สงคราม","th_wrong":"สันติภาพ"}
+{"en":"history","th_correct":"ประวัติศาสตร์","th_wrong":"อนาคต"}
+{"en":"party","th_correct":"งานเลี้ยง / พรรคการเมือง","th_wrong":"งานศพ"}
+{"en":"result","th_correct":"ผลลัพธ์","th_wrong":"สาเหตุ"}
+{"en":"morning","th_correct":"ตอนเช้า","th_wrong":"ตอนเย็น"}
+{"en":"reason","th_correct":"เหตุผล","th_wrong":"ข้ออ้าง"}
+{"en":"research","th_correct":"การวิจัย","th_wrong":"การโฆษณา"}
+{"en":"girl","th_correct":"เด็กผู้หญิง","th_wrong":"เด็กผู้ชาย"}
+{"en":"guy","th_correct":"ผู้ชาย / หมอนั่น","th_wrong":"ผู้หญิง"}
+{"en":"moment","th_correct":"ชั่วขณะ / ช่วงเวลา","th_wrong":"ตลอดกาล"}
+{"en":"air","th_correct":"อากาศ","th_wrong":"ดิน"}
+{"en":"teacher","th_correct":"คุณครู","th_wrong":"ผู้จัดการ"}
+{"en":"force","th_correct":"แรง / กำลัง","th_wrong":"ความอ่อนโยน"}
+{"en":"education","th_correct":"การศึกษา","th_wrong":"ความบันเทิง"}
+{"en":"foot","th_correct":"เท้า","th_wrong":"แขน"}
+{"en":"boy","th_correct":"เด็กผู้ชาย","th_wrong":"คุณตา"}
+{"en":"age","th_correct":"อายุ / ยุคสมัย","th_wrong":"ส่วนสูง"}
+{"en":"policy","th_correct":"นโยบาย","th_wrong":"ตำราอาหาร"}
+{"en":"process","th_correct":"กระบวนการ","th_wrong":"ผลผลิต"}
+{"en":"music","th_correct":"ดนตรี / เพลง","th_wrong":"ภาพวาด"}
+{"en":"market","th_correct":"ตลาด","th_wrong":"สนามกีฬา"}
+{"en":"sense","th_correct":"ประสาทสัมผัส / ความรู้สึก","th_wrong":"ความเงียบ"}
+{"en":"nation","th_correct":"ประเทศชาติ","th_wrong":"ตำบล"}
+{"en":"plan","th_correct":"แผนการ","th_wrong":"ความผิดพลาด"}
+{"en":"college","th_correct":"วิทยาลัย / มหาวิทยาลัย","th_wrong":"อนุบาล"}
+{"en":"interest","th_correct":"ความสนใจ / ดอกเบี้ย","th_wrong":"ความเบื่อหน่าย"}
+{"en":"death","th_correct":"ความตาย","th_wrong":"การเกิด"}
+{"en":"experience","th_correct":"ประสบการณ์","th_wrong":"จินตนาการ"}
+{"en":"effect","th_correct":"ผลกระทบ","th_wrong":"ต้นเหตุ"}
+{"en":"class","th_correct":"ชั้นเรียน / ระดับ","th_wrong":"สนามเด็กเล่น"}
+{"en":"control","th_correct":"การควบคุม","th_wrong":"ความวุ่นวาย"}
+{"en":"care","th_correct":"การดูแล / ความใส่ใจ","th_wrong":"การละเลย"}
+{"en":"field","th_correct":"สนาม / ทุ่ง / สาขาวิชา","th_wrong":"ภูเขา"}
+{"en":"development","th_correct":"การพัฒนา","th_wrong":"ความเสื่อมถอย"}
+{"en":"role","th_correct":"บทบาท","th_wrong":"กฎระเบียบ"}
+{"en":"effort","th_correct":"ความพยายาม","th_wrong":"ความขี้เกียจ"}
+{"en":"rate","th_correct":"อัตรา / ระดับ","th_wrong":"ขนาด"}
+{"en":"stay","th_correct":"อยู่ต่อ / พักอาศัย","th_wrong":"ย้ายออก"}
+{"en":"fall","th_correct":"ตกลงมา / ฤดูใบไม้ร่วง","th_wrong":"ปีนขึ้นไป"}
+{"en":"cut","th_correct":"ตัด","th_wrong":"ต่อติด"}
+{"en":"reach","th_correct":"ไปถึง / เอื้อมถึง","th_wrong":"ถอยห่าง"}
+{"en":"kill","th_correct":"ฆ่า","th_wrong":"รักษา"}
+{"en":"remain","th_correct":"ยังคงอยู่ / เหลืออยู่","th_wrong":"หมดไป"}
+{"en":"suggest","th_correct":"แนะนำ / เสนอแนะ","th_wrong":"บังคับ"}
+{"en":"raise","th_correct":"ยกขึ้น / เลี้ยงดู / ขึ้นเงินเดือน","th_wrong":"ลดลง"}
+{"en":"pass","th_correct":"ผ่าน / ส่งต่อ","th_wrong":"สอบตก"}
+{"en":"sell","th_correct":"ขาย","th_wrong":"แจกฟรี"}
+{"en":"require","th_correct":"ต้องการ / กำหนดให้ต้องมี","th_wrong":"ยกเว้น"}
+{"en":"report","th_correct":"รายงาน","th_wrong":"ปิดบังข่าว"}
+{"en":"decide","th_correct":"ตัดสินใจ","th_wrong":"ลังเลใจ"}
+{"en":"pull","th_correct":"ดึง","th_wrong":"ผลัก"}
+{"en":"return","th_correct":"กลับมา / ส่งคืน","th_wrong":"ออกไปไกล"}
+{"en":"explain","th_correct":"อธิบาย","th_wrong":"ตั้งคำถาม"}
+{"en":"hope","th_correct":"หวัง","th_wrong":"สิ้นหวัง"}
+{"en":"develop","th_correct":"พัฒนา","th_wrong":"หยุดชะงัก"}
+{"en":"carry","th_correct":"ถือ / แบก / พกพา","th_wrong":"วางทิ้งไว้"}
+{"en":"break","th_correct":"ทำให้แตก / หัก / พักเบรก","th_wrong":"ซ่อมแซม"}
+{"en":"receive","th_correct":"ได้รับ","th_wrong":"ส่งออก"}
+{"en":"agree","th_correct":"เห็นด้วย","th_wrong":"คัดค้าน"}
+{"en":"support","th_correct":"สนับสนุน","th_wrong":"ต่อต้าน"}
+{"en":"hit","th_correct":"ตี / ชน","th_wrong":"หลบหลีก"}
+{"en":"produce","th_correct":"ผลิต","th_wrong":"บริโภค"}
+{"en":"eat","th_correct":"กิน","th_wrong":"อดอาหาร"}
+{"en":"cover","th_correct":"คลุม / ปกปิด / ครอบคลุม","th_wrong":"เปิดเผย"}
+{"en":"catch","th_correct":"จับ / รับไว้","th_wrong":"โยนทิ้ง"}
+{"en":"draw","th_correct":"วาดรูป / ดึง","th_wrong":"ลบออก"}
+{"en":"choose","th_correct":"เลือก","th_wrong":"สุ่มมั่ว"}
+{"en":"cause","th_correct":"ก่อให้เกิด / สาเหตุ","th_wrong":"ป้องกัน"}
+{"en":"drive","th_correct":"ขับรถ","th_wrong":"โดยสาร"}
+{"en":"wear","th_correct":"สวมใส่","th_wrong":"ถอดออก"}
+{"en":"save","th_correct":"ช่วยชีวิต / ประหยัด / บันทึก","th_wrong":"ใช้จ่ายฟุ่มเฟือย"}
+{"en":"fly","th_correct":"บิน","th_wrong":"ว่ายน้ำ"}
+{"en":"push","th_correct":"ผลัก / ดัน","th_wrong":"ลาก"}
+{"en":"fight","th_correct":"ต่อสู้ / ทะเลาะ","th_wrong":"คืนดี"}
+{"en":"throw","th_correct":"ขว้าง / โยน","th_wrong":"เก็บขึ้นมา"}
+{"en":"fill","th_correct":"เติมให้เต็ม / กรอก","th_wrong":"เททิ้ง"}
+{"en":"drop","th_correct":"ทำหล่น / ลดลง","th_wrong":"ยกขึ้นสูง"}
+{"en":"current","th_correct":"ปัจจุบัน / กระแสน้ำ","th_wrong":"ในอดีต"}
+{"en":"wrong","th_correct":"ผิด","th_wrong":"ถูกต้อง"}
+{"en":"private","th_correct":"ส่วนตัว / เอกชน","th_wrong":"รัฐบาล"}
+{"en":"past","th_correct":"อดีต / ที่ผ่านมา","th_wrong":"อนาคต"}
+{"en":"foreign","th_correct":"ต่างประเทศ","th_wrong":"ท้องถิ่น"}
+{"en":"fine","th_correct":"สบายดี / ละเอียด / ค่าปรับ","th_wrong":"หยาบกระด้าง"}
+{"en":"common","th_correct":"ทั่วไป / ธรรมดา / ร่วมกัน","th_wrong":"หายาก"}
+{"en":"poor","th_correct":"ยากจน / แย่","th_wrong":"ร่ำรวย"}
+{"en":"natural","th_correct":"ตามธรรมชาติ","th_wrong":"สังเคราะห์"}
+{"en":"significant","th_correct":"สำคัญ / มีนัยสำคัญ","th_wrong":"เล็กน้อย"}
+{"en":"similar","th_correct":"คล้ายคลึงกัน","th_wrong":"แตกต่างกันสิ้นเชิง"}
+{"en":"hot","th_correct":"ร้อน / เผ็ด","th_wrong":"หนาว"}
+{"en":"dead","th_correct":"ตายแล้ว / หมดแบต","th_wrong":"มีชีวิตชีวา"}
+{"en":"central","th_correct":"ส่วนกลาง / ใจกลาง","th_wrong":"รอบนอก"}
+{"en":"happy","th_correct":"มีความสุข","th_wrong":"เสียใจ"}
+{"en":"serious","th_correct":"จริงจัง / ร้ายแรง","th_wrong":"ตลกขบขัน"}
+{"en":"ready","th_correct":"พร้อม","th_wrong":"ไม่ทันตั้งตัว"}
+{"en":"simple","th_correct":"เรียบง่าย","th_wrong":"ยุ่งยาก"}
+{"en":"left","th_correct":"ด้านซ้าย / ที่เหลืออยู่","th_wrong":"ด้านขวา"}
+{"en":"physical","th_correct":"ทางกายภาพ / ร่างกาย","th_wrong":"ทางจิตใจ"}
+{"en":"heart","th_correct":"หัวใจ","th_wrong":"ปอด"}
+{"en":"drug","th_correct":"ยา / ยาเสพติด","th_wrong":"อาหารเสริม"}
+{"en":"leader","th_correct":"ผู้นำ","th_wrong":"ผู้ติดตาม"}
+{"en":"light","th_correct":"แสงสว่าง / เบา","th_wrong":"ความมืด"}
+{"en":"voice","th_correct":"เสียงพูด","th_wrong":"สายตา"}
+{"en":"wife","th_correct":"ภรรยา","th_wrong":"สามี"}
+{"en":"police","th_correct":"ตำรวจ","th_wrong":"ทหาร"}
+{"en":"mind","th_correct":"จิตใจ / ความคิด","th_wrong":"ร่างกาย"}
+{"en":"price","th_correct":"ราคา","th_wrong":"รางวัล"}
+{"en":"son","th_correct":"ลูกชาย","th_wrong":"ลูกสาว"}
+{"en":"view","th_correct":"ทิวทัศน์ / มุมมอง","th_wrong":"เสียงสะท้อน"}
+{"en":"relationship","th_correct":"ความสัมพันธ์","th_wrong":"การแข่งขัน"}
+{"en":"town","th_correct":"เมืองขนาดเล็ก / อำเภอ","th_wrong":"ทวีป"}
+{"en":"road","th_correct":"ถนน","th_wrong":"แม่น้ำ"}
+{"en":"arm","th_correct":"แขน","th_wrong":"ขา"}
+{"en":"difference","th_correct":"ความแตกต่าง","th_wrong":"ความเหมือน"}
+{"en":"value","th_correct":"คุณค่า / มูลค่า","th_wrong":"ปริมาณ"}
+{"en":"building","th_correct":"อาคาร / ตึก","th_wrong":"สะพาน"}
+{"en":"action","th_correct":"การกระทำ","th_wrong":"ความคิดฝัน"}
+{"en":"model","th_correct":"แบบจำลอง / นางแบบ","th_wrong":"ต้นฉบับ"}
+{"en":"season","th_correct":"ฤดูกาล","th_wrong":"ทศวรรษ"}
+{"en":"society","th_correct":"สังคม","th_wrong":"ธรรมชาติ"}
+{"en":"tax","th_correct":"ภาษี","th_wrong":"เงินเดือน"}
+{"en":"director","th_correct":"ผู้กำกับ / ผู้อำนวยการ","th_wrong":"นักแสดง"}
+{"en":"position","th_correct":"ตำแหน่ง","th_wrong":"ทิศทาง"}
+{"en":"player","th_correct":"ผู้เล่น / นักกีฬา","th_wrong":"ผู้ชม"}
+{"en":"record","th_correct":"บันทึก / สถิติ","th_wrong":"คำทำนาย"}
+{"en":"paper","th_correct":"กระดาษ / เอกสาร","th_wrong":"พลาสติก"}
+{"en":"space","th_correct":"พื้นที่ว่าง / อวกาศ","th_wrong":"พื้นดิน"}
+{"en":"ground","th_correct":"พื้นดิน","th_wrong":"ท้องฟ้า"}
+{"en":"form","th_correct":"แบบฟอร์ม / รูปทรง","th_wrong":"สีสัน"}
+{"en":"event","th_correct":"เหตุการณ์ / งานอีเวนต์","th_wrong":"กิจวัตร"}
+{"en":"official","th_correct":"เจ้าหน้าที่ / อย่างเป็นทางการ","th_wrong":"อาสาสมัคร"}
+{"en":"matter","th_correct":"เรื่อง / สสาร","th_wrong":"ความว่างเปล่า"}
+{"en":"center","th_correct":"ศูนย์กลาง","th_wrong":"ขอบเขต"}
+{"en":"couple","th_correct":"คู่รัก / สองสาม","th_wrong":"ฝูงชน"}
+{"en":"site","th_correct":"สถานที่ตั้ง / เว็บไซต์","th_wrong":"ขนาด"}
+{"en":"project","th_correct":"โครงการ","th_wrong":"ผลสรุป"}
+{"en":"activity","th_correct":"กิจกรรม","th_wrong":"การนอนหลับ"}
+{"en":"star","th_correct":"ดวงดาว / ดารา","th_wrong":"ก้อนเมฆ"}
+{"en":"lie","th_correct":"โกหก / นอนราบ","th_wrong":"พูดความจริง"}
+{"en":"pick","th_correct":"เลือก / หยิบ","th_wrong":"โยนทิ้ง"}
+{"en":"check","th_correct":"ตรวจสอบ / เช็กบิล","th_wrong":"มองข้าม"}
+{"en":"deal","th_correct":"จัดการ / ข้อตกลง","th_wrong":"ยกเลิก"}
+{"en":"close","th_correct":"ปิด / ใกล้ชิด","th_wrong":"เปิดกว้าง"}
+{"en":"accept","th_correct":"ยอมรับ","th_wrong":"ปฏิเสธ"}
+{"en":"focus","th_correct":"จดจ่อ / มุ่งเน้น","th_wrong":"วอกแวก"}
+{"en":"prove","th_correct":"พิสูจน์","th_wrong":"คาดเดา"}
+{"en":"laugh","th_correct":"หัวเราะ","th_wrong":"ร้องไห้"}
+{"en":"drink","th_correct":"ดื่ม","th_wrong":"เคี้ยว"}
+{"en":"sleep","th_correct":"นอนหลับ","th_wrong":"ตื่นนอน"}
+{"en":"cook","th_correct":"ทำอาหาร","th_wrong":"ล้างจาน"}
+{"en":"clean","th_correct":"ทำความสะอาด / สะอาด","th_wrong":"ทำสกปรก"}
+{"en":"wash","th_correct":"ล้าง / ซัก","th_wrong":"ตากแห้ง"}
+{"en":"travel","th_correct":"เดินทางท่องเที่ยว","th_wrong":"พักอยู่บ้าน"}
+{"en":"visit","th_correct":"ไปเยี่ยม / เยือน","th_wrong":"ย้ายหนี"}
+{"en":"join","th_correct":"เข้าร่วม","th_wrong":"ลาออก"}
+{"en":"share","th_correct":"แบ่งปัน","th_wrong":"เก็บไว้คนเดียว"}
+{"en":"enjoy","th_correct":"สนุกสนาน / เพลิดเพลิน","th_wrong":"เบื่อหน่าย"}
+{"en":"forget","th_correct":"ลืม","th_wrong":"จดจำ"}
+{"en":"miss","th_correct":"คิดถึง / พลาด","th_wrong":"พบเจอ"}
+{"en":"hate","th_correct":"เกลียด","th_wrong":"ชื่นชม"}
+{"en":"wish","th_correct":"ปรารถนา / อวยพร","th_wrong":"สาปแช่ง"}
+{"en":"thank","th_correct":"ขอบคุณ","th_wrong":"ตำหนิ"}
+{"en":"welcome","th_correct":"ต้อนรับ","th_wrong":"ขับไล่"}
+{"en":"invite","th_correct":"เชิญชวน","th_wrong":"ห้ามเข้า"}
+{"en":"promise","th_correct":"สัญญา","th_wrong":"โกหก"}
+{"en":"refuse","th_correct":"ปฏิเสธ","th_wrong":"ตกลง"}
+{"en":"admit","th_correct":"ยอมรับผิด / อนุญาตให้เข้า","th_wrong":"ปฏิเสธเสียงแข็ง"}
+{"en":"deny","th_correct":"ปฏิเสธว่าไม่จริง","th_wrong":"ยืนยันว่าเป็นจริง"}
+{"en":"avoid","th_correct":"หลีกเลี่ยง","th_wrong":"เผชิญหน้า"}
+{"en":"prevent","th_correct":"ป้องกัน","th_wrong":"ส่งเสริม"}
+{"en":"protect","th_correct":"ปกป้อง","th_wrong":"ทำร้าย"}
+{"en":"improve","th_correct":"ปรับปรุงให้ดีขึ้น","th_wrong":"ทำให้แย่ลง"}
+{"en":"increase","th_correct":"เพิ่มขึ้น","th_wrong":"ลดลง"}
+{"en":"reduce","th_correct":"ลดลง","th_wrong":"ขยายใหญ่"}
+{"en":"compare","th_correct":"เปรียบเทียบ","th_wrong":"รวมกัน"}
+{"en":"measure","th_correct":"วัดขนาด / มาตรการ","th_wrong":"กะประมาณ"}
+{"en":"count","th_correct":"นับจำนวน","th_wrong":"ลบออก"}
+{"en":"general","th_correct":"ทั่วไป / นายพล","th_wrong":"เฉพาะเจาะจง"}
+{"en":"environmental","th_correct":"เกี่ยวกับสิ่งแวดล้อม","th_wrong":"เกี่ยวกับการเมือง"}
+{"en":"financial","th_correct":"ทางการเงิน","th_wrong":"ทางการแพทย์"}
+{"en":"blue","th_correct":"สีน้ำเงิน / เศร้า","th_wrong":"สีเขียว"}
+{"en":"dark","th_correct":"มืด / สีเข้ม","th_wrong":"สว่าง"}
+{"en":"various","th_correct":"หลากหลาย","th_wrong":"เพียงอย่างเดียว"}
+{"en":"entire","th_correct":"ทั้งหมด / ทั้งสิ้น","th_wrong":"บางส่วน"}
+{"en":"cold","th_correct":"หนาว / เย็น / โรคหวัด","th_wrong":"อบอุ่น"}
+{"en":"strong","th_correct":"แข็งแรง / เข้มข้น","th_wrong":"อ่อนแอ"}
+{"en":"possible","th_correct":"เป็นไปได้","th_wrong":"เป็นไปไม่ได้"}
+{"en":"whole","th_correct":"ทั้งหมด / เต็มชิ้น","th_wrong":"ครึ่งเดียว"}
+{"en":"real","th_correct":"จริง / ของแท้","th_wrong":"ของปลอม"}
+{"en":"best","th_correct":"ดีที่สุด","th_wrong":"แย่ที่สุด"}
+{"en":"better","th_correct":"ดีกว่า","th_wrong":"ด้อยกว่า"}
+{"en":"economic","th_correct":"ทางเศรษฐกิจ","th_wrong":"ทางศาสนา"}
+{"en":"low","th_correct":"ต่ำ / น้อย","th_wrong":"สูง"}
+{"en":"white","th_correct":"สีขาว","th_wrong":"สีดำ"}
+{"en":"black","th_correct":"สีดำ","th_wrong":"สีเทา"}
+{"en":"green","th_correct":"สีเขียว","th_wrong":"สีส้ม"}
+{"en":"deep","th_correct":"ลึก","th_wrong":"ตื้น"}
+{"en":"fast","th_correct":"เร็ว","th_wrong":"ช้า"}
+{"en":"table","th_correct":"โต๊ะ / ตาราง","th_wrong":"เก้าอี้"}
+{"en":"court","th_correct":"ศาล / สนามกีฬา","th_wrong":"เรือนจำ"}
+{"en":"oil","th_correct":"น้ำมัน","th_wrong":"น้ำส้มสายชู"}
+{"en":"situation","th_correct":"สถานการณ์","th_wrong":"สถานที่"}
+{"en":"cost","th_correct":"ต้นทุน / ค่าใช้จ่าย","th_wrong":"กำไร"}
+{"en":"industry","th_correct":"อุตสาหกรรม","th_wrong":"การท่องเที่ยว"}
+{"en":"figure","th_correct":"ตัวเลข / รูปร่าง","th_wrong":"สีสัน"}
+{"en":"street","th_correct":"ถนน","th_wrong":"สะพาน"}
+{"en":"image","th_correct":"ภาพลักษณ์ / รูปภาพ","th_wrong":"เสียงเพลง"}
+{"en":"phone","th_correct":"โทรศัพท์","th_wrong":"โทรทัศน์"}
+{"en":"data","th_correct":"ข้อมูล","th_wrong":"วันที่"}
+{"en":"picture","th_correct":"รูปภาพ","th_wrong":"กระจก"}
+{"en":"practice","th_correct":"การฝึกฝน / การปฏิบัติ","th_wrong":"การพักผ่อน"}
+{"en":"piece","th_correct":"ชิ้น / ส่วน","th_wrong":"สันติภาพ"}
+{"en":"land","th_correct":"ผืนดิน / ที่ดิน","th_wrong":"ทะเล"}
+{"en":"product","th_correct":"สินค้า / ผลิตภัณฑ์","th_wrong":"โรงงาน"}
+{"en":"doctor","th_correct":"หมอ / แพทย์","th_wrong":"พยาบาล"}
+{"en":"wall","th_correct":"กำแพง / ผนัง","th_wrong":"เพดาน"}
+{"en":"patient","th_correct":"ผู้ป่วย / อดทน","th_wrong":"เภสัชกร"}
+{"en":"worker","th_correct":"คนงาน / พนักงาน","th_wrong":"เจ้าของร้าน"}
+{"en":"news","th_correct":"ข่าวสาร","th_wrong":"นิยาย"}
+{"en":"test","th_correct":"การทดสอบ / ข้อสอบ","th_wrong":"การบ้าน"}
+{"en":"movie","th_correct":"ภาพยนตร์ / หนัง","th_wrong":"ละครเวที"}
+{"en":"north","th_correct":"ทิศเหนือ","th_wrong":"ทิศใต้"}
+{"en":"south","th_correct":"ทิศใต้","th_wrong":"ทิศตะวันออก"}
+{"en":"east","th_correct":"ทิศตะวันออก","th_wrong":"ทิศตะวันตก"}
+{"en":"west","th_correct":"ทิศตะวันตก","th_wrong":"ทิศเหนือ"}
+{"en":"computer","th_correct":"คอมพิวเตอร์","th_wrong":"เครื่องคิดเลข"}
+{"en":"hospital","th_correct":"โรงพยาบาล","th_wrong":"ร้านขายยา"}
+{"en":"risk","th_correct":"ความเสี่ยง","th_wrong":"ความปลอดภัย"}
+{"en":"fire","th_correct":"ไฟ / ไล่ออก","th_wrong":"น้ำแข็ง"}
+{"en":"future","th_correct":"อนาคต","th_wrong":"ปัจจุบัน"}
+{"en":"defense","th_correct":"การป้องกัน","th_wrong":"การโจมตี"}
+{"en":"security","th_correct":"ความปลอดภัย / การรักษาความปลอดภัย","th_wrong":"ความลับ"}
+{"en":"bank","th_correct":"ธนาคาร / ริมฝั่งแม่น้ำ","th_wrong":"ตลาดสด"}
+{"en":"sport","th_correct":"กีฬา","th_wrong":"ดนตรี"}
+{"en":"board","th_correct":"กระดาน / คณะกรรมการ","th_wrong":"หน้าต่าง"}
+{"en":"subject","th_correct":"วิชา / หัวข้อ","th_wrong":"คะแนน"}
+{"en":"officer","th_correct":"เจ้าหน้าที่ / นายทหาร","th_wrong":"พลเมือง"}
+{"en":"behavior","th_correct":"พฤติกรรม","th_wrong":"ความเชื่อ"}
+{"en":"describe","th_correct":"อธิบาย / บรรยาย","th_wrong":"ตั้งคำถาม"}
+{"en":"design","th_correct":"ออกแบบ","th_wrong":"ทำลาย"}
+{"en":"discuss","th_correct":"พูดคุย / อภิปราย","th_wrong":"เงียบเฉย"}
+{"en":"discover","th_correct":"ค้นพบ","th_wrong":"ซ่อนเร้น"}
+{"en":"enter","th_correct":"เข้าไป / ป้อนข้อมูล","th_wrong":"ออกเดินทาง"}
+{"en":"exist","th_correct":"มีอยู่จริง / ดำรงอยู่","th_wrong":"สูญหาย"}
+{"en":"fail","th_correct":"ล้มเหลว / สอบตก","th_wrong":"ประสบความสำเร็จ"}
+{"en":"finish","th_correct":"ทำให้เสร็จสิ้น","th_wrong":"เริ่มต้นใหม่"}
+{"en":"fix","th_correct":"ซ่อมแซม / แก้ไข","th_wrong":"ทำให้พัง"}
+{"en":"guess","th_correct":"เดา / คาดคะเน","th_wrong":"พิสูจน์"}
+{"en":"handle","th_correct":"จัดการ / รับมือ","th_wrong":"ปล่อยปละละเลย"}
+{"en":"imagine","th_correct":"จินตนาการ","th_wrong":"ลืมเลือน"}
+{"en":"introduce","th_correct":"แนะนำให้รู้จัก","th_wrong":"บอกลา"}
+{"en":"listen","th_correct":"ฟัง","th_wrong":"ตะโกน"}
+{"en":"manage","th_correct":"บริหาร / จัดการ","th_wrong":"ทำตามคำสั่ง"}
+{"en":"mention","th_correct":"กล่าวถึง / เอ่ยถึง","th_wrong":"ปกปิด"}
+{"en":"notice","th_correct":"สังเกตเห็น","th_wrong":"มองข้าม"}
+{"en":"order","th_correct":"สั่งซื้อ / คำสั่ง","th_wrong":"ยกเลิก"}
+{"en":"organize","th_correct":"จัดระเบียบ / จัดงาน","th_wrong":"ทำให้ยุ่งเหยิง"}
+{"en":"prepare","th_correct":"เตรียมตัว / จัดเตรียม","th_wrong":"ละทิ้ง"}
+{"en":"realize","th_correct":"ตระหนัก / เพิ่งนึกออก","th_wrong":"เข้าใจผิด"}
+{"en":"recognize","th_correct":"จำได้ / ยอมรับ","th_wrong":"ลืมหน้า"}
+{"en":"remove","th_correct":"เอาออก / ลบออก","th_wrong":"ติดตั้ง"}
+{"en":"repair","th_correct":"ซ่อมแซม","th_wrong":"ทุบทำลาย"}
+{"en":"repeat","th_correct":"ทำซ้ำ / พูดซ้ำ","th_wrong":"หยุดทำ"}
+{"en":"replace","th_correct":"แทนที่ / เปลี่ยนใหม่","th_wrong":"เก็บไว้เหมือนเดิม"}
+{"en":"reply","th_correct":"ตอบกลับ","th_wrong":"ถามกลับ"}
+{"en":"search","th_correct":"ค้นหา","th_wrong":"ซ่อนไว้"}
+{"en":"select","th_correct":"คัดเลือก","th_wrong":"ปฏิเสธ"}
+{"en":"solve","th_correct":"แก้ปัญหา","th_wrong":"สร้างปัญหา"}
+{"en":"succeed","th_correct":"ประสบความสำเร็จ","th_wrong":"ยอมแพ้"}
+{"en":"suffer","th_correct":"ทนทุกข์ทรมาน","th_wrong":"มีความสุข"}
+{"en":"survive","th_correct":"เอาชีวิตรอด","th_wrong":"ยอมจำนน"}
+{"en":"teach","th_correct":"สอน","th_wrong":"เรียน"}
+{"en":"touch","th_correct":"สัมผัส / แตะ","th_wrong":"ผลักออก"}
+{"en":"slow","th_correct":"ช้า","th_wrong":"รวดเร็ว"}
+{"en":"heavy","th_correct":"หนัก","th_wrong":"เบา"}
+{"en":"empty","th_correct":"ว่างเปล่า","th_wrong":"เต็มเปี่ยม"}
+{"en":"rich","th_correct":"ร่ำรวย / เข้มข้น","th_wrong":"ยากจน"}
+{"en":"safe","th_correct":"ปลอดภัย","th_wrong":"อันตราย"}
+{"en":"dangerous","th_correct":"อันตราย","th_wrong":"สงบสุข"}
+{"en":"dirty","th_correct":"สกปรก","th_wrong":"สะอาด"}
+{"en":"quiet","th_correct":"เงียบสงบ","th_wrong":"เสียงดัง"}
+{"en":"loud","th_correct":"เสียงดัง","th_wrong":"เบาเสียง"}
+{"en":"bright","th_correct":"สว่าง / สดใส","th_wrong":"มืดมิด"}
+{"en":"soft","th_correct":"นุ่มนวล / อ่อนนุ่ม","th_wrong":"แข็งกระด้าง"}
+{"en":"hard","th_correct":"แข็ง / ยาก","th_wrong":"นิ่ม"}
+{"en":"sweet","th_correct":"หวาน","th_wrong":"ขม"}
+{"en":"sour","th_correct":"เปรี้ยว","th_wrong":"เค็ม"}
+{"en":"fresh","th_correct":"สดใหม่","th_wrong":"เน่าเสีย"}
+{"en":"dry","th_correct":"แห้ง","th_wrong":"เปียกชื้น"}
+{"en":"wet","th_correct":"เปียก","th_wrong":"แห้งสนิท"}
+{"en":"warm","th_correct":"อบอุ่น","th_wrong":"หนาวเหน็บ"}
+{"en":"cool","th_correct":"เย็นสบาย / เจ๋ง","th_wrong":"ร้อนจัด"}
+{"en":"busy","th_correct":"ยุ่ง / พลุกพล่าน","th_wrong":"ว่างงาน"}
+{"en":"lazy","th_correct":"ขี้เกียจ","th_wrong":"ขยันขันแข็ง"}
+{"en":"smart","th_correct":"ฉลาด","th_wrong":"โง่เขลา"}
+{"en":"brave","th_correct":"กล้าหาญ","th_wrong":"ขี้ขลาด"}
+{"en":"honest","th_correct":"ซื่อสัตย์","th_wrong":"คดโกง"}
+{"en":"polite","th_correct":"สุภาพ","th_wrong":"หยาบคาย"}
+{"en":"sun","th_correct":"ดวงอาทิตย์","th_wrong":"ดวงจันทร์"}
+{"en":"moon","th_correct":"ดวงจันทร์","th_wrong":"ก้อนเมฆ"}
+{"en":"sky","th_correct":"ท้องฟ้า","th_wrong":"พื้นดิน"}
+{"en":"rain","th_correct":"ฝน","th_wrong":"หิมะ"}
+{"en":"snow","th_correct":"หิมะ","th_wrong":"ลม"}
+{"en":"wind","th_correct":"ลม","th_wrong":"หมอก"}
+{"en":"tree","th_correct":"ต้นไม้","th_wrong":"ดอกไม้"}
+{"en":"flower","th_correct":"ดอกไม้","th_wrong":"ใบไม้"}
+{"en":"river","th_correct":"แม่น้ำ","th_wrong":"ภูเขา"}
+{"en":"mountain","th_correct":"ภูเขา","th_wrong":"ทะเลสาบ"}
+{"en":"sea","th_correct":"ทะเล","th_wrong":"ป่าไม้"}
+{"en":"lake","th_correct":"ทะเลสาบ","th_wrong":"น้ำตก"}
+{"en":"bridge","th_correct":"สะพาน","th_wrong":"อุโมงค์"}
+{"en":"animal","th_correct":"สัตว์","th_wrong":"พืช"}
+{"en":"bird","th_correct":"นก","th_wrong":"ปลา"}
+{"en":"fish","th_correct":"ปลา","th_wrong":"ม้า"}
+{"en":"horse","th_correct":"ม้า","th_wrong":"วัว"}
+{"en":"food","th_correct":"อาหาร","th_wrong":"เครื่องดื่ม"}
+{"en":"bread","th_correct":"ขนมปัง","th_wrong":"ข้าวสวย"}
+{"en":"milk","th_correct":"นม","th_wrong":"น้ำผลไม้"}
+{"en":"coffee","th_correct":"กาแฟ","th_wrong":"ชา"}
+{"en":"tea","th_correct":"ชา","th_wrong":"น้ำอัดลม"}
+{"en":"meat","th_correct":"เนื้อสัตว์","th_wrong":"ผักสด"}
+{"en":"egg","th_correct":"ไข่","th_wrong":"เนย"}
+{"en":"sugar","th_correct":"น้ำตาล","th_wrong":"เกลือ"}
+{"en":"salt","th_correct":"เกลือ","th_wrong":"พริกไทย"}
+{"en":"rice","th_correct":"ข้าว","th_wrong":"เส้นก๋วยเตี๋ยว"}
+{"en":"fruit","th_correct":"ผลไม้","th_wrong":"ขนมหวาน"}
+{"en":"evening","th_correct":"ตอนเย็น","th_wrong":"ตอนเที่ยง"}
+{"en":"today","th_correct":"วันนี้","th_wrong":"พรุ่งนี้"}
+{"en":"tomorrow","th_correct":"พรุ่งนี้","th_wrong":"เมื่อวาน"}
+{"en":"yesterday","th_correct":"เมื่อวาน","th_wrong":"สัปดาห์หน้า"}
+{"en":"truth","th_correct":"ความจริง","th_wrong":"ความลับ"}
+{"en":"feeling","th_correct":"ความรู้สึก","th_wrong":"เหตุผล"}
+{"en":"chance","th_correct":"โอกาส","th_wrong":"อุปสรรค"}
+{"en":"choice","th_correct":"ทางเลือก","th_wrong":"คำสั่ง"}
+{"en":"dream","th_correct":"ความฝัน","th_wrong":"ความทรงจำ"}
+{"en":"goal","th_correct":"เป้าหมาย","th_wrong":"จุดเริ่มต้น"}
+{"en":"habit","th_correct":"นิสัย / กิจวัตร","th_wrong":"ความสามารถ"}
+{"en":"memory","th_correct":"ความทรงจำ","th_wrong":"จินตนาการ"}
+{"en":"smile","th_correct":"ยิ้ม","th_wrong":"ร้องไห้"}
+{"en":"cry","th_correct":"ร้องไห้","th_wrong":"หัวเราะ"}
+{"en":"sing","th_correct":"ร้องเพลง","th_wrong":"เต้นรำ"}
+{"en":"dance","th_correct":"เต้นรำ","th_wrong":"กระโดด"}
+{"en":"swim","th_correct":"ว่ายน้ำ","th_wrong":"วิ่งเหยาะๆ"}
+{"en":"jump","th_correct":"กระโดด","th_wrong":"คลาน"}
+{"en":"climb","th_correct":"ปีนป่าย","th_wrong":"ลื่นไถล"}
+{"en":"ride","th_correct":"ขี่ / โดยสาร","th_wrong":"เดินเท้า"}
+{"en":"park","th_correct":"จอดรถ / สวนสาธารณะ","th_wrong":"ขับรถเร็ว"}
+{"en":"lock","th_correct":"ล็อก / แม่กุญแจ","th_wrong":"เปิดกว้าง"}
+{"en":"knock","th_correct":"เคาะประตู","th_wrong":"กดกริ่ง"}
+{"en":"shout","th_correct":"ตะโกน","th_wrong":"กระซิบ"}
+{"en":"whisper","th_correct":"กระซิบ","th_wrong":"ตะโกน"}
+{"en":"hide","th_correct":"ซ่อน","th_wrong":"แสดงให้เห็น"}
+{"en":"seek","th_correct":"เสาะหา / ค้นหา","th_wrong":"ละทิ้ง"}
+{"en":"steal","th_correct":"ขโมย","th_wrong":"บริจาค"}
+{"en":"borrow","th_correct":"ขอยืม","th_wrong":"ให้ยืม"}
+{"en":"lend","th_correct":"ให้ยืม","th_wrong":"ขอยืม"}
+{"en":"earn","th_correct":"หาเงิน / ได้รับค่าตอบแทน","th_wrong":"ใช้จ่าย"}
+{"en":"waste","th_correct":"ใช้สิ้นเปลือง / ขยะ","th_wrong":"ประหยัด"}
+{"en":"collect","th_correct":"สะสม / เก็บรวบรวม","th_wrong":"แจกจ่าย"}
+{"en":"deliver","th_correct":"จัดส่ง","th_wrong":"สั่งซื้อ"}
+{"en":"pack","th_correct":"จัดกระเป๋า / บรรจุหีบห่อ","th_wrong":"แกะกล่อง"}
+{"en":"wrap","th_correct":"ห่อ","th_wrong":"ฉีกออก"}
+{"en":"pour","th_correct":"เท / ริน","th_wrong":"ตัก"}
+{"en":"mix","th_correct":"ผสม","th_wrong":"แยกออก"}
+{"en":"boil","th_correct":"ต้มให้เดือด","th_wrong":"แช่แข็ง"}
+{"en":"bake","th_correct":"อบขนม","th_wrong":"ทอด"}
+{"en":"fry","th_correct":"ทอด","th_wrong":"นึ่ง"}
+{"en":"taste","th_correct":"ชิม / รสชาติ","th_wrong":"ดมกลิ่น"}
+{"en":"smell","th_correct":"ดมกลิ่น / กลิ่น","th_wrong":"สัมผัส"}
+{"en":"burn","th_correct":"เผาไหม้ / ลวก","th_wrong":"ดับไฟ"}
+{"en":"freeze","th_correct":"แช่แข็ง / หนาวจัด","th_wrong":"ละลาย"}
+{"en":"melt","th_correct":"ละลาย","th_wrong":"แข็งตัว"}
+{"en":"shine","th_correct":"ส่องแสง / เปล่งประกาย","th_wrong":"มืดลง"}
+{"en":"sad","th_correct":"เศร้า","th_wrong":"ตื่นเต้น"}
+{"en":"tired","th_correct":"เหนื่อย","th_wrong":"สดชื่น"}
+{"en":"hungry","th_correct":"หิว","th_wrong":"อิ่ม"}
+{"en":"thirsty","th_correct":"กระหายน้ำ","th_wrong":"ง่วงนอน"}
+{"en":"afraid","th_correct":"กลัว","th_wrong":"กล้าหาญ"}
+{"en":"angry","th_correct":"โกรธ","th_wrong":"ใจเย็น"}
+{"en":"surprised","th_correct":"ประหลาดใจ","th_wrong":"เบื่อหน่าย"}
+{"en":"excited","th_correct":"ตื่นเต้น","th_wrong":"ผิดหวัง"}
+{"en":"worried","th_correct":"กังวล","th_wrong":"สบายใจ"}
+{"en":"proud","th_correct":"ภูมิใจ","th_wrong":"อับอาย"}
+{"en":"lucky","th_correct":"โชคดี","th_wrong":"โชคร้าย"}
+{"en":"nervous","th_correct":"ประหม่า / ตื่นเต้นกังวล","th_wrong":"มั่นใจ"}
+{"en":"calm","th_correct":"สงบ / ใจเย็น","th_wrong":"ตื่นตระหนก"}
+{"en":"funny","th_correct":"ตลก","th_wrong":"น่าเบื่อ"}
+{"en":"famous","th_correct":"มีชื่อเสียง","th_wrong":"ไม่มีใครรู้จัก"}
+{"en":"beautiful","th_correct":"สวยงาม","th_wrong":"น่าเกลียด"}
+{"en":"nice","th_correct":"ดี / น่ารัก / น่าประทับใจ","th_wrong":"แย่มาก"}
+{"en":"bitter","th_correct":"ขม","th_wrong":"หวาน"}
+{"en":"salty","th_correct":"เค็ม","th_wrong":"จืด"}
+{"en":"spicy","th_correct":"เผ็ด","th_wrong":"เปรี้ยว"}
+{"en":"cheap","th_correct":"ราคาถูก","th_wrong":"ราคาแพง"}
+{"en":"expensive","th_correct":"ราคาแพง","th_wrong":"ฟรี"}
+{"en":"thin","th_correct":"ผอม / บาง","th_wrong":"หนา"}
+{"en":"thick","th_correct":"หนา / ข้น","th_wrong":"บาง"}
+{"en":"wide","th_correct":"กว้าง","th_wrong":"แคบ"}
+{"en":"narrow","th_correct":"แคบ","th_wrong":"กว้าง"}
+{"en":"round","th_correct":"กลม / รอบ","th_wrong":"สี่เหลี่ยม"}
+{"en":"flat","th_correct":"แบน / เรียบ","th_wrong":"ขรุขระ"}
+{"en":"sharp","th_correct":"แหลมคม / เฉียบแหลม","th_wrong":"ทื่อ"}
+{"en":"smooth","th_correct":"เรียบเนียน / ราบรื่น","th_wrong":"หยาบ"}
+{"en":"rough","th_correct":"หยาบ / ขรุขระ / คร่าวๆ","th_wrong":"นุ่มนวล"}
+{"en":"loose","th_correct":"หลวม","th_wrong":"แน่น"}
+{"en":"tight","th_correct":"แน่น / คับ","th_wrong":"หลวม"}
+{"en":"strange","th_correct":"แปลกประหลาด","th_wrong":"คุ้นเคย"}
+{"en":"normal","th_correct":"ปกติ / ธรรมดา","th_wrong":"ผิดปกติ"}
+{"en":"wild","th_correct":"ป่าเถื่อน / ดุร้าย / ตามธรรมชาติ","th_wrong":"เชื่อง"}
+{"en":"gentle","th_correct":"อ่อนโยน","th_wrong":"รุนแรง"}
+{"en":"cruel","th_correct":"โหดร้าย","th_wrong":"เมตตา"}
+{"en":"rude","th_correct":"หยาบคาย","th_wrong":"สุภาพ"}
+{"en":"shy","th_correct":"ขี้อาย","th_wrong":"กล้าแสดงออก"}
+{"en":"strict","th_correct":"เข้มงวด","th_wrong":"ผ่อนปรน"}
+{"en":"fair","th_correct":"ยุติธรรม / งานวัด","th_wrong":"ลำเอียง"}
+{"en":"equal","th_correct":"เท่าเทียมกัน","th_wrong":"แตกต่างกัน"}
+{"en":"useful","th_correct":"มีประโยชน์","th_wrong":"ไร้ประโยชน์"}
+{"en":"useless","th_correct":"ไร้ประโยชน์","th_wrong":"จำเป็นมาก"}
+{"en":"careful","th_correct":"ระมัดระวัง","th_wrong":"ประมาท"}
+{"en":"careless","th_correct":"สะเพร่า / ประมาท","th_wrong":"รอบคอบ"}
+{"en":"healthy","th_correct":"สุขภาพดี","th_wrong":"เจ็บป่วย"}
+{"en":"sick","th_correct":"ป่วย / ไม่สบาย","th_wrong":"แข็งแรง"}
+{"en":"weak","th_correct":"อ่อนแอ","th_wrong":"ทรงพลัง"}
+{"en":"alive","th_correct":"มีชีวิตอยู่","th_wrong":"เสียชีวิตแล้ว"}
+{"en":"asleep","th_correct":"หลับอยู่","th_wrong":"ตื่นอยู่"}
+{"en":"awake","th_correct":"ตื่นอยู่","th_wrong":"ง่วงนอน"}
+{"en":"alone","th_correct":"ตามลำพัง / คนเดียว","th_wrong":"เป็นกลุ่ม"}
+{"en":"together","th_correct":"ด้วยกัน","th_wrong":"แยกจากกัน"}
+{"en":"shirt","th_correct":"เสื้อเชิ้ต","th_wrong":"กางเกง"}
+{"en":"pants","th_correct":"กางเกงขายาว","th_wrong":"กระโปรง"}
+{"en":"dress","th_correct":"ชุดเดรส / แต่งตัว","th_wrong":"รองเท้า"}
+{"en":"coat","th_correct":"เสื้อโค้ต","th_wrong":"ถุงเท้า"}
+{"en":"hat","th_correct":"หมวก","th_wrong":"เข็มขัด"}
+{"en":"shoe","th_correct":"รองเท้า","th_wrong":"ถุงมือ"}
+{"en":"pocket","th_correct":"กระเป๋าเสื้อ/กางเกง","th_wrong":"กระดุม"}
+{"en":"bag","th_correct":"กระเป๋า / ถุง","th_wrong":"กล่อง"}
+{"en":"key","th_correct":"กุญแจ / สำคัญ","th_wrong":"ประตู"}
+{"en":"clock","th_correct":"นาฬิกาแขวน/ตั้งโต๊ะ","th_wrong":"ปฏิทิน"}
+{"en":"mirror","th_correct":"กระจกเงา","th_wrong":"หน้าต่าง"}
+{"en":"bed","th_correct":"เตียงนอน","th_wrong":"โซฟา"}
+{"en":"chair","th_correct":"เก้าอี้","th_wrong":"โต๊ะ"}
+{"en":"kitchen","th_correct":"ห้องครัว","th_wrong":"ห้องน้ำ"}
+{"en":"floor","th_correct":"พื้น / ชั้นของตึก","th_wrong":"เพดาน"}
+{"en":"roof","th_correct":"หลังคา","th_wrong":"บันได"}
+{"en":"window","th_correct":"หน้าต่าง","th_wrong":"กำแพง"}
+{"en":"garden","th_correct":"สวน","th_wrong":"โรงรถ"}
+{"en":"farm","th_correct":"ฟาร์ม / ไร่นา","th_wrong":"โรงงาน"}
+{"en":"forest","th_correct":"ป่าไม้","th_wrong":"ทะเลทราย"}
+{"en":"island","th_correct":"เกาะ","th_wrong":"ภูเขาไฟ"}
+{"en":"beach","th_correct":"ชายหาด","th_wrong":"น้ำตก"}
+{"en":"stone","th_correct":"ก้อนหิน","th_wrong":"ทราย"}
+{"en":"sand","th_correct":"ทราย","th_wrong":"โคลน"}
+{"en":"wood","th_correct":"ไม้","th_wrong":"เหล็ก"}
+{"en":"metal","th_correct":"โลหะ","th_wrong":"พลาสติก"}
+{"en":"glass","th_correct":"แก้ว / กระจก","th_wrong":"กระดาษ"}
+{"en":"gold","th_correct":"ทองคำ","th_wrong":"เงิน"}
+{"en":"silver","th_correct":"แร่เงิน / สีเงิน","th_wrong":"ทองแดง"}
+{"en":"blood","th_correct":"เลือด","th_wrong":"เหงื่อ"}
+{"en":"bone","th_correct":"กระดูก","th_wrong":"กล้ามเนื้อ"}
+{"en":"skin","th_correct":"ผิวหนัง","th_wrong":"เส้นผม"}
+{"en":"hair","th_correct":"เส้นผม / ขน","th_wrong":"เล็บ"}
+{"en":"mouth","th_correct":"ปาก","th_wrong":"จมูก"}
+{"en":"nose","th_correct":"จมูก","th_wrong":"คาง"}
+{"en":"ear","th_correct":"หู","th_wrong":"คิ้ว"}
+{"en":"neck","th_correct":"คอ","th_wrong":"ไหล่"}
+{"en":"shoulder","th_correct":"หัวไหล่","th_wrong":"ข้อศอก"}
+{"en":"finger","th_correct":"นิ้วมือ","th_wrong":"นิ้วเท้า"}
+{"en":"knee","th_correct":"หัวเข่า","th_wrong":"ข้อเท้า"}
+{"en":"breathe","th_correct":"หายใจ","th_wrong":"ไอ"}
+{"en":"cough","th_correct":"ไอ","th_wrong":"จาม"}
+{"en":"bite","th_correct":"กัด","th_wrong":"กลืน"}
+{"en":"chew","th_correct":"เคี้ยว","th_wrong":"ดื่ม"}
+{"en":"swallow","th_correct":"กลืน","th_wrong":"คาย"}
+{"en":"kick","th_correct":"เตะ","th_wrong":"ต่อย"}
+{"en":"shake","th_correct":"เขย่า / สั่น","th_wrong":"กอด"}
+{"en":"hug","th_correct":"กอด","th_wrong":"ผลัก"}
+{"en":"kiss","th_correct":"จูบ","th_wrong":"ตบ"}
+{"en":"wave","th_correct":"โบกมือ / คลื่น","th_wrong":"พยักหน้า"}
+{"en":"nod","th_correct":"พยักหน้า","th_wrong":"ส่ายหน้า"}
+{"en":"point","th_correct":"ชี้ / จุด","th_wrong":"จับ"}
+{"en":"fold","th_correct":"พับ","th_wrong":"ฉีก"}
+{"en":"tear","th_correct":"ฉีกขาด / น้ำตา","th_wrong":"เย็บ"}
+{"en":"tie","th_correct":"ผูก / เนกไท / เสมอกัน","th_wrong":"แกะออก"}
+{"en":"dig","th_correct":"ขุด","th_wrong":"ฝัง"}
+{"en":"plant","th_correct":"ปลูกพืช / โรงงาน","th_wrong":"เก็บเกี่ยว"}
+{"en":"hunt","th_correct":"ล่าสัตว์ / ตามหา","th_wrong":"เลี้ยงดู"}
+{"en":"chase","th_correct":"วิ่งไล่ตาม","th_wrong":"วิ่งหนี"}
+{"en":"escape","th_correct":"หลบหนี","th_wrong":"ยอมมอบตัว"}
+{"en":"rescue","th_correct":"ช่วยเหลือ / กู้ภัย","th_wrong":"ทอดทิ้ง"}
+{"en":"attack","th_correct":"โจมตี","th_wrong":"ป้องกัน"}
+{"en":"defend","th_correct":"ปกป้อง / ป้องกัน","th_wrong":"บุกรุก"}
+{"en":"warn","th_correct":"เตือน","th_wrong":"ชมเชย"}
+{"en":"blame","th_correct":"กล่าวโทษ / ตำหนิ","th_wrong":"ให้อภัย"}
+{"en":"forgive","th_correct":"ให้อภัย","th_wrong":"แก้แค้น"}
+{"en":"punish","th_correct":"ลงโทษ","th_wrong":"ให้รางวัล"}
+{"en":"reward","th_correct":"ให้รางวัล / รางวัล","th_wrong":"ปรับเงิน"}
+{"en":"trust","th_correct":"ไว้วางใจ","th_wrong":"ระแวง"}
+{"en":"doubt","th_correct":"สงสัย / ไม่แน่ใจ","th_wrong":"เชื่อมั่น"}
+{"en":"airport","th_correct":"สนามบิน","th_wrong":"ท่าเรือ"}
+{"en":"station","th_correct":"สถานี","th_wrong":"ทางด่วน"}
+{"en":"ticket","th_correct":"ตั๋ว / ใบสั่ง","th_wrong":"ใบเสร็จ"}
+{"en":"passport","th_correct":"หนังสือเดินทาง","th_wrong":"ใบขับขี่"}
+{"en":"hotel","th_correct":"โรงแรม","th_wrong":"หอพัก"}
+{"en":"restaurant","th_correct":"ร้านอาหาร","th_wrong":"ร้านเบเกอรี่"}
+{"en":"menu","th_correct":"รายการอาหาร","th_wrong":"สูตรอาหาร"}
+{"en":"bill","th_correct":"ใบแจ้งหนี้ / บิล","th_wrong":"เหรียญ"}
+{"en":"tip","th_correct":"เงินทิป / เคล็ดลับ","th_wrong":"ค่าปรับ"}
+{"en":"cash","th_correct":"เงินสด","th_wrong":"เช็คเงินสด"}
+{"en":"coin","th_correct":"เหรียญ","th_wrong":"ธนบัตร"}
+{"en":"wallet","th_correct":"กระเป๋าสตางค์","th_wrong":"กระเป๋าเดินทาง"}
+{"en":"store","th_correct":"ร้านค้า","th_wrong":"โกดังสินค้า"}
+{"en":"shop","th_correct":"ร้านค้า / ซื้อของ","th_wrong":"โรงงาน"}
+{"en":"gift","th_correct":"ของขวัญ","th_wrong":"ของหาย"}
+{"en":"prize","th_correct":"รางวัล","th_wrong":"ราคา"}
+{"en":"letter","th_correct":"จดหมาย / ตัวอักษร","th_wrong":"พัสดุ"}
+{"en":"message","th_correct":"ข้อความ","th_wrong":"สายโทรเข้า"}
+{"en":"email","th_correct":"อีเมล","th_wrong":"เว็บไซต์"}
+{"en":"address","th_correct":"ที่อยู่","th_wrong":"รหัสผ่าน"}
+{"en":"map","th_correct":"แผนที่","th_wrong":"เข็มทิศ"}
+{"en":"sign","th_correct":"ป้าย / สัญญาณ / เซ็นชื่อ","th_wrong":"กำแพง"}
+{"en":"rule","th_correct":"กฎระเบียบ","th_wrong":"ข้อยกเว้น"}
+{"en":"crime","th_correct":"อาชญากรรม","th_wrong":"ความยุติธรรม"}
+{"en":"judge","th_correct":"ผู้พิพากษา / ตัดสิน","th_wrong":"ทนายความ"}
+{"en":"prison","th_correct":"เรือนจำ / คุก","th_wrong":"สถานีตำรวจ"}
+{"en":"weapon","th_correct":"อาวุธ","th_wrong":"เกราะป้องกัน"}
+{"en":"gun","th_correct":"ปืน","th_wrong":"มีด"}
+{"en":"knife","th_correct":"มีด","th_wrong":"ช้อน"}
+{"en":"army","th_correct":"กองทัพ","th_wrong":"รัฐบาล"}
+{"en":"soldier","th_correct":"ทหาร","th_wrong":"ตำรวจ"}
+{"en":"king","th_correct":"พระราชา","th_wrong":"เจ้าชาย"}
+{"en":"queen","th_correct":"พระราชินี","th_wrong":"เจ้าหญิง"}
+{"en":"hero","th_correct":"วีรบุรุษ / ฮีโร่","th_wrong":"วายร้าย"}
+{"en":"enemy","th_correct":"ศัตรู","th_wrong":"พันธมิตร"}
+{"en":"neighbor","th_correct":"เพื่อนบ้าน","th_wrong":"คนแปลกหน้า"}
+{"en":"guest","th_correct":"แขก / ผู้มาเยือน","th_wrong":"เจ้าภาพ"}
+{"en":"host","th_correct":"เจ้าภาพ / พิธีกร","th_wrong":"ผู้ชม"}
+{"en":"crowd","th_correct":"ฝูงชน","th_wrong":"ความเงียบ"}
+{"en":"respect","th_correct":"เคารพ / นับถือ","th_wrong":"ดูถูก"}
+{"en":"admire","th_correct":"ชื่นชม","th_wrong":"อิจฉา"}
+{"en":"envy","th_correct":"อิจฉา","th_wrong":"ยินดีด้วย"}
+{"en":"regret","th_correct":"เสียใจภายหลัง / เสียดาย","th_wrong":"ภูมิใจ"}
+{"en":"complain","th_correct":"บ่น / ร้องเรียน","th_wrong":"ชื่นชม"}
+{"en":"argue","th_correct":"โต้เถียง / ทะเลาะ","th_wrong":"เห็นด้วย"}
+{"en":"disagree","th_correct":"ไม่เห็นด้วย","th_wrong":"สนับสนุน"}
+{"en":"apologize","th_correct":"ขอโทษ","th_wrong":"กล่าวโทษ"}
+{"en":"celebrate","th_correct":"เฉลิมฉลอง","th_wrong":"ไว้อาลัย"}
+{"en":"congratulate","th_correct":"แสดงความยินดี","th_wrong":"ปลอบใจ"}
+{"en":"graduate","th_correct":"เรียนจบ / สำเร็จการศึกษา","th_wrong":"สมัครเรียน"}
+{"en":"retire","th_correct":"เกษียณอายุ","th_wrong":"เริ่มทำงาน"}
+{"en":"hire","th_correct":"จ้างงาน","th_wrong":"ไล่ออก"}
+{"en":"quit","th_correct":"ลาออก / เลิกทำ","th_wrong":"ทำต่อไป"}
+{"en":"invest","th_correct":"ลงทุน","th_wrong":"กู้ยืม"}
+{"en":"afford","th_correct":"มีกำลังทรัพย์พอที่จะซื้อ","th_wrong":"ขาดทุน"}
+{"en":"owe","th_correct":"เป็นหนี้ / ติดค้าง","th_wrong":"จ่ายครบแล้ว"}
+{"en":"charge","th_correct":"คิดเงิน / ชาร์จแบต","th_wrong":"คืนเงิน"}
+{"en":"cancel","th_correct":"ยกเลิก","th_wrong":"ยืนยัน"}
+{"en":"delay","th_correct":"ล่าช้า / เลื่อนเวลา","th_wrong":"เร่งรีบ"}
+{"en":"postpone","th_correct":"เลื่อนออกไปก่อน","th_wrong":"เริ่มทันที"}
+{"en":"confirm","th_correct":"ยืนยัน","th_wrong":"ปฏิเสธ"}
+{"en":"arrange","th_correct":"จัดเตรียม / นัดหมาย","th_wrong":"รื้อทิ้ง"}
+{"en":"reserve","th_correct":"จองล่วงหน้า / สำรอง","th_wrong":"ยกเลิกการจอง"}
+{"en":"rent","th_correct":"เช่า","th_wrong":"ซื้อขาด"}
+{"en":"own","th_correct":"เป็นเจ้าของ","th_wrong":"ขอยืม"}
+{"en":"belong","th_correct":"เป็นของ / สังกัดอยู่","th_wrong":"แยกตัวออก"}
+{"en":"consist","th_correct":"ประกอบด้วย","th_wrong":"ขาดหายไป"}
+{"en":"depend","th_correct":"ขึ้นอยู่กับ / พึ่งพา","th_wrong":"เป็นอิสระ"}
+{"en":"prefer","th_correct":"ชอบมากกว่า","th_wrong":"รังเกียจ"}
+{"en":"recommend","th_correct":"แนะนำ","th_wrong":"ห้ามปราม"}
+{"en":"advise","th_correct":"ให้คำแนะนำ","th_wrong":"ออกคำสั่ง"}
+{"en":"persuade","th_correct":"โน้มน้าวใจ","th_wrong":"บังคับขู่เข็ญ"}
+{"en":"encourage","th_correct":"ให้กำลังใจ / ส่งเสริม","th_wrong":"ตัดกำลังใจ"}
+{"en":"remind","th_correct":"เตือนความจำ","th_wrong":"ทำให้ลืม"}
+{"en":"modern","th_correct":"ทันสมัย","th_wrong":"โบราณ"}
+{"en":"ancient","th_correct":"โบราณ / เก่าแก่","th_wrong":"ร่วมสมัย"}
+{"en":"popular","th_correct":"เป็นที่นิยม","th_wrong":"ตกยุค"}
+{"en":"rare","th_correct":"หายาก","th_wrong":"พบเห็นได้ทั่วไป"}
+{"en":"local","th_correct":"ท้องถิ่น","th_wrong":"นานาชาติ"}
+{"en":"global","th_correct":"ระดับโลก","th_wrong":"ระดับหมู่บ้าน"}
+{"en":"national","th_correct":"ระดับชาติ","th_wrong":"ส่วนบุคคล"}
+{"en":"urban","th_correct":"ในเมือง","th_wrong":"ชนบท"}
+{"en":"rural","th_correct":"ชนบท","th_wrong":"ใจกลางเมือง"}
+{"en":"crowded","th_correct":"แออัด / คนแน่น","th_wrong":"ร้างผู้คน"}
+{"en":"silent","th_correct":"เงียบสนิท","th_wrong":"อึกทึกครึกโครม"}
+{"en":"peaceful","th_correct":"สงบสุข","th_wrong":"วุ่นวาย"}
+{"en":"violent","th_correct":"รุนแรง","th_wrong":"อ่อนโยน"}
+{"en":"guilty","th_correct":"มีความผิด / รู้สึกผิด","th_wrong":"บริสุทธิ์"}
+{"en":"innocent","th_correct":"บริสุทธิ์ / ไร้เดียงสา","th_wrong":"มีพิรุธ"}
+{"en":"legal","th_correct":"ถูกกฎหมาย","th_wrong":"ผิดกฎหมาย"}
+{"en":"illegal","th_correct":"ผิดกฎหมาย","th_wrong":"ได้รับอนุญาต"}
+{"en":"formal","th_correct":"เป็นทางการ","th_wrong":"ลำลอง / สบายๆ"}
+{"en":"casual","th_correct":"ลำลอง / ไม่เป็นทางการ","th_wrong":"เคร่งครัด"}
+{"en":"original","th_correct":"ต้นฉบับ / ดั้งเดิม","th_wrong":"ของเลียนแบบ"}
+{"en":"fake","th_correct":"ปลอม","th_wrong":"ของแท้"}
+{"en":"genuine","th_correct":"แท้จริง / จริงใจ","th_wrong":"เสแสร้ง"}
+{"en":"exact","th_correct":"แม่นยำ / เป๊ะ","th_wrong":"คร่าวๆ"}
+{"en":"sudden","th_correct":"กะทันหัน","th_wrong":"ค่อยเป็นค่อยไป"}
+{"en":"permanent","th_correct":"ถาวร","th_wrong":"ชั่วคราว"}
+{"en":"temporary","th_correct":"ชั่วคราว","th_wrong":"ตลอดไป"}
+{"en":"culture","th_correct":"วัฒนธรรม","th_wrong":"ภูมิศาสตร์"}
+{"en":"tradition","th_correct":"ประเพณี","th_wrong":"นวัตกรรม"}
+{"en":"religion","th_correct":"ศาสนา","th_wrong":"การเมือง"}
+{"en":"science","th_correct":"วิทยาศาสตร์","th_wrong":"วรรณกรรม"}
+{"en":"technology","th_correct":"เทคโนโลยี","th_wrong":"ประวัติศาสตร์"}
+{"en":"energy","th_correct":"พลังงาน","th_wrong":"ความเหนื่อยล้า"}
+{"en":"electricity","th_correct":"ไฟฟ้า","th_wrong":"ประปา"}
+{"en":"traffic","th_correct":"การจราจร","th_wrong":"การขนส่งทางเรือ"}
+{"en":"accident","th_correct":"อุบัติเหตุ","th_wrong":"ความตั้งใจ"}
+{"en":"emergency","th_correct":"เหตุฉุกเฉิน","th_wrong":"กิจวัตรประจำวัน"}
+{"en":"injury","th_correct":"อาการบาดเจ็บ","th_wrong":"การรักษา"}
+{"en":"pain","th_correct":"ความเจ็บปวด","th_wrong":"ความสบายใจ"}
+{"en":"fever","th_correct":"อาการไข้","th_wrong":"อาการคัน"}
+{"en":"medicine","th_correct":"ยารักษาโรค","th_wrong":"เครื่องมือผ่าตัด"}
+{"en":"vitamin","th_correct":"วิตามิน","th_wrong":"ไขมัน"}
+{"en":"diet","th_correct":"อาหารการกิน / การควบคุมอาหาร","th_wrong":"การออกกำลังกาย"}
+{"en":"exercise","th_correct":"การออกกำลังกาย","th_wrong":"การนอนหลับ"}
+{"en":"muscle","th_correct":"กล้ามเนื้อ","th_wrong":"กระดูก"}
+{"en":"brain","th_correct":"สมอง","th_wrong":"หัวใจ"}
+{"en":"breath","th_correct":"ลมหายใจ","th_wrong":"ชีพจร"}
+{"en":"shadow","th_correct":"เงา","th_wrong":"แสงแดด"}
+{"en":"reflection","th_correct":"ภาพสะท้อน / การไตร่ตรอง","th_wrong":"ความมืดมิด"}
+{"en":"silence","th_correct":"ความเงียบ","th_wrong":"เสียงรบกวน"}
+{"en":"noise","th_correct":"เสียงรบกวน","th_wrong":"เสียงดนตรี"}
+{"en":"echo","th_correct":"เสียงสะท้อน","th_wrong":"เสียงกระซิบ"}
+{"en":"rhythm","th_correct":"จังหวะ","th_wrong":"เนื้อเพลง"}
+{"en":"melody","th_correct":"ทำนองเพลง","th_wrong":"เครื่องดนตรี"}
+{"en":"lyric","th_correct":"เนื้อเพลง","th_wrong":"นักร้อง"}
+{"en":"poem","th_correct":"บทกวี / กลอน","th_wrong":"ข่าวสาร"}
+{"en":"novel","th_correct":"นวนิยาย","th_wrong":"พจนานุกรม"}
+{"en":"author","th_correct":"ผู้แต่ง / นักเขียน","th_wrong":"ผู้อ่าน"}
+{"en":"journalist","th_correct":"นักข่าว / สื่อมวลชน","th_wrong":"นักแสดง"}
+{"en":"photographer","th_correct":"ช่างภาพ","th_wrong":"จิตรกร"}
+{"en":"artist","th_correct":"ศิลปิน","th_wrong":"วิศวกร"}
+{"en":"musician","th_correct":"นักดนตรี","th_wrong":"นักกีฬา"}
+{"en":"actor","th_correct":"นักแสดง","th_wrong":"ผู้ชม"}
+{"en":"athlete","th_correct":"นักกีฬา","th_wrong":"กรรมการ"}
+{"en":"coach","th_correct":"ผู้ฝึกสอน / โค้ช","th_wrong":"คู่แข่ง"}
+{"en":"champion","th_correct":"แชมเปียน / ผู้ชนะเลิศ","th_wrong":"ผู้แพ้"}
+{"en":"trophy","th_correct":"ถ้วยรางวัล","th_wrong":"ใบประกาศนียบัตร"}
+{"en":"achieve","th_correct":"บรรลุเป้าหมาย / ทำสำเร็จ","th_wrong":"ล้มเลิก"}
+{"en":"accomplish","th_correct":"ทำให้สำเร็จลุล่วง","th_wrong":"ปล่อยค้างไว้"}
+{"en":"adapt","th_correct":"ปรับตัว","th_wrong":"ต่อต้าน"}
+{"en":"adjust","th_correct":"ปรับแต่ง / ปรับแก้","th_wrong":"ทำพัง"}
+{"en":"analyze","th_correct":"วิเคราะห์","th_wrong":"คาดเดา"}
+{"en":"apply","th_correct":"สมัคร / นำไปประยุกต์ใช้","th_wrong":"ลาออก"}
+{"en":"appreciate","th_correct":"ซาบซึ้งใจ / เห็นคุณค่า","th_wrong":"มองข้าม"}
+{"en":"approach","th_correct":"เข้าใกล้ / แนวทาง","th_wrong":"ถอยหนี"}
+{"en":"assume","th_correct":"สันนิษฐาน / ทึกทักเอาเอง","th_wrong":"พิสูจน์แล้ว"}
+{"en":"attempt","th_correct":"พยายาม","th_wrong":"ยอมแพ้"}
+{"en":"attract","th_correct":"ดึงดูดความสนใจ","th_wrong":"ผลักไส"}
+{"en":"balance","th_correct":"สร้างสมดุล / ยอดคงเหลือ","th_wrong":"เอียงข้าง"}
+{"en":"benefit","th_correct":"ได้ประโยชน์ / ผลประโยชน์","th_wrong":"เสียเปรียบ"}
+{"en":"calculate","th_correct":"คำนวณ","th_wrong":"สุ่มเดา"}
+{"en":"capture","th_correct":"จับกุม / บันทึกภาพ","th_wrong":"ปล่อยตัว"}
+{"en":"challenge","th_correct":"ท้าทาย / ความท้าทาย","th_wrong":"ยอมจำนน"}
+{"en":"clarify","th_correct":"ชี้แจงให้ชัดเจน","th_wrong":"ทำให้สับสน"}
+{"en":"combine","th_correct":"รวมเข้าด้วยกัน","th_wrong":"แยกออกจากกัน"}
+{"en":"communicate","th_correct":"สื่อสาร","th_wrong":"เก็บเงียบ"}
+{"en":"compete","th_correct":"แข่งขัน","th_wrong":"ร่วมมือกัน"}
+{"en":"concentrate","th_correct":"ตั้งสมาธิ / จดจ่อ","th_wrong":"เหม่อลอย"}
+{"en":"conclude","th_correct":"สรุปผล","th_wrong":"เริ่มต้น"}
+{"en":"connect","th_correct":"เชื่อมต่อ","th_wrong":"ตัดขาด"}
+{"en":"contribute","th_correct":"มีส่วนร่วม / บริจาค","th_wrong":"กอบโกย"}
+{"en":"convince","th_correct":"โน้มน้าวให้เชื่อ","th_wrong":"ทำให้สงสัย"}
+{"en":"cooperate","th_correct":"ร่วมมือกัน","th_wrong":"ขัดขวางกัน"}
+{"en":"criticize","th_correct":"วิพากษ์วิจารณ์","th_wrong":"ยกย่องชมเชย"}
+{"en":"damage","th_correct":"ทำความเสียหาย","th_wrong":"ซ่อมแซม"}
+{"en":"debate","th_correct":"โต้วาที / ถกเถียง","th_wrong":"เห็นพ้องต้องกัน"}
+{"en":"define","th_correct":"ให้คำนิยาม","th_wrong":"ตั้งคำถาม"}
+{"en":"demonstrate","th_correct":"สาธิต / แสดงให้เห็น","th_wrong":"ซ่อนเร้น"}
+{"en":"deserve","th_correct":"สมควรได้รับ","th_wrong":"ไม่คู่ควร"}
+{"en":"destroy","th_correct":"ทำลายล้าง","th_wrong":"ก่อสร้าง"}
+{"en":"determine","th_correct":"กำหนด / ตัดสินใจแน่วแน่","th_wrong":"ลังเล"}
+{"en":"divide","th_correct":"แบ่งแยก / หาร","th_wrong":"คูณ"}
+{"en":"dominate","th_correct":"ครอบงำ / มีอำนาจเหนือกว่า","th_wrong":"ยอมจำนน"}
+{"en":"educate","th_correct":"ให้การศึกษา / อบรม","th_wrong":"หลอกลวง"}
+{"en":"eliminate","th_correct":"กำจัดออก / ตัดออก","th_wrong":"เก็บรักษาไว้"}
+{"en":"emphasize","th_correct":"เน้นย้ำ","th_wrong":"ละเลย"}
+{"en":"enable","th_correct":"ทำให้สามารถทำได้ / เปิดใช้งาน","th_wrong":"ปิดกั้น"}
+{"en":"accurate","th_correct":"แม่นยำ / ถูกต้อง","th_wrong":"คลาดเคลื่อน"}
+{"en":"active","th_correct":"กระตือรือร้น / ใช้งานอยู่","th_wrong":"เฉื่อยชา"}
+{"en":"actual","th_correct":"แท้จริง / ตามความเป็นจริง","th_wrong":"สมมติขึ้น"}
+{"en":"additional","th_correct":"เพิ่มเติม","th_wrong":"ขาดหายไป"}
+{"en":"adequate","th_correct":"เพียงพอ","th_wrong":"ไม่เพียงพอ"}
+{"en":"advanced","th_correct":"ขั้นสูง / ก้าวหน้า","th_wrong":"ขั้นพื้นฐาน"}
+{"en":"aggressive","th_correct":"ก้าวร้าว / ดุดัน","th_wrong":"สุภาพเรียบร้อย"}
+{"en":"ambitious","th_correct":"ทะเยอทะยาน","th_wrong":"มักน้อย"}
+{"en":"annual","th_correct":"ประจำปี","th_wrong":"ประจำวัน"}
+{"en":"anxious","th_correct":"วิตกกังวล","th_wrong":"ผ่อนคลาย"}
+{"en":"apparent","th_correct":"ชัดเจน / เห็นได้ชัด","th_wrong":"คลุมเครือ"}
+{"en":"appropriate","th_correct":"เหมาะสม","th_wrong":"ไม่เหมาะสม"}
+{"en":"artificial","th_correct":"เทียม / สังเคราะห์","th_wrong":"ตามธรรมชาติ"}
+{"en":"ashamed","th_correct":"ละอายใจ / อับอาย","th_wrong":"ภาคภูมิใจ"}
+{"en":"attractive","th_correct":"มีเสน่ห์ / น่าดึงดูด","th_wrong":"น่าเบื่อหน่าย"}
+{"en":"automatic","th_correct":"อัตโนมัติ","th_wrong":"ทำด้วยมือ"}
+{"en":"aware","th_correct":"ตระหนักรู้ / รู้ตัว","th_wrong":"ไม่รู้เรื่อง"}
+{"en":"basic","th_correct":"พื้นฐาน / เบื้องต้น","th_wrong":"ซับซ้อน"}
+{"en":"brilliant","th_correct":"ยอดเยี่ยม / ฉลาดล้ำเลิศ","th_wrong":"ธรรมดาสามัญ"}
+{"en":"capable","th_correct":"มีความสามารถ","th_wrong":"ไร้ความสามารถ"}
+{"en":"ability","th_correct":"ความสามารถ","th_wrong":"ความรับผิดชอบ"}
+{"en":"absence","th_correct":"การขาดหายไป / การไม่อยู่","th_wrong":"การเข้าร่วม"}
+{"en":"access","th_correct":"การเข้าถึง","th_wrong":"การปิดกั้น"}
+{"en":"account","th_correct":"บัญชี / คำบอกเล่า","th_wrong":"จำนวนเงิน"}
+{"en":"advantage","th_correct":"ข้อได้เปรียบ","th_wrong":"ข้อเสียเปรียบ"}
+{"en":"advice","th_correct":"คำแนะนำ","th_wrong":"คำสั่ง"}
+{"en":"agency","th_correct":"หน่วยงาน / ตัวแทน","th_wrong":"ลูกค้า"}
+{"en":"agreement","th_correct":"ข้อตกลง / สัญญา","th_wrong":"ความขัดแย้ง"}
+{"en":"amount","th_correct":"จำนวน / ปริมาณ","th_wrong":"คุณภาพ"}
+{"en":"analysis","th_correct":"การวิเคราะห์","th_wrong":"การคาดเดา"}
+{"en":"angle","th_correct":"มุม / แง่มุม","th_wrong":"เส้นตรง"}
+{"en":"anxiety","th_correct":"ความวิตกกังวล","th_wrong":"ความตื่นเต้นดีใจ"}
+{"en":"appearance","th_correct":"รูปลักษณ์ภายนอก / การปรากฏตัว","th_wrong":"นิสัยใจคอ"}
+{"en":"application","th_correct":"ใบสมัคร / แอปพลิเคชัน","th_wrong":"ใบรับรอง"}
+{"en":"appointment","th_correct":"การนัดหมาย","th_wrong":"การยกเลิก"}
+{"en":"approval","th_correct":"การอนุมัติ","th_wrong":"การปฏิเสธ"}
+{"en":"argument","th_correct":"การโต้เถียง / ข้อโต้แย้ง","th_wrong":"การประนีประนอม"}
+{"en":"aspect","th_correct":"แง่มุม / ลักษณะ","th_wrong":"ผลลัพธ์"}
+{"en":"atmosphere","th_correct":"บรรยากาศ","th_wrong":"อุณหภูมิ"}
+{"en":"attention","th_correct":"ความสนใจ / ความตั้งใจ","th_wrong":"ความเบื่อหน่าย"}
+{"en":"attitude","th_correct":"ทัศนคติ","th_wrong":"ความสามารถ"}
+{"en":"audience","th_correct":"ผู้ชม / ผู้ฟัง","th_wrong":"นักแสดง"}
+{"en":"authority","th_correct":"อำนาจหน้าที่ / เจ้าหน้าที่","th_wrong":"ผู้ใต้บังคับบัญชา"}
+{"en":"background","th_correct":"ภูมิหลัง / พื้นหลัง","th_wrong":"เป้าหมายในอนาคต"}
+{"en":"barrier","th_correct":"อุปสรรค / สิ่งกีดขวาง","th_wrong":"สะพานเชื่อม"}
+{"en":"basis","th_correct":"พื้นฐาน / หลักการ","th_wrong":"ข้อยกเว้น"}
+{"en":"belief","th_correct":"ความเชื่อ","th_wrong":"หลักฐาน"}
+{"en":"border","th_correct":"ชายแดน / ขอบเขต","th_wrong":"ใจกลางเมือง"}
+{"en":"branch","th_correct":"สาขา / กิ่งไม้","th_wrong":"รากไม้"}
+{"en":"budget","th_correct":"งบประมาณ","th_wrong":"หนี้สิน"}
+{"en":"burden","th_correct":"ภาระ","th_wrong":"รางวัล"}
+{"en":"campaign","th_correct":"แคมเปญ / การรณรงค์","th_wrong":"การพักรบ"}
+{"en":"capacity","th_correct":"ความจุ / ศักยภาพ","th_wrong":"น้ำหนัก"}
+{"en":"category","th_correct":"หมวดหมู่ / ประเภท","th_wrong":"ลำดับ"}
+{"en":"chapter","th_correct":"บท (ในหนังสือ)","th_wrong":"หน้าปก"}
+{"en":"character","th_correct":"ตัวละคร / อุปนิสัย","th_wrong":"ฉากหลัง"}
+{"en":"charity","th_correct":"การกุศล","th_wrong":"การค้ากำไร"}
+{"en":"circumstance","th_correct":"สถานการณ์ / สภาพแวดล้อม","th_wrong":"ความตั้งใจ"}
+{"en":"citizen","th_correct":"พลเมือง","th_wrong":"นักท่องเที่ยว"}
+{"en":"climate","th_correct":"ภูมิอากาศ","th_wrong":"ฤดูเก็บเกี่ยว"}
+{"en":"ensure","th_correct":"รับรอง / ทำให้แน่ใจ","th_wrong":"สงสัย"}
+{"en":"establish","th_correct":"ก่อตั้ง / สร้างขึ้น","th_wrong":"ยุบเลิก"}
+{"en":"estimate","th_correct":"ประมาณการ / ประเมิน","th_wrong":"วัดค่าเป๊ะๆ"}
+{"en":"evaluate","th_correct":"ประเมินผล","th_wrong":"ละเลย"}
+{"en":"expand","th_correct":"ขยายตัว","th_wrong":"หดตัว"}
+{"en":"explore","th_correct":"สำรวจ","th_wrong":"หลบซ่อน"}
+{"en":"express","th_correct":"แสดงออก","th_wrong":"เก็บงำไว้"}
+{"en":"extend","th_correct":"ขยายเวลา / ยื่นออกไป","th_wrong":"ตัดให้สั้นลง"}
+{"en":"gather","th_correct":"รวบรวม / รวมตัวกัน","th_wrong":"แยกย้าย"}
+{"en":"generate","th_correct":"สร้างขึ้น / ก่อให้เกิด","th_wrong":"ทำลายทิ้ง"}
+{"en":"guarantee","th_correct":"รับประกัน","th_wrong":"ปฏิเสธความรับผิดชอบ"}
+{"en":"identify","th_correct":"ระบุตัวตน / แยกแยะ","th_wrong":"สับสน"}
+{"en":"ignore","th_correct":"เพิกเฉย / เมินเฉย","th_wrong":"ใส่ใจ"}
+{"en":"illustrate","th_correct":"แสดงภาพประกอบ / ยกตัวอย่าง","th_wrong":"ปิดบัง"}
+{"en":"indicate","th_correct":"บ่งชี้ / แสดงให้เห็น","th_wrong":"ซ่อนเร้น"}
+{"en":"influence","th_correct":"มีอิทธิพลต่อ","th_wrong":"ไม่มีผลกระทบ"}
+{"en":"inform","th_correct":"แจ้งให้ทราบ","th_wrong":"เก็บเป็นความลับ"}
+{"en":"inspire","th_correct":"สร้างแรงบันดาลใจ","th_wrong":"ทำให้ท้อแท้"}
+{"en":"intend","th_correct":"ตั้งใจ / มีเจตนา","th_wrong":"ทำโดยบังเอิญ"}
+{"en":"interpret","th_correct":"ตีความ / แปลความหมาย","th_wrong":"คัดลอก"}
+{"en":"involve","th_correct":"เกี่ยวข้อง / มีส่วนร่วม","th_wrong":"แยกตัวออก"}
+{"en":"justify","th_correct":"ให้เหตุผลสนับสนุน / ชี้แจงความชอบธรรม","th_wrong":"กล่าวหา"}
+{"en":"maintain","th_correct":"รักษาไว้ / บำรุงรักษา","th_wrong":"ปล่อยปละละเลย"}
+{"en":"motivate","th_correct":"กระตุ้น / สร้างแรงจูงใจ","th_wrong":"ขัดขวาง"}
+{"en":"negotiate","th_correct":"เจรจาต่อรอง","th_wrong":"บังคับเอา"}
+{"en":"observe","th_correct":"สังเกตการณ์","th_wrong":"มองข้าม"}
+{"en":"obtain","th_correct":"ได้รับมา / หามาได้","th_wrong":"สูญเสียไป"}
+{"en":"occur","th_correct":"เกิดขึ้น","th_wrong":"หยุดลง"}
+{"en":"operate","th_correct":"ดำเนินการ / ควบคุมเครื่อง","th_wrong":"ปิดระบบ"}
+{"en":"overcome","th_correct":"เอาชนะอุปสรรค","th_wrong":"ยอมจำนน"}
+{"en":"participate","th_correct":"เข้าร่วมกิจกรรม","th_wrong":"ถอนตัว"}
+{"en":"perceive","th_correct":"รับรู้ / มองเห็นว่า","th_wrong":"ไม่รู้ตัว"}
+{"en":"perform","th_correct":"แสดง / ปฏิบัติงาน","th_wrong":"รับชม"}
+{"en":"permit","th_correct":"อนุญาต","th_wrong":"สั่งห้าม"}
+{"en":"possess","th_correct":"ครอบครอง / มีไว้ในครอบครอง","th_wrong":"ขาดแคลน"}
+{"en":"predict","th_correct":"ทำนาย / คาดการณ์","th_wrong":"ทบทวนอดีต"}
+{"en":"preserve","th_correct":"อนุรักษ์ / ถนอมไว้","th_wrong":"ทำลาย"}
+{"en":"promote","th_correct":"ส่งเสริม / เลื่อนตำแหน่ง","th_wrong":"ลดตำแหน่ง"}
+{"en":"pursue","th_correct":"ไล่ตาม / มุ่งมั่นทำตาม","th_wrong":"ล้มเลิก"}
+{"en":"react","th_correct":"ตอบสนอง / มีปฏิกิริยา","th_wrong":"นิ่งเฉย"}
+{"en":"complex","th_correct":"ซับซ้อน","th_wrong":"เรียบง่าย"}
+{"en":"confident","th_correct":"มั่นใจ","th_wrong":"ประหม่า"}
+{"en":"conscious","th_correct":"มีสติ / รู้ตัว","th_wrong":"หมดสติ"}
+{"en":"consistent","th_correct":"สม่ำเสมอ / คงเส้นคงวา","th_wrong":"แปรปรวน"}
+{"en":"constant","th_correct":"คงที่ / ตลอดเวลา","th_wrong":"เป็นครั้งคราว"}
+{"en":"convenient","th_correct":"สะดวกสบาย","th_wrong":"ยุ่งยากลำบาก"}
+{"en":"creative","th_correct":"มีความคิดสร้างสรรค์","th_wrong":"ซ้ำซากจำเจ"}
+{"en":"critical","th_correct":"สำคัญยิ่ง / วิกฤต / เชิงวิจารณ์","th_wrong":"ไม่สลักสำคัญ"}
+{"en":"curious","th_correct":"อยากรู้อยากเห็น","th_wrong":"ไม่สนใจใคร"}
+{"en":"efficient","th_correct":"มีประสิทธิภาพ","th_wrong":"สิ้นเปลืองและล่าช้า"}
+{"en":"essential","th_correct":"จำเป็นอย่างยิ่ง","th_wrong":"ไม่จำเป็น"}
+{"en":"flexible","th_correct":"ยืดหยุ่น","th_wrong":"แข็งทื่อ"}
+{"en":"frequent","th_correct":"บ่อยครั้ง","th_wrong":"นานๆ ครั้ง"}
+{"en":"independent","th_correct":"เป็นอิสระ / พึ่งพาตนเอง","th_wrong":"พึ่งพาผู้อื่น"}
+{"en":"logical","th_correct":"มีเหตุผล / เป็นตรรกะ","th_wrong":"ไร้เหตุผล"}
+{"en":"obvious","th_correct":"ชัดเจน / เห็นได้ชัด","th_wrong":"ซ่อนเร้น"}
+{"en":"positive","th_correct":"เชิงบวก / มั่นใจ","th_wrong":"เชิงลบ"}
+{"en":"practical","th_correct":"นำไปใช้ได้จริง / เน้นปฏิบัติ","th_wrong":"เป็นไปไม่ได้จริง"}
+{"en":"relevant","th_correct":"เกี่ยวข้อง / ตรงประเด็น","th_wrong":"ไม่เกี่ยวข้อง"}
+{"en":"reliable","th_correct":"เชื่อถือได้ / ไว้ใจได้","th_wrong":"ไม่น่าไว้ใจ"}
